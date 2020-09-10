@@ -139,7 +139,7 @@ loginShopee = async (page, accounts) => {
 
         if (checkcode.length) {
             console.log("account bi hỏi mã")
-            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
+            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n" + "\n")
 
             return false
         }
@@ -220,6 +220,7 @@ populateClick = async (page, listcategories) => {
 
     timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
     await page.waitFor(timeout);
+
     randomidcategory = Math.floor(Math.random() * (listcategories.length - 1))
     randomcategory = listcategories[randomidcategory]
 
@@ -599,20 +600,43 @@ runAllTime = async () => {
                             await page.goto("http://192.168.8.1/html/home.html")
                             //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                             //   await page.waitFor(timeout)
+
+                            // turn off dcom
                             checkDcom = await page.$$(".mobile_connect_btn_on")
+
                             if (checkDcom.length) {
                                 await page.click("#mobile_connect_btn")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.waitFor(timeout)
+
+                                // turn on dcom
+                                checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                if (!checkDcomOff.length) {
+                                    await page.click("#mobile_connect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                    await page.waitFor(timeout)
+                                }
                             }
 
-                            checkDcom = await page.$$(".mobile_connect_btn_on")
                             if (!checkDcom.length) {
-                                await page.click("#mobile_connect_btn")
+                                console.log("DCOM V2")
+                                checkDcomOff = await page.$$("#disconnect_btn")
+                                await page.click("#disconnect_btn")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                await page.waitFor(timeout)
+
+                                // turn on dcom
+                                //checkDcomOff = await page.$$("#connect_btn")
+                                checkDcomOff = await page.waitForSelector("#connect_btn")
+
+                                await page.click("#connect_btn")
                                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
                                 await page.waitFor(timeout)
+
                             }
+
                         }
+
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
                         await page.goto("https://shopee.vn")
@@ -734,18 +758,41 @@ runAllTime = async () => {
                             //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                             //   await page.waitFor(timeout)
                             checkDcom = await page.$$(".mobile_connect_btn_on")
+
+                            console.log("CheckDcom: " + checkDcom.length)
+
+                            //   process.exit()
                             if (checkDcom.length) {
                                 await page.click("#mobile_connect_btn")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.waitFor(timeout)
+
+                                // turn on dcom
+                                checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                if (!checkDcomOff.length) {
+                                    await page.click("#mobile_connect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                    await page.waitFor(timeout)
+                                }
                             }
 
-                            checkDcom = await page.$$(".mobile_connect_btn_on")
                             if (!checkDcom.length) {
-                                await page.click("#mobile_connect_btn")
+                                console.log("DCOM V2")
+                                checkDcomOff = await page.$$("#disconnect_btn")
+                                await page.click("#disconnect_btn")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                await page.waitFor(timeout)
+
+                                // turn on dcom
+                                //checkDcomOff = await page.$$("#connect_btn")
+                                checkDcomOff = await page.waitForSelector("#connect_btn")
+
+                                await page.click("#connect_btn")
                                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
                                 await page.waitFor(timeout)
+
                             }
+
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
