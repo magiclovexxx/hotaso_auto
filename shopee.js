@@ -1,0 +1,866 @@
+require('dotenv').config();
+var fs = require('fs');
+const axios = require('axios').default;
+const puppeteer = require('puppeteer');
+var cron = require('node-cron');
+
+const exec = require('child_process').exec;
+linkShopeeUpdate = "http://auto.tranquoctoan.com/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
+linkShopeeAccountUpdate = "http://auto.tranquoctoan.com/api_user/shopeeAccountUpdate" // Link update account shopee status
+dataShopeeDir = "http://auto.tranquoctoan.com/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+slavenumber = process.env.SLAVE
+
+chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
+let profileDir = process.env.PROFILE_DIR
+phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
+// Danh sách profile fb trong file .env
+maxTab = process.env.MAXTAB_SHOPEE                           // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
+// Danh sách profile facebook trong mỗi slave
+mode = process.env.MODE
+if (mode === "DEV") {
+    timemax = 5000;
+    timemin = 3000;
+} else {
+    timemax = 5000;
+    timemin = 3000;
+}
+
+// Lấy ngẫu nhiên số lượng = maxtab profile để gửi đến master lấy dữ liệu schedule về thao tác
+function GenDirToGetData(maxTab, listAccounts) {
+    // Lấy id profile đã tương tác trước đó
+    maxid = []
+    checkLogoutId = []
+
+    var blockAccounts = fs.readFileSync("accountBlock.txt", { flag: "as+" });
+
+    if (blockAccounts) {
+        blockAccounts = blockAccounts.toString();
+        blockAccounts = blockAccounts.split("\n")
+    } else {
+        blockAccounts = []
+    }
+
+    var savedid = fs.readFileSync("saveidshopee.txt", { flag: "as+" });
+    if (savedid) {
+        savedid = savedid.toString();
+        savedid = savedid.split("\n");
+    } else {
+        savedid = []
+    }
+
+    randomId = typeof 123      // Ép kiểu dữ liệu về dạng số
+    maxTab = parseInt(maxTab); // Ép kiểu dữ liệu về int
+    idnotsave = [];
+    idCanUser = [];
+    // mảng
+    if ((savedid.length + maxTab) >= (listAccounts.length - 1)) {  // reset file saveid về trống khi số lượng đã bằng với số lượng tk của trường PROFILE trong file .ENV
+        savedid = [];
+        fs.writeFileSync('saveidshopee.txt', savedid)
+    }
+    let accountnNotBlock = []
+    // lấy các profile chưa có trong file block account
+    listAccounts.forEach(item => {
+        // Tìm các id profile trong file .ENV
+        if (!blockAccounts.includes(item)) {
+            // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
+            accountnNotBlock.push(item);
+        }
+    })
+
+    // lấy các profile chưa có trong file savedid
+    accountnNotBlock.forEach(item => {
+        // Tìm các id profile trong file .ENV
+        if (!savedid.includes(item)) {
+
+            idnotsave.push(item);
+        }
+    })
+
+    if (idnotsave.length != 0) {
+
+        randomId = Math.floor(Math.random() * (idnotsave.length - 1));           // Lấy ngẫu nhiêu 1 id trong mảng id chưa tương tác bên trên
+        if ((randomId + maxTab) >= idnotsave.length) {
+            randomId = idnotsave.length - maxTab;                         // Nếu số random + maxtab lớn hơn tổng số id trong mảng idnotsave sẽ lấy các giá trị cuối mảng
+        }
+
+        for (let a = randomId; a < (randomId + maxTab); a++) {           // Lưu các id vừa lấy để gửi lên server trong mảng idnotsave lưu vào mảng maxid.
+            maxid.push(idnotsave[a])
+        }
+
+        maxid.forEach(item => {
+            savedid.push(item);                                            // Update lại vào file saveid
+            fs.appendFileSync('saveidshopee.txt', item + "\n")
+        })
+
+        return maxid;
+
+    } else {
+        savedid = [];
+        fs.writeFileSync('saveidshopee.txt', savedid)
+        return false
+    }
+}
+
+loginShopee = async (page, accounts) => {
+
+    //await page.goto("https://shopee.vn")
+    // await page.waitFor(3000)
+
+    const logincheck = await page.$$('.shopee-avatar');
+
+    if (!logincheck.length) {
+
+        await page.mouse.click(10, 30)
+        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+
+        await page.waitFor(timeout)
+
+        const loginclass = await page.$$('.navbar__link--account');
+        await loginclass[1].click()
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+
+        await page.click('[name="loginKey"]')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        await page.type('[name="loginKey"]', accounts[0], { delay: 100 })    // Nhập comment 
+        await page.click('[name="password"]')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        await page.type('[name="password"]', accounts[1], { delay: 200 })    // Nhập comment 
+        await page.click('[name="password"]')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        const loginbutton = await page.$$('div>button:nth-child(4)');
+        await loginbutton[0].click()
+        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+        await page.waitFor(timeout)
+        checkcode = await page.$$('[autocomplete="one-time-code"]')
+
+        if (checkcode.length) {
+            console.log("account bi hỏi mã")
+            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
+
+            return false
+        }
+
+        checkblock = await page.$('[role="alert"]')
+        if (checkblock) {
+            console.log("account bi block")
+            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
+
+            return false
+        }
+
+        try{
+            await page.waitForSelector('.shopee-searchbar-input');
+        }catch(error){
+            console.log("account bi block")
+            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
+
+            return false
+        }
+        
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+
+        return true
+
+    } else {
+        return true
+    }
+}
+
+
+searchKeyWord = async (page, keyword) => {
+    timeout = Math.floor(Math.random() * (2000 - 100)) + 500;
+    await page.waitFor(timeout);
+    const checkSearchInput = await page.$$('.shopee-searchbar-input__input');
+
+    if (checkSearchInput.length) {
+        await page.click('.shopee-searchbar-input__input')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout);
+        console.log(keyword)
+        await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
+        timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+        await page.waitFor(timeout);
+        await page.keyboard.press('Enter')
+    } else {
+        //  await page.waitForSelector('.shopee-searchbar-input')
+        await page.click('.shopee-searchbar-input')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout);
+        await page.click('.shopee-searchbar-input')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout);
+        await page.click('.shopee-searchbar-input')
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout);
+        console.log(keyword)
+        await page.type('.shopee-searchbar-input', keyword, { delay: 100 })
+        timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+        await page.waitFor(timeout);
+        await page.keyboard.press('Enter')
+        await page.waitForNavigation()
+
+    }
+}
+
+populateClick = async (page, listcategories) => {
+    timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
+    await page.waitFor(timeout);
+
+    timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
+    await page.waitFor(timeout);
+    checkpopup = await page.$$('.shopee-popup__close-btn')
+    if (checkpopup.length) {
+        await page.click('.shopee-popup__close-btn')
+    }
+
+    timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
+    await page.waitFor(timeout);
+    randomidcategory = Math.floor(Math.random() * (listcategories.length - 1))
+    randomcategory = listcategories[randomidcategory]
+
+    // category chính
+    let categoryId = await page.evaluate((xx) => {
+
+        // Class có link bài đăng trên profile       
+        let titles = document.querySelectorAll('.home-category-list__category-grid');
+        let idcategory
+        titles.forEach((item, index) => {
+            if (item.href == xx.password) {
+                idcategory = index
+                return true
+            }
+
+        })
+        return idcategory
+    }, randomcategory)
+
+    console.log(categoryId)
+
+    checkCategory = await page.$$('.home-category-list__category-grid');
+    await checkCategory[categoryId].click()
+    timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
+    await page.waitFor(timeout);
+
+    if (randomcategory.pages) {
+
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.keyboard.press('PageDown');
+        await page.waitFor(timeout);
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.keyboard.press('PageDown');
+        await page.waitFor(timeout);
+
+        let categoryChildId = await page.evaluate((xx) => {
+
+            // Class có link bài đăng trên profile       
+            let titles = document.querySelectorAll('.shopee-category-list__sub-category');
+            let idcategorychild
+            titles.forEach((item, index) => {
+                if (item.href == xx.pages) {
+                    idcategorychild = index
+                    return true
+                }
+
+            })
+            return idcategorychild
+        }, randomcategory)
+
+        checkCategoryChild = await page.$$('.shopee-category-list__sub-category');
+        await checkCategoryChild[categoryChildId].click()
+
+    }
+
+
+
+}
+
+getproduct = async (page, saveProduct, limit, idShops) => {
+    try {
+        let thuHangSanPham
+        await page.waitForSelector('[data-sqe="name"]')
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        if (phobien) {
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout);
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout);
+        }
+        console.log(limit)
+        getProduct = []
+        getProduct = await page.evaluate(() => {
+
+            // Class có link bài đăng trên profile          
+            let titles = document.querySelectorAll('[data-sqe="link"]');
+            listProductLinks = []
+            titles.forEach((item) => {
+                listProductLinks.push(item.href)
+            })
+            return listProductLinks
+        })
+
+        let productIndex = 0
+        let productId
+
+        // tìm vị trí sản phẩm có tên cần click
+        let productIds
+        getProduct.forEach((item, index) => {
+            idShops.forEach((shop, index2) => {
+
+                productIds = item.split(shop + ".")
+                if (productIds.length == 2) {
+                    if (!saveProduct.includes(productIds[1])) {
+                        productId = productIds[1]
+                        productIndex = index;
+                        thuHangSanPham = {
+                            sanpham: getProduct[productIndex],
+                            id: productId,
+                            shopId: shop,
+                            trang: limit,
+                            vitri: productIndex
+                        }
+                    }
+                    return true
+                }
+            })
+            if (productIndex>4 && productIndex < 45) {
+                return true
+            }
+
+
+        })
+
+        if (thuHangSanPham) {
+            return thuHangSanPham;
+        }
+
+        if (limit == 5) {
+            return false
+        } else {
+            limit += 1;
+            next = await page.$$('.shopee-icon-button--right')
+            if (next.length) {
+                await next[0].click()
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                await page.waitFor(timeout);
+                return await getproduct(page, saveProduct, limit, idShops)
+            } else {
+                console.log("Đây là trang tìm kiếm cuối cùng")
+                return false
+            }
+        }
+
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+// chọn thuộc tính sản phẩm
+chooseVariation = async (page, limit) => {
+    let checkSelected = []
+    limit -= 1
+
+    checkvaritations = await page.$$('.flex.flex-column>.flex.items-center>.flex.items-center')
+
+    if (checkvaritations.length == 4) {
+        lengthvarirations = await page.evaluate(() => {
+            
+            varitations1 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
+            varitations2 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
+            variationslengt = {
+                varitations1: varitations1,
+                varitations2: varitations2
+            }
+            return variationslengt
+        })
+    }
+
+    if (limit == 0) return false
+    varitations = await page.$$('.product-variation')
+    if (!varitations.length) {
+        return true
+    }
+    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+    await page.waitFor(timeout)
+    varitation = Math.floor(Math.random() * ((varitations.length - 1) - 0)) + 0;
+    await varitations[varitation].click()
+    checkSelected = await page.$$('.product-variation--selected')
+    if (checkSelected.length) {
+        return true
+    } else {
+        chooseVariation(page, limit)
+    }
+}
+
+actionShopee = async (page) => {
+    await page.waitForSelector('.product-briefing')
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.click('.product-briefing>div>div>div');
+
+    // xem ngẫu nhiên n ảnh sản phẩm
+    viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
+    checkvideo = await page.$$('video')
+    if (checkvideo.length) {
+        timeout = Math.floor(Math.random() * (25000 - 15000)) + 20000;
+        await page.waitFor(timeout)
+    }
+    for (let i = 0; i <= viewRandomImages; i++) {
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        nextRightButton = await page.$$('.icon-arrow-right-bold')
+        await nextRightButton[1].click();
+    }
+
+    // click tắt ảnh sản phẩm    
+    await page.mouse.click(10, 30)
+
+    // lướt đọc sản phẩm, review
+    viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
+    for (let i = 0; i <= viewRandomImages; i++) {
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+    }
+    await page.waitFor(timeout)
+    await page.keyboard.press('Home');
+
+    // click chọn màu
+    let checkVariation = chooseVariation(page, 5)
+    if (checkVariation) {
+
+        // click thêm vào giỏ hàng
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        addToCard = await page.$$('.btn-tinted')
+        await addToCard[0].click()
+    } else {
+        console.log("Không chọn được mẫu mã")
+        return false
+    }
+}
+
+removeCart = async (page) => {
+    // check đầy giỏ hàng
+    checkcart = typeof 123
+    checkcart = await page.evaluate(() => {
+
+        // Class có link bài đăng trên profile       
+        let titles = document.querySelector('.shopee-cart-number-badge').innerText;
+        return titles
+    })
+
+    carts = Math.floor(Math.random() * (50 - 35)) + 35;
+
+    if (checkcart > 4) {
+        await page.goto('https://shopee.vn/cart/')
+        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+        await page.waitFor(timeout)
+        await page.waitForSelector('.cart-item__action')
+        actionDeletes = await page.$$('.cart-item__action')
+
+        for (let i = actionDeletes.length; i > 2; i--) {
+            timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+            await page.waitFor(timeout)
+            await actionDeletes[i - 1].click();
+            timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+            await page.waitFor(timeout)
+            await page.click('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
+            timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+            await page.waitFor(timeout)
+        }
+
+    }
+}
+
+
+
+runAllTime = async () => {
+
+    // lấy dữ liệu từ master
+
+    let linkgetdataShopeeDir = ""
+    linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA"
+
+    try {
+        dataShopee = await axios.get(linkgetdataShopeeDir);
+    } catch (error) {
+        console.log(error)
+        console.log("Không lấy được dữ liệU từ master")
+        return false
+    }
+
+    idShops = []
+    dataShopee = dataShopee.data
+    dataShopee.shops.forEach(item => {
+        idShop = item.fullname.split("\r")[0]
+        idShops.push(item.fullname)
+    })
+
+    keywords = []
+    dataShopee.keywords.forEach(item => {
+        keyword = item.username.split("\r")[0]
+        keywords.push(keyword)
+    })
+
+    //accounts = []
+    //dataShopee.accounts.forEach(item => {
+    //    let account = item.username + "\t" + item.password
+    //    account = account.split("\r")[0]
+    //    accounts.push(account)
+    //})
+
+    var accounts = fs.readFileSync("shopee.txt", { flag: "as+" });
+
+    if (accounts) {
+        accounts = accounts.toString();
+        accounts = accounts.split("\n")
+    } else {
+        accounts = []
+    }
+
+    listProducts = []
+    dataShopee.products.forEach(item => {
+        product = item.fullname
+        listProducts.push(product)
+    })
+
+    listcategories = dataShopee.categories
+
+    try {
+        console.log("----------- START SHOPEE ---------------")
+        data = GenDirToGetData(maxTab, accounts)
+        if (data) {
+            if (data.updateCode == 1) {
+                const myShellScript = exec('update.sh /');
+                myShellScript.stdout.on('data', (data) => {
+                    // do whatever you want here with data
+                });
+                myShellScript.stderr.on('data', (data) => {
+                    console.error(data);
+                });
+                return false
+            }
+
+            data.forEach(async (key, index) => {   // Foreach object Chạy song song các tab chromium
+
+                // Nếu có dữ liệu schedule trả về
+                key = key.split("\t")
+                let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
+                console.log(profileChrome)
+
+                if (phobien == 1) {
+
+                    const browser = await puppeteer.launch({
+                        executablePath: chromiumDir,
+                        headless: false,
+                        devtools: false,
+                        args: [
+                            `--user-data-dir=${profileChrome}`      // load profile chromium
+                        ]
+                    });
+
+                    const page = (await browser.pages())[0];
+
+                    // Random kích cỡ màn hình
+                    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+                    height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+                    await page.setViewport({
+                        width: width,
+                        height: height
+                    });
+
+                    try {
+                        if ((index == 0) && (mode == "DEV")) {
+                            // đổi ip
+                            console.log("Đổi ip mạng")
+                            await page.goto("http://192.168.8.1/html/home.html")
+                            //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                            //   await page.waitFor(timeout)
+                            checkDcom = await page.$$(".mobile_connect_btn_on")
+                            if (checkDcom.length) {
+                                await page.click("#mobile_connect_btn")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                await page.waitFor(timeout)
+                            }
+
+                            checkDcom = await page.$$(".mobile_connect_btn_on")
+                            if (!checkDcom.length) {
+                                await page.click("#mobile_connect_btn")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                await page.waitFor(timeout)
+                            }
+                        }
+                        //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+                        await page.waitFor(10000)
+                        await page.goto("https://shopee.vn")
+                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                        await page.waitFor(timeout)
+
+                        // login account shopee                    
+                        checklogin = await loginShopee(page, key)
+
+                        if (checklogin) {
+                            console.log("san pham pho bien")
+
+                            populateClick(page, listcategories)
+
+                            // lấy danh sách product đã lưu
+                            var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
+                            saveProduct = saveProduct.toString();
+                            saveProduct = saveProduct.split("\n")
+
+                            // danh sách product không nằm trong file saveproduct.txt
+
+                            //lấy danh sách product thuộc các id shop của cùng 1 người dùng                   
+
+                            productInfo = await getproduct(page, saveProduct, 1, idShops)
+
+                            if (productInfo) {
+                                //  console.log(productInfo)
+                                fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
+
+                                var today = new Date().toLocaleString();
+                                productInfo.keyword = "Sản phẩm phổ biến"
+                                productInfo.time = today
+                                productInfo.user= key[0]
+                                productInfo.pass= key[1]
+                                // lưu thứ hạng sản phẩm theo từ khoá vào file
+                                fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
+
+                                try {
+                                    let datatest = await axios.get(linkShopeeUpdate, {
+                                        params: {
+                                            data: {
+                                                dataToServer: productInfo,
+                                            }
+                                        }
+                                    })
+                                    console.log(datatest.data)
+                                } catch (error) {
+                                    console.log(error)
+                                    //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+                                }
+
+                                products = await page.$$('[data-sqe="link"]')
+                                products[productInfo.vitri].click()
+                                await actionShopee(page)
+                                await page.waitFor(1000);
+                                await removeCart(page)
+                            } else {
+                                // nếu đã check hết product sẽ xoá file saveProduct.txt                                
+                                saveProduct = [];
+                                fs.writeFileSync('saveProduct.txt', saveProduct)
+                                fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
+                            }
+                            await browser.close();
+                        }else{
+                            accountInfo = {
+                                user:key[0],
+                                pass:key[1],
+                                status : 0,
+                                message: "Account bị khoá"
+                            }
+                            try {
+                                let datatest = await axios.get(linkShopeeAccountUpdate, {
+                                    params: {
+                                        data: {
+                                            dataToServer: accountInfo,
+                                        }
+                                    }
+                                })
+                                console.log(datatest.data)
+                            } catch (error) {
+                                console.log(error)
+                                //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+                            }
+                        }
+
+                    } catch (error) {
+                        console.log(error)
+                        await browser.close();
+                    }
+                    await browser.close();
+                    console.log("----------- STOP ---------------")
+                } else {
+
+                    const browser = await puppeteer.launch({
+                        executablePath: chromiumDir,
+                        headless: false,
+                        devtools: false,
+                        args: [
+                            `--user-data-dir=${profileChrome}`      // load profile chromium
+                        ]
+                    });
+
+                    const page = (await browser.pages())[0];
+
+                    // Random kích cỡ màn hình
+                    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+                    height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+                    await page.setViewport({
+                        width: width,
+                        height: height
+                    });
+
+                    try {
+                        if ((index == 0) && (mode == "DEV")) {
+                            // đổi ip
+                            console.log("Đổi ip mạng")
+                            await page.goto("http://192.168.8.1/html/home.html")
+                            //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                            //   await page.waitFor(timeout)
+                            checkDcom = await page.$$(".mobile_connect_btn_on")
+                            if (checkDcom.length) {
+                                await page.click("#mobile_connect_btn")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                await page.waitFor(timeout)
+                            }
+
+                            checkDcom = await page.$$(".mobile_connect_btn_on")
+                            if (!checkDcom.length) {
+                                await page.click("#mobile_connect_btn")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                await page.waitFor(timeout)
+                            }
+                        }
+                        //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+                        await page.waitFor(10000)
+                        await page.goto("https://shopee.vn")
+                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                        await page.waitFor(timeout)
+
+                        // login account shopee                    
+                        checklogin = await loginShopee(page, key)
+                        if (checklogin) {
+
+                            // Lấy danh sách keyword đã tìm kiếm
+                            var saveKeyword = fs.readFileSync("saveKeyword.txt", { flag: "as+" });
+                            saveKeyword = saveKeyword.toString();
+                            saveKeyword = saveKeyword.split("\n")
+                            if (saveKeyword.length >= keywords.length) {
+                                saveKeyword = [];
+                                fs.writeFileSync('saveKeyword.txt', saveKeyword)
+                            }
+
+                            // danh sách keyword không nằm trong file savekeyword.txt
+                            let keywordNotSave = []
+                            keywords.forEach(item => {
+                                if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
+                                    keywordNotSave.push(item);
+                                }
+                            })
+                            // lấy ngẫu nhiên keyword để tìm kiếm
+                            randomkey = Math.floor(Math.random() * (keywordNotSave.length - 1));
+
+                            // lưu keyword sẽ tìm vào file saveKeyword.txt
+                            fs.appendFileSync('saveKeyword.txt', keywordNotSave[randomkey] + "\n")
+                            // tìm kiếm theo keyword
+                            await searchKeyWord(page, keywordNotSave[randomkey])
+
+                            // lấy danh sách product đã lưu
+                            var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
+                            saveProduct = saveProduct.toString();
+                            saveProduct = saveProduct.split("\n")
+
+                            // danh sách product không nằm trong file saveproduct.txt
+
+                            productInfo = await getproduct(page, saveProduct, 1, idShops)
+
+                            if (productInfo) {
+                                today = new Date().toLocaleString();
+                                console.log(productInfo)
+                                fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
+                                productInfo.keyword = keywordNotSave[randomkey]
+                                productInfo.time = today
+                                productInfo.user= key[0]
+                                productInfo.pass= key[1]
+                                // lưu thứ hạng sản phẩm theo từ khoá vào file
+                                fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
+
+                                try {
+                                    let datatest = await axios.get(linkShopeeUpdate, {
+                                        params: {
+                                            data: {
+                                                dataToServer: productInfo,
+                                            }
+                                        }
+                                    })
+                                    console.log(datatest.data)
+                                } catch (error) {
+                                    console.log("Không gửi được dữ liệu thứ hạng mới đến")
+
+                                }
+
+                                products = await page.$$('[data-sqe="link"]')
+                                products[productInfo.vitri].click()
+                                await actionShopee(page)
+                                await page.waitFor(1000);
+                                await removeCart(page)
+
+                            } else {
+                                // nếu đã check hết product sẽ xoá file saveProduct.txt                                
+                                saveProduct = [];
+                                fs.writeFileSync('saveProduct.txt', saveProduct)
+                                fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
+                            }
+
+                            await browser.close();
+                        }
+                    } catch (error) {
+                        console.log(error)
+
+                    }
+
+                    await browser.close();
+                    console.log("----------- STOP ---------------")
+                }
+            })
+        }
+
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+    //}
+};
+
+//Cron 1 phút 1 lần 
+
+//(async () => {
+if (mode === "DEV") {
+    (async () => {
+        await runAllTime()
+
+    })();
+} else {
+    cron.schedule('*/5 * * * *', async () => {
+        await runAllTime()
+    })
+}
+
+
+//})();

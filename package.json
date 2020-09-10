@@ -1,0 +1,27 @@
+{
+  "name": "autosocial_slave",
+  "version": "1.0.0",
+  "description": "",
+  "main": "addfb.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "node-cron": "^2.0.3",
+    "pm2": "^4.4.0",
+    "puppeteer": "^2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magiclovexxx/autosocial_slave.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/magiclovexxx/autosocial_slave/issues"
+  },
+  "homepage": "https://github.com/magiclovexxx/autosocial_slave#readme"
+}
