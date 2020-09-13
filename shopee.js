@@ -594,7 +594,7 @@ runAllTime = async () => {
                     });
 
                     try {
-                        if ((index == 0) && (mode == "DEV")) {
+                        if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             await page.goto("http://192.168.8.1/html/home.html")
@@ -751,7 +751,7 @@ runAllTime = async () => {
                     });
 
                     try {
-                        if ((index == 0) && (mode == "DEV")) {
+                        if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             await page.goto("http://192.168.8.1/html/home.html")
