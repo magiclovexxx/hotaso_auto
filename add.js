@@ -168,8 +168,8 @@ const loginaccount = async (browser) => {
   console.log(height);
   if (logoutId) {
     const page = (await browser.pages())[0];
-   // await page.goto('https://shopee.vn');
-    await page.goto('http://192.168.8.1/html/home.html');
+    await page.goto('https://shopee.vn');
+    //await page.goto('http://192.168.8.1/html/home.html');
     await page.waitFor(10000000);
   } else {
     await loginaccount(browser, cookies)

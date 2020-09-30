@@ -134,7 +134,7 @@ loginShopee = async (page, accounts) => {
         const loginbutton = await page.$$('div>button:nth-child(4)');
         await loginbutton[0].click()
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-        await page.waitFor(timeout)
+        await page.waitFor(15000)
         checkcode = await page.$$('[autocomplete="one-time-code"]')
 
         if (checkcode.length) {
@@ -152,15 +152,15 @@ loginShopee = async (page, accounts) => {
             return false
         }
 
-        try{
+        try {
             await page.waitForSelector('.shopee-searchbar-input');
-        }catch(error){
+        } catch (error) {
             console.log("account bi block")
             fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
 
             return false
         }
-        
+
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout)
 
@@ -344,7 +344,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
                     return true
                 }
             })
-            if (productIndex>4 && productIndex < 45) {
+            if (productIndex > 4 && productIndex < 45) {
                 return true
             }
 
@@ -386,7 +386,7 @@ chooseVariation = async (page, limit) => {
 
     if (checkvaritations.length == 4) {
         lengthvarirations = await page.evaluate(() => {
-            
+
             varitations1 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
             varitations2 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
             variationslengt = {
@@ -414,6 +414,83 @@ chooseVariation = async (page, limit) => {
     }
 }
 
+viewReview = async (page) => {
+    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
+    await page.waitFor(timeout)
+    allRview = await page.$$('.product-rating-overview__filter')
+    console.log(allRview.length)
+    randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
+    // click vào ngẫu nhiên 
+    await allRview[randomReview1].click()
+    // lướt xuống xem
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageDown');
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageDown');
+
+    // lên đầu phần review
+    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageUp');
+    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageUp');
+
+    randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
+    // click vào ngẫu nhiên lần 2
+    await allRview[randomReview1].click()
+    // lướt xuống xem
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageDown');
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageDown');
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('PageDown');
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    //click xem sản phẩm khác của shop
+    clickNext = await page.$$('.carousel-arrow--next')
+
+    clickNext[0].click()
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    clickNext[0].click()
+
+}
+
+
+viewShop = async (page) => {
+    viewShop = await page.$$('.shopee-avatar__placeholder')
+    viewShop[1].click()
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+
+    randomDown = Math.floor(Math.random() * (5 - 3)) + 3;
+    for(i=0; i<randomDown; i++){
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+    }
+    getProductShop = await page.$$('.shop-search-result-view__item')
+    randomProduct = Math.floor(Math.random() * (getProductShop.length - 1)) + 1;
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await getProductShop[randomProduct].click()
+    randomDown = Math.floor(Math.random() * (4 - 2)) + 2;
+    for(i=0; i<randomDown; i++){
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+    }
+
+}
+
+
 actionShopee = async (page) => {
     await page.waitForSelector('.product-briefing')
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
@@ -437,13 +514,22 @@ actionShopee = async (page) => {
     // click tắt ảnh sản phẩm    
     await page.mouse.click(10, 30)
 
-    // lướt đọc sản phẩm, review
+    // lướt đọc sản phẩm
     viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
     for (let i = 0; i <= viewRandomImages; i++) {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
         await page.keyboard.press('PageDown');
+        // đến phần review thì dừng lại
+        goToRview = await page.$$('.product-rating-overview__filter')
+        if (goToRview.length) {
+           
+            break;
+        }
+
     }
+    await viewReview(page)
+
     await page.waitFor(timeout)
     await page.keyboard.press('Home');
 
@@ -456,6 +542,11 @@ actionShopee = async (page) => {
         await page.waitFor(timeout)
         addToCard = await page.$$('.btn-tinted')
         await addToCard[0].click()
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+
+        viewShop(page)
+
     } else {
         console.log("Không chọn được mẫu mã")
         return false
@@ -669,8 +760,8 @@ runAllTime = async () => {
                                 var today = new Date().toLocaleString();
                                 productInfo.keyword = "Sản phẩm phổ biến"
                                 productInfo.time = today
-                                productInfo.user= key[0]
-                                productInfo.pass= key[1]
+                                productInfo.user = key[0]
+                                productInfo.pass = key[1]
                                 // lưu thứ hạng sản phẩm theo từ khoá vào file
                                 fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
 
@@ -700,11 +791,11 @@ runAllTime = async () => {
                                 fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
                             }
                             await browser.close();
-                        }else{
+                        } else {
                             accountInfo = {
-                                user:key[0],
-                                pass:key[1],
-                                status : 0,
+                                user: key[0],
+                                pass: key[1],
+                                status: 0,
                                 message: "Account bị khoá"
                             }
                             try {
@@ -843,8 +934,8 @@ runAllTime = async () => {
                                 fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
                                 productInfo.keyword = keywordNotSave[randomkey]
                                 productInfo.time = today
-                                productInfo.user= key[0]
-                                productInfo.pass= key[1]
+                                productInfo.user = key[0]
+                                productInfo.pass = key[1]
                                 // lưu thứ hạng sản phẩm theo từ khoá vào file
                                 fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
 
