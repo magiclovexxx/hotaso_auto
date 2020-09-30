@@ -55,7 +55,7 @@ function GenDirToGetData(maxTab, listAccounts) {
     // mảng
     if ((savedid.length + maxTab) >= (listAccounts.length - 1)) {  // reset file saveid về trống khi số lượng đã bằng với số lượng tk của trường PROFILE trong file .ENV
         savedid = [];
-        fs.writeFileSync('saveidshopee.txt', savedid)
+        fs.writeFileSync('saveidshopee.txt', savedid.toString())
     }
     let accountnNotBlock = []
     // lấy các profile chưa có trong file block account
