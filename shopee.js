@@ -995,9 +995,11 @@ if (mode === "DEV") {
 
     })();
 } else {
-    cron.schedule('*/5 * * * *', async () => {
+
+    (async () => {
         await runAllTime()
-    })
+
+    })();
 }
 
 
