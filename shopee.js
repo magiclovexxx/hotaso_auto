@@ -436,9 +436,10 @@ viewReview = async (page) => {
     if(allmedia.length>2){
         randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
         for(i=0; i<randomDown; i++){
+            randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
-            await allmedia[i].click()
+            await allmedia[randomDown2].click()
         }
     }
     
@@ -469,9 +470,10 @@ viewReview = async (page) => {
     if(allmedia.length>2){
         randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
         for(i=0; i<randomDown; i++){
+            randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
-            await allmedia[i].click()
+            await allmedia[randomDown2].click()
         }
     }
 
@@ -580,6 +582,10 @@ actionShopee = async (page) => {
 
 removeCart = async (page) => {
     // check đầy giỏ hàng
+    
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('Home');
     checkcart = typeof 123
     checkcart = await page.evaluate(() => {
 
