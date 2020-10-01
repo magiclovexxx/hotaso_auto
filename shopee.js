@@ -430,6 +430,19 @@ viewReview = async (page) => {
     await page.waitFor(timeout)
     await page.keyboard.press('PageDown');
 
+    // xem ngẫu nhiên n ảnh
+    allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
+
+    if(allmedia.length>2){
+        randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+        for(i=0; i<randomDown; i++){
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            await allmedia[i].click()
+        }
+    }
+    
+
     // lên đầu phần review
     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
     await page.waitFor(timeout)
@@ -450,6 +463,18 @@ viewReview = async (page) => {
     await page.keyboard.press('PageDown');
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
+
+    allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
+
+    if(allmedia.length>2){
+        randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+        for(i=0; i<randomDown; i++){
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            await allmedia[i].click()
+        }
+    }
+
     await page.keyboard.press('PageDown');
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)

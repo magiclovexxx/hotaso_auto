@@ -18,7 +18,7 @@ gfa = account.split("\t")[2]
 //cookies = [];
 //let xs,
 //  cuser,
- 
+
 //cookieSplited = gfa.split(";")
 //if (cookieSplited.length > 2) {
 //  cookieSplited.map((item) => {
@@ -69,7 +69,7 @@ const loginaccount = async (browser) => {
 
   if (cookies.length) {
     console.log("Login with cookie")
-    
+
     cookies.forEach(async element => {
       console.log(element)
       await page.setCookie(element)
@@ -168,6 +168,46 @@ const loginaccount = async (browser) => {
   console.log(height);
   if (logoutId) {
     const page = (await browser.pages())[0];
+
+    console.log("Đổi ip mạng")
+    await page.goto("http://192.168.8.1/html/home.html")
+    //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+    //   await page.waitFor(timeout)
+
+    // turn off dcom
+    checkDcom = await page.$$(".mobile_connect_btn_on")
+
+    if (checkDcom.length) {
+      await page.click("#mobile_connect_btn")
+      timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+      await page.waitFor(timeout)
+
+      // turn on dcom
+      checkDcomOff = await page.$$(".mobile_connect_btn_on")
+      if (!checkDcomOff.length) {
+        await page.click("#mobile_connect_btn")
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+        await page.waitFor(timeout)
+      }
+    }
+
+    if (!checkDcom.length) {
+      console.log("DCOM V2")
+      checkDcomOff = await page.$$("#disconnect_btn")
+      await page.click("#disconnect_btn")
+      timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+      await page.waitFor(timeout)
+
+      // turn on dcom
+      //checkDcomOff = await page.$$("#connect_btn")
+      checkDcomOff = await page.waitForSelector("#connect_btn")
+
+      await page.click("#connect_btn")
+      timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+      await page.waitFor(timeout)
+
+    }
+
     await page.goto('https://shopee.vn');
     //await page.goto('http://192.168.8.1/html/home.html');
     await page.waitFor(10000000);
