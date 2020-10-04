@@ -398,15 +398,23 @@ chooseVariation = async (page, limit) => {
     }
 
     if (limit == 0) return false
+
     varitations = await page.$$('.product-variation')
     if (!varitations.length) {
         return true
     }
     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
     await page.waitFor(timeout)
-    varitation = Math.floor(Math.random() * ((varitations.length - 1) - 0)) + 0;
-    await varitations[varitation].click()
+
+    for (i = 0; i < varitations.length; i++) {
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        varitation = Math.floor(Math.random() * ((varitations.length - 1) - 0)) + 0;
+        await varitations[varitation].click()
+    }
+
     checkSelected = await page.$$('.product-variation--selected')
+
     if (checkSelected.length) {
         return true
     } else {
@@ -433,16 +441,16 @@ viewReview = async (page) => {
     // xem ngẫu nhiên n ảnh
     allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
 
-    if(allmedia.length>2){
+    if (allmedia.length > 2) {
         randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-        for(i=0; i<randomDown; i++){
+        for (i = 0; i < randomDown; i++) {
             randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
             await allmedia[randomDown2].click()
         }
     }
-    
+
 
     // lên đầu phần review
     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -467,9 +475,9 @@ viewReview = async (page) => {
 
     allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
 
-    if(allmedia.length>2){
+    if (allmedia.length > 2) {
         randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-        for(i=0; i<randomDown; i++){
+        for (i = 0; i < randomDown; i++) {
             randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
@@ -498,23 +506,42 @@ viewShop = async (page) => {
     await page.waitFor(timeout)
 
     randomDown = Math.floor(Math.random() * (5 - 3)) + 3;
-    for(i=0; i<randomDown; i++){
+    for (i = 0; i < randomDown; i++) {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
         await page.keyboard.press('PageDown');
     }
+
     getProductShop = await page.$$('.shop-search-result-view__item')
     randomProduct = Math.floor(Math.random() * (getProductShop.length - 1)) + 1;
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
     await getProductShop[randomProduct].click()
     randomDown = Math.floor(Math.random() * (4 - 2)) + 2;
-    for(i=0; i<randomDown; i++){
+
+    for (i = 0; i < randomDown; i++) {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
         await page.keyboard.press('PageDown');
     }
 
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('Home');
+
+    // Click xem phaan loai sản phẩm và chọn 
+    let checkVariation = chooseVariation(page, 5)
+    if (checkVariation) {
+
+        // click thêm vào giỏ hàng
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        addToCard = await page.$$('.btn-tinted')
+        await addToCard[0].click()
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+
+    }
 }
 
 
@@ -550,7 +577,7 @@ actionShopee = async (page) => {
         // đến phần review thì dừng lại
         goToRview = await page.$$('.product-rating-overview__filter')
         if (goToRview.length) {
-           
+
             break;
         }
 
@@ -582,7 +609,7 @@ actionShopee = async (page) => {
 
 removeCart = async (page) => {
     // check đầy giỏ hàng
-    
+
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
     await page.keyboard.press('Home');
@@ -618,6 +645,65 @@ removeCart = async (page) => {
 }
 
 
+checkDcomconnect = async (profileDir) => {
+    profileDirTest = profileDir + "test"
+    const browser = await puppeteer.launch({
+        executablePath: chromiumDir,
+        headless: false,
+        devtools: false,
+        args: [
+            `--user-data-dir=${profileDirTest}`      // load profile chromium
+        ]
+    });
+
+    const page = (await browser.pages())[0];
+
+    // Random kích cỡ màn hình
+    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+    height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+    await page.setViewport({
+        width: width,
+        height: height
+    });
+
+    // Check dcom off 
+    try {
+        await page.goto("http://192.168.8.1/html/home.html")
+    } catch (error) {
+        browser.close()
+        return false
+    }
+
+
+    // turn on dcom
+    checkDcomOff = await page.$$(".mobile_connect_btn_on")
+    if (!checkDcomOff.length) {
+        await page.click("#mobile_connect_btn")
+        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+        await page.waitFor(timeout)
+        browser.close()
+        return true
+    }
+
+    if (!checkDcomOff.length) {
+
+        // turn on dcom
+        //checkDcomOff = await page.$$("#connect_btn")
+        checkDcomOff = await page.waitForSelector("#connect_btn")
+
+        if (!checkDcomOff.length) {
+            await page.click("#connect_btn")
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            await page.waitFor(timeout)
+            browser.close()
+            return true
+        } else {
+            browser.close()
+            return false
+        }
+    }
+}
 
 runAllTime = async () => {
 
@@ -628,10 +714,38 @@ runAllTime = async () => {
 
     try {
         dataShopee = await axios.get(linkgetdataShopeeDir);
+
+        console.log("Datashopee: " + dataShopee.length)
+        if (dataShopee.length = "undefined") {
+            //if(!dataShopee.data.length){
+            console.log("Check dcom connect")
+    
+            checkDcomOff = await checkDcomconnect(profileDir)
+            console.log("Check dcom connect: " + checkDcomOff)
+            if(checkDcomOff){
+                dataShopee = await axios.get(linkgetdataShopeeDir);
+            }else{ 
+                console.log("Không thể kểt nối mạng")
+                return false
+            }
+            console.log("Reconect dcom : " + checkDcomOff)
+            //  }
+        }
+
     } catch (error) {
-        console.log(error)
-        console.log("Không lấy được dữ liệU từ master")
-        return false
+        //if(!dataShopee.data.length){
+        console.log("Check dcom connect")
+
+        checkDcomOff = await checkDcomconnect(profileDir)
+        console.log("Check dcom connect: " + checkDcomOff)
+        if(checkDcomOff){
+            dataShopee = await axios.get(linkgetdataShopeeDir);
+        }else{ 
+            console.log("Không thể kểt nối mạng")
+            return false
+        }
+        console.log("Reconect dcom : " + checkDcomOff)
+        //  }
     }
 
     idShops = []
@@ -674,8 +788,30 @@ runAllTime = async () => {
     try {
         console.log("----------- START SHOPEE ---------------")
         data = GenDirToGetData(maxTab, accounts)
+
         if (data) {
-            if (data.updateCode == 1) {
+
+            // get version hien tai trong file version.txt
+            var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
+
+            if (checkVersion) {
+                checkVersion = checkVersion.toString();
+
+            } else {
+                checkVersion = ""
+            }
+
+            console.log("Version hiện tai: " + checkVersion);
+            newVersion = dataShopee.version;
+            console.log("Version server: " + dataShopee.version);
+
+            //   if (data.updateCode == 1) {
+            if (newVersion !== checkVersion) {
+
+                console.log("Cập nhật code");
+                // Update version mới vào file version.txt
+                fs.writeFileSync('version.txt', newVersion)
+
                 const myShellScript = exec('update.sh /');
                 myShellScript.stdout.on('data', (data) => {
                     // do whatever you want here with data
@@ -685,7 +821,6 @@ runAllTime = async () => {
                 });
                 return false
             }
-
             data.forEach(async (key, index) => {   // Foreach object Chạy song song các tab chromium
 
                 // Nếu có dữ liệu schedule trả về

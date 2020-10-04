@@ -16,6 +16,7 @@ accountBlock.txt
 name.txt
 namesave.txt
 savevipid.txt
+version.txt
 # Logs
 logs
 *.log
