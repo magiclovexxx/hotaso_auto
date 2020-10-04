@@ -714,9 +714,10 @@ runAllTime = async () => {
 
     try {
         dataShopee = await axios.get(linkgetdataShopeeDir);
+        dataShopee2 = dataShopee.data
+        console.log("Datashopee: " + dataShopee2.shops.length)
 
-        console.log("Datashopee: " + dataShopee.length)
-        if (dataShopee.length = "undefined") {
+        if (dataShopee2.shops.length == "undefined") {
             //if(!dataShopee.data.length){
             console.log("Check dcom connect")
     
