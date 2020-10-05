@@ -500,8 +500,8 @@ viewReview = async (page) => {
 
 
 viewShop = async (page) => {
-    viewShop = await page.$$('.shopee-avatar__placeholder')
-    viewShop[1].click()
+    viewShopClick = await page.$$('.shopee-avatar__placeholder')
+    viewShopClick[1].click()
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
 
@@ -599,7 +599,7 @@ actionShopee = async (page) => {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
 
-        viewShop(page)
+        await viewShop(page)
 
     } else {
         console.log("Không chọn được mẫu mã")
@@ -689,10 +689,10 @@ checkDcomconnect = async (profileDir) => {
     if (!checkDcomOff.length) {
 
         // turn on dcom
-        //checkDcomOff = await page.$$("#connect_btn")
-        checkDcomOff = await page.waitForSelector("#connect_btn")
+        checkDcomOff = await page.$$("#connect_btn")
+       // checkDcomOff = await page.waitForSelector("#connect_btn")
 
-        if (!checkDcomOff.length) {
+        if (checkDcomOff.length) {
             await page.click("#connect_btn")
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
@@ -710,43 +710,35 @@ runAllTime = async () => {
     // lấy dữ liệu từ master
 
     let linkgetdataShopeeDir = ""
+    let checkDcomOff
     linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA"
 
-    try {
-        dataShopee = await axios.get(linkgetdataShopeeDir);
-        dataShopee2 = dataShopee.data
-        console.log("Datashopee: " + dataShopee2.shops.length)
+    dataShopee = await axios.get(linkgetdataShopeeDir).catch(async function (error) {
+        if (error.response) {
+            // Request made and server responded
+            //     console.log(error.response.data);
+            //    console.log(error.response.status);
+            //    console.log(error.response.headers);
+        } else if (error.request) {
+            // The request was made but no response was received
+            console.log("Error Code: " + error.code);
 
-        if (dataShopee2.shops.length == "undefined") {
-            //if(!dataShopee.data.length){
-            console.log("Check dcom connect")
-    
             checkDcomOff = await checkDcomconnect(profileDir)
-            console.log("Check dcom connect: " + checkDcomOff)
-            if(checkDcomOff){
+
+            if (checkDcomOff) {
                 dataShopee = await axios.get(linkgetdataShopeeDir);
-            }else{ 
-                console.log("Không thể kểt nối mạng")
-                return false
             }
-            console.log("Reconect dcom : " + checkDcomOff)
-            //  }
+
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
         }
 
-    } catch (error) {
-        //if(!dataShopee.data.length){
-        console.log("Check dcom connect")
+    });
 
-        checkDcomOff = await checkDcomconnect(profileDir)
-        console.log("Check dcom connect: " + checkDcomOff)
-        if(checkDcomOff){
-            dataShopee = await axios.get(linkgetdataShopeeDir);
-        }else{ 
-            console.log("Không thể kểt nối mạng")
-            return false
-        }
-        console.log("Reconect dcom : " + checkDcomOff)
-        //  }
+    if (checkDcomOff == false) {
+        console.log("Không thể kểt nối mạng")
+        return false
     }
 
     idShops = []
@@ -856,8 +848,8 @@ runAllTime = async () => {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             await page.goto("http://192.168.8.1/html/home.html")
-                            //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                            //   await page.waitFor(timeout)
+                            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                            await page.waitFor(timeout)
 
                             // turn off dcom
                             checkDcom = await page.$$(".mobile_connect_btn_on")
