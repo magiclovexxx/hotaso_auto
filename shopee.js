@@ -452,7 +452,6 @@ viewReview = async (page) => {
             }
         }
 
-
         // lên đầu phần review
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout)
@@ -497,8 +496,6 @@ viewReview = async (page) => {
         await page.waitFor(timeout)
         clickNext[0].click()
     }
-
-
 }
 
 
@@ -678,7 +675,6 @@ checkDcomconnect = async (profileDir) => {
         return false
     }
 
-
     // turn on dcom
     checkDcomOff = await page.$$(".mobile_connect_btn_on")
     if (!checkDcomOff.length) {
@@ -746,6 +742,8 @@ runAllTime = async () => {
 
     idShops = []
     dataShopee = dataShopee.data
+    console.log("data Shopee: " + dataShopee.length)
+   // if()
     dataShopee.shops.forEach(item => {
         idShop = item.fullname.split("\r")[0]
         idShops.push(item.fullname)
@@ -892,7 +890,13 @@ runAllTime = async () => {
 
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
-                        await page.goto("https://shopee.vn")
+                        try {
+                            await page.goto("https://shopee.vn")
+                        } catch (error) {
+                            console.log("Mạng chậm không kết nối dc")
+                            return false
+                        }
+                        
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
 
