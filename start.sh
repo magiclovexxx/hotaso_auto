@@ -1,1 +1,1 @@
-pm2 start shopee.js
+pm2 start shopee.js restartall.js

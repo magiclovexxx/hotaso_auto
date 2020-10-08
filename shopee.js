@@ -712,7 +712,7 @@ runAllTime = async () => {
     let checkDcomOff
     linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA"
 
-    dataShopee = await axios.get(linkgetdataShopeeDir).catch(async function (error) {
+    getDataShopee = await axios.get(linkgetdataShopeeDir).catch(async function (error) {
         if (error.response) {
             // Request made and server responded
             //     console.log(error.response.data);
@@ -725,7 +725,7 @@ runAllTime = async () => {
             checkDcomOff = await checkDcomconnect(profileDir)
 
             if (checkDcomOff) {
-                dataShopee = await axios.get(linkgetdataShopeeDir);
+                getDataShopee = await axios.get(linkgetdataShopeeDir);
             }
 
         } else {
@@ -741,9 +741,12 @@ runAllTime = async () => {
     }
 
     idShops = []
-    dataShopee = dataShopee.data
+    dataShopee = getDataShopee.data
     console.log("data Shopee: " + dataShopee.length)
-   // if()
+    
+    if(dataShopee.shops.length < 1){
+        return false
+    }
     dataShopee.shops.forEach(item => {
         idShop = item.fullname.split("\r")[0]
         idShops.push(item.fullname)
