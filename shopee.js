@@ -712,13 +712,19 @@ runAllTime = async () => {
     let checkDcomOff
     linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA"
 
-    getDataShopee = await axios.get(linkgetdataShopeeDir).catch(async function (error) {
+    getDataShopee = await axios.get(linkgetdataShopeeDir)
+	
+	/*.catch(async function (error) {
+		
         if (error.response) {
+			console.log(error)
+		//	return false
             // Request made and server responded
             //     console.log(error.response.data);
             //    console.log(error.response.status);
             //    console.log(error.response.headers);
         } else if (error.request) {
+				console.log(error)
             // The request was made but no response was received
             console.log("Error Code: " + error.code);
 
@@ -730,12 +736,24 @@ runAllTime = async () => {
             }
 
         } else {
+			console.log("Loi khong biet")
+		//	return false
             // Something happened in setting up the request that triggered an Error
             console.log('Error', error.message);
         }
 
-    });
+    });  */
+	
+	if(getDataShopee.data.shops == undefined){
+		
+            checkDcomOff = await checkDcomconnect(profileDir)
+            console.log("Kết nối lại dcom: " + checkDcomOff);
 
+            if (checkDcomOff) {
+                getDataShopee = await axios.get(linkgetdataShopeeDir);
+            }
+	}
+	
     if (checkDcomOff == false) {
         console.log("Không thể kểt nối mạng")
         return false
@@ -743,8 +761,6 @@ runAllTime = async () => {
 
     idShops = []
     dataShopee = getDataShopee.data
-    console.log("shops Shopee: " + dataShopee.shops)
-
     dataShopee.shops.forEach(item => {
         idShop = item.fullname.split("\r")[0]
         idShops.push(item.fullname)
@@ -763,10 +779,10 @@ runAllTime = async () => {
     //    accounts.push(account)
     //})
 
-    var accounts = fs.readFileSync("shopee.txt", { flag: "as+" });
-
+    var accounts = fs.readFileSync("shopee.txt");
     if (accounts) {
         accounts = accounts.toString();
+		
         accounts = accounts.split("\n")
     } else {
         accounts = []
