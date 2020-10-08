@@ -745,9 +745,6 @@ runAllTime = async () => {
     dataShopee = getDataShopee.data
     console.log("shops Shopee: " + dataShopee.shops)
 
-    if(dataShopee.shops){
-        return false
-    }
     dataShopee.shops.forEach(item => {
         idShop = item.fullname.split("\r")[0]
         idShops.push(item.fullname)
