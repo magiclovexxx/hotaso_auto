@@ -423,78 +423,81 @@ chooseVariation = async (page, limit) => {
 }
 
 viewReview = async (page) => {
-    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
+    timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
     await page.waitFor(timeout)
     allRview = await page.$$('.product-rating-overview__filter')
     console.log(allRview.length)
-    randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
-    // click vào ngẫu nhiên 
-    await allRview[randomReview1].click()
-    // lướt xuống xem
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.keyboard.press('PageDown');
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.keyboard.press('PageDown');
+    if (allRview.length > 1) {
+        randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
+        // click vào ngẫu nhiên 
+        await allRview[randomReview1].click()
+        // lướt xuống xem
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
 
-    // xem ngẫu nhiên n ảnh
-    allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
+        // xem ngẫu nhiên n ảnh
+        allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
 
-    if (allmedia.length > 2) {
-        randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-        for (i = 0; i < randomDown; i++) {
-            randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
-            await allmedia[randomDown2].click()
+        if (allmedia.length > 2) {
+            randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+            for (i = 0; i < randomDown; i++) {
+                randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                await page.waitFor(timeout)
+                await allmedia[randomDown2].click()
+            }
         }
+
+
+        // lên đầu phần review
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageUp');
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageUp');
+
+        randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
+        // click vào ngẫu nhiên lần 2
+        await allRview[randomReview1].click()
+        // lướt xuống xem
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+
+        allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
+
+        if (allmedia.length > 2) {
+            randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+            for (i = 0; i < randomDown; i++) {
+                randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                await page.waitFor(timeout)
+                await allmedia[randomDown2].click()
+            }
+        }
+
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        //click xem sản phẩm khác của shop
+        clickNext = await page.$$('.carousel-arrow--next')
+
+        clickNext[0].click()
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout)
+        clickNext[0].click()
     }
 
-
-    // lên đầu phần review
-    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-    await page.waitFor(timeout)
-    await page.keyboard.press('PageUp');
-    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-    await page.waitFor(timeout)
-    await page.keyboard.press('PageUp');
-
-    randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
-    // click vào ngẫu nhiên lần 2
-    await allRview[randomReview1].click()
-    // lướt xuống xem
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.keyboard.press('PageDown');
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.keyboard.press('PageDown');
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-
-    allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
-
-    if (allmedia.length > 2) {
-        randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-        for (i = 0; i < randomDown; i++) {
-            randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
-            await allmedia[randomDown2].click()
-        }
-    }
-
-    await page.keyboard.press('PageDown');
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    //click xem sản phẩm khác của shop
-    clickNext = await page.$$('.carousel-arrow--next')
-
-    clickNext[0].click()
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    clickNext[0].click()
 
 }
 
@@ -690,7 +693,7 @@ checkDcomconnect = async (profileDir) => {
 
         // turn on dcom
         checkDcomOff = await page.$$("#connect_btn")
-       // checkDcomOff = await page.waitForSelector("#connect_btn")
+        // checkDcomOff = await page.waitForSelector("#connect_btn")
 
         if (checkDcomOff.length) {
             await page.click("#connect_btn")
