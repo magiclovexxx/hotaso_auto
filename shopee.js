@@ -707,8 +707,8 @@ checkDcomconnect = async (profileDir) => {
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
-
-    let linkgetdataShopeeDir = ""
+    try {
+        let linkgetdataShopeeDir = ""
     let checkDcomOff
     linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA"
 
@@ -723,6 +723,7 @@ runAllTime = async () => {
             console.log("Error Code: " + error.code);
 
             checkDcomOff = await checkDcomconnect(profileDir)
+            console.log("Kết nối lại dcom: " + checkDcomOff);
 
             if (checkDcomOff) {
                 getDataShopee = await axios.get(linkgetdataShopeeDir);
@@ -742,9 +743,9 @@ runAllTime = async () => {
 
     idShops = []
     dataShopee = getDataShopee.data
-    console.log("data Shopee: " + dataShopee.length)
-    
-    if(dataShopee.shops.length < 1){
+    console.log("shops Shopee: " + dataShopee.shops)
+
+    if(dataShopee.shops){
         return false
     }
     dataShopee.shops.forEach(item => {
@@ -781,6 +782,10 @@ runAllTime = async () => {
     })
 
     listcategories = dataShopee.categories
+    } catch (error) {
+        console.log(error)   
+    }
+    
 
     try {
         console.log("----------- START SHOPEE ---------------")
@@ -1018,8 +1023,6 @@ runAllTime = async () => {
                             //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                             //   await page.waitFor(timeout)
                             checkDcom = await page.$$(".mobile_connect_btn_on")
-
-                            console.log("CheckDcom: " + checkDcom.length)
 
                             //   process.exit()
                             if (checkDcom.length) {
