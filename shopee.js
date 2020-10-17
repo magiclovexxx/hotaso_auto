@@ -9,6 +9,7 @@ linkShopeeUpdate = "http://auto.tranquoctoan.com/api_user/shopeeupdate"     // L
 linkShopeeAccountUpdate = "http://auto.tranquoctoan.com/api_user/shopeeAccountUpdate" // Link update account shopee status
 dataShopeeDir = "http://auto.tranquoctoan.com/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
 slavenumber = process.env.SLAVE
+clickAds = process.env.CLICKADS
 
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
@@ -344,10 +345,10 @@ getproduct = async (page, saveProduct, limit, idShops) => {
                     return true
                 }
             })
-            if (productIndex > 4 && productIndex < 45) {
-                return true
-            }
-
+            /*    if (productIndex > 4 && productIndex < 45) {
+                    return true
+                }
+            */
 
         })
 
@@ -491,10 +492,13 @@ viewReview = async (page) => {
         //click xem sản phẩm khác của shop
         clickNext = await page.$$('.carousel-arrow--next')
 
-        clickNext[0].click()
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-        clickNext[0].click()
+        if (clickNext.length) {
+            clickNext[0].click()
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            clickNext[0].click()
+        }
+
     }
 }
 
@@ -709,24 +713,12 @@ runAllTime = async () => {
     // lấy dữ liệu từ master
     try {
         let linkgetdataShopeeDir = ""
-    let checkDcomOff
-    linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA"
+        let checkDcomOff
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds
 
-    getDataShopee = await axios.get(linkgetdataShopeeDir)
-	
-	/*.catch(async function (error) {
-		
-        if (error.response) {
-			console.log(error)
-		//	return false
-            // Request made and server responded
-            //     console.log(error.response.data);
-            //    console.log(error.response.status);
-            //    console.log(error.response.headers);
-        } else if (error.request) {
-				console.log(error)
-            // The request was made but no response was received
-            console.log("Error Code: " + error.code);
+        getDataShopee = await axios.get(linkgetdataShopeeDir)
+
+        if (getDataShopee.data.shops == undefined) {
 
             checkDcomOff = await checkDcomconnect(profileDir)
             console.log("Kết nối lại dcom: " + checkDcomOff);
@@ -734,71 +726,53 @@ runAllTime = async () => {
             if (checkDcomOff) {
                 getDataShopee = await axios.get(linkgetdataShopeeDir);
             }
-
-        } else {
-			console.log("Loi khong biet")
-		//	return false
-            // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message);
         }
 
-    });  */
-	
-	if(getDataShopee.data.shops == undefined){
-		
-            checkDcomOff = await checkDcomconnect(profileDir)
-            console.log("Kết nối lại dcom: " + checkDcomOff);
+        if (checkDcomOff == false) {
+            console.log("Không thể kểt nối mạng")
+            return false
+        }
 
-            if (checkDcomOff) {
-                getDataShopee = await axios.get(linkgetdataShopeeDir);
-            }
-	}
-	
-    if (checkDcomOff == false) {
-        console.log("Không thể kểt nối mạng")
-        return false
-    }
+        idShops = []
+        dataShopee = getDataShopee.data
+        dataShopee.shops.forEach(item => {
+            idShop = item.fullname.split("\r")[0]
+            idShops.push(item.fullname)
+        })
 
-    idShops = []
-    dataShopee = getDataShopee.data
-    dataShopee.shops.forEach(item => {
-        idShop = item.fullname.split("\r")[0]
-        idShops.push(item.fullname)
-    })
+        keywords = []
+        dataShopee.keywords.forEach(item => {
+            keyword = item.username.split("\r")[0]
+            keywords.push(keyword)
+        })
 
-    keywords = []
-    dataShopee.keywords.forEach(item => {
-        keyword = item.username.split("\r")[0]
-        keywords.push(keyword)
-    })
+        //accounts = []
+        //dataShopee.accounts.forEach(item => {
+        //    let account = item.username + "\t" + item.password
+        //    account = account.split("\r")[0]
+        //    accounts.push(account)
+        //})
 
-    //accounts = []
-    //dataShopee.accounts.forEach(item => {
-    //    let account = item.username + "\t" + item.password
-    //    account = account.split("\r")[0]
-    //    accounts.push(account)
-    //})
+        var accounts = fs.readFileSync("shopee.txt");
+        if (accounts) {
+            accounts = accounts.toString();
 
-    var accounts = fs.readFileSync("shopee.txt");
-    if (accounts) {
-        accounts = accounts.toString();
-		
-        accounts = accounts.split("\n")
-    } else {
-        accounts = []
-    }
+            accounts = accounts.split("\n")
+        } else {
+            accounts = []
+        }
 
-    listProducts = []
-    dataShopee.products.forEach(item => {
-        product = item.fullname
-        listProducts.push(product)
-    })
+        listProducts = []
+        dataShopee.products.forEach(item => {
+            product = item.fullname
+            listProducts.push(product)
+        })
 
-    listcategories = dataShopee.categories
+        listcategories = dataShopee.categories
     } catch (error) {
-        console.log(error)   
+        console.log(error)
     }
-    
+
 
     try {
         console.log("----------- START SHOPEE ---------------")
@@ -843,170 +817,8 @@ runAllTime = async () => {
                 let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
                 console.log(profileChrome)
 
-                if (phobien == 1) {
-
-                    const browser = await puppeteer.launch({
-                        executablePath: chromiumDir,
-                        headless: false,
-                        devtools: false,
-                        args: [
-                            `--user-data-dir=${profileChrome}`      // load profile chromium
-                        ]
-                    });
-
-                    const page = (await browser.pages())[0];
-
-                    // Random kích cỡ màn hình
-                    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-                    height = Math.floor(Math.random() * (800 - 600)) + 600;;
-
-                    await page.setViewport({
-                        width: width,
-                        height: height
-                    });
-
-                    try {
-                        if ((index == 0) && (mode !== "DEV")) {
-                            // đổi ip
-                            console.log("Đổi ip mạng")
-                            await page.goto("http://192.168.8.1/html/home.html")
-                            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                            await page.waitFor(timeout)
-
-                            // turn off dcom
-                            checkDcom = await page.$$(".mobile_connect_btn_on")
-
-                            if (checkDcom.length) {
-                                await page.click("#mobile_connect_btn")
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.waitFor(timeout)
-
-                                // turn on dcom
-                                checkDcomOff = await page.$$(".mobile_connect_btn_on")
-                                if (!checkDcomOff.length) {
-                                    await page.click("#mobile_connect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                    await page.waitFor(timeout)
-                                }
-                            }
-
-                            if (!checkDcom.length) {
-                                console.log("DCOM V2")
-                                checkDcomOff = await page.$$("#disconnect_btn")
-                                await page.click("#disconnect_btn")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                await page.waitFor(timeout)
-
-                                // turn on dcom
-                                //checkDcomOff = await page.$$("#connect_btn")
-                                checkDcomOff = await page.waitForSelector("#connect_btn")
-
-                                await page.click("#connect_btn")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                await page.waitFor(timeout)
-
-                            }
-
-                        }
-
-                        //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitFor(10000)
-                        try {
-                            await page.goto("https://shopee.vn")
-                        } catch (error) {
-                            console.log("Mạng chậm không kết nối dc")
-                            return false
-                        }
-                        
-                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-                        await page.waitFor(timeout)
-
-                        // login account shopee                    
-                        checklogin = await loginShopee(page, key)
-
-                        if (checklogin) {
-                            console.log("san pham pho bien")
-
-                            populateClick(page, listcategories)
-
-                            // lấy danh sách product đã lưu
-                            var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
-                            saveProduct = saveProduct.toString();
-                            saveProduct = saveProduct.split("\n")
-
-                            // danh sách product không nằm trong file saveproduct.txt
-
-                            //lấy danh sách product thuộc các id shop của cùng 1 người dùng                   
-
-                            productInfo = await getproduct(page, saveProduct, 1, idShops)
-
-                            if (productInfo) {
-                                //  console.log(productInfo)
-                                fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
-
-                                var today = new Date().toLocaleString();
-                                productInfo.keyword = "Sản phẩm phổ biến"
-                                productInfo.time = today
-                                productInfo.user = key[0]
-                                productInfo.pass = key[1]
-                                // lưu thứ hạng sản phẩm theo từ khoá vào file
-                                fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
-
-                                try {
-                                    let datatest = await axios.get(linkShopeeUpdate, {
-                                        params: {
-                                            data: {
-                                                dataToServer: productInfo,
-                                            }
-                                        }
-                                    })
-                                    console.log(datatest.data)
-                                } catch (error) {
-                                    console.log(error)
-                                    //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
-                                }
-
-                                products = await page.$$('[data-sqe="link"]')
-                                products[productInfo.vitri].click()
-                                await actionShopee(page)
-                                await page.waitFor(1000);
-                                await removeCart(page)
-                            } else {
-                                // nếu đã check hết product sẽ xoá file saveProduct.txt                                
-                                saveProduct = [];
-                                fs.writeFileSync('saveProduct.txt', saveProduct)
-                                fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
-                            }
-                            await browser.close();
-                        } else {
-                            accountInfo = {
-                                user: key[0],
-                                pass: key[1],
-                                status: 0,
-                                message: "Account bị khoá"
-                            }
-                            try {
-                                let datatest = await axios.get(linkShopeeAccountUpdate, {
-                                    params: {
-                                        data: {
-                                            dataToServer: accountInfo,
-                                        }
-                                    }
-                                })
-                                console.log(datatest.data)
-                            } catch (error) {
-                                console.log(error)
-                                //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
-                            }
-                        }
-
-                    } catch (error) {
-                        console.log(error)
-                        await browser.close();
-                    }
-                    await browser.close();
-                    console.log("----------- STOP ---------------")
-                } else {
+                if (clickAds == 1) {
+                    console.log("----- START CLICK ADS -----")
 
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
@@ -1068,7 +880,6 @@ runAllTime = async () => {
                                 await page.waitFor(timeout)
 
                             }
-
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
@@ -1080,29 +891,11 @@ runAllTime = async () => {
                         checklogin = await loginShopee(page, key)
                         if (checklogin) {
 
-                            // Lấy danh sách keyword đã tìm kiếm
-                            var saveKeyword = fs.readFileSync("saveKeyword.txt", { flag: "as+" });
-                            saveKeyword = saveKeyword.toString();
-                            saveKeyword = saveKeyword.split("\n")
-                            if (saveKeyword.length >= keywords.length) {
-                                saveKeyword = [];
-                                fs.writeFileSync('saveKeyword.txt', saveKeyword)
-                            }
 
-                            // danh sách keyword không nằm trong file savekeyword.txt
-                            let keywordNotSave = []
-                            keywords.forEach(item => {
-                                if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
-                                    keywordNotSave.push(item);
-                                }
-                            })
                             // lấy ngẫu nhiên keyword để tìm kiếm
-                            randomkey = Math.floor(Math.random() * (keywordNotSave.length - 1));
+                            randomkey = Math.floor(Math.random() * (keywords.length - 1));
 
-                            // lưu keyword sẽ tìm vào file saveKeyword.txt
-                            fs.appendFileSync('saveKeyword.txt', keywordNotSave[randomkey] + "\n")
-                            // tìm kiếm theo keyword
-                            await searchKeyWord(page, keywordNotSave[randomkey])
+                            await searchKeyWord(page, keywords[randomkey])
 
                             // lấy danh sách product đã lưu
                             var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
@@ -1116,41 +909,16 @@ runAllTime = async () => {
                             if (productInfo) {
                                 today = new Date().toLocaleString();
                                 console.log(productInfo)
-                                fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
-                                productInfo.keyword = keywordNotSave[randomkey]
-                                productInfo.time = today
-                                productInfo.user = key[0]
-                                productInfo.pass = key[1]
-                                // lưu thứ hạng sản phẩm theo từ khoá vào file
-                                fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
 
-                                try {
-                                    let datatest = await axios.get(linkShopeeUpdate, {
-                                        params: {
-                                            data: {
-                                                dataToServer: productInfo,
-                                            }
-                                        }
-                                    })
-                                    console.log(datatest.data)
-                                } catch (error) {
-                                    console.log("Không gửi được dữ liệu thứ hạng mới đến")
-
+                                if (productInfo.vitri < 4 || productInfo.vitri > 45) {
+                                    products = await page.$$('[data-sqe="link"]')
+                                    products[productInfo.vitri].click()
+                                    timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+                                    await page.waitFor(timeout)
                                 }
 
-                                products = await page.$$('[data-sqe="link"]')
-                                products[productInfo.vitri].click()
-                                await actionShopee(page)
-                                await page.waitFor(1000);
-                                await removeCart(page)
 
-                            } else {
-                                // nếu đã check hết product sẽ xoá file saveProduct.txt                                
-                                saveProduct = [];
-                                fs.writeFileSync('saveProduct.txt', saveProduct)
-                                fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
                             }
-
                             await browser.close();
                         }
                     } catch (error) {
@@ -1159,8 +927,335 @@ runAllTime = async () => {
                     }
 
                     await browser.close();
-                    console.log("----------- STOP ---------------")
-                }
+                    console.log("----------- STOP CLICK ADS ---------------")
+
+                } else
+                    if (phobien == 1) {
+
+                        const browser = await puppeteer.launch({
+                            executablePath: chromiumDir,
+                            headless: false,
+                            devtools: false,
+                            args: [
+                                `--user-data-dir=${profileChrome}`      // load profile chromium
+                            ]
+                        });
+
+                        const page = (await browser.pages())[0];
+
+                        // Random kích cỡ màn hình
+                        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+                        height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+                        await page.setViewport({
+                            width: width,
+                            height: height
+                        });
+
+                        try {
+                            if ((index == 0) && (mode !== "DEV")) {
+                                // đổi ip
+                                console.log("Đổi ip mạng")
+                                await page.goto("http://192.168.8.1/html/home.html")
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                await page.waitFor(timeout)
+
+                                // turn off dcom
+                                checkDcom = await page.$$(".mobile_connect_btn_on")
+
+                                if (checkDcom.length) {
+                                    await page.click("#mobile_connect_btn")
+                                    timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    await page.waitFor(timeout)
+
+                                    // turn on dcom
+                                    checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                    if (!checkDcomOff.length) {
+                                        await page.click("#mobile_connect_btn")
+                                        timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                        await page.waitFor(timeout)
+                                    }
+                                }
+
+                                if (!checkDcom.length) {
+                                    console.log("DCOM V2")
+                                    checkDcomOff = await page.$$("#disconnect_btn")
+                                    await page.click("#disconnect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                    await page.waitFor(timeout)
+
+                                    // turn on dcom
+                                    //checkDcomOff = await page.$$("#connect_btn")
+                                    checkDcomOff = await page.waitForSelector("#connect_btn")
+
+                                    await page.click("#connect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                    await page.waitFor(timeout)
+
+                                }
+
+                            }
+
+                            //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+                            await page.waitFor(10000)
+                            try {
+                                await page.goto("https://shopee.vn")
+                            } catch (error) {
+                                console.log("Mạng chậm không kết nối dc")
+                                return false
+                            }
+
+                            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                            await page.waitFor(timeout)
+
+                            // login account shopee                    
+                            checklogin = await loginShopee(page, key)
+
+                            if (checklogin) {
+                                console.log("san pham pho bien")
+
+                                populateClick(page, listcategories)
+
+                                // lấy danh sách product đã lưu
+                                var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
+                                saveProduct = saveProduct.toString();
+                                saveProduct = saveProduct.split("\n")
+
+                                // danh sách product không nằm trong file saveproduct.txt
+
+                                //lấy danh sách product thuộc các id shop của cùng 1 người dùng                   
+
+                                productInfo = await getproduct(page, saveProduct, 1, idShops)
+
+                                if (productInfo) {
+                                    //  console.log(productInfo)
+                                    fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
+
+                                    var today = new Date().toLocaleString();
+                                    productInfo.keyword = "Sản phẩm phổ biến"
+                                    productInfo.time = today
+                                    productInfo.user = key[0]
+                                    productInfo.pass = key[1]
+                                    // lưu thứ hạng sản phẩm theo từ khoá vào file
+                                    fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
+
+                                    try {
+                                        let datatest = await axios.get(linkShopeeUpdate, {
+                                            params: {
+                                                data: {
+                                                    dataToServer: productInfo,
+                                                }
+                                            }
+                                        })
+                                        console.log(datatest.data)
+                                    } catch (error) {
+                                        console.log(error)
+                                        //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+                                    }
+
+                                    products = await page.$$('[data-sqe="link"]')
+
+                                    if (productInfo.vitri > 4 && productInfo.vitri < 45) {
+                                        products[productInfo.vitri].click()
+                                        await actionShopee(page)
+                                        await page.waitFor(1000);
+                                        await removeCart(page)
+                                    }
+
+
+                                } else {
+                                    // nếu đã check hết product sẽ xoá file saveProduct.txt                                
+                                    saveProduct = [];
+                                    fs.writeFileSync('saveProduct.txt', saveProduct)
+                                    fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
+                                }
+                                await browser.close();
+                            } else {
+                                accountInfo = {
+                                    user: key[0],
+                                    pass: key[1],
+                                    status: 0,
+                                    message: "Account bị khoá"
+                                }
+                                try {
+                                    let datatest = await axios.get(linkShopeeAccountUpdate, {
+                                        params: {
+                                            data: {
+                                                dataToServer: accountInfo,
+                                            }
+                                        }
+                                    })
+                                    console.log(datatest.data)
+                                } catch (error) {
+                                    console.log(error)
+                                    //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+                                }
+                            }
+
+                        } catch (error) {
+                            console.log(error)
+                            await browser.close();
+                        }
+                        await browser.close();
+                        console.log("----------- STOP PHO BIEN---------------")
+                    } else {
+
+                        const browser = await puppeteer.launch({
+                            executablePath: chromiumDir,
+                            headless: false,
+                            devtools: false,
+                            args: [
+                                `--user-data-dir=${profileChrome}`      // load profile chromium
+                            ]
+                        });
+
+                        const page = (await browser.pages())[0];
+
+                        // Random kích cỡ màn hình
+                        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+                        height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+                        await page.setViewport({
+                            width: width,
+                            height: height
+                        });
+
+                        try {
+                            if ((index == 0) && (mode !== "DEV")) {
+                                // đổi ip
+                                console.log("Đổi ip mạng")
+                                await page.goto("http://192.168.8.1/html/home.html")
+                                //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                //   await page.waitFor(timeout)
+                                checkDcom = await page.$$(".mobile_connect_btn_on")
+
+                                //   process.exit()
+                                if (checkDcom.length) {
+                                    await page.click("#mobile_connect_btn")
+                                    timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    await page.waitFor(timeout)
+
+                                    // turn on dcom
+                                    checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                    if (!checkDcomOff.length) {
+                                        await page.click("#mobile_connect_btn")
+                                        timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                        await page.waitFor(timeout)
+                                    }
+                                }
+
+                                if (!checkDcom.length) {
+                                    console.log("DCOM V2")
+                                    checkDcomOff = await page.$$("#disconnect_btn")
+                                    await page.click("#disconnect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                    await page.waitFor(timeout)
+
+                                    // turn on dcom
+                                    //checkDcomOff = await page.$$("#connect_btn")
+                                    checkDcomOff = await page.waitForSelector("#connect_btn")
+
+                                    await page.click("#connect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                    await page.waitFor(timeout)
+
+                                }
+
+                            }
+                            //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+                            await page.waitFor(10000)
+                            await page.goto("https://shopee.vn")
+                            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                            await page.waitFor(timeout)
+
+                            // login account shopee                    
+                            checklogin = await loginShopee(page, key)
+                            if (checklogin) {
+
+                                // Lấy danh sách keyword đã tìm kiếm
+                                var saveKeyword = fs.readFileSync("saveKeyword.txt", { flag: "as+" });
+                                saveKeyword = saveKeyword.toString();
+                                saveKeyword = saveKeyword.split("\n")
+                                if (saveKeyword.length >= keywords.length) {
+                                    saveKeyword = [];
+                                    fs.writeFileSync('saveKeyword.txt', saveKeyword)
+                                }
+
+                                // danh sách keyword không nằm trong file savekeyword.txt
+                                let keywordNotSave = []
+                                keywords.forEach(item => {
+                                    if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
+                                        keywordNotSave.push(item);
+                                    }
+                                })
+                                // lấy ngẫu nhiên keyword để tìm kiếm
+                                randomkey = Math.floor(Math.random() * (keywordNotSave.length - 1));
+
+                                // lưu keyword sẽ tìm vào file saveKeyword.txt
+                                fs.appendFileSync('saveKeyword.txt', keywordNotSave[randomkey] + "\n")
+                                // tìm kiếm theo keyword
+                                await searchKeyWord(page, keywordNotSave[randomkey])
+
+                                // lấy danh sách product đã lưu
+                                var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
+                                saveProduct = saveProduct.toString();
+                                saveProduct = saveProduct.split("\n")
+
+                                // danh sách product không nằm trong file saveproduct.txt
+
+                                productInfo = await getproduct(page, saveProduct, 1, idShops)
+
+                                if (productInfo) {
+                                    today = new Date().toLocaleString();
+                                    console.log(productInfo)
+                                    fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
+                                    productInfo.keyword = keywordNotSave[randomkey]
+                                    productInfo.time = today
+                                    productInfo.user = key[0]
+                                    productInfo.pass = key[1]
+                                    // lưu thứ hạng sản phẩm theo từ khoá vào file
+                                    fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
+
+                                    try {
+                                        let datatest = await axios.get(linkShopeeUpdate, {
+                                            params: {
+                                                data: {
+                                                    dataToServer: productInfo,
+                                                }
+                                            }
+                                        })
+                                        console.log(datatest.data)
+                                    } catch (error) {
+                                        console.log("Không gửi được dữ liệu thứ hạng mới đến")
+
+                                    }
+
+                                    products = await page.$$('[data-sqe="link"]')
+
+                                    if (productInfo.vitri > 4 && productInfo.vitri < 45) {
+                                        products[productInfo.vitri].click()
+                                        await actionShopee(page)
+                                        await page.waitFor(1000);
+                                        await removeCart(page)
+                                    }
+
+                                } else {
+                                    // nếu đã check hết product sẽ xoá file saveProduct.txt                                
+                                    saveProduct = [];
+                                    fs.writeFileSync('saveProduct.txt', saveProduct)
+                                    fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
+                                }
+
+                                await browser.close();
+                            }
+                        } catch (error) {
+                            console.log(error)
+
+                        }
+
+                        await browser.close();
+                        console.log("----------- STOP ---------------")
+                    }
             })
         }
 
