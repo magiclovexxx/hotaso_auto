@@ -999,13 +999,14 @@ runAllTime = async () => {
                                 await page.waitFor(timeout)
 
                                 await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
                                 await page.waitFor(timeout)
                                 await page.keyboard.press('PageDown');
                                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                                 await page.waitFor(timeout)
                                 await page.keyboard.press('PageDown');
-
+                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                await page.waitFor(timeout)
 
                             } else {
                                 productInfo = await getproduct(page, saveProduct, 1, idShops)
@@ -1014,7 +1015,7 @@ runAllTime = async () => {
                                     if (productInfo.vitri < 4 || productInfo.vitri > 45) {
                                         products = await page.$$('[data-sqe="link"]')
                                         products[productInfo.vitri].click()
-                                        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+                                        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
                                         await page.waitFor(timeout)
                                         let checkvariationAds = chooseVariation(page, 5)
 
@@ -1022,12 +1023,14 @@ runAllTime = async () => {
                                         await page.waitFor(timeout)
 
                                         await page.keyboard.press('PageDown');
-                                        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                        timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
                                         await page.waitFor(timeout)
                                         await page.keyboard.press('PageDown');
                                         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                                         await page.waitFor(timeout)
                                         await page.keyboard.press('PageDown');
+                                        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                        await page.waitFor(timeout)
                                     }
                                 }
                             }
