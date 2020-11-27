@@ -7,9 +7,11 @@ var cron = require('node-cron');
 const exec = require('child_process').exec;
 linkShopeeUpdate = "http://auto.tranquoctoan.com/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
 linkShopeeAccountUpdate = "http://auto.tranquoctoan.com/api_user/shopeeAccountUpdate" // Link update account shopee status
+linkShopeeUpdateAds = "http://auto.tranquoctoan.com/api_user/shopeeUpdateAds" // Link update shopee ads index
 dataShopeeDir = "http://auto.tranquoctoan.com/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
+typeClick = process.env.TYPECLICK
 
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
@@ -118,7 +120,7 @@ loginShopee = async (page, accounts) => {
 
         const loginclass = await page.$$('.navbar__link--account');
         await loginclass[1].click()
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
         await page.waitFor(timeout)
 
         await page.click('[name="loginKey"]')
@@ -326,6 +328,8 @@ getproduct = async (page, saveProduct, limit, idShops) => {
 
         // tìm vị trí sản phẩm có tên cần click
         let productIds
+
+
         getProduct.forEach((item, index) => {
             idShops.forEach((shop, index2) => {
 
@@ -372,6 +376,64 @@ getproduct = async (page, saveProduct, limit, idShops) => {
             }
         }
 
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+getproductAds = async (page, idShops) => {
+    try {
+        await page.waitForSelector('[data-sqe="name"]')
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        getProduct = []
+
+        getProduct = await page.evaluate(() => {
+            // Class có link bài đăng trên profile          
+            let titles = document.querySelectorAll('[data-sqe="link"]');
+            listProductLinks = []
+            titles.forEach((item) => {
+                listProductLinks.push(item.href)
+            })
+            return listProductLinks
+        })
+
+        productIndexs = []
+        // tìm vị trí sản phẩm có tên cần click
+        let productIds
+        for (i = 0; i <= 4; i++) {
+            idShops.forEach((shop, index2) => {
+                productIds = getProduct[i].split(shop + ".")
+                if (productIds.length == 2) {
+                    productIndexs.push(index)
+                }
+            })
+        }
+
+        for (i = 45; i <= 49; i++) {
+            idShops.forEach((shop, index2) => {
+                productIds = getProduct[i].split(shop + ".")
+                if (productIds.length == 2) {
+                    productIndexs.push(index)
+                }
+            })
+        }
+
+        return productIndexs
     } catch (error) {
         console.log(error)
         return false
@@ -708,13 +770,24 @@ checkDcomconnect = async (profileDir) => {
     }
 }
 
+function generateRandom(min, max, num1) {
+    var rtn = Math.floor(Math.random() * (max - min)) + min;
+
+    num1.forEach(element => {
+        if (rtn == element) {
+            return generateRandom(min, max, num1)
+        }
+    });
+    return rtn
+}
+
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
     try {
         let linkgetdataShopeeDir = ""
         let checkDcomOff
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick
 
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
@@ -794,7 +867,7 @@ runAllTime = async () => {
             newVersion = dataShopee.version;
             console.log("Version server: " + dataShopee.version);
 
-            //   if (data.updateCode == 1) {
+            // if (0) {
             if (newVersion !== checkVersion) {
 
                 console.log("Cập nhật code");
@@ -815,7 +888,7 @@ runAllTime = async () => {
                 // Nếu có dữ liệu schedule trả về
                 key = key.split("\t")
                 let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
-                console.log(profileChrome)
+                console.log(idShops)
 
                 if (clickAds == 1) {
                     console.log("----- START CLICK ADS -----")
@@ -904,21 +977,62 @@ runAllTime = async () => {
 
                             // danh sách product không nằm trong file saveproduct.txt
 
-                            productInfo = await getproduct(page, saveProduct, 1, idShops)
+                            today = new Date().toLocaleString();
 
-                            if (productInfo) {
-                                today = new Date().toLocaleString();
-                                console.log(productInfo)
-
-                                if (productInfo.vitri < 4 || productInfo.vitri > 45) {
-                                    products = await page.$$('[data-sqe="link"]')
-                                    products[productInfo.vitri].click()
-                                    timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
-                                    await page.waitFor(timeout)
+                            if (typeClick == 1) {
+                                // Lấy mảng vị trí các sp trong phần ads thuộc các shop
+                                productIndexs = await getproductAds(page, idShops)
+                                console.log("typeclick = 1: " + productIndexs.length)
+                                // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
+                                indexClick = generateRandom(0, 9, productIndexs)
+                                if (indexClick > 4) {
+                                    indexClick = indexClick + 40
                                 }
+                                products = await page.$$('[data-sqe="link"]')
+                                console.log("Index Click: " + indexClick)
+                                products[indexClick].click()
+                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+                                await page.waitFor(timeout)
+                                let checkvariationAds = chooseVariation(page, 5)
+
+                                timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
+                                await page.waitFor(timeout)
+
+                                await page.keyboard.press('PageDown');
+                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                await page.waitFor(timeout)
+                                await page.keyboard.press('PageDown');
+                                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                                await page.waitFor(timeout)
+                                await page.keyboard.press('PageDown');
 
 
+                            } else {
+                                productInfo = await getproduct(page, saveProduct, 1, idShops)
+                                if (productInfo) {
+
+                                    if (productInfo.vitri < 4 || productInfo.vitri > 45) {
+                                        products = await page.$$('[data-sqe="link"]')
+                                        products[productInfo.vitri].click()
+                                        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+                                        await page.waitFor(timeout)
+                                        let checkvariationAds = chooseVariation(page, 5)
+
+                                        timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
+                                        await page.waitFor(timeout)
+
+                                        await page.keyboard.press('PageDown');
+                                        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                        await page.waitFor(timeout)
+                                        await page.keyboard.press('PageDown');
+                                        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                                        await page.waitFor(timeout)
+                                        await page.keyboard.press('PageDown');
+                                    }
+                                }
                             }
+
+
                             await browser.close();
                         }
                     } catch (error) {
