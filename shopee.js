@@ -360,10 +360,10 @@ getproduct = async (page, saveProduct, limit, idShops) => {
             return thuHangSanPham;
         }
 
-        if (limit == 5) {
+        if (limit == 0) {
             return false
         } else {
-            limit += 1;
+            limit -= 1;
             next = await page.$$('.shopee-icon-button--right')
             if (next.length) {
                 await next[0].click()
@@ -888,7 +888,6 @@ runAllTime = async () => {
                 // Nếu có dữ liệu schedule trả về
                 key = key.split("\t")
                 let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
-                console.log(idShops)
 
                 if (clickAds == 1) {
                     console.log("----- START CLICK ADS -----")
@@ -947,11 +946,9 @@ runAllTime = async () => {
                                 // turn on dcom
                                 //checkDcomOff = await page.$$("#connect_btn")
                                 checkDcomOff = await page.waitForSelector("#connect_btn")
-
                                 await page.click("#connect_btn")
                                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
                                 await page.waitFor(timeout)
-
                             }
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
@@ -964,10 +961,8 @@ runAllTime = async () => {
                         checklogin = await loginShopee(page, key)
                         if (checklogin) {
 
-
                             // lấy ngẫu nhiên keyword để tìm kiếm
                             randomkey = Math.floor(Math.random() * (keywords.length - 1));
-
                             await searchKeyWord(page, keywords[randomkey])
 
                             // lấy danh sách product đã lưu
@@ -976,10 +971,20 @@ runAllTime = async () => {
                             saveProduct = saveProduct.split("\n")
 
                             // danh sách product không nằm trong file saveproduct.txt
-
                             today = new Date().toLocaleString();
 
                             if (typeClick == 1) {
+                                // random vị trí ads
+                                adsIndex = Math.floor(Math.random() * (59));
+                                //Xác định trang của ads
+                                pageAds = adsIndex / 10
+                                pageUrl = await page.url()
+                                // Đi đến trang có vị trí ads cần click
+                                pageUrlAds = pageUrl + "&page=" + pageAds
+                                await page.goto(pageUrlAds)
+                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+                                await page.waitFor(timeout)
+
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
                                 productIndexs = await getproductAds(page, idShops)
                                 console.log("typeclick = 1: " + productIndexs.length)
@@ -994,10 +999,8 @@ runAllTime = async () => {
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                                 let checkvariationAds = chooseVariation(page, 5)
-
                                 timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
                                 await page.waitFor(timeout)
-
                                 await page.keyboard.press('PageDown');
                                 timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
                                 await page.waitFor(timeout)
@@ -1009,19 +1012,16 @@ runAllTime = async () => {
                                 await page.waitFor(timeout)
 
                             } else {
-                                productInfo = await getproduct(page, saveProduct, 1, idShops)
+                                productInfo = await getproduct(page, saveProduct, 6, idShops)
                                 if (productInfo) {
-
-                                    if (productInfo.vitri < 4 || productInfo.vitri > 45) {
+                                    if (productInfo.vitri < 4 || productInfo.vitri >= 45) {
                                         products = await page.$$('[data-sqe="link"]')
                                         products[productInfo.vitri].click()
                                         timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
                                         await page.waitFor(timeout)
                                         let checkvariationAds = chooseVariation(page, 5)
-
                                         timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
                                         await page.waitFor(timeout)
-
                                         await page.keyboard.press('PageDown');
                                         timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
                                         await page.waitFor(timeout)
@@ -1034,7 +1034,6 @@ runAllTime = async () => {
                                     }
                                 }
                             }
-
 
                             await browser.close();
                         }
@@ -1142,7 +1141,7 @@ runAllTime = async () => {
 
                                 //lấy danh sách product thuộc các id shop của cùng 1 người dùng                   
 
-                                productInfo = await getproduct(page, saveProduct, 1, idShops)
+                                productInfo = await getproduct(page, saveProduct, 6, idShops)
 
                                 if (productInfo) {
                                     //  console.log(productInfo)
@@ -1320,7 +1319,7 @@ runAllTime = async () => {
 
                                 // danh sách product không nằm trong file saveproduct.txt
 
-                                productInfo = await getproduct(page, saveProduct, 1, idShops)
+                                productInfo = await getproduct(page, saveProduct, 6, idShops)
 
                                 if (productInfo) {
                                     today = new Date().toLocaleString();
