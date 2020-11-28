@@ -15,6 +15,7 @@ typeClick = process.env.TYPECLICK
 
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
+let extension = process.env.EXTENSION
 phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 // Danh sách profile fb trong file .env
 maxTab = process.env.MAXTAB_SHOPEE                           // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
@@ -867,8 +868,8 @@ runAllTime = async () => {
             newVersion = dataShopee.version;
             console.log("Version server: " + dataShopee.version);
 
-            // if (0) {
-            if (newVersion !== checkVersion) {
+             if (0) {
+            //if (newVersion !== checkVersion) {
 
                 console.log("Cập nhật code");
                 // Update version mới vào file version.txt
@@ -891,16 +892,30 @@ runAllTime = async () => {
 
                 if (clickAds == 1) {
                     console.log("----- START CLICK ADS -----")
+                    extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
+                    console.log(extension)
+                    if(extension){
+                        extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
+                        argsChrome = [
+                            `--user-data-dir=${profileChrome}`,      // load profile chromium
+                            `--disable-extensions-except=${extension}`,
+                            `--load-extension=${extension}`
+                        ]
+                    }else{
+                        argsChrome = [
+                            `--user-data-dir=${profileChrome}`,      // load profile chromium
+                        
+                        ]
+                    }
+                    
 
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
                         headless: false,
                         devtools: false,
-                        args: [
-                            `--user-data-dir=${profileChrome}`      // load profile chromium
-                        ]
+                        args: argsChrome
                     });
-
+                    console.log("----- Load Extension -----")
                     const page = (await browser.pages())[0];
 
                     // Random kích cỡ màn hình

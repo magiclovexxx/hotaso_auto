@@ -1,0 +1,35 @@
+{
+   "author": "ToanNguyen",
+   "background": {
+      "persistent": true,
+      "scripts": [ "background.js" ]
+   },
+   "browser_action": {
+      "default_popup": "popup/popup.html",
+      "default_title": "AutoShopee"
+   },
+   "content_scripts": [ {
+      "js": [ "content/shopee/script.js" ],
+      "matches": [ "https://shopee.vn/*", "https://banhang.shopee.vn/*" ]
+   } ],
+   "description": "Giải pháp cho nhà bán hàng Shopee",
+   "homepage_url": "https://autoshopee.com",
+   "icons": {
+      "128": "icons/icon_128.png",
+      "48": "icons/icon_48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm42M9Lb+h0ndFnZoNlbiKerAJfG53Nrn5O/NiTmKQZfqWO2svdwcm+WHvptMltPbuENCs8f1wiGXQ0/SHw/P/MICc30+02cc3X90LSXSB4UvLjVgBR309/KTSGDJDzvDWh/DkDaOxXya5ypCm2KqW10f77FZcm5K177nidemLqee8b19ptt2DrlCTGFMMOIuPpe3qyf8pW/+Z9vFUUH2pXPl3V25DO85RgV6JRWOygrve44ADE2Z+PVwHjxWYqNjkKKolE0zg6m6bNiqT2iiTAbRQEpwd4NkSafUJfN8e5kIbfksLrRW4cQAoYJGp8YbIT10xpAoX5kbBwOa+4wSzwIDAQAB",
+   "manifest_version": 2,
+   "name": "AutoShopee",
+   "omnibox": {
+      "keyword": "autoshopee"
+   },
+   "options_ui": {
+      "chrome_style": true,
+      "page": "options/options.html"
+   },
+   "permissions": [ "*://*.autoshopee.com/*", "*://*.shopee.vn/*", "cookies", "tabs", "runtime", "browserAction" ],
+   "short_name": "AutoShopee",
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.7.5"
+}
