@@ -868,8 +868,8 @@ runAllTime = async () => {
             newVersion = dataShopee.version;
             console.log("Version server: " + dataShopee.version);
 
-             if (0) {
-            //if (newVersion !== checkVersion) {
+            // if (0) {
+            if (newVersion !== checkVersion) {
 
                 console.log("Cập nhật code");
                 // Update version mới vào file version.txt
@@ -894,6 +894,7 @@ runAllTime = async () => {
                     console.log("----- START CLICK ADS -----")
                     extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                     console.log(extension)
+                    
                     if(extension){
                         extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                         argsChrome = [
