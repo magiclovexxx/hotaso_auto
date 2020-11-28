@@ -978,6 +978,7 @@ runAllTime = async () => {
                                 adsIndex = Math.floor(Math.random() * (59));
                                 //Xác định trang của ads
                                 pageAds = adsIndex / 10
+                                pageAds2 = adsIndex % 10
                                 pageUrl = await page.url()
                                 // Đi đến trang có vị trí ads cần click
                                 pageUrlAds = pageUrl + "&page=" + pageAds
@@ -989,7 +990,7 @@ runAllTime = async () => {
                                 productIndexs = await getproductAds(page, idShops)
                                 console.log("typeclick = 1: " + productIndexs.length)
                                 // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
-                                indexClick = generateRandom(0, 9, productIndexs)
+                                indexClick = generateRandom(0, pageAds2, productIndexs)
                                 if (indexClick > 4) {
                                     indexClick = indexClick + 40
                                 }
