@@ -820,8 +820,12 @@ runAllTime = async () => {
             keywords.push(keyword)
         })
 
-        indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
-        console.log(indexClickShopee)
+        if(typeClick == 1){
+            console.log(dataShopee.soLuongAdsClick)
+            indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
+            console.log(indexClickShopee)
+        }
+        
         //accounts = []
         //dataShopee.accounts.forEach(item => {
         //    let account = item.username + "\t" + item.password
