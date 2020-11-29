@@ -821,7 +821,7 @@ runAllTime = async () => {
         })
 
         indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
-        
+        console.log(indexClickShopee)
         //accounts = []
         //dataShopee.accounts.forEach(item => {
         //    let account = item.username + "\t" + item.password
@@ -829,10 +829,11 @@ runAllTime = async () => {
         //    accounts.push(account)
         //})
 
+       
+
         var accounts = fs.readFileSync("shopee.txt");
         if (accounts) {
             accounts = accounts.toString();
-
             accounts = accounts.split("\n")
         } else {
             accounts = []
