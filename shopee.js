@@ -820,6 +820,8 @@ runAllTime = async () => {
             keywords.push(keyword)
         })
 
+        indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
+        
         //accounts = []
         //dataShopee.accounts.forEach(item => {
         //    let account = item.username + "\t" + item.password
@@ -851,7 +853,7 @@ runAllTime = async () => {
     try {
         console.log("----------- START SHOPEE ---------------")
         data = GenDirToGetData(maxTab, accounts)
-
+        
         if (data) {
 
             // get version hien tai trong file version.txt
@@ -892,9 +894,8 @@ runAllTime = async () => {
 
                 if (clickAds == 1) {
                     console.log("----- START CLICK ADS -----")
-                    extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
-                    console.log(extension)
-                    
+                 //   extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
+                    extension = ""
                     if(extension){
                         extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                         argsChrome = [
@@ -905,18 +906,16 @@ runAllTime = async () => {
                     }else{
                         argsChrome = [
                             `--user-data-dir=${profileChrome}`,      // load profile chromium
-                        
+            
                         ]
                     }
                     
-
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
                         headless: false,
                         devtools: false,
                         args: argsChrome
                     });
-                    console.log("----- Load Extension -----")
                     const page = (await browser.pages())[0];
 
                     // Random kích cỡ màn hình
@@ -977,6 +976,11 @@ runAllTime = async () => {
                         checklogin = await loginShopee(page, key)
                         if (checklogin) {
 
+                            if(!keywords.length){
+                                console.log("Không có từ khoá")
+                                await browser.close();
+                                return false
+                            }
                             // lấy ngẫu nhiên keyword để tìm kiếm
                             randomkey = Math.floor(Math.random() * (keywords.length - 1));
                             await searchKeyWord(page, keywords[randomkey])
@@ -990,8 +994,10 @@ runAllTime = async () => {
                             today = new Date().toLocaleString();
 
                             if (typeClick == 1) {
+                                
                                 // random vị trí ads
-                                adsIndex = Math.floor(Math.random() * (59));
+                                adsIndex = indexClickShopee;
+                                console.log("adsIndex: " + adsIndex)
                                 //Xác định trang của ads
                                 pageAds = adsIndex / 10
                                 pageAds2 = adsIndex % 10
@@ -1001,7 +1007,6 @@ runAllTime = async () => {
                                 await page.goto(pageUrlAds)
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
-
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
                                 productIndexs = await getproductAds(page, idShops)
                                 console.log("typeclick = 1: " + productIndexs.length)
