@@ -416,20 +416,20 @@ getproductAds = async (page, idShops) => {
         productIndexs = []
         // tìm vị trí sản phẩm có tên cần click
         let productIds
-        for (i = 0; i <= 4; i++) {
+        for (let i = 0; i <= 4; i++) {
             idShops.forEach((shop, index2) => {
                 productIds = getProduct[i].split(shop + ".")
                 if (productIds.length == 2) {
-                    productIndexs.push(index)
+                    productIndexs.push(i)
                 }
             })
         }
 
-        for (i = 45; i <= 49; i++) {
+        for (let i = 45; i <= 49; i++) {
             idShops.forEach((shop, index2) => {
                 productIds = getProduct[i].split(shop + ".")
                 if (productIds.length == 2) {
-                    productIndexs.push(index)
+                    productIndexs.push(i)
                 }
             })
         }
@@ -821,9 +821,7 @@ runAllTime = async () => {
         })
 
         if(typeClick == 1){
-            console.log(dataShopee.soLuongAdsClick)
             indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
-            console.log(indexClickShopee)
         }
         
         //accounts = []
@@ -832,8 +830,6 @@ runAllTime = async () => {
         //    account = account.split("\r")[0]
         //    accounts.push(account)
         //})
-
-       
 
         var accounts = fs.readFileSync("shopee.txt");
         if (accounts) {
@@ -973,7 +969,7 @@ runAllTime = async () => {
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
-                        await page.goto("https://shopee.vn")
+                        await page.goto("https://shopee.vn", {timeout: 55000})
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
 
@@ -1004,12 +1000,15 @@ runAllTime = async () => {
                                 adsIndex = indexClickShopee;
                                 console.log("adsIndex: " + adsIndex)
                                 //Xác định trang của ads
-                                pageAds = adsIndex / 10
+                                pageAds =Math.floor (adsIndex / 10)
                                 pageAds2 = adsIndex % 10
-                                pageUrl = await page.url()
-                                // Đi đến trang có vị trí ads cần click
-                                pageUrlAds = pageUrl + "&page=" + pageAds
-                                await page.goto(pageUrlAds)
+                                if(pageAds > 0){
+                                    pageUrl = await page.url()
+                                    // Đi đến trang có vị trí ads cần click
+                                    pageUrlAds = pageUrl + "&page=" + pageAds
+                                    await page.goto(pageUrlAds, {timeout: 25000})
+                                }
+                                
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
@@ -1142,7 +1141,7 @@ runAllTime = async () => {
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                             await page.waitFor(10000)
                             try {
-                                await page.goto("https://shopee.vn")
+                                await page.goto("https://shopee.vn", {timeout: 55000})
                             } catch (error) {
                                 console.log("Mạng chậm không kết nối dc")
                                 return false
@@ -1307,7 +1306,7 @@ runAllTime = async () => {
                             }
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                             await page.waitFor(10000)
-                            await page.goto("https://shopee.vn")
+                            await page.goto("https://shopee.vn", {timeout: 55000})
                             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                             await page.waitFor(timeout)
 
