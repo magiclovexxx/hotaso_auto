@@ -151,14 +151,29 @@ const loginaccount = async (browser) => {
 
 
 (async () => {
+  extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
+  console.log(extension)
+  
+  if(extension){
+      extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
+      argsChrome = [
+          `--user-data-dir=${profileDir}`,      // load profile chromium
+          `--disable-extensions-except=${extension}`,
+          `--load-extension=${extension}`
+      ]
+  }else{
+      argsChrome = [
+          `--user-data-dir=${profileDir}`,      // load profile chromium
+      
+      ]
+  }
+  
   const browser = await puppeteer.launch({
 
     executablePath: chromium,
     headless: false,
     devtools: false,
-    args: [
-      `--user-data-dir=${profileDir}`
-    ]
+    args: argsChrome
   });
 
   width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
