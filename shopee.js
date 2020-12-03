@@ -1065,7 +1065,7 @@ runAllTime = async () => {
                                 productInfo = await getproductAds(page, idShops, 5)
                                 if (productInfo.length) {
                                     products = await page.$$('[data-sqe="link"]')
-                                    products[productInfo.vitri].click()
+                                    products[productInfo[0]].click()
                                     timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
                                     await page.waitFor(timeout)
                                     let checkvariationAds = chooseVariation(page, 5)
