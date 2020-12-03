@@ -434,7 +434,7 @@ getproductAds = async (page, idShops, limit) => {
             })
         }
 
-        if (productIndexs) {
+        if (productIndexs.length) {
             return productIndexs;
         }
 
@@ -1063,7 +1063,7 @@ runAllTime = async () => {
                             } else {
                                 saveProduct = []
                                 productInfo = await getproductAds(page, idShops, 5)
-                                if (productInfo) {
+                                if (productInfo.length) {
                                     products = await page.$$('[data-sqe="link"]')
                                     products[productInfo.vitri].click()
                                     timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
