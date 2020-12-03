@@ -789,20 +789,29 @@ checkDcomconnect = async (profileDir) => {
     }
 }
 
-function generateRandom(min, max, num1) {
+function generateRandom(min, max, num1, limit) {
     var rtn = Math.floor(Math.random() * (max - min)) + min;
-
+    let check = 0
     num1.forEach(element => {
-        if (rtn == element) {
-            return generateRandom(min, max, num1)
+        if (element == rtn) {
+            check++
         }
     });
-    return rtn
+    if(limit == 0){
+        console.log ("Vui lòng thêm số lượng click lớn")
+        return false
+    }else if (check != 0) {
+        limit--
+        return generateRandom(min, max, num1, limit)
+    } else {
+        return rtn
+    }
 }
 
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
+   
     try {
         let linkgetdataShopeeDir = ""
         let checkDcomOff
@@ -831,7 +840,7 @@ runAllTime = async () => {
             idShop = item.fullname.split("\r")[0]
             idShops.push(item.fullname)
         })
-    //    console.log(idShops)
+        //    console.log(idShops)
         keywords = []
         dataShopee.keywords.forEach(item => {
             keyword = item.username.split("\r")[0]
@@ -1026,19 +1035,22 @@ runAllTime = async () => {
                                     pageUrlAds = pageUrl + "&page=" + pageAds
                                     await page.goto(pageUrlAds)
                                 }
-
+                                console.log(" ------ Danh sách id shop loại trừ ----------")
+                                console.log(idShops)
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
                                 productIndexs = await getproductAds(page, idShops, 5)
-                                console.log("typeclick = 1: " + productIndexs.length)
+                                //
+                                console.log("---------- vi tri cac san pham cua shop loai tru ----------")
+                                console.log(productIndexs)
                                 // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
-                                if(productIndexs){
-                                    indexClick = generateRandom(0, pageAds2, productIndexs)
-                                }else{
-                                    indexClick =Math.floor(Math.random() * pageAds2)
+                                if (productIndexs) {
+                                    indexClick = generateRandom(0, pageAds2, productIndexs, 10)
+                                } else {
+                                    indexClick = Math.floor(Math.random() * pageAds2)
                                 }
-                                
+
                                 if (indexClick > 4) {
                                     indexClick = indexClick + 40
                                 }
@@ -1047,6 +1059,9 @@ runAllTime = async () => {
                                 products[indexClick].click()
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
+                                console.log("---------- Link sản phẩm click ads ----------")
+                                currentUrl = await page.url()
+                                console.log(currentUrl)
                                 let checkvariationAds = chooseVariation(page, 5)
                                 timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
                                 await page.waitFor(timeout)
@@ -1063,6 +1078,8 @@ runAllTime = async () => {
                             } else {
                                 saveProduct = []
                                 productInfo = await getproductAds(page, idShops, 5)
+                                console.log("---------- Vị trí sản phẩm đối thủ ----------")
+                                console.log(productInfo)
                                 if (productInfo.length) {
                                     products = await page.$$('[data-sqe="link"]')
                                     products[productInfo[0]].click()
@@ -1082,12 +1099,10 @@ runAllTime = async () => {
                                     await page.waitFor(timeout)
                                 }
                             }
-
                             await browser.close();
                         }
                     } catch (error) {
                         console.log(error)
-
                     }
 
                     await browser.close();
@@ -1157,7 +1172,6 @@ runAllTime = async () => {
                                     await page.waitFor(timeout)
 
                                 }
-
                             }
 
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
@@ -1176,7 +1190,7 @@ runAllTime = async () => {
                             checklogin = await loginShopee(page, key)
 
                             if (checklogin) {
-                                console.log("san pham pho bien")
+                                console.log("---------- san pham pho bien ----------")
 
                                 populateClick(page, listcategories)
 
@@ -1225,7 +1239,6 @@ runAllTime = async () => {
                                         await page.waitFor(1000);
                                         await removeCart(page)
                                     }
-
 
                                 } else {
                                     // nếu đã check hết product sẽ xoá file saveProduct.txt                                
@@ -1409,14 +1422,12 @@ runAllTime = async () => {
                                     fs.writeFileSync('saveProduct.txt', saveProduct)
                                     fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
                                 }
-
                                 await browser.close();
                             }
                         } catch (error) {
                             console.log(error)
 
                         }
-
                         await browser.close();
                         console.log("----------- STOP ---------------")
                     }
