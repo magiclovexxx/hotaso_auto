@@ -987,7 +987,7 @@ runAllTime = async () => {
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
-                        await page.goto("https://shopee.vn", { timeout: 55000 })
+                        await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
 
@@ -1024,13 +1024,13 @@ runAllTime = async () => {
                                     pageUrl = await page.url()
                                     // Đi đến trang có vị trí ads cần click
                                     pageUrlAds = pageUrl + "&page=" + pageAds
-                                    await page.goto(pageUrlAds, { timeout: 25000 })
+                                    await page.goto(pageUrlAds)
                                 }
 
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
-                                productIndexs = await getproductAds(page, idShops)
+                                productIndexs = await getproductAds(page, idShops, 5)
                                 console.log("typeclick = 1: " + productIndexs.length)
                                 // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
                                 if(productIndexs){
@@ -1163,7 +1163,7 @@ runAllTime = async () => {
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                             await page.waitFor(10000)
                             try {
-                                await page.goto("https://shopee.vn", { timeout: 55000 })
+                                await page.goto("https://shopee.vn")
                             } catch (error) {
                                 console.log("Mạng chậm không kết nối dc")
                                 return false
@@ -1328,7 +1328,7 @@ runAllTime = async () => {
                             }
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                             await page.waitFor(10000)
-                            await page.goto("https://shopee.vn", { timeout: 55000 })
+                            await page.goto("https://shopee.vn")
                             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                             await page.waitFor(timeout)
 
