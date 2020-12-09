@@ -312,7 +312,6 @@ getproduct = async (page, saveProduct, limit, idShops) => {
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout);
         }
-        console.log(limit)
         getProduct = []
         getProduct = await page.evaluate(() => {
 
@@ -332,29 +331,25 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         let productIds
 
         getProduct.forEach((item, index) => {
-            idShops.forEach((shop, index2) => {
-
-                productIds = item.split(shop + ".")
-                if (productIds.length == 2) {
-                    if (!saveProduct.includes(productIds[1])) {
-                        productId = productIds[1]
-                        productIndex = index;
-                        thuHangSanPham = {
-                            sanpham: getProduct[productIndex],
-                            id: productId,
-                            shopId: shop,
-                            trang: limit,
-                            vitri: productIndex
+            if ((index < 45) && (index > 4)) {
+                idShops.forEach((shop, index2) => {
+                    productIds = item.split(shop + ".")
+                    if (productIds.length == 2) {
+                        if (!saveProduct.includes(productIds[1])) {
+                            productId = productIds[1]
+                            productIndex = index;
+                            thuHangSanPham = {
+                                sanpham: getProduct[productIndex],
+                                id: productId,
+                                shopId: shop,
+                                trang: (6 - limit),
+                                vitri: productIndex
+                            }
                         }
+                        return true
                     }
-                    return true
-                }
-            })
-            /*    if (productIndex > 4 && productIndex < 45) {
-                    return true
-                }
-            */
-
+                })
+            }
         })
 
         if (thuHangSanPham) {
@@ -434,10 +429,10 @@ getproductAds = async (page, idShops, limit) => {
             })
         }
 
-/*        if (productIndexs.length) {
-            return productIndexs;
-        }
-        */
+        /*        if (productIndexs.length) {
+                    return productIndexs;
+                }
+                */
 
         if (limit == 0) {
             return productIndexs
@@ -514,7 +509,7 @@ getproductAdsClickShop = async (page, idShops, limit) => {
         if (productIndexs.length) {
             return productIndexs;
         }
-        
+
 
         if (limit == 0) {
             return false
@@ -542,7 +537,7 @@ getproductAdsSanPhamTuongTu = async (page, idShops, limit) => {
         await page.waitForSelector('[data-sqe="name"]')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout);
-       
+
         getProduct = []
 
         getProduct = await page.evaluate(() => {
@@ -595,6 +590,44 @@ getproductAdsSanPhamTuongTu = async (page, idShops, limit) => {
                 return false
             }
         }
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+getproductAdsLienQuan = async (page, idShops) => {
+    try {
+        xxx = await page.waitForSelector('[data-sqe="link"]')
+        console.log("Tổng số sản phẩm tương tự" + xxx.length)
+        listProductAdsIndex = await page.evaluate((shops) => {
+            // Class có link bài đăng trên profile          
+            let titles = document.querySelectorAll('[data-sqe="link"]');
+
+            listProductAds = []
+            if (titles.length) {
+                titles.forEach((item, index) => {
+                    if (item.children[0].children[0].children[3]) {
+                        if (item.children[0].children[0].children[3].children[0]) {
+
+                            checkShop = 0
+                            shops.forEach((shop) => {
+                                if (item.href.split(shop + ".") == 2) {
+                                    checkShop++
+                                }
+                            })
+                            if (checkShop == 0) {
+                                listProductAds.push(index)
+                            }
+                        }
+                    }
+                })
+
+            }
+            return listProductAds
+        }, idShops)
+
+        return listProductAdsIndex
     } catch (error) {
         console.log(error)
         return false
@@ -772,7 +805,7 @@ viewShop = async (page) => {
 }
 
 
-actionShopee = async (page) => {
+actionShopee = async (page, lienQuan) => {
     await page.waitForSelector('.product-briefing')
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
@@ -810,7 +843,6 @@ actionShopee = async (page) => {
 
     }
     await viewReview(page)
-
     await page.waitFor(timeout)
     await page.keyboard.press('Home');
 
@@ -825,9 +857,9 @@ actionShopee = async (page) => {
         await addToCard[0].click()
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
-
-        await viewShop(page)
-
+        if (lienQuan != 1) {
+            await viewShop(page)
+        }
     } else {
         console.log("Không chọn được mẫu mã")
         return false
@@ -939,10 +971,10 @@ function generateRandom(min, max, num1, limit) {
             check++
         }
     });
-    if(limit == 0){
-        console.log ("Vui lòng thêm số lượng click lớn")
+    if (limit == 0) {
+        console.log("Vui lòng thêm số lượng click lớn")
         return false
-    }else if (check != 0) {
+    } else if (check != 0) {
         limit--
         return generateRandom(min, max, num1, limit)
     } else {
@@ -953,7 +985,7 @@ function generateRandom(min, max, num1, limit) {
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
-   
+
     try {
         let linkgetdataShopeeDir = ""
         let checkDcomOff
@@ -1223,63 +1255,73 @@ runAllTime = async () => {
                                 await page.waitFor(timeout)
 
                             } else if (lienQuan == 1) {
-
+                                saveProduct = []
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
                                 productInfo = await getproduct(page, saveProduct, 6, idShops)
 
-                                console.log("---------- vi tri cac san pham cua shop ----------")
-                                console.log(productIndexs)
-                                
-                                // Click sản phẩm của shop
-                                products = await page.$$('[data-sqe="link"]')
-                                products[productInfo.vitri].click()
-                                // Thao tác
-                                await actionShopee(page)
-                                await page.waitFor(1000);
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
-                                await page.waitFor(timeout)
+                                if (productInfo.vitri) {
+                                    console.log("---------- vi tri cac san pham cua shop ----------")
+                                    console.log(productInfo.vitri)
+                                    products = await page.$$('[data-sqe="link"]')
+                                    // Click sản phẩm của shop
+                                    products[productInfo.vitri].click()
+                                    await actionShopee(page, 1)
+                                    await page.waitFor(1000);
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
+                                    await page.waitFor(timeout)
 
-                                // Xác định các vị trí ads 
-                                
-                                // Xác định vị trí ads của shop loại trừ
-                                
-                                // Tìm ngẫU nhiên vị trí ads
+                                    // Xác định các vị trí ads đã loại trừ shop
+                                    productAdsList = await getproductAdsLienQuan(page, idShops)
+                                    console.log("---------- Vị trí sp Ads ----------")
+                                    console.log(productAdsList)
+                                    // Tìm ngẫU nhiên vị trí ads
+                                    indexAds = Math.floor(Math.random() * productAdsList.length)
+                                    productsList = await page.$$('[data-sqe="link"]')
+                                    console.log("---------- Tổng số Sản phẩm ----------")
+                                    console.log(productsList.length)
+                                    // Click ads
 
-                                // Click ads
-                               
-                                console.log("---------- Link sản phẩm click ads ----------")
-                                currentUrl = await page.url()
-                                console.log(currentUrl)
-                                let checkvariationAds = chooseVariation(page, 5)
-                                timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                                await page.waitFor(timeout)
-                                await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
-                                await page.waitFor(timeout)
+                                    console.log("---------- Vi trí ads chuẩn bị click ----------")
+                                    console.log(productAdsList[indexAds])
 
-                            }else {
+                                    productsList[productAdsList[indexAds]].click()
+
+                                    console.log("---------- Link sản phẩm click ads ----------")
+                                    currentUrl = await page.url()
+                                    console.log(currentUrl)
+                                    let checkvariationAds = chooseVariation(page, 5)
+                                    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                                    await page.waitFor(timeout)
+                                    await page.keyboard.press('PageDown');
+                                    timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
+                                    await page.waitFor(timeout)
+                                } else {
+                                    await browser.close();
+                                    return false
+                                }
+                            } else {
                                 saveProduct = []
                                 productInfo = await getproductAdsClickShop(page, idShops, 5)
                                 console.log("---------- Vị trí sản phẩm đối thủ ----------")
