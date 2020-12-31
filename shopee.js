@@ -9,11 +9,12 @@ linkShopeeUpdate = "http://auto.tranquoctoan.com/api_user/shopeeupdate"     // L
 linkShopeeAccountUpdate = "http://auto.tranquoctoan.com/api_user/shopeeAccountUpdate" // Link update account shopee status
 linkShopeeUpdateAds = "http://auto.tranquoctoan.com/api_user/shopeeUpdateAds" // Link update shopee ads index
 dataShopeeDir = "http://auto.tranquoctoan.com/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+shopeeUpdateSeoSanPhamDir = "http://auto.tranquoctoan.com/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
 typeClick = process.env.TYPECLICK
+clickSanPham = process.env.CLICK_SAN_PHAM
 lienQuan = process.env.LIEN_QUAN
-
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
 let extension = process.env.EXTENSION
@@ -259,7 +260,6 @@ searchKeyWord = async (page, keyword) => {
         await page.waitFor(timeout);
         await page.keyboard.press('Enter')
         await page.waitForNavigation()
-
     }
 }
 
@@ -421,6 +421,209 @@ getproduct = async (page, saveProduct, limit, idShops) => {
                 console.log("Đây là trang tìm kiếm cuối cùng")
                 return false
             }
+        }
+
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+getproductByProductId = async (page, product) => {
+    try {
+        let thuHangSanPham
+        // Next dến trang có vị trí cũ của sản phẩm
+        product_page = product.product_page
+        product_index = product.product_index
+
+        await page.waitForSelector('[data-sqe="name"]')
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+       
+        if (phobien) {
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout);
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout);
+        }
+
+        getProduct = []
+        // Lấy vị trí sản phẩm theo id sản phẩm
+        getProduct = await page.evaluate(() => {
+
+            // Class có link bài đăng trên profile          
+            let titles = document.querySelectorAll('[data-sqe="link"]');
+            listProductLinks = []
+            titles.forEach((item) => {
+                listProductLinks.push(item.href)
+            })
+            return listProductLinks
+        })
+
+        let productIndex = 0
+        let productId
+        // tìm vị trí sản phẩm có tên cần click
+        let page_link = await page.url()
+        product_page2 = page_link.split("&page=")[1]
+        if(product_page2 == undefined){
+            product_page2 = 0
+        }
+        console.log(product_page2)
+        let productIds
+      
+        getProduct.forEach((item, index) => {
+            if ((index < 45) && (index > 4)) {
+                productIds = item.split(product.product_id)
+                if (productIds.length == 2) {
+                    productId = product.id
+                    productIndex = index;
+                    thuHangSanPham = {
+                        sanpham: product.product_name,
+                        id: productId,
+                        shopId: product.shop_id,
+                        trang: product_page2,
+                        vitri: productIndex
+                    }
+                    return true
+                }
+            }
+        })
+
+        if (thuHangSanPham) {
+            return thuHangSanPham;
+        }else {           
+            if(product_page2 == product.max_page){
+                thuHangSanPham = {
+                    sanpham: product.product_name,
+                    id: productId,
+                    shopId: product.shop_id,
+                    trang: "Not",
+                    vitri: "Not"
+                }
+                return thuHangSanPham;
+            }
+            next = await page.$$('.shopee-icon-button--right')
+            if (next.length) {
+                await next[0].click()
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                await page.waitFor(timeout);
+                return await getproductByProductId(page, product)
+            } 
+        }
+
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+getproductByOldIndex = async (page, product) => {
+    try {
+        console.log( "------ Tìm sản phẩm theo vị trí cũ ------")
+        let thuHangSanPham
+        // Next dến trang có vị trí cũ của sản phẩm
+        product_page = product.product_page
+        product_index = product.product_index
+        check_page = Math.floor(product_page/5)
+
+        if(check_page > 1)
+        await page.waitForSelector('[data-sqe="name"]')
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitFor(3000);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitFor(timeout);
+       
+        if (phobien) {
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout);
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout);
+        }
+
+        getProduct = []
+        // Lấy vị trí sản phẩm theo id sản phẩm
+        getProduct = await page.evaluate(() => {
+
+            // Class có link bài đăng trên profile          
+            let titles = document.querySelectorAll('[data-sqe="link"]');
+            listProductLinks = []
+            titles.forEach((item) => {
+                listProductLinks.push(item.href)
+            })
+            return listProductLinks
+        })
+
+        let productIndex = 0
+        let productId
+        // tìm vị trí sản phẩm có tên cần click
+        let page_link = await page.url()
+        product_page2 = page_link.split("&page=")[1]
+        if(product_page2 == undefined){
+            product_page2 = 0
+        }
+        console.log(product_page2)
+        let productIds
+      
+        getProduct.forEach((item, index) => {
+            if ((index < 45) && (index > 4)) {
+                productIds = item.split(product.product_id)
+                if (productIds.length == 2) {
+                    productId = product.id
+                    productIndex = index;
+                    thuHangSanPham = {
+                        sanpham: product.product_name,
+                        id: productId,
+                        shopId: product.shop_id,
+                        trang: product_page2,
+                        vitri: productIndex
+                    }
+                    return true
+                }
+            }
+        })
+
+        if (thuHangSanPham) {
+            return thuHangSanPham;
+        }else {           
+            if(product_page2 == 99){
+                thuHangSanPham = {
+                    sanpham: product.product_name,
+                    id: productId,
+                    shopId: product.shop_id,
+                    trang: "Not",
+                    vitri: "Not"
+                }
+                return thuHangSanPham;
+            }
+            
         }
 
     } catch (error) {
@@ -1041,7 +1244,7 @@ runAllTime = async () => {
     try {
         let linkgetdataShopeeDir = ""
         let checkDcomOff
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "$san_pham=" + clickSanPham
         console.log(linkgetdataShopeeDir)
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
@@ -1059,25 +1262,35 @@ runAllTime = async () => {
             console.log("Không thể kểt nối mạng")
             return false
         }
-
-        idShops = []
         dataShopee = getDataShopee.data
+        if(clickSanPham != 1){
+        idShops = []
+        
         dataShopee.shops.forEach(item => {
             idShop = item.fullname.split("\r")[0]
             idShops.push(item.fullname)
         })
+    }
         //    console.log(idShops)
         keywords = []
-        dataShopee.keywords.forEach(item => {
-            keyword = item.username.split("\r")[0]
-            keywords.push(keyword)
-        })
+
+        if(clickSanPham == 1){
+            keywords = products = dataShopee.products
+
+        }else{
+            dataShopee.keywords.forEach(item => {
+                keyword = item.username.split("\r")[0]
+                keywords.push(keyword)
+            })
+        }
+        
+        if(clickSanPham != 1){
         shopsLoaiTru = []
         dataShopee.shops.forEach(item => {
             idShop = item.fullname.split("\r")[0]
             shopsLoaiTru.push(item.fullname)
         })
-
+    }
         if (typeClick == 1) {
             indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
         }
@@ -1573,6 +1786,7 @@ runAllTime = async () => {
                         console.log("----------- STOP PHO BIEN---------------")
                     } else {
 
+                        console.log("----------- CLICK ALL SẢN PHẨM ---------------")
                         const browser = await puppeteer.launch({
                             executablePath: chromiumDir,
                             headless: false,
@@ -1644,79 +1858,135 @@ runAllTime = async () => {
                             // login account shopee                    
                             checklogin = await loginShopee(page, key)
                             if (checklogin) {
+                                if (clickSanPham == 1) {
+                                    console.log("----- Click theo sản phẩm -----")
 
-                                // Lấy danh sách keyword đã tìm kiếm
-                                var saveKeyword = fs.readFileSync("saveKeyword.txt", { flag: "as+" });
-                                saveKeyword = saveKeyword.toString();
-                                saveKeyword = saveKeyword.split("\n")
-                                if (saveKeyword.length >= keywords.length) {
-                                    saveKeyword = [];
-                                    fs.writeFileSync('saveKeyword.txt', saveKeyword)
-                                }
+                                    // Server trả về dữ liệu sắp xếp theo số lượng lượt tìm kiếm từ nhỏ đến lớn
+                                    // server check tài khoản còn tiền để sử dụng không
 
-                                // danh sách keyword không nằm trong file savekeyword.txt
-                                let keywordNotSave = []
-                                keywords.forEach(item => {
-                                    if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
-                                        keywordNotSave.push(item);
+                                    // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
+                                    product = products[0];
+                                    console.log(product.product_name)
+                                    await searchKeyWord(page, product.keyword)
+                                    // Check vị trí sản phẩm theo page, index
+                                    // search lần đầu , search lần 2, 
+                                    if(product.product_page == null || product.product_page == "Not"){
+                                        productInfo = await getproductByProductId(page, product)
+                                    }else{
+                                        productInfo = await getproductByOldIndex(page, product)
                                     }
-                                })
-                                // lấy ngẫu nhiên keyword để tìm kiếm
-                                randomkey = Math.floor(Math.random() * (keywordNotSave.length - 1));
-
-                                // lưu keyword sẽ tìm vào file saveKeyword.txt
-                                fs.appendFileSync('saveKeyword.txt', keywordNotSave[randomkey] + "\n")
-                                // tìm kiếm theo keyword
-                                await searchKeyWord(page, keywordNotSave[randomkey])
-
-                                // lấy danh sách product đã lưu
-                                var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
-                                saveProduct = saveProduct.toString();
-                                saveProduct = saveProduct.split("\n")
-
-                                // danh sách product không nằm trong file saveproduct.txt
-
-                                productInfo = await getproduct(page, saveProduct, 6, idShops)
-
-                                if (productInfo) {
-                                    today = new Date().toLocaleString();
-                                    console.log(productInfo)
-                                    fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
-                                    productInfo.keyword = keywordNotSave[randomkey]
-                                    productInfo.time = today
-                                    productInfo.user = key[0]
-                                    productInfo.pass = key[1]
-                                    // lưu thứ hạng sản phẩm theo từ khoá vào file
-                                    fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
-
-                                    try {
-                                        let datatest = await axios.get(linkShopeeUpdate, {
-                                            params: {
-                                                data: {
-                                                    dataToServer: productInfo,
+                                   
+                                    if (productInfo) {
+                                        today = new Date().toLocaleString();
+                                        console.log(productInfo)
+                                        
+                                        productInfo.keyword = product.keyword
+                                        productInfo.time = today
+                                        productInfo.user = key[0]
+                                        //productInfo.pass = key[1]
+                                       
+                                        try {
+                                            let datatest = await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                                params: {
+                                                    data: {
+                                                        dataToServer: productInfo,
+                                                    }
                                                 }
-                                            }
-                                        })
-                                        console.log(datatest.data)
-                                    } catch (error) {
-                                        console.log("Không gửi được dữ liệu thứ hạng mới đến")
-                                    }
+                                            })
+                                            console.log(datatest.data)
+                                        } catch (error) {
+                                            console.log("Không gửi được dữ liệu thứ hạng mới đến server")
+                                            console.log(error)
+                                           
+                                        }
+                                        console.log(productInfo)
+                                        process.exit()
+                                        products = await page.$$('[data-sqe="link"]')
 
-                                    products = await page.$$('[data-sqe="link"]')
+                                        if (productInfo.vitri > 4 && productInfo.vitri < 45) {
+                                            products[productInfo.vitri].click()
+                                            await actionShopee(page)
+                                            await page.waitFor(1000);
+                                            await removeCart(page)
+                                        }
 
-                                    if (productInfo.vitri > 4 && productInfo.vitri < 45) {
-                                        products[productInfo.vitri].click()
-                                        await actionShopee(page)
-                                        await page.waitFor(1000);
-                                        await removeCart(page)
                                     }
 
                                 } else {
-                                    // nếu đã check hết product sẽ xoá file saveProduct.txt                                
-                                    saveProduct = [];
-                                    fs.writeFileSync('saveProduct.txt', saveProduct)
-                                    fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
+                                    var saveKeyword = fs.readFileSync("saveKeyword.txt", { flag: "as+" });
+                                    saveKeyword = saveKeyword.toString();
+                                    saveKeyword = saveKeyword.split("\n")
+                                    if (saveKeyword.length >= keywords.length) {
+                                        saveKeyword = [];
+                                        fs.writeFileSync('saveKeyword.txt', saveKeyword)
+                                    }
+
+                                    // danh sách keyword không nằm trong file savekeyword.txt
+                                    let keywordNotSave = []
+                                    keywords.forEach(item => {
+                                        if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
+                                            keywordNotSave.push(item);
+                                        }
+                                    })
+                                    // lấy ngẫu nhiên keyword để tìm kiếm
+                                    randomkey = Math.floor(Math.random() * (keywordNotSave.length - 1));
+
+                                    // lưu keyword sẽ tìm vào file saveKeyword.txt
+                                    fs.appendFileSync('saveKeyword.txt', keywordNotSave[randomkey] + "\n")
+                                    // tìm kiếm theo keyword
+                                    await searchKeyWord(page, keywordNotSave[randomkey])
+
+                                    // lấy danh sách product đã lưu
+                                    var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
+                                    saveProduct = saveProduct.toString();
+                                    saveProduct = saveProduct.split("\n")
+
+                                    // danh sách product không nằm trong file saveproduct.txt
+
+                                    productInfo = await getproduct(page, saveProduct, 6, idShops)
+
+                                    if (productInfo) {
+                                        today = new Date().toLocaleString();
+                                        console.log(productInfo)
+                                        fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
+                                        productInfo.keyword = keywordNotSave[randomkey]
+                                        productInfo.time = today
+                                        productInfo.user = key[0]
+                                        productInfo.pass = key[1]
+                                        // lưu thứ hạng sản phẩm theo từ khoá vào file
+                                        fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
+
+                                        try {
+                                            let datatest = await axios.get(linkShopeeUpdate, {
+                                                params: {
+                                                    data: {
+                                                        dataToServer: productInfo,
+                                                    }
+                                                }
+                                            })
+                                            console.log(datatest.data)
+                                        } catch (error) {
+                                            console.log("Không gửi được dữ liệu thứ hạng mới đến")
+                                        }
+
+                                        products = await page.$$('[data-sqe="link"]')
+
+                                        if (productInfo.vitri > 4 && productInfo.vitri < 45) {
+                                            products[productInfo.vitri].click()
+                                            await actionShopee(page)
+                                            await page.waitFor(1000);
+                                            await removeCart(page)
+                                        }
+
+                                    } else {
+                                        // nếu đã check hết product sẽ xoá file saveProduct.txt                                
+                                        saveProduct = [];
+                                        fs.writeFileSync('saveProduct.txt', saveProduct)
+                                        fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
+                                    }
                                 }
+                                // Lấy danh sách keyword đã tìm kiếm
+
                                 await browser.close();
                             }
                         } catch (error) {
