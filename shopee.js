@@ -1870,11 +1870,12 @@ runAllTime = async () => {
                                     await searchKeyWord(page, product.keyword)
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
-                                    if(product.product_page == null || product.product_page == "Not"){
-                                        productInfo = await getproductByProductId(page, product)
-                                    }else{
-                                        productInfo = await getproductByOldIndex(page, product)
-                                    }
+                                    productInfo = await getproductByProductId(page, product)
+                                    // if(product.product_page == null || product.product_page == "Not"){
+                                    //     productInfo = await getproductByProductId(page, product)
+                                    // }else{
+                                    //     productInfo = await getproductByOldIndex(page, product)
+                                    // }
                                    
                                     if (productInfo) {
                                         today = new Date().toLocaleString();
