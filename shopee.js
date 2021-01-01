@@ -1244,7 +1244,7 @@ runAllTime = async () => {
     try {
         let linkgetdataShopeeDir = ""
         let checkDcomOff
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "$san_pham=" + clickSanPham
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham
         console.log(linkgetdataShopeeDir)
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
@@ -1276,7 +1276,6 @@ runAllTime = async () => {
 
         if(clickSanPham == 1){
             keywords = products = dataShopee.products
-
         }else{
             dataShopee.keywords.forEach(item => {
                 keyword = item.username.split("\r")[0]
@@ -1440,7 +1439,7 @@ runAllTime = async () => {
                             }
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitFor(10000)
+                        await page.waitForTimeout(1000)
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
