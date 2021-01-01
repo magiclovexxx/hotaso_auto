@@ -1865,7 +1865,7 @@ runAllTime = async () => {
 
                                     // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
                                     product = products[0];
-                                    console.log(product.product_name)
+                                    console.log(product)
                                     await searchKeyWord(page, product.keyword)
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
@@ -1878,8 +1878,6 @@ runAllTime = async () => {
                                    
                                     if (productInfo) {
                                         today = new Date().toLocaleString();
-                                        console.log(productInfo)
-                                        
                                         productInfo.keyword = product.keyword
                                         productInfo.time = today
                                         productInfo.user = key[0]
@@ -1899,8 +1897,7 @@ runAllTime = async () => {
                                             console.log(error)
                                            
                                         }
-                                        console.log(productInfo)
-                                        process.exit()
+                                       
                                         products = await page.$$('[data-sqe="link"]')
 
                                         if (productInfo.vitri > 4 && productInfo.vitri < 45) {
