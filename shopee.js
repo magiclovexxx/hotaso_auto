@@ -1439,7 +1439,7 @@ runAllTime = async () => {
                             }
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitForTimeout(1000)
+                        await page.waitFor(2000)
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
