@@ -483,7 +483,7 @@ getproductByProductId = async (page, product) => {
         if(product_page2 == undefined){
             product_page2 = 0
         }
-        console.log(product_page2)
+        
         let productIds
       
         getProduct.forEach((item, index) => {
@@ -503,7 +503,9 @@ getproductByProductId = async (page, product) => {
                 }
             }
         })
-
+        if(product.max_page == 0 || product.max_page == null){
+            product.max_page = 5
+        }
         if (thuHangSanPham) {
             return thuHangSanPham;
         }else {           
@@ -589,7 +591,7 @@ getproductByOldIndex = async (page, product) => {
         if(product_page2 == undefined){
             product_page2 = 0
         }
-        console.log(product_page2)
+       
         let productIds
       
         getProduct.forEach((item, index) => {
@@ -1271,7 +1273,7 @@ runAllTime = async () => {
             idShops.push(item.fullname)
         })
     }
-        //    console.log(idShops)
+        
         keywords = []
 
         if(clickSanPham == 1){
@@ -1341,10 +1343,9 @@ runAllTime = async () => {
             console.log("Version hiện tai: " + checkVersion);
             newVersion = dataShopee.version;
             console.log("Version server: " + dataShopee.version);
-
+           
             // if (0) {
             if (newVersion !== checkVersion) {
-
                 console.log("Cập nhật code");
                 // Update version mới vào file version.txt
                 fs.writeFileSync('version.txt', newVersion)
@@ -1378,7 +1379,6 @@ runAllTime = async () => {
                     } else {
                         argsChrome = [
                             `--user-data-dir=${profileChrome}`,      // load profile chromium
-
                         ]
                     }
 
@@ -1487,8 +1487,7 @@ runAllTime = async () => {
                                 productIndexs = await getproductAdsDaLoaiTru(page, idShops)
                                 //
                                 console.log("---------- TypeClick = 1 Danh vi tri cac san pham ads đã loai tru ----------")
-                                console.log(productIndexs)
-
+                               
                                 // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
 
                                 indexClick = Math.floor(Math.random() * (productIndexs.length - 1))
@@ -1520,7 +1519,7 @@ runAllTime = async () => {
 
                                 if (productInfo.vitri) {
                                     console.log("---------- vi tri cac san pham cua shop ----------")
-                                    console.log(productInfo.vitri)
+                                   
                                     products = await page.$$('[data-sqe="link"]')
                                     // Click sản phẩm của shop
                                     products[productInfo.vitri].click()
@@ -1714,7 +1713,7 @@ runAllTime = async () => {
                                 productInfo = await getproduct(page, saveProduct, 6, idShops)
 
                                 if (productInfo) {
-                                    //  console.log(productInfo)
+                                    console.log(productInfo)
                                     fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
 
                                     var today = new Date().toLocaleString();
@@ -1875,8 +1874,8 @@ runAllTime = async () => {
                                     // }else{
                                     //     productInfo = await getproductByOldIndex(page, product)
                                     // }
-                                   
-                                    if (productInfo) {
+                                    console.log(productInfo)
+                                    if (productInfo.length && (productInfo.vitri!= "Not")) {
                                         today = new Date().toLocaleString();
                                         productInfo.keyword = product.keyword
                                         productInfo.time = today
@@ -1907,6 +1906,8 @@ runAllTime = async () => {
                                             await removeCart(page)
                                         }
 
+                                    }else{
+                                        console.log("Không tìm thấy sản phẩm")
                                     }
 
                                 } else {
