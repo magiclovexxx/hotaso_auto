@@ -3,8 +3,11 @@ var fs = require('fs');
 const axios = require('axios').default;
 const puppeteer = require('puppeteer');
 var cron = require('node-cron');
+var randomMac = require('random-mac');
 
 const exec = require('child_process').exec;
+const { spawn } = require('child_process');
+
 linkShopeeUpdate = "http://auto.tranquoctoan.com/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
 linkShopeeAccountUpdate = "http://auto.tranquoctoan.com/api_user/shopeeAccountUpdate" // Link update account shopee status
 linkShopeeUpdateAds = "http://auto.tranquoctoan.com/api_user/shopeeUpdateAds" // Link update shopee ads index
@@ -102,7 +105,7 @@ function GenDirToGetData(maxTab, listAccounts) {
 
     } else {
         savedid = [];
-        fs.writeFileSync('saveidshopee.txt', savedid)
+        fs.writeFileSync('saveidshopee.txt', savedid.toString())
         return false
     }
 }
@@ -452,7 +455,7 @@ getproductByProductId = async (page, product) => {
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout);
-       
+
         if (phobien) {
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
@@ -480,12 +483,12 @@ getproductByProductId = async (page, product) => {
         // tìm vị trí sản phẩm có tên cần click
         let page_link = await page.url()
         product_page2 = page_link.split("&page=")[1]
-        if(product_page2 == undefined){
+        if (product_page2 == undefined) {
             product_page2 = 0
         }
-        
+
         let productIds
-      
+
         getProduct.forEach((item, index) => {
             if ((index < 45) && (index > 4)) {
                 productIds = item.split(product.product_id)
@@ -503,13 +506,13 @@ getproductByProductId = async (page, product) => {
                 }
             }
         })
-        if(product.max_page == 0 || product.max_page == null){
+        if (product.max_page == 0 || product.max_page == null) {
             product.max_page = 5
         }
         if (thuHangSanPham) {
             return thuHangSanPham;
-        }else {           
-            if(product_page2 == product.max_page){
+        } else {
+            if (product_page2 == product.max_page) {
                 thuHangSanPham = {
                     sanpham: product.product_name,
                     id: productId,
@@ -525,7 +528,7 @@ getproductByProductId = async (page, product) => {
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                 await page.waitFor(timeout);
                 return await getproductByProductId(page, product)
-            } 
+            }
         }
 
     } catch (error) {
@@ -536,15 +539,15 @@ getproductByProductId = async (page, product) => {
 
 getproductByOldIndex = async (page, product) => {
     try {
-        console.log( "------ Tìm sản phẩm theo vị trí cũ ------")
+        console.log("------ Tìm sản phẩm theo vị trí cũ ------")
         let thuHangSanPham
         // Next dến trang có vị trí cũ của sản phẩm
         product_page = product.product_page
         product_index = product.product_index
-        check_page = Math.floor(product_page/5)
+        check_page = Math.floor(product_page / 5)
 
-        if(check_page > 1)
-        await page.waitForSelector('[data-sqe="name"]')
+        if (check_page > 1)
+            await page.waitForSelector('[data-sqe="name"]')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
@@ -560,7 +563,7 @@ getproductByOldIndex = async (page, product) => {
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout);
-       
+
         if (phobien) {
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
@@ -588,12 +591,12 @@ getproductByOldIndex = async (page, product) => {
         // tìm vị trí sản phẩm có tên cần click
         let page_link = await page.url()
         product_page2 = page_link.split("&page=")[1]
-        if(product_page2 == undefined){
+        if (product_page2 == undefined) {
             product_page2 = 0
         }
-       
+
         let productIds
-      
+
         getProduct.forEach((item, index) => {
             if ((index < 45) && (index > 4)) {
                 productIds = item.split(product.product_id)
@@ -614,8 +617,8 @@ getproductByOldIndex = async (page, product) => {
 
         if (thuHangSanPham) {
             return thuHangSanPham;
-        }else {           
-            if(product_page2 == 99){
+        } else {
+            if (product_page2 == 99) {
                 thuHangSanPham = {
                     sanpham: product.product_name,
                     id: productId,
@@ -625,7 +628,7 @@ getproductByOldIndex = async (page, product) => {
                 }
                 return thuHangSanPham;
             }
-            
+
         }
 
     } catch (error) {
@@ -1239,6 +1242,39 @@ function generateRandom(min, max, num1, limit) {
     }
 }
 
+
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+genRandomMac = () => {
+    const os = require('os');
+    keyRandomMac2 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+    keyRandomMac = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+    let commandLineChange = ""
+    let macAndress = ""
+
+    macAndress = "XX:XX:XX:XX:XX:XX".replace(/X/g, function () {
+        return "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16))
+    });
+
+    macAndress = randomMac()
+    console.log(macAndress)
+
+    netName = os.networkInterfaces()
+    netName = Object.keys(netName)[1]
+
+    commandLineChange = {
+        netword: netName,
+        mac: macAndress
+    }
+    //commandLineChange = "tmac -n "+netName + " -m " + macAndress + " -re -s"
+    // console.log(commandLineChange);
+    return commandLineChange
+}
+
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
@@ -1265,33 +1301,33 @@ runAllTime = async () => {
             return false
         }
         dataShopee = getDataShopee.data
-        if(clickSanPham != 1){
-        idShops = []
-        
-        dataShopee.shops.forEach(item => {
-            idShop = item.fullname.split("\r")[0]
-            idShops.push(item.fullname)
-        })
-    }
-        
+        if (clickSanPham != 1) {
+            idShops = []
+
+            dataShopee.shops.forEach(item => {
+                idShop = item.fullname.split("\r")[0]
+                idShops.push(item.fullname)
+            })
+        }
+
         keywords = []
 
-        if(clickSanPham == 1){
+        if (clickSanPham == 1) {
             keywords = products = dataShopee.products
-        }else{
+        } else {
             dataShopee.keywords.forEach(item => {
                 keyword = item.username.split("\r")[0]
                 keywords.push(keyword)
             })
         }
-        
-        if(clickSanPham != 1){
-        shopsLoaiTru = []
-        dataShopee.shops.forEach(item => {
-            idShop = item.fullname.split("\r")[0]
-            shopsLoaiTru.push(item.fullname)
-        })
-    }
+
+        if (clickSanPham != 1) {
+            shopsLoaiTru = []
+            dataShopee.shops.forEach(item => {
+                idShop = item.fullname.split("\r")[0]
+                shopsLoaiTru.push(item.fullname)
+            })
+        }
         if (typeClick == 1) {
             indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
         }
@@ -1324,9 +1360,27 @@ runAllTime = async () => {
 
 
     try {
+
         console.log("----------- START SHOPEE ---------------")
 
         data = GenDirToGetData(maxTab, accounts)
+        //  console.log()
+        commandChangeMac = genRandomMac();
+        console.log(commandChangeMac);
+
+        // Đổi mac máy
+
+        exec(`"changemac.bat" "${commandChangeMac.netword}" ${commandChangeMac.mac}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(stdout);
+        });
+
+        await sleep(5000)
+
+        //process.exit();
 
         if (data) {
 
@@ -1343,7 +1397,7 @@ runAllTime = async () => {
             console.log("Version hiện tai: " + checkVersion);
             newVersion = dataShopee.version;
             console.log("Version server: " + dataShopee.version);
-           
+
             // if (0) {
             if (newVersion !== checkVersion) {
                 console.log("Cập nhật code");
@@ -1359,16 +1413,22 @@ runAllTime = async () => {
                 });
                 return false
             }
+
+            console.log("data:--------")
+
             data.forEach(async (key, index) => {   // Foreach object Chạy song song các tab chromium
 
                 // Nếu có dữ liệu schedule trả về
                 key = key.split("\t")
-                let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
 
                 if (clickAds == 1) {
                     console.log("----- START CLICK ADS -----")
                     //   extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                     extension = ""
+
+                    let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
+                    console.log("Profile chrome link: " + profileChrome)
+                    
                     if (extension) {
                         extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                         argsChrome = [
@@ -1487,7 +1547,7 @@ runAllTime = async () => {
                                 productIndexs = await getproductAdsDaLoaiTru(page, idShops)
                                 //
                                 console.log("---------- TypeClick = 1 Danh vi tri cac san pham ads đã loai tru ----------")
-                               
+
                                 // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
 
                                 indexClick = Math.floor(Math.random() * (productIndexs.length - 1))
@@ -1519,7 +1579,7 @@ runAllTime = async () => {
 
                                 if (productInfo.vitri) {
                                     console.log("---------- vi tri cac san pham cua shop ----------")
-                                   
+
                                     products = await page.$$('[data-sqe="link"]')
                                     // Click sản phẩm của shop
                                     products[productInfo.vitri].click()
@@ -1617,7 +1677,7 @@ runAllTime = async () => {
 
                 } else
                     if (phobien == 1) {
-
+                        let profileChrome = profileDir + key[0]
                         const browser = await puppeteer.launch({
                             executablePath: chromiumDir,
                             headless: false,
@@ -1785,6 +1845,9 @@ runAllTime = async () => {
                     } else {
 
                         console.log("----------- CLICK ALL SẢN PHẨM ---------------")
+
+                        let profileChrome = profileDir + key[0]
+                        console.log("Profile chrome link: " + profileChrome)
                         const browser = await puppeteer.launch({
                             executablePath: chromiumDir,
                             headless: false,
@@ -1863,7 +1926,12 @@ runAllTime = async () => {
                                     // server check tài khoản còn tiền để sử dụng không
 
                                     // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
-                                    product = products[0];
+                                    if (indexx < products.length) {
+                                        product = products[index];
+                                    } else {
+                                        product = products[0];
+                                    }
+
                                     console.log(product)
                                     await searchKeyWord(page, product.keyword)
                                     // Check vị trí sản phẩm theo page, index
@@ -1875,13 +1943,13 @@ runAllTime = async () => {
                                     //     productInfo = await getproductByOldIndex(page, product)
                                     // }
                                     console.log(productInfo)
-                                    if (productInfo.length && (productInfo.vitri!= "Not")) {
+                                    if (productInfo.length && (productInfo.vitri != "Not")) {
                                         today = new Date().toLocaleString();
                                         productInfo.keyword = product.keyword
                                         productInfo.time = today
                                         productInfo.user = key[0]
                                         //productInfo.pass = key[1]
-                                       
+
                                         try {
                                             let datatest = await axios.get(shopeeUpdateSeoSanPhamDir, {
                                                 params: {
@@ -1894,9 +1962,9 @@ runAllTime = async () => {
                                         } catch (error) {
                                             console.log("Không gửi được dữ liệu thứ hạng mới đến server")
                                             console.log(error)
-                                           
+
                                         }
-                                       
+
                                         products = await page.$$('[data-sqe="link"]')
 
                                         if (productInfo.vitri > 4 && productInfo.vitri < 45) {
@@ -1906,7 +1974,7 @@ runAllTime = async () => {
                                             await removeCart(page)
                                         }
 
-                                    }else{
+                                    } else {
                                         console.log("Không tìm thấy sản phẩm")
                                     }
 
