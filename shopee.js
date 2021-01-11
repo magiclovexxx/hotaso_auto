@@ -1264,10 +1264,18 @@ genRandomMac = () => {
     console.log(macAndress)
 
     netName = os.networkInterfaces()
-    netName = Object.keys(netName)[1]
-
+    netName = Object.keys(netName).forEach(key =>{
+       
+        ipAddress = netName[key][1].address
+       
+        if(ipAddress.split("192.168").length > 1){
+            currentNet = key
+            console.log(key)
+        }
+    })
+   
     commandLineChange = {
-        netword: netName,
+        netword: currentNet,
         mac: macAndress
     }
     //commandLineChange = "tmac -n "+netName + " -m " + macAndress + " -re -s"
@@ -1428,7 +1436,7 @@ runAllTime = async () => {
 
                     let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
                     console.log("Profile chrome link: " + profileChrome)
-                    
+
                     if (extension) {
                         extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                         argsChrome = [
