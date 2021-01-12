@@ -1378,15 +1378,15 @@ runAllTime = async () => {
 
         // Đổi mac máy
 
-        exec(`"changemac.bat" "${commandChangeMac.netword}" ${commandChangeMac.mac}`, (err, stdout, stderr) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log(stdout);
-        });
+        // exec(`"changemac.bat" "${commandChangeMac.netword}" ${commandChangeMac.mac}`, (err, stdout, stderr) => {
+        //     if (err) {
+        //         console.error(err);
+        //         return;
+        //     }
+        //     console.log(stdout);
+        // });
 
-        await sleep(5000)
+        // await sleep(5000)
 
         //process.exit();
 
