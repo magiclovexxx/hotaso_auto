@@ -7,6 +7,8 @@ var randomMac = require('random-mac');
 
 const exec = require('child_process').exec;
 const { spawn } = require('child_process');
+const randomUseragent = require('random-useragent');
+
 
 linkShopeeUpdate = "http://auto.tranquoctoan.com/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
 linkShopeeAccountUpdate = "http://auto.tranquoctoan.com/api_user/shopeeAccountUpdate" // Link update account shopee status
@@ -161,14 +163,16 @@ loginShopee = async (page, accounts) => {
             accountText = accounts[0] + "\t" + accounts[1]
             indexAccount = AllAccounts.indexOf(accountText)
             AllAccounts.splice(indexAccount, 1)
-
+                        
             AllAccounts.forEach((acc, index) => {
-                if (index == 0) {
+                if (index == 0 && acc!="") {
                     fs.writeFileSync("shopee.txt", acc + "\n")
-                } else {
+                } else if(acc!="" && index == (AllAccounts.length-1) ){
+                    fs.appendFileSync('shopee.txt', acc)
+                }
+                else if(acc!="") {
                     fs.appendFileSync('shopee.txt', acc + "\n")
                 }
-
             })
             console.log("account bi hỏi mã")
             fs.appendFileSync('accountBlock.txt', 'Account bi hỏi mã' + "\n")
@@ -179,21 +183,23 @@ loginShopee = async (page, accounts) => {
 
         checkblock = await page.$('[role="alert"]')
         if (checkblock) {
-            console.log("account bi block")
+            console.log("account bị block")
             accountText = accounts[0] + "\t" + accounts[1]
-            indexAccount = AllAccounts.indexOf(accountText)
-
+            indexAccount = AllAccounts.indexOf(accountText)            
             AllAccounts.splice(indexAccount, 1)
 
             AllAccounts.forEach((acc, index) => {
-                if (index == 0) {
+                if (index == 0 && acc!="") {
                     fs.writeFileSync("shopee.txt", acc + "\n")
-                } else {
+                } else if(acc!="" && index == (AllAccounts.length-1) ){
+                    fs.appendFileSync('shopee.txt', acc)
+                }
+                else if(acc!="") {
                     fs.appendFileSync('shopee.txt', acc + "\n")
                 }
 
             })
-            fs.appendFileSync('accountBlock.txt', 'Account bi khoá' + "\n")
+            fs.appendFileSync('accountBlock.txt', 'Account bị khoá' + "\n")
             fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
 
             return false
@@ -204,17 +210,20 @@ loginShopee = async (page, accounts) => {
         } catch (error) {
             accountText = accounts[0] + "\t" + accounts[1]
             indexAccount = AllAccounts.indexOf(accountText)
+            
             AllAccounts.splice(indexAccount, 1)
-
             AllAccounts.forEach((acc, index) => {
-                if (index == 0) {
+                if (index == 0 && acc!="") {
                     fs.writeFileSync("shopee.txt", acc + "\n")
-                } else {
+                } else if(acc!="" && index == (AllAccounts.length-1) ){
+                    fs.appendFileSync('shopee.txt', acc)
+                }
+                else if(acc!="") {
                     fs.appendFileSync('shopee.txt', acc + "\n")
                 }
 
             })
-            console.log("account bi block")
+            console.log("account bị block")
             fs.appendFileSync('accountBlock.txt', 'Account bi khoá' + "\n")
             fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
 
@@ -1163,6 +1172,24 @@ removeCart = async (page) => {
     }
 }
 
+orderProduct = async (page) => {
+    // check đầy giỏ hàng
+
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitFor(timeout)
+    await page.keyboard.press('Home');
+    checkcart = typeof 123
+
+
+    await page.click('.btn-solid-primary')
+
+    timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+    await page.waitFor(timeout)
+    await page.click('.shopee-button-solid--primary')
+
+
+}
+
 
 checkDcomconnect = async (profileDir) => {
     profileDirTest = profileDir + "test"
@@ -1176,7 +1203,11 @@ checkDcomconnect = async (profileDir) => {
     });
 
     const page = (await browser.pages())[0];
-
+    userAgent = randomUseragent.getRandom(function (ua) {
+        return ua.browserName === 'Chrome';
+    });
+    await page.setUserAgent(userAgent)
+    console.log(userAgent.userAgent)
     // Random kích cỡ màn hình
     width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
     height = Math.floor(Math.random() * (800 - 600)) + 600;;
@@ -1261,19 +1292,14 @@ genRandomMac = () => {
     });
 
     macAndress = randomMac()
-    console.log(macAndress)
-
     netName = os.networkInterfaces()
-    netName = Object.keys(netName).forEach(key =>{
-       
+    netName = Object.keys(netName).forEach(key => {
         ipAddress = netName[key][1].address
-       
-        if(ipAddress.split("192.168").length > 1){
-            currentNet = key
-            console.log(key)
+        if (ipAddress.split("192.168").length > 1) {
+            currentNet = key           
         }
     })
-   
+
     commandLineChange = {
         netword: currentNet,
         mac: macAndress
@@ -1323,9 +1349,13 @@ runAllTime = async () => {
         if (clickSanPham == 1) {
             keywords = products = dataShopee.products
         } else {
+         //   console.log(dataShopee.keywords)
+
             dataShopee.keywords.forEach(item => {
-                keyword = item.username.split("\r")[0]
-                keywords.push(keyword)
+
+                    keyword = item.keyword.split("\r")[0]
+                    keywords.push(keyword)
+                
             })
         }
 
@@ -1374,7 +1404,7 @@ runAllTime = async () => {
         data = GenDirToGetData(maxTab, accounts)
         //  console.log()
         commandChangeMac = genRandomMac();
-        console.log(commandChangeMac);
+        //console.log(data);
 
         // Đổi mac máy
 
@@ -1457,7 +1487,11 @@ runAllTime = async () => {
                         args: argsChrome
                     });
                     const page = (await browser.pages())[0];
-
+                    userAgent = randomUseragent.getRandom(function (ua) {
+                        return ua.browserName === 'Chrome';
+                    });
+                    await page.setUserAgent(userAgent)
+                    console.log(userAgent.userAgent)
                     // Random kích cỡ màn hình
                     width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
                     height = Math.floor(Math.random() * (800 - 600)) + 600;;
@@ -1696,6 +1730,11 @@ runAllTime = async () => {
                         });
 
                         const page = (await browser.pages())[0];
+                        userAgent = randomUseragent.getRandom(function (ua) {
+                            return ua.browserName === 'Chrome';
+                        });
+                        
+                        await page.setUserAgent(userAgent)                        
 
                         // Random kích cỡ màn hình
                         width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
@@ -1705,7 +1744,7 @@ runAllTime = async () => {
                             width: width,
                             height: height
                         });
-
+                       
                         try {
                             if ((index == 0) && (mode !== "DEV")) {
                                 // đổi ip
@@ -1866,7 +1905,11 @@ runAllTime = async () => {
                         });
 
                         const page = (await browser.pages())[0];
-
+                        userAgent = randomUseragent.getRandom(function (ua) {
+                            return ua.browserName === 'Chrome';
+                        });
+                        await page.setUserAgent(userAgent)
+                        console.log(userAgent.userAgent)
                         // Random kích cỡ màn hình
                         width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
                         height = Math.floor(Math.random() * (800 - 600)) + 600;;
