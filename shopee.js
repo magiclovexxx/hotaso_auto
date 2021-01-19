@@ -1353,7 +1353,7 @@ runAllTime = async () => {
 
             dataShopee.keywords.forEach(item => {
 
-                    keyword = item.keyword.split("\r")[0]
+                    keyword = item.username.split("\r")[0]
                     keywords.push(keyword)
                 
             })
