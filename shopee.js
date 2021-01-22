@@ -751,33 +751,31 @@ getproductAdsDaLoaiTru = async (page, idShops) => {
             })
             return listProductLinks
         })
-
         productIndexs = []
         // tìm vị trí sản phẩm ads có id shop
         let productIds
 
-        for (let i = 0; i <= 4; i++) {
-            idShops.forEach((shop) => {
-                productIds = getProduct[i].split(shop + ".")
-                if (productIds.length < 2) {
+        idShops.forEach((shop) => {
+            for (let i = 0; i <= 4; i++) {
+                productIds = getProduct[i].includes(shop)
+                if (!productIds) {
                     productIndexs.push(i)
                 }
                 productIds = 0
-            })
-        }
+            }
+        })
 
-        for (let j = 45; j <= 49; j++) {
-            idShops.forEach((shop2) => {
-                productIds = getProduct[j].split(shop2 + ".")
-                if (productIds.length < 2) {
+        idShops.forEach((shop2) => {
+            for (let j = 45; j <= 49; j++) {
+                productIds = getProduct[j].includes(shop2)
+                if (!productIds) {
                     productIndexs.push(j)
                 }
                 productIds = 0
-            })
-        }
+            }
+        })
 
         return productIndexs
-
     } catch (error) {
         console.log(error)
         return false
@@ -1769,11 +1767,11 @@ runAllTime = async () => {
 
                                     await actionShopee(page, 1)
                                     if (productInfo.randomOrder > 1) {
-                                        randomOrder = Math.floor(Math.random() * (productInfo.randomOrder))
+                                        randomOrder = Math.floor(Math.random() * (productInfo.randomOrder+1))
                                         if (randomOrder % productInfo.randomOrder == 0)
                                             await orderProduct(page)
                                     }
-                                    await viewShop(page,productLink)
+                                    await viewShop(page, productLink)
                                     await page.waitFor(1000);
                                     await page.keyboard.press('PageDown');
                                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000
@@ -2003,13 +2001,13 @@ runAllTime = async () => {
                                         await actionShopee(page)
                                         await page.waitFor(1000);
                                         if (productInfo.randomOrder > 1) {
-                                            randomOrder = Math.floor(Math.random() * (productInfo.randomOrder))
+                                            randomOrder = Math.floor(Math.random() * (productInfo.randomOrder+1))
                                             if (randomOrder % productInfo.randomOrder == 0)
                                                 await orderProduct(page)
                                         }
 
                                         if (lienQuan != 1) {
-                                            await viewShop(page,productLink)
+                                            await viewShop(page, productLink)
                                         }
                                         await removeCart(page)
                                     }
@@ -2258,11 +2256,11 @@ runAllTime = async () => {
                                             await actionShopee(page)
                                             await page.waitFor(1000);
                                             if (productInfo.randomOrder > 1) {
-                                                randomOrder = Math.floor(Math.random() * (productInfo.randomOrder))
+                                                randomOrder = Math.floor(Math.random() * (productInfo.randomOrder+1))
                                                 if (randomOrder % productInfo.randomOrder == 0)
                                                     await orderProduct(page)
                                             }
-                                            await viewShop(page,productLink)
+                                            await viewShop(page, productLink)
                                             await removeCart(page)
                                         }
                                     } else {
