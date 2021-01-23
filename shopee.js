@@ -243,7 +243,6 @@ searchKeyWord = async (page, keyword) => {
     timeout = Math.floor(Math.random() * (2000 - 100)) + 500;
     await page.waitFor(timeout);
     const checkSearchInput = await page.$$('.shopee-searchbar-input__input');
-
     if (checkSearchInput.length) {
         await page.click('.shopee-searchbar-input__input')
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -403,7 +402,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
                                 sanpham: getProduct[productIndex],
                                 id: productId,
                                 shopId: shop.fullname,
-                                trang: (6 - limit),
+                                trang: (shop.pages - limit),
                                 vitri: productIndex,
                                 randomOrder: shop.twofa
                             }
@@ -415,12 +414,21 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         })
 
         if (thuHangSanPham) {
+            console.log("---------- vi tri cac san pham cua shop ----------")
+            console.log(thuHangSanPham)
             return thuHangSanPham;
         }
+        //     if(!xxx){
+        //         if(shop.pages && limit>shop.pages){
+        //             limit=shop.pages
+        //         }           
+        //     }
+        //    xxx = 1
 
         if (limit == 0) {
             return false
         } else {
+
             limit -= 1;
             next = await page.$$('.shopee-icon-button--right')
             if (next.length) {
@@ -438,6 +446,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         console.log(error)
         return false
     }
+
 }
 
 getproductByProductId = async (page, product) => {
@@ -934,7 +943,9 @@ chooseVariation = async (page, limit) => {
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout)
         varitation = Math.floor(Math.random() * (varitations.length - 1))
-        await varitations[varitation].click()
+        if (varitations[varitation]) {
+            await varitations[varitation].click()
+        }
     }
 
     checkSelected = await page.$$('.product-variation--selected')
@@ -1166,11 +1177,15 @@ removeCart = async (page) => {
             await actionDeletes[i - 1].click();
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
             await page.waitFor(timeout)
-            await page.click('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
+            checkcart2 = await page.$$('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
+            if (checkcart2.length) {
+                await checkcart2.click()
+            } else {
+                break
+            }
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
             await page.waitFor(timeout)
         }
-
     }
 }
 
@@ -1306,24 +1321,30 @@ orderProduct = async (page) => {
     // Click dat hang
     btnThanhToan = await page.$$('.stardust-button--primary.stardust-button--large')
     btnThanhToan[0].click()
-    btnHuyDon = Math.floor(Math.random() * (5500 - 5000)) + 5000;
+    timeout = Math.floor(Math.random() * (5500 - 5000)) + 5000;
     await page.waitFor(timeout)
     //huy don hang
-    btnHuyDon = await page.$$('.shopee-button-outline.shopee-button-outline--fill.shopee-button-outline--primary')
-    btnHuyDon[1].click()
-    timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-    await page.waitFor(timeout)
+    btnHuyDon = await page.$$('.shopee-button-outline--primary')
+    
+    if (btnHuyDon.length) {
 
-    btnOptHuyDon = await page.$$('.stardust-radio')
-    randomOptionHuyDon = Math.floor(Math.random() * (btnOptHuyDon.length - 1))
-    btnOptHuyDon[randomOptionHuyDon].click()
+        btnHuyDon[1].click()
+        timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+        await page.waitFor(timeout)
 
-    timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-    await page.waitFor(timeout)
-    btnHuyDonHang = await page.$$('.shopee-alert-popup>div>.shopee-button-solid.shopee-button-solid--primary')
-    btnHuyDonHang[0].click()
-    timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-    await page.waitFor(timeout)
+        btnOptHuyDon = await page.$$('.stardust-radio')
+        randomOptionHuyDon = Math.floor(Math.random() * (btnOptHuyDon.length - 1))
+        btnOptHuyDon[randomOptionHuyDon].click()
+
+        timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+        await page.waitFor(timeout)
+        btnHuyDonHang = await page.$$('.shopee-alert-popup>div>.shopee-button-solid.shopee-button-solid--primary')
+        btnHuyDonHang[0].click()
+        timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+        await page.waitFor(timeout)
+    }else{
+        console.log("Không tìm thấy nút huỷ đơn")
+    }    
 }
 
 
@@ -1475,8 +1496,10 @@ runAllTime = async () => {
             idShops = []
             idShopsfull = dataShopee.shops
             dataShopee.shops.forEach(item => {
-                idShop = item.fullname.split("\r")[0]
-                idShops.push(item.fullname)
+                if (item.fullname) {
+                    idShop = item.fullname.split("\r")[0]
+                    idShops.push(item.fullname)
+                }
             })
         }
 
@@ -1488,10 +1511,10 @@ runAllTime = async () => {
             //   console.log(dataShopee.keywords)
 
             dataShopee.keywords.forEach(item => {
-
-                keyword = item.username.split("\r")[0]
-                keywords.push(keyword)
-
+                if (item.username) {
+                    keyword = item.username.split("\r")[0]
+                    keywords.push(keyword)
+                }
             })
         }
 
@@ -1540,21 +1563,7 @@ runAllTime = async () => {
         data = GenDirToGetData(maxTab, accounts)
         //  console.log()
         commandChangeMac = genRandomMac();
-        //console.log(data);
-
-        // Đổi mac máy
-
-        // exec(`"changemac.bat" "${commandChangeMac.netword}" ${commandChangeMac.mac}`, (err, stdout, stderr) => {
-        //     if (err) {
-        //         console.error(err);
-        //         return;
-        //     }
-        //     console.log(stdout);
-        // });
-
-        // await sleep(5000)
-
-        //process.exit();
+        console.log(idShopsfull);
 
         if (data) {
 
@@ -1753,11 +1762,9 @@ runAllTime = async () => {
                             } else if (lienQuan == 1) {
                                 saveProduct = []
                                 // Lấy mảng vị trí các sp trong phần ads thuộc các shop
-                                productInfo = await getproduct(page, saveProduct, 6, idShopsfull)
+                                productInfo = await getproduct(page, saveProduct, 10, idShopsfull)
 
                                 if (productInfo.vitri) {
-                                    console.log("---------- vi tri cac san pham cua shop ----------")
-
                                     products = await page.$$('[data-sqe="link"]')
                                     // Click sản phẩm của shop
                                     products[productInfo.vitri].click()
@@ -1766,8 +1773,8 @@ runAllTime = async () => {
                                     productLink = await page.url()
 
                                     await actionShopee(page, 1)
-                                    if (productInfo.randomOrder > 1) {
-                                        randomOrder = Math.floor(Math.random() * (productInfo.randomOrder+1))
+                                    if (productInfo.randomOrder >= 1) {
+                                        randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                         if (randomOrder % productInfo.randomOrder == 0)
                                             await orderProduct(page)
                                     }
@@ -1962,13 +1969,10 @@ runAllTime = async () => {
                                 // danh sách product không nằm trong file saveproduct.txt
 
                                 //lấy danh sách product thuộc các id shop của cùng 1 người dùng                   
-
-                                productInfo = await getproduct(page, saveProduct, 6, idShopsfull)
+                                productInfo = await getproduct(page, saveProduct, 10, idShopsfull)
 
                                 if (productInfo) {
-                                    console.log(productInfo)
                                     fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
-
                                     var today = new Date().toLocaleString();
                                     productInfo.keyword = "Sản phẩm phổ biến"
                                     productInfo.time = today
@@ -1976,7 +1980,6 @@ runAllTime = async () => {
                                     productInfo.pass = key[1]
                                     // lưu thứ hạng sản phẩm theo từ khoá vào file
                                     fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
-
                                     try {
                                         let datatest = await axios.get(linkShopeeUpdate, {
                                             params: {
@@ -1992,7 +1995,6 @@ runAllTime = async () => {
                                     }
 
                                     products = await page.$$('[data-sqe="link"]')
-
                                     if (productInfo.vitri > 4 && productInfo.vitri < 45) {
                                         products[productInfo.vitri].click()
                                         timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
@@ -2000,8 +2002,8 @@ runAllTime = async () => {
                                         productLink = await page.url()
                                         await actionShopee(page)
                                         await page.waitFor(1000);
-                                        if (productInfo.randomOrder > 1) {
-                                            randomOrder = Math.floor(Math.random() * (productInfo.randomOrder+1))
+                                        if (productInfo.randomOrder >= 1) {
+                                            randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                             if (randomOrder % productInfo.randomOrder == 0)
                                                 await orderProduct(page)
                                         }
@@ -2196,11 +2198,12 @@ runAllTime = async () => {
                                     saveKeyword = saveKeyword.split("\n")
                                     if (saveKeyword.length >= keywords.length) {
                                         saveKeyword = [];
-                                        fs.writeFileSync('saveKeyword.txt', saveKeyword)
+                                        fs.writeFileSync('saveKeyword.txt', saveKeyword.toString())
                                     }
 
                                     // danh sách keyword không nằm trong file savekeyword.txt
                                     let keywordNotSave = []
+                                    console.log(keywords)
                                     keywords.forEach(item => {
                                         if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
                                             keywordNotSave.push(item);
@@ -2221,11 +2224,10 @@ runAllTime = async () => {
 
                                     // danh sách product không nằm trong file saveproduct.txt
 
-                                    productInfo = await getproduct(page, saveProduct, 6, idShopsfull)
+                                    productInfo = await getproduct(page, saveProduct, 10, idShopsfull)
 
                                     if (productInfo) {
                                         today = new Date().toLocaleString();
-                                        console.log(productInfo)
                                         fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
                                         productInfo.keyword = keywordNotSave[randomkey]
                                         productInfo.time = today
@@ -2255,8 +2257,9 @@ runAllTime = async () => {
                                             productLink = await page.url()
                                             await actionShopee(page)
                                             await page.waitFor(1000);
-                                            if (productInfo.randomOrder > 1) {
-                                                randomOrder = Math.floor(Math.random() * (productInfo.randomOrder+1))
+                                            if (productInfo.randomOrder >= 1) {
+                                                // Đặt hàng
+                                                randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0)
                                                     await orderProduct(page)
                                             }
