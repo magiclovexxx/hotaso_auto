@@ -52,6 +52,10 @@ function GenDirToGetData(maxTab, listAccounts) {
     }
 
     var savedid = fs.readFileSync("saveidshopee.txt", { flag: "as+" });
+    if ((savedid.length + maxTab) >= (listAccounts.length - 1)) {  // reset file saveid về trống khi số lượng đã bằng với số lượng tk của trường PROFILE trong file .ENV
+        savedid = [];
+        fs.writeFileSync('saveidshopee.txt', savedid.toString())
+    }
     if (savedid) {
         savedid = savedid.toString();
         savedid = savedid.split("\n");
@@ -64,10 +68,7 @@ function GenDirToGetData(maxTab, listAccounts) {
     idnotsave = [];
     idCanUser = [];
     // mảng
-    if ((savedid.length + maxTab) >= (listAccounts.length - 1)) {  // reset file saveid về trống khi số lượng đã bằng với số lượng tk của trường PROFILE trong file .ENV
-        savedid = [];
-        fs.writeFileSync('saveidshopee.txt', savedid.toString())
-    }
+
     let accountnNotBlock = []
     // lấy các profile chưa có trong file block account
     listAccounts.forEach(item => {
@@ -124,8 +125,14 @@ loginShopee = async (page, accounts) => {
         await page.mouse.click(10, 30)
         timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitFor(timeout)
-        const loginclass = await page.$$('.navbar__link--account');
-        await loginclass[1].click()
+        loginclass = await page.$$('.navbar__link--account');
+        if (loginclass.length) {
+            await loginclass[1].click()
+        } else {
+            console.log("Không tìm thấy nút login")
+            return 0
+        }
+
         timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
         await page.waitFor(timeout)
 
@@ -698,9 +705,11 @@ getproductAds = async (page, idShops, limit) => {
 
         for (let i = 45; i <= 49; i++) {
             idShops.forEach((shop) => {
-                productIds = getProduct[i].includes(shop)
-                if (productIds == true) {
-                    productIndexs.push(i)
+                if (getProduct[i]) {
+                    productIds = getProduct[i].includes(shop)
+                    if (productIds == true) {
+                        productIndexs.push(i)
+                    }
                 }
             })
         }
@@ -757,26 +766,37 @@ getproductAdsDaLoaiTru = async (page, idShops) => {
         productIndexs = []
         // tìm vị trí sản phẩm ads có id shop
         let productIds
-
-        idShops.forEach((shop) => {
-            for (let i = 0; i <= 4; i++) {
+        for (let i = 0; i <= 4; i++) {
+            checkshop = 0
+            idShops.forEach((shop) => {
+                productIds = 0
                 productIds = getProduct[i].includes(shop)
-                if (productIds == false) {
-                    productIndexs.push(i)
+                if (productIds == true) {
+                    checkshop = 1
                 }
-                productIds = 0
+            })
+            if (checkshop == 0) {
+                productIndexs.push(i)
             }
-        })
-        productIds=0
-        idShops.forEach((shop2) => {
-            for (let j = 45; j <= 49; j++) {
-                productIds = getProduct[j].includes(shop2)
-                if (productIds == false) {
-                    productIndexs.push(j)
+        }
+        productIds = 0
+
+        for (let i = 45; i <= 49; i++) {
+            checkshop = 0
+            idShops.forEach((shop) => {
+                productIds = 0
+                if (getProduct[i]) {
+                    productIds = getProduct[i].includes(shop)
+                    if (productIds == true) {
+                        checkshop = 1
+                    }
                 }
-                productIds = 0
+            })
+            if (checkshop == 0) {
+                productIndexs.push(i)
             }
-        })
+        }
+
 
         return productIndexs
     } catch (error) {
@@ -820,18 +840,22 @@ getproductAdsClickShop = async (page, idShops, limit) => {
         let productIds
         for (let i = 0; i <= 4; i++) {
             idShops.forEach((shop) => {
-                productIds = getProduct[i].includes(shop)
-                if (productIds== true) {
-                    productIndexs.push(i)
+                if (getProduct[i]) {
+                    productIds = getProduct[i].includes(shop)
+                    if (productIds == true) {
+                        productIndexs.push(i)
+                    }
                 }
             })
         }
 
         for (let i = 45; i <= 49; i++) {
             idShops.forEach((shop) => {
-                productIds = getProduct[i].includes(shop)
-                if (productIds== true) {
-                    productIndexs.push(i)
+                if (getProduct[i]) {
+                    productIds = getProduct[i].includes(shop)
+                    if (productIds == true) {
+                        productIndexs.push(i)
+                    }
                 }
             })
         }
@@ -1319,7 +1343,7 @@ orderProduct = async (page) => {
     await page.waitFor(timeout)
     //huy don hang
     btnHuyDon = await page.$$('.shopee-button-outline--primary')
-    
+
     if (btnHuyDon.length) {
 
         btnHuyDon[1].click()
@@ -1336,9 +1360,9 @@ orderProduct = async (page) => {
         btnHuyDonHang[0].click()
         timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
         await page.waitFor(timeout)
-    }else{
+    } else {
         console.log("Không tìm thấy nút huỷ đơn")
-    }    
+    }
 }
 
 
@@ -1553,34 +1577,25 @@ runAllTime = async () => {
     try {
         orderStatus = 1
         console.log("----------- START SHOPEE ---------------")
-
         data = GenDirToGetData(maxTab, accounts)
         //  console.log()
         commandChangeMac = genRandomMac();
-        console.log(idShopsfull);
-
         if (data) {
-
             // get version hien tai trong file version.txt
             var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
-
             if (checkVersion) {
                 checkVersion = checkVersion.toString();
-
             } else {
                 checkVersion = ""
             }
-
             console.log("Version hiện tai: " + checkVersion);
             newVersion = dataShopee.version;
             console.log("Version server: " + dataShopee.version);
-
             // if (0) {
             if (newVersion !== checkVersion) {
                 console.log("Cập nhật code");
                 // Update version mới vào file version.txt
                 fs.writeFileSync('version.txt', newVersion)
-
                 const myShellScript = exec('update.sh /');
                 myShellScript.stdout.on('data', (data) => {
                     // do whatever you want here with data
@@ -1602,10 +1617,8 @@ runAllTime = async () => {
                     console.log("----- START CLICK ADS -----")
                     //   extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                     extension = ""
-
                     let profileChrome = profileDir + key[0]        // Link profile chromium của từng tài khoản facebook
                     console.log("Profile chrome link: " + profileChrome)
-
                     if (extension) {
                         extension = __dirname + "\\extension\\autoshopee\\1.7.5_0"
                         argsChrome = [
@@ -1728,26 +1741,26 @@ runAllTime = async () => {
                                 productIndexs = await getproductAdsDaLoaiTru(page, idShops)
                                 //
                                 console.log("---------- TypeClick = 1 Danh vi tri cac san pham ads đã loai tru ----------")
-
+                                console.log(productIndexs)
                                 // Tạo ngẫu nhiên 1 vị trí sp trong ads không thuộc các shop 
 
                                 indexClick = Math.floor(Math.random() * (productIndexs.length - 1))
                                 products = await page.$$('[data-sqe="link"]')
                                 console.log("Vị trí sản phẩm ads sắp click: " + productIndexs[indexClick])
-                                products[productIndexs[indexClick]].click()
+                                await products[productIndexs[indexClick]].click()
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                                 console.log("---------- Link sản phẩm click ads ----------")
                                 currentUrl = await page.url()
                                 console.log(currentUrl)
-                                let checkvariationAds = chooseVariation(page, 5)
+                                let checkvariationAds = await chooseVariation(page, 5)
                                 timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
                                 await page.waitFor(timeout)
                                 await page.keyboard.press('PageDown');
                                 timeout = Math.floor(Math.random() * (30000 - 20000)) + 20000
                                 await page.waitFor(timeout)
                                 await page.keyboard.press('PageDown');
-                                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                                timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
                                 await page.waitFor(timeout)
                                 await page.keyboard.press('PageDown');
                                 timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000
