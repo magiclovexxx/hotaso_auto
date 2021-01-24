@@ -689,27 +689,21 @@ getproductAds = async (page, idShops, limit) => {
         let productIds
         for (let i = 0; i <= 4; i++) {
             idShops.forEach((shop) => {
-                productIds = getProduct[i].split(shop + ".")
-                if (productIds.length == 2) {
+                productIds = getProduct[i].includes(shop)
+                if (productIds == true) {
                     productIndexs.push(i)
                 }
             })
         }
 
         for (let i = 45; i <= 49; i++) {
-            idShops.forEach((shop, index2) => {
-                productIds = getProduct[i].split(shop + ".")
-                if (productIds.length == 2) {
+            idShops.forEach((shop) => {
+                productIds = getProduct[i].includes(shop)
+                if (productIds == true) {
                     productIndexs.push(i)
                 }
             })
         }
-
-        /*        if (productIndexs.length) {
-                    return productIndexs;
-                }
-                */
-
         if (limit == 0) {
             return productIndexs
         } else {
@@ -767,17 +761,17 @@ getproductAdsDaLoaiTru = async (page, idShops) => {
         idShops.forEach((shop) => {
             for (let i = 0; i <= 4; i++) {
                 productIds = getProduct[i].includes(shop)
-                if (!productIds) {
+                if (productIds == false) {
                     productIndexs.push(i)
                 }
                 productIds = 0
             }
         })
-
+        productIds=0
         idShops.forEach((shop2) => {
             for (let j = 45; j <= 49; j++) {
                 productIds = getProduct[j].includes(shop2)
-                if (!productIds) {
+                if (productIds == false) {
                     productIndexs.push(j)
                 }
                 productIds = 0
@@ -826,8 +820,8 @@ getproductAdsClickShop = async (page, idShops, limit) => {
         let productIds
         for (let i = 0; i <= 4; i++) {
             idShops.forEach((shop) => {
-                productIds = getProduct[i].split(shop + ".")
-                if (productIds.length == 2) {
+                productIds = getProduct[i].includes(shop)
+                if (productIds== true) {
                     productIndexs.push(i)
                 }
             })
@@ -835,8 +829,8 @@ getproductAdsClickShop = async (page, idShops, limit) => {
 
         for (let i = 45; i <= 49; i++) {
             idShops.forEach((shop) => {
-                productIds = getProduct[i].split(shop + ".")
-                if (productIds.length == 2) {
+                productIds = getProduct[i].includes(shop)
+                if (productIds== true) {
                     productIndexs.push(i)
                 }
             })
@@ -887,7 +881,7 @@ getproductAdsLienQuan = async (page, idShops) => {
                                 checkShop = 0
                                 //Loại trừ shop
                                 shops.forEach((shop) => {
-                                    if (item.href.split(shop + ".") == 2) {
+                                    if (item.href.includes(shop) == true) {
                                         checkShop++
                                     }
                                 })
