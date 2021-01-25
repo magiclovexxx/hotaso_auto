@@ -2197,8 +2197,11 @@ runAllTime = async () => {
                                         if (productInfo.vitri > 4 && productInfo.vitri < 45) {
                                             products[productInfo.vitri].click()
                                             await actionShopee(page)
-                                            if (orderStatus = 1) {
-                                                await orderProduct(page)
+                                            if (productInfo.randomOrder >= 1) {
+                                                // Đặt hàng
+                                                randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
+                                                if (randomOrder % productInfo.randomOrder == 0)
+                                                    await orderProduct(page)
                                             }
                                             await page.waitFor(1000);
                                             await removeCart(page)
