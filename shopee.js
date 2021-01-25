@@ -1022,7 +1022,9 @@ viewReview = async (page) => {
 
         randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
         // click vào ngẫu nhiên lần 2
-        await allRview[randomReview1].click()
+        if(allRview[randomReview1]){
+            await allRview[randomReview1].click()
+        }        
         // lướt xuống xem
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
