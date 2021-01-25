@@ -400,18 +400,23 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         getProduct.forEach((item, index) => {
             if ((index < 45) && (index > 4)) {
                 idShops.forEach((shop, index2) => {
-                    productIds = item.split(shop.fullname + ".")
-                    if (productIds.length == 2) {
+                    productIds = item.includes(shop.fullname)
+                    if (productIds== true) {
                         if (!saveProduct.includes(productIds[1])) {
-                            productId = productIds[1]
+                            productIds2 = item.split(shop.fullname+".")
+                            productId = productIds2[1]
                             productIndex = index;
                             thuHangSanPham = {
                                 sanpham: getProduct[productIndex],
                                 id: productId,
                                 shopId: shop.fullname,
                                 trang: (shop.pages - limit),
-                                vitri: productIndex,
-                                randomOrder: shop.twofa
+                                vitri: productIndex,                               
+                            }
+                            if(shop.twofa){
+                                thuHangSanPham.randomOrder= shop.twofa
+                            }else{
+                                thuHangSanPham.randomOrder= 0
                             }
                         }
                         return true
