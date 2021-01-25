@@ -1084,35 +1084,39 @@ viewShop = async (page, url) => {
     }
 
     getProductShop = await page.$$('.shop-search-result-view__item')
-    randomProduct = Math.floor(Math.random() * (getProductShop.length - 1)) + 1;
-    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
-    await getProductShop[randomProduct].click()
-    randomDown = Math.floor(Math.random() * (4 - 2)) + 2;
-
-    for (i = 0; i < randomDown; i++) {
+    if(getProductShop.length>2){
+        randomProduct = Math.floor(Math.random() * (getProductShop.length - 1)) + 1;
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
-    }
-
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.keyboard.press('Home');
-
-    // Click xem phaan loai sản phẩm và chọn 
-    let checkVariation = chooseVariation(page, 5)
-    if (checkVariation) {
-
-        // click thêm vào giỏ hàng
+    
+        await getProductShop[randomProduct].click()
+        randomDown = Math.floor(Math.random() * (4 - 2)) + 2;
+    
+        for (i = 0; i < randomDown; i++) {
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageDown');
+        }
+    
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
-        addToCard = await page.$$('.btn-tinted')
-        await addToCard[0].click()
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-
+        await page.keyboard.press('Home');
+    
+        // Click xem phaan loai sản phẩm và chọn 
+        let checkVariation = chooseVariation(page, 5)
+        if (checkVariation) {
+    
+            // click thêm vào giỏ hàng
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            addToCard = await page.$$('.btn-tinted')
+            await addToCard[0].click()
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+    
+        }
     }
+    
 }
 
 
@@ -1249,8 +1253,16 @@ orderProduct = async (page) => {
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
         await page.waitFor(timeout)
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (2500 - 2000)) + 2000;
+        await page.waitFor(timeout)
         buttonBy2 = await page.$$('.shopee-button-solid--primary')
-        await buttonBy2[0].click()
+        if (buttonBy2.length) {
+            await buttonBy2[0].click()
+        }else{
+            console.log("Không tìm thấy nút mua hàng")
+        }
+       
     }
     timeout = Math.floor(Math.random() * (3500 - 3000)) + 3000;
     await page.waitFor(timeout)
@@ -1799,7 +1811,7 @@ runAllTime = async () => {
                                     if (productInfo.randomOrder >= 1) {
                                         randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                         if (randomOrder % productInfo.randomOrder == 0)
-                                            await orderProduct(page)
+                                            //await orderProduct(page)
                                     }
                                     await viewShop(page, productLink)
                                     await page.waitFor(1000);
@@ -2028,7 +2040,7 @@ runAllTime = async () => {
                                         if (productInfo.randomOrder >= 1) {
                                             randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                             if (randomOrder % productInfo.randomOrder == 0)
-                                                await orderProduct(page)
+                                            //    await orderProduct(page)
                                         }
 
                                         if (lienQuan != 1) {
@@ -2208,7 +2220,7 @@ runAllTime = async () => {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0)
-                                                    await orderProduct(page)
+                                                //    await orderProduct(page)
                                             }
                                             await page.waitFor(1000);
                                             await removeCart(page)
@@ -2287,7 +2299,7 @@ runAllTime = async () => {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0)
-                                                    await orderProduct(page)
+                                                //    await orderProduct(page)
                                             }
                                             await viewShop(page, productLink)
                                             await removeCart(page)
