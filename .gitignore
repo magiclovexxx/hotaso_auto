@@ -17,6 +17,7 @@ name.txt
 namesave.txt
 savevipid.txt
 version.txt
+logs.txt
 # Logs
 logs
 *.log

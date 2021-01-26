@@ -35,7 +35,7 @@ if (mode === "DEV") {
     timemax = 5000;
     timemin = 3000;
 }
-
+logs = 1
 // Lấy ngẫu nhiên số lượng = maxtab profile để gửi đến master lấy dữ liệu schedule về thao tác
 function GenDirToGetData(maxTab, listAccounts) {
     // Lấy id profile đã tương tác trước đó
@@ -1810,9 +1810,12 @@ runAllTime = async () => {
                                     await actionShopee(page, 1)
                                     if (productInfo.randomOrder >= 1) {
                                         randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                        if (randomOrder % productInfo.randomOrder == 0)
+                                        if (randomOrder % productInfo.randomOrder == 0){
                                             //await orderProduct(page)
-                                    }
+                                        }
+                                            
+                                
+                                     }
                                     await viewShop(page, productLink)
                                     await page.waitFor(1000);
                                     await page.keyboard.press('PageDown');
@@ -2039,8 +2042,9 @@ runAllTime = async () => {
                                         await page.waitFor(1000);
                                         if (productInfo.randomOrder >= 1) {
                                             randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                            if (randomOrder % productInfo.randomOrder == 0)
+                                            if (randomOrder % productInfo.randomOrder == 0){
                                             //    await orderProduct(page)
+                                            }                                            
                                         }
 
                                         if (lienQuan != 1) {
@@ -2219,8 +2223,9 @@ runAllTime = async () => {
                                             if (productInfo.randomOrder >= 1) {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                                if (randomOrder % productInfo.randomOrder == 0)
-                                                //    await orderProduct(page)
+                                                if (randomOrder % productInfo.randomOrder == 0){
+                                                    //    await orderProduct(page)
+                                                }                                                
                                             }
                                             await page.waitFor(1000);
                                             await removeCart(page)
@@ -2298,8 +2303,10 @@ runAllTime = async () => {
                                             if (productInfo.randomOrder >= 1) {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                                if (randomOrder % productInfo.randomOrder == 0)
+                                                if (randomOrder % productInfo.randomOrder == 0){
                                                 //    await orderProduct(page)
+                                                }
+                                                
                                             }
                                             await viewShop(page, productLink)
                                             await removeCart(page)
