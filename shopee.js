@@ -980,8 +980,8 @@ chooseVariation = async (page, limit) => {
             chooseVariation(page, limit)
         }
     }catch(error){
-        fs.appendFileSync('error.txt', "chooseVariation error")
-        fs.appendFileSync('error.txt', error.toString())
+        fs.appendFileSync('error.txt', "\n"+"chooseVariation error")
+        fs.appendFileSync('error.txt', error.toString()+"\n")
     }
     
 }
@@ -1230,7 +1230,10 @@ removeCart = async (page) => {
 
 orderProduct = async (page, productInfo) => {
     console.log("---- Đặt hàng ----")
-    fs.appendFileSync('logs.txt', "Order: " + JSON.stringify(productInfo, null, 4))
+    linksp = await page.url()
+    productInfo.linkNow=linksp
+
+    fs.appendFileSync('logs.txt',"\n"+"Order: "+"\n" + JSON.stringify(productInfo, null, 4))
     // check đầy giỏ hàng
     // await page.goto("https://shopee.vn/")    
     // await page.waitFor(29999)
@@ -1399,8 +1402,8 @@ orderProduct = async (page, productInfo) => {
             console.log("Không tìm thấy nút huỷ đơn")
         }
     } catch (error) {
-        fs.appendFileSync('error.txt', "Order error")
-        fs.appendFileSync('error.txt', error.toString())
+        fs.appendFileSync('error.txt', "Order error"+"\n")
+        fs.appendFileSync('error.txt', error.toString()+"\n")
     }
 
 }
