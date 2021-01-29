@@ -1826,7 +1826,7 @@ runAllTime = async () => {
                                     if (productInfo.randomOrder >= 1) {
                                         randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                         if (randomOrder % productInfo.randomOrder == 0) {
-                                            await orderProduct(page, productInfo)
+                                        //    await orderProduct(page, productInfo)
                                         }
 
 
@@ -2059,7 +2059,7 @@ runAllTime = async () => {
                                         if (productInfo.randomOrder >= 1) {
                                             randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                             if (randomOrder % productInfo.randomOrder == 0) {
-                                                await orderProduct(page, productInfo)
+                                            //    await orderProduct(page, productInfo)
                                             }
                                         }
 
@@ -2240,7 +2240,7 @@ runAllTime = async () => {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0) {
-                                                    await orderProduct(page, productInfo)
+                                                //    await orderProduct(page, productInfo)
                                                 }
                                             }
                                             await page.waitFor(1000);
@@ -2320,7 +2320,7 @@ runAllTime = async () => {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0) {
-                                                    await orderProduct(page, productInfo)
+                                                //    await orderProduct(page, productInfo)
                                                 }
 
                                             }
