@@ -23,6 +23,7 @@ lienQuan = process.env.LIEN_QUAN
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
 let extension = process.env.EXTENSION
+let dcomVersion = process.env.DCOM
 phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 // Danh sách profile fb trong file .env
 maxTab = process.env.MAXTAB_SHOPEE                           // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
@@ -935,15 +936,15 @@ getproductAdsLienQuan = async (page, idShops) => {
 
 // chọn thuộc tính sản phẩm
 chooseVariation = async (page, limit) => {
-    try{
+    try {
         console.log("---- Chọn ngẫu nhiên phân loại sản phẩm ----")
         let checkSelected = []
         limit -= 1
         checkvaritations = await page.$$('.flex.flex-column>.flex.items-center>.flex.items-center')
-    
+
         if (checkvaritations.length == 4) {
             lengthvarirations = await page.evaluate(() => {
-    
+
                 varitations1 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
                 varitations2 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
                 variationslengt = {
@@ -953,16 +954,16 @@ chooseVariation = async (page, limit) => {
                 return variationslengt
             })
         }
-    
+
         if (limit == 0) return false
-    
+
         varitations = await page.$$('.product-variation')
         if (!varitations.length) {
             return true
         }
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout)
-    
+
         for (i = 0; i < varitations.length; i++) {
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
             await page.waitFor(timeout)
@@ -971,19 +972,19 @@ chooseVariation = async (page, limit) => {
                 await varitations[varitation].click()
             }
         }
-    
+
         checkSelected = await page.$$('.product-variation--selected')
-    
+
         if (checkSelected.length) {
             return true
         } else {
             chooseVariation(page, limit)
         }
-    }catch(error){
-        fs.appendFileSync('error.txt', "\n"+"chooseVariation error")
-        fs.appendFileSync('error.txt', error.toString()+"\n")
+    } catch (error) {
+        fs.appendFileSync('error.txt', "\n" + "chooseVariation error")
+        fs.appendFileSync('error.txt', error.toString() + "\n")
     }
-    
+
 }
 
 viewReview = async (page) => {
@@ -1231,9 +1232,9 @@ removeCart = async (page) => {
 orderProduct = async (page, productInfo) => {
     console.log("---- Đặt hàng ----")
     linksp = await page.url()
-    productInfo.linkNow=linksp
+    productInfo.linkNow = linksp
 
-    fs.appendFileSync('logs.txt',"\n"+"Order: "+"\n" + JSON.stringify(productInfo, null, 4))
+    fs.appendFileSync('logs.txt', "\n" + "Order: " + "\n" + JSON.stringify(productInfo, null, 4))
     // check đầy giỏ hàng
     // await page.goto("https://shopee.vn/")    
     // await page.waitFor(29999)
@@ -1402,8 +1403,8 @@ orderProduct = async (page, productInfo) => {
             console.log("Không tìm thấy nút huỷ đơn")
         }
     } catch (error) {
-        fs.appendFileSync('error.txt', "Order error"+"\n")
-        fs.appendFileSync('error.txt', error.toString()+"\n")
+        fs.appendFileSync('error.txt', "Order error" + "\n")
+        fs.appendFileSync('error.txt', error.toString() + "\n")
     }
 
 }
@@ -1511,13 +1512,17 @@ genRandomMac = () => {
 
     macAndress = randomMac()
     netName = os.networkInterfaces()
-    netName = Object.keys(netName).forEach(key => {
-        ipAddress = netName[key][1].address
-        if (ipAddress.split("192.168").length > 1) {
-            currentNet = key
-        }
-    })
+    // netName = Object.keys(netName).forEach(key => {
+    //    // console.log(netName)
+    //     console.log(netName[key])
+    //     //ipAddress = netName[key][1].address
+    //     if (ipAddress.split("192.168").length > 1) {
+    //         currentNet = key
 
+    //     }
+
+    // })
+    currentNet = "Cellular"
     commandLineChange = {
         netword: currentNet,
         mac: macAndress
@@ -1623,6 +1628,24 @@ runAllTime = async () => {
         data = GenDirToGetData(maxTab, accounts)
         //  console.log()
         commandChangeMac = genRandomMac();
+        console.log(commandChangeMac)
+
+        if (dcomVersion == "V2") {
+            console.log("change mac")
+            param = " " + commandChangeMac.netword + " " + commandChangeMac.mac
+            console.log(param)
+            const changeMac = exec('changemac.bat' + param + ' /');
+            changeMac.stdout.on('data', (data) => {
+                // do whatever you want here with data
+            });
+            changeMac.stderr.on('data', (data) => {
+                console.error(data);
+            });
+        }
+
+
+        // process.exit()
+
         if (data) {
             // get version hien tai trong file version.txt
             var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
@@ -1699,41 +1722,55 @@ runAllTime = async () => {
                     try {
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
+
                             console.log("Đổi ip mạng")
-                            await page.goto("http://192.168.8.1/html/home.html")
-                            //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                            //   await page.waitFor(timeout)
-                            checkDcom = await page.$$(".mobile_connect_btn_on")
+                            if (dcomVersion == "V2") {
+                                const changeIpDcom = exec('dcom.cmd /');
+                                changeIpDcom.stdout.on('data', (data) => {
+                                    // do whatever you want here with data
+                                });
+                                changeIpDcom.stderr.on('data', (data) => {
+                                    console.error(data);
+                                });
+                            } else {
+                                await page.goto("http://192.168.8.1/html/home.html")
+                                //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                //   await page.waitFor(timeout)
+                                checkDcom = await page.$$(".mobile_connect_btn_on")
 
-                            //   process.exit()
-                            if (checkDcom.length) {
-                                await page.click("#mobile_connect_btn")
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.waitFor(timeout)
-
-                                // turn on dcom
-                                checkDcomOff = await page.$$(".mobile_connect_btn_on")
-                                if (!checkDcomOff.length) {
+                                //   process.exit()
+                                if (checkDcom.length) {
                                     await page.click("#mobile_connect_btn")
+                                    timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    await page.waitFor(timeout)
+
+                                    // turn on dcom
+                                    checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                    if (!checkDcomOff.length) {
+                                        await page.click("#mobile_connect_btn")
+                                        timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                        await page.waitFor(timeout)
+                                    }
+                                }
+
+                                if (!checkDcom.length) {
+                                    console.log("DCOM V2")
+                                    checkDcomOff = await page.$$("#disconnect_btn")
+                                    await page.click("#disconnect_btn")
+                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                    await page.waitFor(timeout)
+
+                                    // turn on dcom
+                                    //checkDcomOff = await page.$$("#connect_btn")
+                                    checkDcomOff = await page.waitForSelector("#connect_btn")
+                                    await page.click("#connect_btn")
                                     timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
                                     await page.waitFor(timeout)
                                 }
                             }
 
-                            if (!checkDcom.length) {
-                                console.log("DCOM V2")
-                                checkDcomOff = await page.$$("#disconnect_btn")
-                                await page.click("#disconnect_btn")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                await page.waitFor(timeout)
-
-                                // turn on dcom
-                                //checkDcomOff = await page.$$("#connect_btn")
-                                checkDcomOff = await page.waitForSelector("#connect_btn")
-                                await page.click("#connect_btn")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                await page.waitFor(timeout)
-                            }
+                            timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                            await page.waitFor(timeout)
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(2000)
@@ -1826,10 +1863,8 @@ runAllTime = async () => {
                                     if (productInfo.randomOrder >= 1) {
                                         randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                         if (randomOrder % productInfo.randomOrder == 0) {
-                                        //    await orderProduct(page, productInfo)
+                                            //    await orderProduct(page, productInfo)
                                         }
-
-
                                     }
                                     await viewShop(page, productLink)
                                     await page.waitFor(1000);
@@ -1955,43 +1990,52 @@ runAllTime = async () => {
                             if ((index == 0) && (mode !== "DEV")) {
                                 // đổi ip
                                 console.log("Đổi ip mạng")
-                                await page.goto("http://192.168.8.1/html/home.html")
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                await page.waitFor(timeout)
+                                if (dcomVersion == "V2") {
+                                    const changeIpDcom = exec('dcom.cmd /');
+                                    changeIpDcom.stdout.on('data', (data) => {
+                                        // do whatever you want here with data
+                                    });
+                                    changeIpDcom.stderr.on('data', (data) => {
+                                        console.error(data);
+                                    });
+                                } else {
+                                    await page.goto("http://192.168.8.1/html/home.html")
+                                    //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                    //   await page.waitFor(timeout)
+                                    checkDcom = await page.$$(".mobile_connect_btn_on")
 
-                                // turn off dcom
-                                checkDcom = await page.$$(".mobile_connect_btn_on")
-
-                                if (checkDcom.length) {
-                                    await page.click("#mobile_connect_btn")
-                                    timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                    await page.waitFor(timeout)
-
-                                    // turn on dcom
-                                    checkDcomOff = await page.$$(".mobile_connect_btn_on")
-                                    if (!checkDcomOff.length) {
+                                    //   process.exit()
+                                    if (checkDcom.length) {
                                         await page.click("#mobile_connect_btn")
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                        await page.waitFor(timeout)
+
+                                        // turn on dcom
+                                        checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                        if (!checkDcomOff.length) {
+                                            await page.click("#mobile_connect_btn")
+                                            timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                            await page.waitFor(timeout)
+                                        }
+                                    }
+
+                                    if (!checkDcom.length) {
+                                        console.log("DCOM V2")
+                                        checkDcomOff = await page.$$("#disconnect_btn")
+                                        await page.click("#disconnect_btn")
+                                        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                        await page.waitFor(timeout)
+
+                                        // turn on dcom
+                                        //checkDcomOff = await page.$$("#connect_btn")
+                                        checkDcomOff = await page.waitForSelector("#connect_btn")
+                                        await page.click("#connect_btn")
                                         timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
                                         await page.waitFor(timeout)
                                     }
                                 }
-
-                                if (!checkDcom.length) {
-                                    console.log("DCOM V2")
-                                    checkDcomOff = await page.$$("#disconnect_btn")
-                                    await page.click("#disconnect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                    await page.waitFor(timeout)
-
-                                    // turn on dcom
-                                    //checkDcomOff = await page.$$("#connect_btn")
-                                    checkDcomOff = await page.waitForSelector("#connect_btn")
-
-                                    await page.click("#connect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                    await page.waitFor(timeout)
-
-                                }
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                await page.waitFor(timeout)
                             }
 
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
@@ -2059,7 +2103,7 @@ runAllTime = async () => {
                                         if (productInfo.randomOrder >= 1) {
                                             randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                             if (randomOrder % productInfo.randomOrder == 0) {
-                                            //    await orderProduct(page, productInfo)
+                                                //    await orderProduct(page, productInfo)
                                             }
                                         }
 
@@ -2138,43 +2182,52 @@ runAllTime = async () => {
                             if ((index == 0) && (mode !== "DEV")) {
                                 // đổi ip
                                 console.log("Đổi ip mạng")
-                                await page.goto("http://192.168.8.1/html/home.html")
-                                //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                //   await page.waitFor(timeout)
-                                checkDcom = await page.$$(".mobile_connect_btn_on")
+                                if (dcomVersion == "V2") {
+                                    const changeIpDcom = exec('dcom.cmd /');
+                                    changeIpDcom.stdout.on('data', (data) => {
+                                        // do whatever you want here with data
+                                    });
+                                    changeIpDcom.stderr.on('data', (data) => {
+                                        console.error(data);
+                                    });
+                                } else {
+                                    await page.goto("http://192.168.8.1/html/home.html")
+                                    //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                    //   await page.waitFor(timeout)
+                                    checkDcom = await page.$$(".mobile_connect_btn_on")
 
-                                //   process.exit()
-                                if (checkDcom.length) {
-                                    await page.click("#mobile_connect_btn")
-                                    timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                    await page.waitFor(timeout)
-
-                                    // turn on dcom
-                                    checkDcomOff = await page.$$(".mobile_connect_btn_on")
-                                    if (!checkDcomOff.length) {
+                                    //   process.exit()
+                                    if (checkDcom.length) {
                                         await page.click("#mobile_connect_btn")
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                        await page.waitFor(timeout)
+
+                                        // turn on dcom
+                                        checkDcomOff = await page.$$(".mobile_connect_btn_on")
+                                        if (!checkDcomOff.length) {
+                                            await page.click("#mobile_connect_btn")
+                                            timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                            await page.waitFor(timeout)
+                                        }
+                                    }
+
+                                    if (!checkDcom.length) {
+                                        console.log("DCOM V2")
+                                        checkDcomOff = await page.$$("#disconnect_btn")
+                                        await page.click("#disconnect_btn")
+                                        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                                        await page.waitFor(timeout)
+
+                                        // turn on dcom
+                                        //checkDcomOff = await page.$$("#connect_btn")
+                                        checkDcomOff = await page.waitForSelector("#connect_btn")
+                                        await page.click("#connect_btn")
                                         timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
                                         await page.waitFor(timeout)
                                     }
                                 }
-
-                                if (!checkDcom.length) {
-                                    console.log("DCOM V2")
-                                    checkDcomOff = await page.$$("#disconnect_btn")
-                                    await page.click("#disconnect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                    await page.waitFor(timeout)
-
-                                    // turn on dcom
-                                    //checkDcomOff = await page.$$("#connect_btn")
-                                    checkDcomOff = await page.waitForSelector("#connect_btn")
-
-                                    await page.click("#connect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                    await page.waitFor(timeout)
-
-                                }
-
+                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                await page.waitFor(timeout)
                             }
 
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
@@ -2240,7 +2293,7 @@ runAllTime = async () => {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0) {
-                                                //    await orderProduct(page, productInfo)
+                                                    //    await orderProduct(page, productInfo)
                                                 }
                                             }
                                             await page.waitFor(1000);
@@ -2320,7 +2373,7 @@ runAllTime = async () => {
                                                 // Đặt hàng
                                                 randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
                                                 if (randomOrder % productInfo.randomOrder == 0) {
-                                                //    await orderProduct(page, productInfo)
+                                                    //    await orderProduct(page, productInfo)
                                                 }
 
                                             }
