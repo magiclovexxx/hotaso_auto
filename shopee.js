@@ -1423,7 +1423,7 @@ checkDcomconnect = async (profileDir) => {
 
     const page = (await browser.pages())[0];
     userAgent = randomUseragent.getRandom(function (ua) {
-        return ua.osName === 'Windows';
+        return (ua.osName === 'Windows' && ua.osVersion >= 6);
     });
     await page.setUserAgent(userAgent)
     console.log(userAgent)
@@ -1706,7 +1706,7 @@ runAllTime = async () => {
                     });
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
-                        return ua.osName === 'Windows';
+                        return (ua.osName === 'Windows' && ua.osVersion >= 6);
                     });
                     await page.setUserAgent(userAgent)
                     console.log(userAgent)
@@ -1972,7 +1972,7 @@ runAllTime = async () => {
 
                         const page = (await browser.pages())[0];
                         userAgent = randomUseragent.getRandom(function (ua) {
-                            return ua.osName === 'Windows';
+                            return (ua.osName === 'Windows' && ua.osVersion >= 6);
                         });
 
                         await page.setUserAgent(userAgent)
@@ -2121,6 +2121,7 @@ runAllTime = async () => {
                                 }
                                 await browser.close();
                             } else {
+                                
                                 accountInfo = {
                                     user: key[0],
                                     pass: key[1],
@@ -2165,7 +2166,7 @@ runAllTime = async () => {
 
                         const page = (await browser.pages())[0];
                         userAgent = randomUseragent.getRandom(function (ua) {
-                            return ua.osName === 'Windows';
+                            return (ua.osName === 'Windows' && ua.osVersion >= 6);
                         });
                         await page.setUserAgent(userAgent)
                         console.log(userAgent)
