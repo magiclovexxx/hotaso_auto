@@ -1998,13 +1998,7 @@ runAllTime = async () => {
                                 // đổi ip
                                 console.log("Đổi ip mạng")
                                 if (dcomVersion == "V2") {
-                                    const changeIpDcom = exec('dcom.cmd /');
-                                    changeIpDcom.stdout.on('data', (data) => {
-                                        // do whatever you want here with data
-                                    });
-                                    changeIpDcom.stderr.on('data', (data) => {
-                                        console.error(data);
-                                    });
+                                    await changeIpDcomV2()
                                 } else {
                                     await page.goto("http://192.168.8.1/html/home.html")
                                     //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -2191,13 +2185,7 @@ runAllTime = async () => {
                                 // đổi ip
                                 console.log("Đổi ip mạng")
                                 if (dcomVersion == "V2") {
-                                    const changeIpDcom = exec('dcom.cmd /');
-                                    changeIpDcom.stdout.on('data', (data) => {
-                                        // do whatever you want here with data
-                                    });
-                                    changeIpDcom.stderr.on('data', (data) => {
-                                        console.error(data);
-                                    });
+                                    await changeIpDcomV2()
                                 } else {
                                     await page.goto("http://192.168.8.1/html/home.html")
                                     //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
