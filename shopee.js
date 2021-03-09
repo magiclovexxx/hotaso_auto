@@ -1499,7 +1499,17 @@ function sleep(ms) {
     });
 }
 
-genRandomMac = () => {
+changeIpDcomV2 = async () => {
+    const changeIpDcom = exec('dcom.cmd /');
+    changeIpDcom.stdout.on('data', (data) => {
+        // do whatever you want here with data
+    });
+    changeIpDcom.stderr.on('data', (data) => {
+        console.error(data);
+    });
+}
+
+genRandomMac = async () => {
     const os = require('os');
     keyRandomMac2 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
     keyRandomMac = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
@@ -1529,6 +1539,19 @@ genRandomMac = () => {
     }
     //commandLineChange = "tmac -n "+netName + " -m " + macAndress + " -re -s"
     // console.log(commandLineChange);
+
+    console.log(commandLineChange)
+    console.log("change mac")
+    param = " " + commandLineChange.netword + " " + commandLineChange.mac
+    console.log(param)
+    const changeMac = exec('changemac.bat' + param + ' /');
+    changeMac.stdout.on('data', (data) => {
+        // do whatever you want here with data
+    });
+    changeMac.stderr.on('data', (data) => {
+        console.error(data);
+    });
+
     return commandLineChange
 }
 
@@ -1627,22 +1650,12 @@ runAllTime = async () => {
         console.log("----------- START SHOPEE ---------------")
         data = GenDirToGetData(maxTab, accounts)
         //  console.log()
-        commandChangeMac = genRandomMac();
-        console.log(commandChangeMac)
+
 
         if (dcomVersion == "V2") {
-            console.log("change mac")
-            param = " " + commandChangeMac.netword + " " + commandChangeMac.mac
-            console.log(param)
-            const changeMac = exec('changemac.bat' + param + ' /');
-            changeMac.stdout.on('data', (data) => {
-                // do whatever you want here with data
-            });
-            changeMac.stderr.on('data', (data) => {
-                console.error(data);
-            });
+            // Đổi MAC
+            await genRandomMac()
         }
-
 
         // process.exit()
 
@@ -1725,13 +1738,7 @@ runAllTime = async () => {
 
                             console.log("Đổi ip mạng")
                             if (dcomVersion == "V2") {
-                                const changeIpDcom = exec('dcom.cmd /');
-                                changeIpDcom.stdout.on('data', (data) => {
-                                    // do whatever you want here with data
-                                });
-                                changeIpDcom.stderr.on('data', (data) => {
-                                    console.error(data);
-                                });
+                                await changeIpDcomV2()
                             } else {
                                 await page.goto("http://192.168.8.1/html/home.html")
                                 //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -2121,7 +2128,7 @@ runAllTime = async () => {
                                 }
                                 await browser.close();
                             } else {
-                                
+
                                 accountInfo = {
                                     user: key[0],
                                     pass: key[1],
