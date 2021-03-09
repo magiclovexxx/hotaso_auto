@@ -207,7 +207,7 @@ loginShopee = async (page, accounts) => {
             })
             fs.appendFileSync('accountBlock.txt', 'Account bị khoá' + "\n")
             fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
-
+            await deleteProfile(accounts[0])
             return false
         }
 
@@ -232,7 +232,7 @@ loginShopee = async (page, accounts) => {
             console.log("account bị block")
             fs.appendFileSync('accountBlock.txt', 'Account bi khoá' + "\n")
             fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
-
+            await deleteProfile(accounts[0])
             return false
         }
 
@@ -1509,32 +1509,18 @@ changeIpDcomV2 = async () => {
     });
 }
 
-deleteProfile = async()=>{
+deleteProfile = async (profile) => {
     // Xoá profile block
-    let blockAccounts = fs.readFileSync("accountBlock.txt", { flag: "as+" });
-    if (blockAccounts) {
-        blockAccounts = blockAccounts.toString();
-        blockAccounts = blockAccounts.split("\n")
-        console.log(blockAccounts)
-        blockAccounts.forEach(account => {
-            account = account.split("\t")
-            if(account.length == 2){
-                deleteDir = profileDir+account[0]
-                cmdDelete = 'Rmdir /S /q '+ deleteDir
-                console.log(cmdDelete)
-                let deleteProfile = exec(cmdDelete);
-                deleteProfile.stdout.on('data', (data) => {
-                    // do whatever you want here with data
-                });
-                deleteProfile.stderr.on('data', (data) => {
-                    console.error(data);
-                });
-            }
-            
-        })
-    } else {
-        blockAccounts = ""
-    }
+    deleteDir = profileDir + profile
+    cmdDelete = 'Rmdir /S /q ' + deleteDir
+    console.log(cmdDelete)
+    let deleteProfile = exec(cmdDelete);
+    deleteProfile.stdout.on('data', (data) => {
+        // do whatever you want here with data
+    });
+    deleteProfile.stderr.on('data', (data) => {
+        console.error(data);
+    });
 }
 
 genRandomMac = async () => {
@@ -1680,7 +1666,7 @@ runAllTime = async () => {
         //  console.log()
 
         // Delete profile block
-        await deleteProfile()
+        
         //process.exit()
 
         if (dcomVersion == "V2") {
