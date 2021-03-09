@@ -1509,6 +1509,34 @@ changeIpDcomV2 = async () => {
     });
 }
 
+deleteProfile = async()=>{
+    // Xoá profile block
+    let blockAccounts = fs.readFileSync("accountBlock.txt", { flag: "as+" });
+    if (blockAccounts) {
+        blockAccounts = blockAccounts.toString();
+        blockAccounts = blockAccounts.split("\n")
+        console.log(blockAccounts)
+        blockAccounts.forEach(account => {
+            account = account.split("\t")
+            if(account.length == 2){
+                deleteDir = profileDir+account[0]
+                cmdDelete = 'Rmdir /S /q '+ deleteDir
+                console.log(cmdDelete)
+                let deleteProfile = exec(cmdDelete);
+                deleteProfile.stdout.on('data', (data) => {
+                    // do whatever you want here with data
+                });
+                deleteProfile.stderr.on('data', (data) => {
+                    console.error(data);
+                });
+            }
+            
+        })
+    } else {
+        blockAccounts = ""
+    }
+}
+
 genRandomMac = async () => {
     const os = require('os');
     keyRandomMac2 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
@@ -1651,6 +1679,9 @@ runAllTime = async () => {
         data = GenDirToGetData(maxTab, accounts)
         //  console.log()
 
+        // Delete profile block
+        await deleteProfile()
+        //process.exit()
 
         if (dcomVersion == "V2") {
             // Đổi MAC
