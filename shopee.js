@@ -1792,12 +1792,9 @@ runAllTime = async () => {
                                     await page.waitFor(timeout)
                                 }
                             }
-
-                            timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
-                            await page.waitFor(timeout)
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitFor(2000)
+                        await page.waitFor(10000)
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
@@ -2052,8 +2049,6 @@ runAllTime = async () => {
                                         await page.waitFor(timeout)
                                     }
                                 }
-                                timeout = Math.floor(Math.random() * (5000 - 5000)) + 5000;
-                                await page.waitFor(timeout)
                             }
 
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
@@ -2239,8 +2234,6 @@ runAllTime = async () => {
                                         await page.waitFor(timeout)
                                     }
                                 }
-                                timeout = Math.floor(Math.random() * (5000 - 5000)) + 5000;
-                                await page.waitFor(timeout)
                             }
 
                             //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
