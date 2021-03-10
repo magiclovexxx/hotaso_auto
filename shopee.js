@@ -1793,7 +1793,7 @@ runAllTime = async () => {
                                 }
                             }
 
-                            timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                            timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
                             await page.waitFor(timeout)
                         }
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
@@ -2052,7 +2052,7 @@ runAllTime = async () => {
                                         await page.waitFor(timeout)
                                     }
                                 }
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                timeout = Math.floor(Math.random() * (5000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                             }
 
@@ -2239,7 +2239,7 @@ runAllTime = async () => {
                                         await page.waitFor(timeout)
                                     }
                                 }
-                                timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
+                                timeout = Math.floor(Math.random() * (5000 - 5000)) + 5000;
                                 await page.waitFor(timeout)
                             }
 
