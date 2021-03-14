@@ -533,7 +533,7 @@ getproductByProductId = async (page, product) => {
             }
         })
         if (product.max_page == 0 || product.max_page == null) {
-            product.max_page = 5
+            product.max_page = 20
         }
         if (thuHangSanPham) {
             return thuHangSanPham;
@@ -1069,11 +1069,11 @@ viewReview = async (page) => {
 }
 
 
-checkAtions = async (action,username,product) => {
+checkAtions = async (action, username, product) => {
     datacheck = product
     datacheck.action = action
     datacheck.username = username
-    
+
     try {
         let datatest = await axios.get(checkActionsDir, {
             params: {
@@ -1084,7 +1084,7 @@ checkAtions = async (action,username,product) => {
         })
         checkAtion = datatest.data
         console.log(checkAtion)
-        console.log("check action: "+ action +":" + checkAtion )
+        console.log("check action: " + action + ":" + checkAtion)
     } catch (error) {
         console.log(error)
         //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
@@ -1093,11 +1093,11 @@ checkAtions = async (action,username,product) => {
     return checkAtion
 }
 
-updateAtions = async (action,username,product) => {
+updateAtions = async (action, username, product) => {
     dataupdate = product
     dataupdate.action = action
     dataupdate.username = username
-    update =0
+    update = 0
     try {
         let datatest = await axios.get(updateActionsDir, {
             params: {
@@ -1108,7 +1108,7 @@ updateAtions = async (action,username,product) => {
         })
         update = datatest.data
         console.log(update)
-        console.log("update action: "+ action +":" + update )
+        console.log("update action: " + action + ":" + update)
     } catch (error) {
         console.log(error)
         //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
@@ -1134,7 +1134,7 @@ viewShop = async (page, url) => {
         await page.keyboard.press('PageDown');
     }
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-        await page.waitFor(timeout)
+    await page.waitFor(timeout)
     await page.keyboard.press('Home');
 }
 
@@ -1152,7 +1152,7 @@ followShop = async (page) => {
 
 
 
-actionShopee = async (page, options,username,product) => {
+actionShopee = async (page, options, username, product) => {
     await page.waitForSelector('.product-briefing')
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
@@ -1177,11 +1177,11 @@ actionShopee = async (page, options,username,product) => {
     await page.mouse.click(10, 30)
 
     if (options.heart_product) {
-        check1 = await checkAtions("heart_product", username,product)
+        check1 = await checkAtions("heart_product", username, product)
         if (!check1) {
             console.log("Thả tim sản phẩm: " + options.heart_product)
             heartClick = await page.$$('.justify-center>.flex.items-center>svg')
-            if(heartClick.length){
+            if (heartClick.length) {
                 await heartClick[0].click()
                 await updateAtions("heart_product", username, product)
             }
@@ -1217,7 +1217,7 @@ actionShopee = async (page, options,username,product) => {
         // click chọn màu
         let checkVariation = chooseVariation(page, 5)
         if (checkVariation) {
-         
+
             // click thêm vào giỏ hàng
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
@@ -1770,7 +1770,7 @@ runAllTime = async () => {
 
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
-                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98);
+                        return (ua.osName === 'Windows' && ua.osVersion > 6 && ua.osVersion != 98);
                     });
 
                     await page.setUserAgent(userAgent)
@@ -1956,10 +1956,11 @@ runAllTime = async () => {
 
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
+                        console.log(ua)
                         return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98);
                     });
                     await page.setUserAgent(userAgent)
-                    console.log(userAgent)
+                   
                     // Random kích cỡ màn hình
                     width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
                     height = Math.floor(Math.random() * (800 - 600)) + 600;;
@@ -2052,16 +2053,18 @@ runAllTime = async () => {
                                     console.log(error)
                                 }
                                 console.log("Shop info")
-                                    
+
                                 console.log(shopInfo)
                                 console.log(product)
-                                
+
 
                                 if (shopInfo) {
                                     options = JSON.parse(shopInfo.options)
-                                //    console.log("options add cart: "+ options.add_cart)
-                                //    process.exit()
+                                    //    console.log("options add cart: "+ options.add_cart)
+                                    //    process.exit()
+                                    username = key[0]
                                     await searchKeyWord(page, product.keyword)
+                                    await updateAtions("search", username, product)
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
                                     productInfo = await getproductByProductId(page, product)
@@ -2075,7 +2078,7 @@ runAllTime = async () => {
                                         today = new Date().toLocaleString();
                                         productInfo.keyword = product.keyword
                                         productInfo.time = today
-                                        productInfo.user = username =  key[0]
+                                        productInfo.user = key[0]
                                         //productInfo.pass = key[1]
 
                                         try {
@@ -2086,7 +2089,8 @@ runAllTime = async () => {
                                                     }
                                                 }
                                             })
-                                            console.log(datatest.data)
+                                            console.log("Cập nhật thứ hạng sp: " + datatest.data)
+                                           // console.log(datatest.data)
                                         } catch (error) {
                                             console.log("Không gửi được dữ liệu thứ hạng mới đến server")
                                             console.log(error)
@@ -2096,134 +2100,47 @@ runAllTime = async () => {
 
                                         if (productInfo.vitri > 4 && productInfo.vitri < 45) {
                                             products[productInfo.vitri].click()
-                                           
-                                            await actionShopee(page, options, username,product)
+                                            await updateAtions("view_product", username, product)
+                                            await actionShopee(page, options, username, product)
                                             productLink = await page.url()
-                                            if (productInfo.randomOrder >= 1) {
-                                                // Đặt hàng
-                                                randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                                if (randomOrder % productInfo.randomOrder == 0) {
-                                                    //    await orderProduct(page, productInfo)
+
+                                            if (options.order) {
+                                                console.log("Đặt hàng: " + options.follow_shop)
+                                                if (productInfo.randomOrder >= 1) {
+                                                    // Đặt hàng
+                                                    randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
+                                                    if (randomOrder % productInfo.randomOrder == 0) {
+                                                        //    await orderProduct(page, productInfo)
+                                                    }
                                                 }
                                             }
+
                                             console.log("Option view shop: " + options.view_shop)
                                             if (options.view_shop) {
                                                 await viewShop(page, productLink)
                                                 await updateAtions("view_shop", username, product)
-                                                // if (options.heart) {
-                                                //     check1 = await checkAtions("heart", username,product)
-                                                //     if (!check1) {
-                                                //         await heartShop()
-                                                //         await updateAtions("heart", username, product)
-                                                //     }
-                                                // }
 
                                                 if (options.follow_shop) {
-                                                    check1 = await checkAtions("follow_shop", username,product)
+                                                    check1 = await checkAtions("follow_shop", username, product)
                                                     if (!check1) {
                                                         console.log("follow shop: " + options.follow_shop)
                                                         followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
-                                                        if(followClick.length){
-                                                
+                                                        if (followClick.length) {
+
                                                             await followClick[0].click()
                                                         }
                                                         await updateAtions("follow_shop", username, product)
                                                     }
                                                 }
-
                                             }
                                             await page.waitFor(1000);
                                             await removeCart(page)
                                         }
-
                                     } else {
                                         console.log("Không tìm thấy sản phẩm")
                                     }
                                 }
 
-
-                            } else {
-                                var saveKeyword = fs.readFileSync("saveKeyword.txt", { flag: "as+" });
-                                saveKeyword = saveKeyword.toString();
-                                saveKeyword = saveKeyword.split("\n")
-                                if (saveKeyword.length >= keywords.length) {
-                                    saveKeyword = [];
-                                    fs.writeFileSync('saveKeyword.txt', saveKeyword.toString())
-                                }
-
-                                // danh sách keyword không nằm trong file savekeyword.txt
-                                let keywordNotSave = []
-                                keywords.forEach(item => {
-                                    if (!saveKeyword.includes(item)) {             // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
-                                        keywordNotSave.push(item);
-                                    }
-                                })
-                                // lấy ngẫu nhiên keyword để tìm kiếm
-                                randomkey = Math.floor(Math.random() * (keywordNotSave.length - 1));
-
-                                // lưu keyword sẽ tìm vào file saveKeyword.txt
-                                fs.appendFileSync('saveKeyword.txt', keywordNotSave[randomkey] + "\n")
-                                // tìm kiếm theo keyword
-                                await searchKeyWord(page, keywordNotSave[randomkey])
-
-                                // lấy danh sách product đã lưu
-                                var saveProduct = fs.readFileSync("saveProduct.txt", { flag: "as+" });
-                                saveProduct = saveProduct.toString();
-                                saveProduct = saveProduct.split("\n")
-
-                                // danh sách product không nằm trong file saveproduct.txt
-
-                                productInfo = await getproduct(page, saveProduct, 10, idShopsfull)
-
-                                if (productInfo) {
-                                    today = new Date().toLocaleString();
-                                    fs.appendFileSync('saveProduct.txt', productInfo.id + "\n")
-                                    productInfo.keyword = keywordNotSave[randomkey]
-                                    productInfo.time = today
-                                    productInfo.user = key[0]
-                                    productInfo.pass = key[1]
-                                    // lưu thứ hạng sản phẩm theo từ khoá vào file
-                                    fs.appendFileSync('thuhang.txt', "\n" + JSON.stringify(productInfo, null, 4))
-
-                                    try {
-                                        let datatest = await axios.get(linkShopeeUpdate, {
-                                            params: {
-                                                data: {
-                                                    dataToServer: productInfo,
-                                                }
-                                            }
-                                        })
-                                        console.log(datatest.data)
-                                    } catch (error) {
-                                        console.log("Không gửi được dữ liệu thứ hạng mới đến")
-                                    }
-
-                                    products = await page.$$('[data-sqe="link"]')
-                                    if (productInfo.vitri > 4 && productInfo.vitri < 45) {
-                                        products[productInfo.vitri].click()
-                                        timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
-                                        await page.waitFor(timeout)
-                                        productLink = await page.url()
-                                        await actionShopee(page)
-                                        await page.waitFor(1000);
-
-                                        if (productInfo.randomOrder >= 1) {
-                                            // Đặt hàng
-                                            randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                            if (randomOrder % productInfo.randomOrder == 0) {
-                                                //    await orderProduct(page, productInfo)
-                                            }
-
-                                        }
-                                        await viewShop(page, productLink)
-                                        await removeCart(page)
-                                    }
-                                } else {
-                                    // nếu đã check hết product sẽ xoá file saveProduct.txt                                
-                                    saveProduct = [];
-                                    fs.writeFileSync('saveProduct.txt', saveProduct.toString())
-                                    fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
-                                }
                             }
                             await browser.close();
                         }
