@@ -39,6 +39,7 @@ shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // L
 updateActionsDir = apiUrl + "/api_user/updateActions"     // Update actions
 checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
 getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
+getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // check actions
 
 if (mode === "DEV") {
     timemax = 5000;
@@ -522,8 +523,9 @@ getproductByProductId = async (page, product) => {
                     productId = product.id
                     productIndex = index;
                     thuHangSanPham = {
+                        id : product.id,
                         sanpham: product.product_name,
-                        id: product.product_id,
+                        product_id: product.product_id,
                         shopId: product.shop_id,
                         trang: product_page2,
                         vitri: productIndex
@@ -533,15 +535,16 @@ getproductByProductId = async (page, product) => {
             }
         })
         if (product.max_page == 0 || product.max_page == null) {
-            product.max_page = 20
+            product.max_page = 3
         }
         if (thuHangSanPham) {
             return thuHangSanPham;
         } else {
             if (product_page2 == product.max_page) {
                 thuHangSanPham = {
+                    id : product.id,
                     sanpham: product.product_name,
-                    id: productId,
+                    product_id: product.product_id,
                     shopId: product.shop_id,
                     trang: "Not",
                     vitri: "Not"
@@ -1069,10 +1072,9 @@ viewReview = async (page) => {
 }
 
 
-checkAtions = async (action, username, product) => {
+checkAtions = async (action, product) => {
     datacheck = product
     datacheck.action = action
-    datacheck.username = username
 
     try {
         let datatest = await axios.get(checkActionsDir, {
@@ -1093,10 +1095,10 @@ checkAtions = async (action, username, product) => {
     return checkAtion
 }
 
-updateAtions = async (action, username, product) => {
+updateAtions = async (action, product) => {
     dataupdate = product
     dataupdate.action = action
-    dataupdate.username = username
+    
     update = 0
     try {
         let datatest = await axios.get(updateActionsDir, {
@@ -1152,7 +1154,7 @@ followShop = async (page) => {
 
 
 
-actionShopee = async (page, options, username, product) => {
+actionShopee = async (page, options, product) => {
     await page.waitForSelector('.product-briefing')
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitFor(timeout)
@@ -1177,13 +1179,13 @@ actionShopee = async (page, options, username, product) => {
     await page.mouse.click(10, 30)
 
     if (options.heart_product) {
-        check1 = await checkAtions("heart_product", username, product)
+        check1 = await checkAtions("heart_product", product)
         if (!check1) {
             console.log("Thả tim sản phẩm: " + options.heart_product)
             heartClick = await page.$$('.justify-center>.flex.items-center>svg')
             if (heartClick.length) {
                 await heartClick[0].click()
-                await updateAtions("heart_product", username, product)
+                await updateAtions("heart_product", product)
             }
         }
 
@@ -1206,7 +1208,7 @@ actionShopee = async (page, options, username, product) => {
     if (options.view_review) {
         console.log("---- Xem review ----")
         await viewReview(page)
-        await updateAtions("view_review", username, product)
+        await updateAtions("view_review",product)
         await page.waitFor(timeout)
     }
 
@@ -1225,7 +1227,7 @@ actionShopee = async (page, options, username, product) => {
             await addToCard[0].click()
             console.log("Thêm vào giỏ hàng")
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await updateAtions("add_cart", username, product)
+            await updateAtions("add_cart", product)
             await page.waitFor(timeout)
 
         } else {
@@ -1710,12 +1712,19 @@ runAllTime = async () => {
     try {
         orderStatus = 1
         console.log("----------- START SHOPEE ---------------")
-        data = GenDirToGetData(maxTab, accounts)
-        //  console.log()
+        //data = GenDirToGetData(maxTab, accounts)
 
-        // Delete profile block
-
-        //process.exit()
+        getSlaveAccountDir = getSlaveAccountDir+"?slave="+slavenumber+"&max_tab="+maxTab
+        try {
+            let datatest = await axios.get(getSlaveAccountDir, {
+               
+            })
+            data = datatest.data
+            console.log(data)
+        } catch (error) {
+            console.log(error)
+            //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+        }
 
         if (dcomVersion == "V2") {
             // Đổi MAC
@@ -1750,12 +1759,13 @@ runAllTime = async () => {
                 return false
             }
 
-            console.log("data:--------")
-
-            data.forEach(async (key, index) => {   // Foreach object Chạy song song các tab chromium
+            data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
 
                 // Nếu có dữ liệu schedule trả về
-                key = key.split("\t")
+                //key = key.split("\t")
+                key = []
+                key[0] = acc.username
+                key[1] = acc.password.split("\r")[0]
 
                 if (phobien == 1) {
                     let profileChrome = profileDir + key[0]
@@ -1956,11 +1966,11 @@ runAllTime = async () => {
 
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
-                        console.log(ua)
+
                         return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98);
                     });
                     await page.setUserAgent(userAgent)
-                   
+                    console.log(userAgent)
                     // Random kích cỡ màn hình
                     width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
                     height = Math.floor(Math.random() * (800 - 600)) + 600;;
@@ -2062,9 +2072,11 @@ runAllTime = async () => {
                                     options = JSON.parse(shopInfo.options)
                                     //    console.log("options add cart: "+ options.add_cart)
                                     //    process.exit()
-                                    username = key[0]
+                                    product.username = key[0]
+                                    product.password = key[1]
+                                    product.slave = slavenumber
                                     await searchKeyWord(page, product.keyword)
-                                    await updateAtions("search", username, product)
+                                    await updateAtions("search", product)
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
                                     productInfo = await getproductByProductId(page, product)
@@ -2074,34 +2086,34 @@ runAllTime = async () => {
                                     //     productInfo = await getproductByOldIndex(page, product)
                                     // }
                                     console.log(productInfo)
-                                    if ((productInfo.vitri != "Not")) {
-                                        today = new Date().toLocaleString();
-                                        productInfo.keyword = product.keyword
-                                        productInfo.time = today
-                                        productInfo.user = key[0]
-                                        //productInfo.pass = key[1]
 
-                                        try {
-                                            let datatest = await axios.get(shopeeUpdateSeoSanPhamDir, {
-                                                params: {
-                                                    data: {
-                                                        dataToServer: productInfo,
-                                                    }
+                                    today = new Date().toLocaleString();
+                                    productInfo.keyword = product.keyword
+                                    productInfo.time = today
+                                    productInfo.user = key[0]
+                                    //productInfo.pass = key[1]
+
+                                    try {
+                                        let datatest = await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                            params: {
+                                                data: {
+                                                    dataToServer: productInfo,
                                                 }
-                                            })
-                                            console.log("Cập nhật thứ hạng sp: " + datatest.data)
-                                           // console.log(datatest.data)
-                                        } catch (error) {
-                                            console.log("Không gửi được dữ liệu thứ hạng mới đến server")
-                                            console.log(error)
-                                        }
-
+                                            }
+                                        })
+                                        console.log("Cập nhật thứ hạng sp: " + datatest.data)
+                                        // console.log(datatest.data)
+                                    } catch (error) {
+                                        console.log("Không gửi được dữ liệu thứ hạng mới đến server")
+                                        console.log(error)
+                                    }
+                                    if ((productInfo.vitri != "Not")) {
                                         products = await page.$$('[data-sqe="link"]')
 
                                         if (productInfo.vitri > 4 && productInfo.vitri < 45) {
                                             products[productInfo.vitri].click()
-                                            await updateAtions("view_product", username, product)
-                                            await actionShopee(page, options, username, product)
+                                            await updateAtions("view_product", product)
+                                            await actionShopee(page, options, product)
                                             productLink = await page.url()
 
                                             if (options.order) {
@@ -2118,10 +2130,10 @@ runAllTime = async () => {
                                             console.log("Option view shop: " + options.view_shop)
                                             if (options.view_shop) {
                                                 await viewShop(page, productLink)
-                                                await updateAtions("view_shop", username, product)
+                                                await updateAtions("view_shop", product)
 
                                                 if (options.follow_shop) {
-                                                    check1 = await checkAtions("follow_shop", username, product)
+                                                    check1 = await checkAtions("follow_shop", product)
                                                     if (!check1) {
                                                         console.log("follow shop: " + options.follow_shop)
                                                         followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
@@ -2129,7 +2141,7 @@ runAllTime = async () => {
 
                                                             await followClick[0].click()
                                                         }
-                                                        await updateAtions("follow_shop", username, product)
+                                                        await updateAtions("follow_shop",product)
                                                     }
                                                 }
                                             }
