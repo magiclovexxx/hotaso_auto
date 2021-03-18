@@ -8,6 +8,7 @@ var randomMac = require('random-mac');
 const exec = require('child_process').exec;
 const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
+const publicIp = require('public-ip');
 
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
@@ -164,7 +165,7 @@ loginShopee = async (page, accounts) => {
         await page.waitFor(15000)
         checkcode = await page.$$('[autocomplete="one-time-code"]')
 
-        var AllAccounts = fs.readFileSync("shopee.txt");
+        var AllAccounts = fs.readFileSync("shopee.txt", { flag: "as+" });
         if (AllAccounts) {
             AllAccounts = AllAccounts.toString();
             AllAccounts = AllAccounts.split("\n")
@@ -1619,31 +1620,42 @@ genRandomMac = async () => {
     return commandLineChange
 }
 
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+} 
+
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
+    checkNetwork = 0
+    require('dns').resolve('www.google.com', function(err) {
+        if (err) {
+           console.log("No connection");
+           checkNetwork = 0
+        } else {
+           console.log("Connected");
+           checkNetwork = 1
+        }
+      });
+
+      if(checkNetwork == 0){
+        if (dcomVersion == "V2") {
+            await changeIpDcomV2()
+            await sleep(5000)
+          }    
+      }
 
     try {
+        console.log("IP cũ: "+ await publicIp.v4());
         let linkgetdataShopeeDir = ""
         let checkDcomOff
         linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham
         console.log(linkgetdataShopeeDir)
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
-        if (getDataShopee.data.shops == undefined) {
-
-            checkDcomOff = await checkDcomconnect(profileDir)
-            console.log("Kết nối lại dcom: " + checkDcomOff);
-
-            if (checkDcomOff) {
-                getDataShopee = await axios.get(linkgetdataShopeeDir);
-            }
-        }
-
-        if (checkDcomOff == false) {
-            console.log("Không thể kểt nối mạng")
-            return false
-        }
         dataShopee = getDataShopee.data
         if (clickSanPham != 1) {
             idShops = []
@@ -1661,8 +1673,6 @@ runAllTime = async () => {
         if (clickSanPham == 1) {
             keywords = products = dataShopee.products
         } else {
-            //   console.log(dataShopee.keywords)
-
             dataShopee.keywords.forEach(item => {
                 if (item.username) {
                     keyword = item.username.split("\r")[0]
@@ -1681,14 +1691,6 @@ runAllTime = async () => {
         if (typeClick == 1) {
             indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
         }
-
-        //accounts = []
-        //dataShopee.accounts.forEach(item => {
-        //    let account = item.username + "\t" + item.password
-        //    account = account.split("\r")[0]
-        //    accounts.push(account)
-        //})
-
         var accounts = fs.readFileSync("shopee.txt");
         if (accounts) {
             accounts = accounts.toString();
@@ -1708,12 +1710,11 @@ runAllTime = async () => {
         console.log(error)
     }
 
-
     try {
         orderStatus = 1
         console.log("----------- START SHOPEE ---------------")
         //data = GenDirToGetData(maxTab, accounts)
-
+        
         getSlaveAccountDir = getSlaveAccountDir+"?slave="+slavenumber+"&max_tab="+maxTab
         try {
             let datatest = await axios.get(getSlaveAccountDir, {
@@ -1725,13 +1726,11 @@ runAllTime = async () => {
             console.log(error)
             //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
         }
-
+        console.log("IP trước khi đổi MAC: "+await publicIp.v4());
         if (dcomVersion == "V2") {
             // Đổi MAC
             await genRandomMac()
         }
-
-        // process.exit()
 
         if (data) {
             // get version hien tai trong file version.txt
@@ -1795,6 +1794,7 @@ runAllTime = async () => {
                     });
 
                     try {
+                        console.log("IP cũ: "+await publicIp.v4());
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
@@ -1837,7 +1837,7 @@ runAllTime = async () => {
                                 }
                             }
                         }
-
+                        console.log("IP mới: "+await publicIp.v4());
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
                         try {
@@ -1981,6 +1981,7 @@ runAllTime = async () => {
                     });
 
                     try {
+                        console.log("IP cũ: "+await publicIp.v4());
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
@@ -2023,7 +2024,8 @@ runAllTime = async () => {
                                 }
                             }
                         }
-
+                        newIpAdress = await publicIp.v4()
+                        console.log("IP mới: "+ newIpAdress);
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
                         await page.goto("https://shopee.vn")
@@ -2075,6 +2077,7 @@ runAllTime = async () => {
                                     product.username = key[0]
                                     product.password = key[1]
                                     product.slave = slavenumber
+                                    product.ip  = newIpAdress
                                     await searchKeyWord(page, product.keyword)
                                     await updateAtions("search", product)
                                     // Check vị trí sản phẩm theo page, index
