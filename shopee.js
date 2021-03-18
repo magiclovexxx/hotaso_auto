@@ -1646,7 +1646,7 @@ runAllTime = async () => {
         if (dcomVersion == "V2") {
             await changeIpDcomV2()
             await sleep(7000)
-            return false
+        
           }    
       }
 
