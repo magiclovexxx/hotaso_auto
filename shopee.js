@@ -1633,7 +1633,7 @@ runAllTime = async () => {
     checkNetwork = 0
     require('dns').resolve('www.google.com', function(err) {
         if (err) {
-           console.log("No connection");
+          
            checkNetwork = 0
           
         } else {
@@ -1642,6 +1642,7 @@ runAllTime = async () => {
         }
       });
       if(checkNetwork == 0){
+        console.log("No connection");
         if (dcomVersion == "V2") {
             await changeIpDcomV2()
             await sleep(7000)
