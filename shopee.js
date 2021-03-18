@@ -1635,16 +1635,17 @@ runAllTime = async () => {
         if (err) {
            console.log("No connection");
            checkNetwork = 0
+          
         } else {
            console.log("Connected");
            checkNetwork = 1
         }
       });
-
       if(checkNetwork == 0){
         if (dcomVersion == "V2") {
             await changeIpDcomV2()
             await sleep(7000)
+            return false
           }    
       }
 
@@ -1657,16 +1658,6 @@ runAllTime = async () => {
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
         dataShopee = getDataShopee.data
-        if (clickSanPham != 1) {
-            idShops = []
-            idShopsfull = dataShopee.shops
-            dataShopee.shops.forEach(item => {
-                if (item.fullname) {
-                    idShop = item.fullname.split("\r")[0]
-                    idShops.push(item.fullname)
-                }
-            })
-        }
 
         keywords = []
 
@@ -1681,31 +1672,6 @@ runAllTime = async () => {
             })
         }
 
-        if (clickSanPham != 1) {
-            shopsLoaiTru = []
-            dataShopee.shops.forEach(item => {
-                idShop = item.fullname.split("\r")[0]
-                shopsLoaiTru.push(item.fullname)
-            })
-        }
-        if (typeClick == 1) {
-            indexClickShopee = dataShopee.soLuongAdsClick[0].twofa
-        }
-        var accounts = fs.readFileSync("shopee.txt");
-        if (accounts) {
-            accounts = accounts.toString();
-            accounts = accounts.split("\n")
-        } else {
-            accounts = []
-        }
-
-        listProducts = []
-        dataShopee.products.forEach(item => {
-            product = item.fullname
-            listProducts.push(product)
-        })
-
-        listcategories = dataShopee.categories
     } catch (error) {
         console.log(error)
     }
@@ -1714,7 +1680,7 @@ runAllTime = async () => {
         orderStatus = 1
         console.log("----------- START SHOPEE ---------------")
         //data = GenDirToGetData(maxTab, accounts)
-        
+        data=0
         getSlaveAccountDir = getSlaveAccountDir+"?slave="+slavenumber+"&max_tab="+maxTab
         try {
             let datatest = await axios.get(getSlaveAccountDir, {
