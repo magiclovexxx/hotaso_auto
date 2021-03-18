@@ -1697,6 +1697,7 @@ runAllTime = async () => {
         if (dcomVersion == "V2") {
             // Đổi MAC
             await genRandomMac()
+            await sleep(7000)
         }
 
         if (data) {
@@ -1766,7 +1767,7 @@ runAllTime = async () => {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             if (dcomVersion == "V2") {
-                                await changeIpDcomV2()
+                               // await changeIpDcomV2()
                             } else {
                                 await page.goto("http://192.168.8.1/html/home.html")
                                 //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -1953,7 +1954,7 @@ runAllTime = async () => {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             if (dcomVersion == "V2") {
-                                await changeIpDcomV2()
+                               // await changeIpDcomV2()
                             } else {
                                 await page.goto("http://192.168.8.1/html/home.html")
                                 //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
