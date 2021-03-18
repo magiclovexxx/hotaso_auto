@@ -2044,7 +2044,7 @@ runAllTime = async () => {
                                     product.username = key[0]
                                     product.password = key[1]
                                     product.slave = slavenumber
-                                    product.ip  = newIpAdress
+                                    //product.ip  = newIpAdress
                                     await searchKeyWord(page, product.keyword)
                                     await updateAtions("search", product)
                                     // Check vị trí sản phẩm theo page, index
