@@ -1644,12 +1644,12 @@ runAllTime = async () => {
       if(checkNetwork == 0){
         if (dcomVersion == "V2") {
             await changeIpDcomV2()
-            await sleep(5000)
+            await sleep(7000)
           }    
       }
 
     try {
-        console.log("IP cũ: "+ await publicIp.v4());
+        //console.log("IP cũ: "+ await publicIp.v4());
         let linkgetdataShopeeDir = ""
         let checkDcomOff
         linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham
@@ -1726,7 +1726,7 @@ runAllTime = async () => {
             console.log(error)
             //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
         }
-        console.log("IP trước khi đổi MAC: "+await publicIp.v4());
+       // console.log("IP trước khi đổi MAC: "+await publicIp.v4());
         if (dcomVersion == "V2") {
             // Đổi MAC
             await genRandomMac()
@@ -1794,7 +1794,7 @@ runAllTime = async () => {
                     });
 
                     try {
-                        console.log("IP cũ: "+await publicIp.v4());
+                        //console.log("IP cũ: "+await publicIp.v4());
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
@@ -1837,7 +1837,7 @@ runAllTime = async () => {
                                 }
                             }
                         }
-                        console.log("IP mới: "+await publicIp.v4());
+                       // console.log("IP mới: "+await publicIp.v4());
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
                         try {
@@ -1981,7 +1981,7 @@ runAllTime = async () => {
                     });
 
                     try {
-                        console.log("IP cũ: "+await publicIp.v4());
+                       // console.log("IP cũ: "+await publicIp.v4());
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
@@ -2024,8 +2024,8 @@ runAllTime = async () => {
                                 }
                             }
                         }
-                        newIpAdress = await publicIp.v4()
-                        console.log("IP mới: "+ newIpAdress);
+                       // newIpAdress = await publicIp.v4()
+                       // console.log("IP mới: "+ newIpAdress);
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
                         await page.goto("https://shopee.vn")
