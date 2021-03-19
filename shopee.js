@@ -1551,7 +1551,7 @@ function sleep(ms) {
 }
 
 disconnectDcomV2 = async () => {
-    const disDcom =  await exec('disconnectdcom.cmd /');
+    const disDcom =  await exec('disconnect.bat /');
     disDcom.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
@@ -1562,8 +1562,8 @@ disconnectDcomV2 = async () => {
 }
 
 connectDcomV2 = async () => {
-    await sleep(5000)
-    const connectdcom1 =  await exec('connectdcom.cmd /');
+   
+    const connectdcom1 =  await exec('connect.bat /');
     connectdcom1.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
