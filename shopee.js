@@ -1563,11 +1563,11 @@ disconnectDcomV2 = async () => {
 
 connectDcomV2 = async () => {
     await sleep(5000)
-    const disDcom =  await exec('connectdcom.cmd /');
-    disDcom.stdout.on('data', (data) => {
+    const connectdcom1 =  await exec('connectdcom.cmd /');
+    connectdcom1.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
-    disDcom.stderr.on('data', (data) => {
+    connectdcom1.stderr.on('data', (data) => {
         console.error(data);
     });
 
@@ -1644,9 +1644,9 @@ runAllTime = async () => {
 
     // lấy dữ liệu từ master
     checkNetwork = 0
-    require('dns').resolve('www.google.com', function(err) {
+    await require('dns').resolve('www.google.com', function(err) {
         if (err) {
-          
+            console.log("No connection1");
            checkNetwork = 0
           
         } else {
@@ -1655,23 +1655,23 @@ runAllTime = async () => {
            
         }
       });
-
+      await sleep(2000)
       if(checkNetwork == 0){
-        console.log("No connection");
-        if (mode != "DEV") {
+        console.log("No connection2");
+       // if (mode != "DEV") {
             await connectDcomV2()
-            await sleep(10000)
+            await sleep(15000)
         
-          }    
+        //  }    
       }
 
-      if(checkNetwork == 0){
+      if(checkNetwork == 1){
         console.log("No connection");
-        if (mode != "DEV") {
+        //if (mode != "DEV") {
             // Đổi MAC
             await genRandomMac()
-            await sleep(10000)
-        } 
+            await sleep(15000)
+       // } 
       }
 
     try {
@@ -1700,7 +1700,7 @@ runAllTime = async () => {
     } catch (error) {
         console.log(error)
     }
-
+//process.exit()
     try {
         orderStatus = 1
         console.log("----------- START SHOPEE ---------------")
