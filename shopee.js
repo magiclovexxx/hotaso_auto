@@ -1551,7 +1551,7 @@ function sleep(ms) {
 }
 
 disconnectDcomV2 = async () => {
-    const disDcom =  await exec('%Windir%\system32\rasdial /disconnect');
+    const disDcom =  await exec('%Windir%\\system32\\rasdial /disconnect');
     disDcom.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
@@ -1563,7 +1563,7 @@ disconnectDcomV2 = async () => {
 
 connectDcomV2 = async () => {
     await sleep(5000)
-    const disDcom =  await exec('%Windir%\system32\rasdial "MTN Data"');
+    const disDcom =  await exec('%Windir%\\system32\\rasdial "MTN Data"');
     disDcom.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
@@ -1655,7 +1655,7 @@ runAllTime = async () => {
            
         }
       });
-      
+
       if(checkNetwork == 0){
         console.log("No connection");
         if (mode != "DEV") {
