@@ -1550,14 +1550,27 @@ function sleep(ms) {
     });
 }
 
-changeIpDcomV2 = async () => {
-    const changeIpDcom = exec('dcom.cmd /');
-    changeIpDcom.stdout.on('data', (data) => {
+disconnectDcomV2 = async () => {
+    const disDcom =  await exec('%Windir%\system32\rasdial /disconnect');
+    disDcom.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
-    changeIpDcom.stderr.on('data', (data) => {
+    disDcom.stderr.on('data', (data) => {
         console.error(data);
     });
+
+}
+
+connectDcomV2 = async () => {
+    await sleep(5000)
+    const disDcom =  await exec('%Windir%\system32\rasdial "MTN Data"');
+    disDcom.stdout.on('data', (data) => {
+        // do whatever you want here with data
+    });
+    disDcom.stderr.on('data', (data) => {
+        console.error(data);
+    });
+
 }
 
 deleteProfile = async (profile) => {
@@ -1639,15 +1652,26 @@ runAllTime = async () => {
         } else {
            console.log("Connected");
            checkNetwork = 1
+           
         }
       });
+      
       if(checkNetwork == 0){
         console.log("No connection");
-        if (dcomVersion == "V2") {
-            await changeIpDcomV2()
-            await sleep(7000)
+        if (mode != "DEV") {
+            await connectDcomV2()
+            await sleep(10000)
         
           }    
+      }
+
+      if(checkNetwork == 0){
+        console.log("No connection");
+        if (mode != "DEV") {
+            // Đổi MAC
+            await genRandomMac()
+            await sleep(10000)
+        } 
       }
 
     try {
@@ -1694,11 +1718,7 @@ runAllTime = async () => {
             //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
         }
        // console.log("IP trước khi đổi MAC: "+await publicIp.v4());
-        if (dcomVersion == "V2") {
-            // Đổi MAC
-            await genRandomMac()
-            await sleep(7000)
-        }
+        
 
         if (data) {
             // get version hien tai trong file version.txt
@@ -1955,47 +1975,12 @@ runAllTime = async () => {
                             console.log("Đổi ip mạng")
                             if (dcomVersion == "V2") {
                                // await changeIpDcomV2()
-                            } else {
-                                await page.goto("http://192.168.8.1/html/home.html")
-                                //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                //   await page.waitFor(timeout)
-                                checkDcom = await page.$$(".mobile_connect_btn_on")
-
-                                //   process.exit()
-                                if (checkDcom.length) {
-                                    await page.click("#mobile_connect_btn")
-                                    timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                    await page.waitFor(timeout)
-
-                                    // turn on dcom
-                                    checkDcomOff = await page.$$(".mobile_connect_btn_on")
-                                    if (!checkDcomOff.length) {
-                                        await page.click("#mobile_connect_btn")
-                                        timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                        await page.waitFor(timeout)
-                                    }
-                                }
-
-                                if (!checkDcom.length) {
-                                    console.log("DCOM V2")
-                                    checkDcomOff = await page.$$("#disconnect_btn")
-                                    await page.click("#disconnect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                                    await page.waitFor(timeout)
-
-                                    // turn on dcom
-                                    //checkDcomOff = await page.$$("#connect_btn")
-                                    checkDcomOff = await page.waitForSelector("#connect_btn")
-                                    await page.click("#connect_btn")
-                                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 2000;
-                                    await page.waitFor(timeout)
-                                }
-                            }
+                            } 
                         }
                        // newIpAdress = await publicIp.v4()
                        // console.log("IP mới: "+ newIpAdress);
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitFor(10000)
+                        await page.waitFor(5000)
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
