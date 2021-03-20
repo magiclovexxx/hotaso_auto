@@ -4,7 +4,8 @@ const exec = require('child_process').exec;
 restartAll = async () => {
 
  console.log("------- Restart all -------")
-    exec("pm2 restart all", (error) => {
+    exec("", (error) => {
+    //exec("pm2 restart all", (error) => {
         if (error) {
             console.log(`error: ${error.message}`);
             return;

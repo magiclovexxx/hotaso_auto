@@ -1671,8 +1671,9 @@ runAllTime = async () => {
             // Đổi MAC
             await genRandomMac()
             await disconnectDcomV2()
+            await sleep(4000)
             await connectDcomV2()
-            await sleep(15000)
+            await sleep(10000)
        // } 
       }
 
@@ -1721,8 +1722,7 @@ runAllTime = async () => {
         }
        // console.log("IP trước khi đổi MAC: "+await publicIp.v4());
         
-
-        if (data) {
+        if (data.length) {
             // get version hien tai trong file version.txt
             var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
             if (checkVersion) {
