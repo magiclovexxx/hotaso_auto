@@ -22,6 +22,7 @@ let dcomVersion = process.env.DCOM
 phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 // Danh sách profile fb trong file .env
 maxTab = process.env.MAXTAB_SHOPEE                           // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
+maxTab = 5
 // Danh sách profile facebook trong mỗi slave
 mode = process.env.MODE
 
@@ -518,21 +519,38 @@ getproductByProductId = async (page, product) => {
         let productIds
 
         getProduct.forEach((item, index) => {
-            if ((index < 45) && (index > 4)) {
-                productIds = item.split(product.product_id)
-                if (productIds.length == 2) {
-                    productId = product.id
-                    productIndex = index;
-                    thuHangSanPham = {
-                        id : product.id,
-                        sanpham: product.product_name,
-                        product_id: product.product_id,
-                        shopId: product.shop_id,
-                        trang: product_page2,
-                        vitri: productIndex
+            if (product_page2 < 6) {
+                if ((index < 45) && (index > 4)) {
+                    productIds = item.split(product.product_id)
+                    if (productIds.length == 2) {
+                        productId = product.id
+                        productIndex = index;
+                        thuHangSanPham = {
+                            id: product.id,
+                            sanpham: product.product_name,
+                            product_id: product.product_id,
+                            shopId: product.shop_id,
+                            trang: product_page2,
+                            vitri: productIndex
+                        }
+                        return true
                     }
-                    return true
                 }
+            }else{
+                productIds = item.split(product.product_id)
+                    if (productIds.length == 2) {
+                        productId = product.id
+                        productIndex = index;
+                        thuHangSanPham = {
+                            id: product.id,
+                            sanpham: product.product_name,
+                            product_id: product.product_id,
+                            shopId: product.shop_id,
+                            trang: product_page2,
+                            vitri: productIndex
+                        }
+                        return true
+                    }
             }
         })
         if (product.max_page == 0 || product.max_page == null) {
@@ -543,7 +561,7 @@ getproductByProductId = async (page, product) => {
         } else {
             if (product_page2 == product.max_page) {
                 thuHangSanPham = {
-                    id : product.id,
+                    id: product.id,
                     sanpham: product.product_name,
                     product_id: product.product_id,
                     shopId: product.shop_id,
@@ -1099,7 +1117,7 @@ checkAtions = async (action, product) => {
 updateAtions = async (action, product) => {
     dataupdate = product
     dataupdate.action = action
-    
+
     update = 0
     try {
         let datatest = await axios.get(updateActionsDir, {
@@ -1209,7 +1227,7 @@ actionShopee = async (page, options, product) => {
     if (options.view_review) {
         console.log("---- Xem review ----")
         await viewReview(page)
-        await updateAtions("view_review",product)
+        await updateAtions("view_review", product)
         await page.waitFor(timeout)
     }
 
@@ -1551,7 +1569,7 @@ function sleep(ms) {
 }
 
 disconnectDcomV2 = async () => {
-    const disDcom =  await exec('disconnect.bat /');
+    const disDcom = await exec('disconnect.bat /');
     disDcom.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
@@ -1562,8 +1580,8 @@ disconnectDcomV2 = async () => {
 }
 
 connectDcomV2 = async () => {
-   
-    const connectdcom1 =  await exec('connect.bat /');
+
+    const connectdcom1 = await exec('connect.bat /');
     connectdcom1.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
@@ -1635,47 +1653,47 @@ genRandomMac = async () => {
 
 
 function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-} 
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 
 runAllTime = async () => {
 
     // lấy dữ liệu từ master
     checkNetwork = 0
-    await require('dns').resolve('www.google.com', function(err) {
+    await require('dns').resolve('www.google.com', function (err) {
         if (err) {
             console.log("No connection1");
-           checkNetwork = 0
-          
-        } else {
-           console.log("Connected");
-           checkNetwork = 1
-           
-        }
-      });
-      await sleep(2000)
-      if(checkNetwork == 0){
-        console.log("No connection2");
-       // if (mode != "DEV") {
-            await connectDcomV2()
-            await sleep(15000)
-        
-        //  }    
-      }
+            checkNetwork = 0
 
-      if(checkNetwork == 1){
+        } else {
+            console.log("Connected");
+            checkNetwork = 1
+
+        }
+    });
+    await sleep(2000)
+    if (checkNetwork == 0) {
+        console.log("No connection2");
+        // if (mode != "DEV") {
+        await connectDcomV2()
+        await sleep(15000)
+
+        //  }    
+    }
+
+    if (checkNetwork == 1) {
         console.log("connected");
         //if (mode != "DEV") {
-            // Đổi MAC
-            await genRandomMac()
-            await disconnectDcomV2()
-            await sleep(4000)
-            await connectDcomV2()
-            await sleep(10000)
-       // } 
-      }
+        // Đổi MAC
+        await genRandomMac()
+        await disconnectDcomV2()
+        await sleep(4000)
+        await connectDcomV2()
+        await sleep(10000)
+        // } 
+    }
 
     try {
         //console.log("IP cũ: "+ await publicIp.v4());
@@ -1703,16 +1721,16 @@ runAllTime = async () => {
     } catch (error) {
         console.log(error)
     }
-//process.exit()
+    //process.exit()
     try {
         orderStatus = 1
         console.log("----------- START SHOPEE ---------------")
         //data = GenDirToGetData(maxTab, accounts)
-        data=0
-        getSlaveAccountDir = getSlaveAccountDir+"?slave="+slavenumber+"&max_tab="+maxTab
+        data = 0
+        getSlaveAccountDir = getSlaveAccountDir + "?slave=" + slavenumber + "&max_tab=" + maxTab
         try {
             let datatest = await axios.get(getSlaveAccountDir, {
-               
+
             })
             data = datatest.data
             console.log(data)
@@ -1720,8 +1738,8 @@ runAllTime = async () => {
             console.log(error)
             //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
         }
-       // console.log("IP trước khi đổi MAC: "+await publicIp.v4());
-        
+        // console.log("IP trước khi đổi MAC: "+await publicIp.v4());
+
         if (data.length) {
             // get version hien tai trong file version.txt
             var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
@@ -1789,7 +1807,7 @@ runAllTime = async () => {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             if (dcomVersion == "V2") {
-                               // await changeIpDcomV2()
+                                // await changeIpDcomV2()
                             } else {
                                 await page.goto("http://192.168.8.1/html/home.html")
                                 //  timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -1827,7 +1845,7 @@ runAllTime = async () => {
                                 }
                             }
                         }
-                       // console.log("IP mới: "+await publicIp.v4());
+                        // console.log("IP mới: "+await publicIp.v4());
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(10000)
                         try {
@@ -1971,16 +1989,16 @@ runAllTime = async () => {
                     });
 
                     try {
-                       // console.log("IP cũ: "+await publicIp.v4());
+                        // console.log("IP cũ: "+await publicIp.v4());
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
                             if (dcomVersion == "V2") {
-                               // await changeIpDcomV2()
-                            } 
+                                // await changeIpDcomV2()
+                            }
                         }
-                       // newIpAdress = await publicIp.v4()
-                       // console.log("IP mới: "+ newIpAdress);
+                        // newIpAdress = await publicIp.v4()
+                        // console.log("IP mới: "+ newIpAdress);
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
                         await page.waitFor(5000)
                         await page.goto("https://shopee.vn")
@@ -2099,7 +2117,7 @@ runAllTime = async () => {
 
                                                             await followClick[0].click()
                                                         }
-                                                        await updateAtions("follow_shop",product)
+                                                        await updateAtions("follow_shop", product)
                                                     }
                                                 }
                                             }
