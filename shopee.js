@@ -526,7 +526,7 @@ getproductByProductId = async (page, product) => {
         let page_link = await page.url()
         product_page2 = page_link.split("&page=")[1]
         product_page2=parseInt(product_page2)
-        
+
         if (product_page2 == undefined) {
             product_page2 = 0
         }
@@ -1461,12 +1461,12 @@ runAllTime = async () => {
         //console.log("IP cũ: "+ await publicIp.v4());
         let linkgetdataShopeeDir = ""
         let checkDcomOff
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham+"&max_tab=" + maxTab
         console.log(linkgetdataShopeeDir)
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
         dataShopee = getDataShopee.data
-
+        
         keywords = []
 
         if (clickSanPham == 1) {
@@ -1532,12 +1532,12 @@ runAllTime = async () => {
 
                 // Nếu có dữ liệu schedule trả về
                 //key = key.split("\t")
-                key = []
-                key[0] = acc.username
-                key[1] = acc.password.split("\r")[0]
+                let subAccount = []
+                subAccount[0] = acc.username
+                subAccount[1] = acc.password.split("\r")[0]
 
                 if (phobien == 1) {
-                    let profileChrome = profileDir + key[0]
+                    let profileChrome = profileDir + subAccount[0]
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
                         headless: false,
@@ -1621,7 +1621,7 @@ runAllTime = async () => {
                         await page.waitFor(timeout)
 
                         // login account shopee                    
-                        checklogin = await loginShopee(page, key)
+                        checklogin = await loginShopee(page, subAccount)
 
                         if (checklogin) {
                             console.log("---------- san pham pho bien ----------")
@@ -1693,8 +1693,8 @@ runAllTime = async () => {
                         } else {
 
                             accountInfo = {
-                                user: key[0],
-                                pass: key[1],
+                                user: subAccount[0],
+                                pass: subAccount[1],
                                 status: 0,
                                 message: "Account bị khoá"
                             }
@@ -1723,7 +1723,7 @@ runAllTime = async () => {
 
                     console.log("----------- CLICK ALL SẢN PHẨM ---------------")
 
-                    let profileChrome = profileDir + key[0]
+                    let profileChrome = profileDir + subAccount[0]
                     console.log("Profile chrome link: " + profileChrome)
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
@@ -1737,7 +1737,7 @@ runAllTime = async () => {
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
 
-                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98);
+                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osName != "Win95");
                     });
                     await page.setUserAgent(userAgent)
                     console.log(userAgent)
@@ -1768,7 +1768,7 @@ runAllTime = async () => {
                         await page.waitFor(timeout)
 
                         // login account shopee                    
-                        checklogin = await loginShopee(page, key)
+                        checklogin = await loginShopee(page, subAccount)
                         if (checklogin) {
                             if (clickSanPham == 1) {
                                 console.log("----- Click theo sản phẩm -----")
@@ -1777,6 +1777,8 @@ runAllTime = async () => {
                                 // server check tài khoản còn tiền để sử dụng không
 
                                 // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
+                                console.log("index: " + index)
+                                console.log("account: " + subAccount[0])
                                 if (index < products.length) {
                                     product = products[index];
                                 } else {
@@ -1799,18 +1801,18 @@ runAllTime = async () => {
                                     console.log("Không gửi được dữ liệu thứ hạng mới đến server")
                                     console.log(error)
                                 }
-                                console.log("Shop info")
+                                console.log("Shop id")
 
-                                console.log(shopInfo)
-                                console.log(product)
+                                console.log(shopInfo.fullname)
+                                console.log(product.product_name)
 
 
                                 if (shopInfo) {
                                     options = JSON.parse(shopInfo.options)
                                     //    console.log("options add cart: "+ options.add_cart)
                                     //    process.exit()
-                                    product.username = key[0]
-                                    product.password = key[1]
+                                    product.username = subAccount[0]
+                                    product.password = subAccount[1]
                                     product.slave = slavenumber
                                     //product.ip  = newIpAdress
                                     await searchKeyWord(page, product.keyword)
@@ -1828,7 +1830,7 @@ runAllTime = async () => {
                                     today = new Date().toLocaleString();
                                     productInfo.keyword = product.keyword
                                     productInfo.time = today
-                                    productInfo.user = key[0]
+                                    productInfo.user = subAccount[0]
                                     //productInfo.pass = key[1]
 
                                     try {
