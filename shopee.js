@@ -518,12 +518,15 @@ getproductByProductId = async (page, product) => {
             
             return titles[0].textContent
         })
+        getProductPageTotal=parseInt(getProductPageTotal)
         console.log("Tổng số trang kết quả tìm kiếm: " + getProductPageTotal)
         let productIndex = 0
         let productId
         // tìm vị trí sản phẩm có tên cần click
         let page_link = await page.url()
         product_page2 = page_link.split("&page=")[1]
+        product_page2=parseInt(product_page2)
+        
         if (product_page2 == undefined) {
             product_page2 = 0
         }
