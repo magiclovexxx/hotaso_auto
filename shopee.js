@@ -554,7 +554,7 @@ getproductByProductId = async (page, product) => {
             }
         })
         if (product.max_page == 0 || product.max_page == null) {
-            product.max_page = 30
+            product.max_page = 3
         }
         if (thuHangSanPham) {
             return thuHangSanPham;
@@ -1786,7 +1786,7 @@ runAllTime = async () => {
                                     product.slave = slavenumber
                                     //product.ip  = newIpAdress
                                     await searchKeyWord(page, product.keyword)
-                                    await updateAtions("search", product)
+                                    await updateAtions("search", product.product_name)
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
                                     productInfo = await getproductByProductId(page, product)
