@@ -571,7 +571,7 @@ getproductByProductId = async (page, product) => {
         if (thuHangSanPham) {
             return thuHangSanPham;
         } else {
-            if (product_page2 == product.max_page) {
+            if (product_page2 == (product.max_page-1)) {
                 thuHangSanPham = {
                     id: product.id,
                     sanpham: product.product_name,
@@ -582,7 +582,7 @@ getproductByProductId = async (page, product) => {
                 }
                 return thuHangSanPham;
             }
-            if(product_page2<getProductPageTotal){
+            if(product_page2<(getProductPageTotal-1)){
                 next = await page.$$('.shopee-icon-button--right')
                 if (next.length) {
                     await next[0].click()
