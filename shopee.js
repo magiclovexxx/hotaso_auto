@@ -1777,12 +1777,13 @@ runAllTime = async () => {
                                 // server check tài khoản còn tiền để sử dụng không
 
                                 // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
+                                let productForUser
                                 console.log("index: " + index)
                                 console.log("account: " + subAccount[0])
                                 if (index < products.length) {
-                                    product = products[index];
+                                    productForUser = products[index];
                                 } else {
-                                    product = products[0];
+                                    productForUser = products[0];
                                 }
 
                                 // Check actions can thao tac cua shop
@@ -1791,7 +1792,7 @@ runAllTime = async () => {
                                     let datatest = await axios.get(getShopActionsDir, {
                                         params: {
                                             data: {
-                                                dataToServer: product,
+                                                dataToServer: productForUser,
                                             }
                                         }
                                     })
@@ -1804,22 +1805,22 @@ runAllTime = async () => {
                                 console.log("Shop id")
 
                                 console.log(shopInfo.fullname)
-                                console.log(product.product_name)
+                                console.log("Product data id: "+productForUser.id)
 
 
                                 if (shopInfo) {
                                     options = JSON.parse(shopInfo.options)
                                     //    console.log("options add cart: "+ options.add_cart)
                                     //    process.exit()
-                                    product.username = subAccount[0]
-                                    product.password = subAccount[1]
-                                    product.slave = slavenumber
+                                    productForUser.username = subAccount[0]
+                                    productForUser.password = subAccount[1]
+                                    productForUser.slave = slavenumber
                                     //product.ip  = newIpAdress
-                                    await searchKeyWord(page, product.keyword)
-                                    await updateAtions("search", product)
+                                    await searchKeyWord(page, productForUser.keyword)
+                                    await updateAtions("search", productForUser)
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
-                                    productInfo = await getproductByProductId(page, product)
+                                    productInfo = await getproductByProductId(page, productForUser)
                                     // if(product.product_page == null || product.product_page == "Not"){
                                     //     productInfo = await getproductByProductId(page, product)
                                     // }else{
@@ -1828,7 +1829,7 @@ runAllTime = async () => {
                                     console.log(productInfo)
 
                                     today = new Date().toLocaleString();
-                                    productInfo.keyword = product.keyword
+                                    productInfo.keyword = productForUser.keyword
                                     productInfo.time = today
                                     productInfo.user = subAccount[0]
                                     //productInfo.pass = key[1]
@@ -1848,17 +1849,18 @@ runAllTime = async () => {
                                         console.log(error)
                                     }
                                     if ((productInfo.vitri != "Not")) {
-                                        products = await page.$$('[data-sqe="link"]')
-                                        products[productInfo.vitri].click()
+                                        productsAll = await page.$$('[data-sqe="link"]')
+                                        productsAll[productInfo.vitri].click()
                                     } else {
-                                        await page.goto(product.product_link)
+                                        console.log("Goto product"+ productForUser.product_link)
+                                        await page.goto(productForUser.product_link)
                                     }
                                     // Goto product link
 
                                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                     await page.waitFor(timeout)
-                                    await updateAtions("view_product", product)
-                                    await actionShopee(page, options, product)
+                                    await updateAtions("view_product", productForUser)
+                                    await actionShopee(page, options, productForUser)
                                     productLink = await page.url()
 
                                     if (options.order) {
@@ -1875,10 +1877,10 @@ runAllTime = async () => {
                                     console.log("Option view shop: " + options.view_shop)
                                     if (options.view_shop) {
                                         await viewShop(page, productLink)
-                                        await updateAtions("view_shop", product)
+                                        await updateAtions("view_shop", productForUser)
 
                                         if (options.follow_shop) {
-                                            check1 = await checkAtions("follow_shop", product)
+                                            check1 = await checkAtions("follow_shop", productForUser)
                                             if (!check1) {
                                                 console.log("follow shop: " + options.follow_shop)
                                                 followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
@@ -1886,7 +1888,7 @@ runAllTime = async () => {
 
                                                     await followClick[0].click()
                                                 }
-                                                await updateAtions("follow_shop", product)
+                                                await updateAtions("follow_shop", productForUser)
                                             }
                                         }
                                     }
