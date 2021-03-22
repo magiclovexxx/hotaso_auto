@@ -475,17 +475,19 @@ getproductByProductId = async (page, product) => {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        await page.waitFor(3000);
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        await page.waitFor(3000);
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        await page.waitFor(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
         await page.waitFor(timeout);
 
         if (phobien) {
@@ -509,7 +511,14 @@ getproductByProductId = async (page, product) => {
             })
             return listProductLinks
         })
+        getProductPageTotal = await page.evaluate(() => {
 
+            // Class có link bài đăng trên profile          
+            let titles = document.querySelectorAll('.shopee-mini-page-controller__total');
+            
+            return titles[0].textContent
+        })
+        console.log("Tổng số trang kết quả tìm kiếm: " + getProductPageTotal)
         let productIndex = 0
         let productId
         // tìm vị trí sản phẩm có tên cần click
@@ -573,13 +582,26 @@ getproductByProductId = async (page, product) => {
                 }
                 return thuHangSanPham;
             }
-            next = await page.$$('.shopee-icon-button--right')
-            if (next.length) {
-                await next[0].click()
-                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitFor(timeout);
-                return await getproductByProductId(page, product)
+            if(product_page2<getProductPageTotal){
+                next = await page.$$('.shopee-icon-button--right')
+                if (next.length) {
+                    await next[0].click()
+                    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                    await page.waitFor(timeout);
+                    return await getproductByProductId(page, product)
+                }
+            }else{
+                thuHangSanPham = {
+                    id: product.id,
+                    sanpham: product.product_name,
+                    product_id: product.product_id,
+                    shopId: product.shop_id,
+                    trang: "Not",
+                    vitri: "Not"
+                }
+                return thuHangSanPham;
             }
+            
         }
 
     } catch (error) {
