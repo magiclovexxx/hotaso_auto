@@ -32,7 +32,7 @@ if (mode === "DEV") {
 
 } else {
     apiUrl = "http://hotaso.vn"
-    maxTab = 5
+    maxTab = 7
 }
 
 
@@ -50,7 +50,7 @@ if (mode === "DEV") {
     timemax = 5000;
     timemin = 3000;
 } else {
-    timemax = 5000;
+    timemax = 4000;
     timemin = 3000;
 }
 logs = 1
@@ -475,19 +475,19 @@ getproductByProductId = async (page, product) => {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (3000 - 1000)) + 1000;
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
 
         if (phobien) {
@@ -768,7 +768,7 @@ chooseVariation = async (page, limit) => {
 }
 
 viewReview = async (page) => {
-    timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
     await page.waitFor(timeout)
     allRview = await page.$$('.product-rating-overview__filter')
     console.log(allRview.length)
@@ -946,7 +946,7 @@ actionShopee = async (page, options, product) => {
     viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
     checkvideo = await page.$$('video')
     if (checkvideo.length) {
-        timeout = Math.floor(Math.random() * (25000 - 15000)) + 20000;
+        timeout = Math.floor(Math.random() * (13000 - 7000)) + 70000;
         await page.waitFor(timeout)
     }
     for (let i = 0; i <= viewRandomImages; i++) {
