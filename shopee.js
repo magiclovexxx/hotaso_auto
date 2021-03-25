@@ -1467,6 +1467,7 @@ runAllTime = async () => {
 
             data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
 
+               await sleep(5000*index)
                 // Nếu có dữ liệu schedule trả về
                 //key = key.split("\t")
                 let subAccount = []
@@ -1546,7 +1547,7 @@ runAllTime = async () => {
                         }
                         // console.log("IP mới: "+await publicIp.v4());
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitFor((5000 * index))
+                        await page.waitFor(10000)
                         try {
                             await page.goto("https://shopee.vn")
                         } catch (error) {
