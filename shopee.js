@@ -1467,7 +1467,7 @@ runAllTime = async () => {
 
             data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
 
-               await sleep(5000*index)
+               await sleep(10000*index)
                 // Nếu có dữ liệu schedule trả về
                 //key = key.split("\t")
                 let subAccount = []
