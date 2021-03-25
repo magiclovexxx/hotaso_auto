@@ -1546,7 +1546,7 @@ runAllTime = async () => {
                         }
                         // console.log("IP mới: "+await publicIp.v4());
                         //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-                        await page.waitFor(10000)
+                        await page.waitFor((5000 * index))
                         try {
                             await page.goto("https://shopee.vn")
                         } catch (error) {
