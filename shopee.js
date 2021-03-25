@@ -32,7 +32,7 @@ if (mode === "DEV") {
 
 } else {
     apiUrl = "http://hotaso.vn"
-    maxTab = 7
+    maxTab = 5
 }
 
 
@@ -147,7 +147,7 @@ loginShopee = async (page, accounts) => {
             return 0
         }
 
-        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+        timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
         await page.waitFor(timeout)
 
         await page.click('[name="loginKey"]')
@@ -1240,69 +1240,6 @@ orderProduct = async (page, productInfo) => {
 
 }
 
-
-checkDcomconnect = async (profileDir) => {
-    profileDirTest = profileDir + "test"
-    const browser = await puppeteer.launch({
-        executablePath: chromiumDir,
-        headless: false,
-        devtools: false,
-        args: [
-            `--user-data-dir=${profileDirTest}`      // load profile chromium
-        ]
-    });
-
-    const page = (await browser.pages())[0];
-    userAgent = randomUseragent.getRandom(function (ua) {
-        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98);
-    });
-    await page.setUserAgent(userAgent)
-    console.log(userAgent)
-    // Random kích cỡ màn hình
-    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-    height = Math.floor(Math.random() * (800 - 600)) + 600;;
-
-    await page.setViewport({
-        width: width,
-        height: height
-    });
-
-    // Check dcom off 
-    try {
-        await page.goto("http://192.168.8.1/html/home.html")
-    } catch (error) {
-        browser.close()
-        return false
-    }
-
-    // turn on dcom
-    checkDcomOff = await page.$$(".mobile_connect_btn_on")
-    if (!checkDcomOff.length) {
-        await page.click("#mobile_connect_btn")
-        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-        await page.waitFor(timeout)
-        browser.close()
-        return true
-    }
-
-    if (!checkDcomOff.length) {
-
-        // turn on dcom
-        checkDcomOff = await page.$$("#connect_btn")
-        // checkDcomOff = await page.waitForSelector("#connect_btn")
-
-        if (checkDcomOff.length) {
-            await page.click("#connect_btn")
-            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitFor(timeout)
-            browser.close()
-            return true
-        } else {
-            browser.close()
-            return false
-        }
-    }
-}
 
 function generateRandom(min, max, num1, limit) {
     var rtn = Math.floor(Math.random() * (max - min)) + min;
