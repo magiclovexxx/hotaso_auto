@@ -38,7 +38,7 @@ runAllTime = async () => {
     //     console.log(error)
 
     // }
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 20; i++) {
 
         page = 50 * i
         //shopeesearch = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=v%C3%AD%20n%E1%BB%AF&limit=50&newest=50&order=desc&page_type=search&version=2"
@@ -66,7 +66,7 @@ runAllTime = async () => {
         }
 
         try {
-            datatest = await axios.get(shopeesearch, {
+            datatest = await axios.get(productInfo, {
 
                 headers: headersearch
             })
@@ -76,14 +76,17 @@ runAllTime = async () => {
             console.log(error)
         }
         data = datatest.data
-        //console.log(i + ":" + datatest.data.items.name)
-        console.log("Trang: " + i)
-        fs.appendFileSync('check.txt', "Trang: " + i + "\n", { flag: "as+" })
+        console.log(data.item.name)
+        //console.log("Trang: " + i)
 
-        datatest.data.items.forEach(element => {
-            fs.appendFileSync('check.txt', i + " - " + element.item_basic.itemid + " - " + element.item_basic.name + "\n", { flag: "as+" })
-            // console.log(element.item_basic.name)    
-        });
+       // fs.appendFileSync('check.txt', "Trang: " + i + "\n", { flag: "as+" })
+
+        
+        // datatest.data.items.forEach(element => {
+        //     fs.appendFileSync('check.txt', i + " - " + element.item_basic.itemid + " - " + element.item_basic.name + "\n", { flag: "as+" })
+        //     // console.log(element.item_basic.name)    
+        // });
+
 
         if (data.items != undefined) {
             //console.log(i + " --- " +datatest.data.items.length)
@@ -111,7 +114,7 @@ checkheader = async () => {
 }
 
 (async () => {
-    //await runAllTime()
-    await checkheader()
+    await runAllTime()
+   // await checkheader()
 
 })();

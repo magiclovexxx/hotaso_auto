@@ -21,8 +21,17 @@ let extension = process.env.EXTENSION
 let dcomVersion = process.env.DCOM
 phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 // Danh sách profile fb trong file .env
-maxTab = process.env.MAXTAB_SHOPEE                           // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
+maxTab = process.env.MAXTAB_SHOPEE  // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
+headless_mode = process.env.HEADLESS_MODE     // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
 
+
+if(headless_mode == "0"){
+    headless_mode = true
+}else {
+    headless_mode = false
+}
+
+console.log(headless_mode)
 
 // Danh sách profile facebook trong mỗi slave
 mode = process.env.MODE
@@ -1430,7 +1439,7 @@ runAllTime = async () => {
 
             data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
 
-               await sleep(10000*index)
+               await sleep(15000*index)
                 // Nếu có dữ liệu schedule trả về
                 //key = key.split("\t")
                 let subAccount = []
@@ -1441,7 +1450,7 @@ runAllTime = async () => {
                     let profileChrome = profileDir + subAccount[0]
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
-                        headless: false,
+                        headless: headless_mode,
                         devtools: false,
                         args: [
                             `--user-data-dir=${profileChrome}`      // load profile chromium
@@ -1631,7 +1640,7 @@ runAllTime = async () => {
                     console.log("Profile chrome link: " + profileChrome)
                     const browser = await puppeteer.launch({
                         executablePath: chromiumDir,
-                        headless: false,
+                        headless: headless_mode,
                         devtools: false,
                         args: [
                             `--user-data-dir=${profileChrome}`      // load profile chromium
