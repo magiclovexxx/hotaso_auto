@@ -169,81 +169,44 @@ loginShopee = async (page, accounts) => {
         await page.waitFor(15000)
         checkcode = await page.$$('[autocomplete="one-time-code"]')
 
-        var AllAccounts = fs.readFileSync("shopee.txt", { flag: "as+" });
-        if (AllAccounts) {
-            AllAccounts = AllAccounts.toString();
-            AllAccounts = AllAccounts.split("\n")
-        } else {
-            AllAccounts = []
-        }
-
         if (checkcode.length) {
-            // Xoá account trong shopee.txt
-            accountText = accounts[0] + "\t" + accounts[1]
-            indexAccount = AllAccounts.indexOf(accountText)
-            AllAccounts.splice(indexAccount, 1)
-
-            AllAccounts.forEach((acc, index) => {
-                if (index == 0 && acc != "") {
-                    fs.writeFileSync("shopee.txt", acc + "\n")
-                } else if (acc != "" && index == (AllAccounts.length - 1)) {
-                    fs.appendFileSync('shopee.txt', acc)
-                }
-                else if (acc != "") {
-                    fs.appendFileSync('shopee.txt', acc + "\n")
-                }
-            })
-            console.log("account bi hỏi mã")
-            fs.appendFileSync('accountBlock.txt', 'Account bi hỏi mã' + "\n")
-            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
-
+           
+            console.log("account bi khoá")
+           
             return false
         }
 
         checkblock = await page.$('[role="alert"]')
         if (checkblock) {
-            console.log("account bị block")
-            accountText = accounts[0] + "\t" + accounts[1]
-            indexAccount = AllAccounts.indexOf(accountText)
-            AllAccounts.splice(indexAccount, 1)
-
-            AllAccounts.forEach((acc, index) => {
-                if (index == 0 && acc != "") {
-                    fs.writeFileSync("shopee.txt", acc + "\n")
-                } else if (acc != "" && index == (AllAccounts.length - 1)) {
-                    fs.appendFileSync('shopee.txt', acc)
-                }
-                else if (acc != "") {
-                    fs.appendFileSync('shopee.txt', acc + "\n")
-                }
-            })
-            fs.appendFileSync('accountBlock.txt', 'Account bị khoá' + "\n")
-            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
-            await deleteProfile(accounts[0])
+            console.log("account bị khoá")
+        
             return false
         }
 
         try {
             await page.waitForSelector('.shopee-searchbar-input');
         } catch (error) {
-            accountText = accounts[0] + "\t" + accounts[1]
-            indexAccount = AllAccounts.indexOf(accountText)
-
-            AllAccounts.splice(indexAccount, 1)
-            AllAccounts.forEach((acc, index) => {
-                if (index == 0 && acc != "") {
-                    fs.writeFileSync("shopee.txt", acc + "\n")
-                } else if (acc != "" && index == (AllAccounts.length - 1)) {
-                    fs.appendFileSync('shopee.txt', acc)
-                }
-                else if (acc != "") {
-                    fs.appendFileSync('shopee.txt', acc + "\n")
-                }
-            })
-            console.log("account bị block")
-            fs.appendFileSync('accountBlock.txt', 'Account bi khoá' + "\n")
-            fs.appendFileSync('accountBlock.txt', accounts[0] + "\t" + accounts[1] + "\n")
-            await deleteProfile(accounts[0])
+            
+            // await deleteProfile(accounts[0])
+            // accountInfo = {
+            //     user: subAccount[0],
+            //     pass: subAccount[1],
+            //     status: 0,
+            //     message: "Account bị khoá"
+            // }
+            // try {
+            //     let datatest = await axios.get(linkShopeeAccountUpdate, {
+            //         params: {
+            //             data: {
+            //                 dataToServer: accountInfo,
+            //             }
+            //         }
+            //     })
+            //     console.log(datatest.data)
+            // } catch (error) {
+            //     console.log(error)
+            //     //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+            // }
             return false
         }
 
@@ -1649,7 +1612,10 @@ runAllTime = async () => {
                                 console.log(error)
                                 //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
                             }
+                            await browser.close();
+                            await deleteProfile(accounts[0])
                         }
+                        
 
                     } catch (error) {
                         console.log(error)
@@ -1840,6 +1806,28 @@ runAllTime = async () => {
 
                             // }
                             await browser.close();
+                        }else{
+                            accountInfo = {
+                                user: subAccount[0],
+                                pass: subAccount[1],
+                                status: 0,
+                                message: "Account bị khoá"
+                            }
+                            try {
+                                let datatest = await axios.get(linkShopeeAccountUpdate, {
+                                    params: {
+                                        data: {
+                                            dataToServer: accountInfo,
+                                        }
+                                    }
+                                })
+                                console.log(datatest.data)
+                            } catch (error) {
+                                console.log(error)
+                                //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+                            }
+                            await browser.close();
+                            await deleteProfile(subAccount[0])
                         }
                     } catch (error) {
                         console.log(error)
