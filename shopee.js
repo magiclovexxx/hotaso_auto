@@ -1522,8 +1522,8 @@ runAllTime = async () => {
                         await page.waitFor(timeout)
 
                         // login account shopee                    
-                        checklogin = await loginShopee(page, subAccount)
-
+                        let checklogin = await loginShopee(page, subAccount)
+                        
                         if (checklogin) {
                             console.log("---------- san pham pho bien ----------")
 
@@ -1672,7 +1672,34 @@ runAllTime = async () => {
                         await page.waitFor(timeout)
 
                         // login account shopee                    
-                        checklogin = await loginShopee(page, subAccount)
+                        let checklogin = await loginShopee(page, subAccount)
+                        console.log("check login account: " + subAccount[0] + " --- "+ checklogin)
+
+                        if(checklogin == 2 ){
+                            console.log("------ Cập nhật tk bị khoá -----------")
+                            accountInfo = {
+                                user: subAccount[0],
+                                pass: subAccount[1],
+                                status: 0,
+                                message: "Account bị khoá"
+                            }
+                        
+                            try {
+                                let datatest = await axios.get(linkShopeeAccountUpdate, {
+                                    params: {
+                                        data: {
+                                            dataToServer: accountInfo,
+                                        }
+                                    }
+                                })
+                                console.log(datatest.data)
+                            } catch (error) {
+                                console.log(error)
+                                //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+                            }
+                            await browser.close();
+                            await deleteProfile(subAccount[0])
+                        }
                         if (checklogin) {
                             if (clickSanPham == 1) {
                                 console.log("----- Click theo sản phẩm -----")
@@ -1683,7 +1710,7 @@ runAllTime = async () => {
                                 // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
                                 let productForUser
                                 console.log("index: " + index)
-                                console.log("account: " + subAccount[0])
+                                //console.log("account: " + subAccount[0])
                                 if (index < products.length) {
                                     productForUser = products[index];
                                 } else {
@@ -1806,29 +1833,9 @@ runAllTime = async () => {
 
                             // }
                             await browser.close();
-                        }else if(checklogin==2){
-                            accountInfo = {
-                                user: subAccount[0],
-                                pass: subAccount[1],
-                                status: 0,
-                                message: "Account bị khoá"
-                            }
-                            try {
-                                let datatest = await axios.get(linkShopeeAccountUpdate, {
-                                    params: {
-                                        data: {
-                                            dataToServer: accountInfo,
-                                        }
-                                    }
-                                })
-                                console.log(datatest.data)
-                            } catch (error) {
-                                console.log(error)
-                                //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
-                            }
-                            await browser.close();
-                            await deleteProfile(subAccount[0])
                         }
+                        
+                        
                     } catch (error) {
                         console.log(error)
                     }
