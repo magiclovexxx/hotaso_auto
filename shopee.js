@@ -186,11 +186,19 @@ loginShopee = async (page, accounts) => {
         }
 
         checkblock = await page.$('[role="alert"]')
-        if (checkblock) {
+        if (checkblock.length) {
             console.log("account bị khoá")
         
             return 2
         }
+
+        checkblock = await page.$('[role="alert"]')
+        if (checkblock.length) {
+            console.log("account bị khoá")
+        
+            return 2
+        }
+
 
         try {
             await page.waitForSelector('.shopee-searchbar-input');
