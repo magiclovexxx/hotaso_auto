@@ -192,7 +192,7 @@ loginShopee = async (page, accounts) => {
             return 2
         }
 
-        checkblock = await page.$('[role="alert"]')
+        checkblock = await page.$('.stardust-icon-cross-with-circle')
         if (checkblock) {
             console.log("account bị khoá")
         
@@ -1690,7 +1690,7 @@ runAllTime = async () => {
 
                         // login account shopee                    
                         let checklogin = await loginShopee(page, subAccount)
-                        console.log("check login account: " + subAccount[0] + " --- "+ checklogin)
+                        console.log("index = "+ index + " --- check login account: " + subAccount[0] + " --- "+ checklogin)
 
                         if(checklogin == 2 ){
                             console.log("------ Cập nhật tk bị khoá -----------")
