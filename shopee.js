@@ -173,14 +173,14 @@ loginShopee = async (page, accounts) => {
            
             console.log("account bi khoá")
            
-            return false
+            return 2
         }
 
         checkblock = await page.$('[role="alert"]')
         if (checkblock) {
             console.log("account bị khoá")
         
-            return false
+            return 2
         }
 
         try {
@@ -1450,7 +1450,7 @@ runAllTime = async () => {
 
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
-                        return (ua.osName === 'Windows' && ua.osVersion > 6 && ua.osVersion != 98);
+                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osVersion != "Win95");
                     });
 
                     await page.setUserAgent(userAgent)
@@ -1591,7 +1591,7 @@ runAllTime = async () => {
                                 fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
                             }
                             await browser.close();
-                        } else {
+                        } else if(checklogin==2){
 
                             accountInfo = {
                                 user: subAccount[0],
@@ -1641,7 +1641,7 @@ runAllTime = async () => {
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
 
-                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osName != "Win95");
+                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osVersion != "Win95");
                     });
                     await page.setUserAgent(userAgent)
                     console.log(userAgent)
@@ -1806,7 +1806,7 @@ runAllTime = async () => {
 
                             // }
                             await browser.close();
-                        }else{
+                        }else if(checklogin==2){
                             accountInfo = {
                                 user: subAccount[0],
                                 pass: subAccount[1],
