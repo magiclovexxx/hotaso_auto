@@ -186,14 +186,14 @@ loginShopee = async (page, accounts) => {
         }
 
         checkblock = await page.$('[role="alert"]')
-        if (checkblock.length) {
+        if (checkblock) {
             console.log("account bị khoá")
         
             return 2
         }
 
         checkblock = await page.$('[role="alert"]')
-        if (checkblock.length) {
+        if (checkblock) {
             console.log("account bị khoá")
         
             return 2
