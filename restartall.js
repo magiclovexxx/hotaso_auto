@@ -13,6 +13,6 @@ restartAll = async () => {
     });
 }
 
-cron.schedule('* 6 * * *', async () => {
+cron.schedule('* * 6 * *', async () => {
     await restartAll()
   })

@@ -1,5 +1,6 @@
 require('dotenv').config();
 var fs = require('fs');
+const shopeeApi = require('./src/shopeeApi.js')
 const axios = require('axios').default;
 const puppeteer = require('puppeteer');
 var cron = require('node-cron');
@@ -8,7 +9,7 @@ var randomMac = require('random-mac');
 const exec = require('child_process').exec;
 const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
-const publicIp = require('public-ip');
+//const publicIp = require('public-ip');
 
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
@@ -25,9 +26,9 @@ maxTab = process.env.MAXTAB_SHOPEE  // Số lượng tab chromium cùng mở t�
 headless_mode = process.env.HEADLESS_MODE     // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
 
 
-if(headless_mode == "0"){
+if (headless_mode == "0") {
     headless_mode = true
-}else {
+} else {
     headless_mode = false
 }
 
@@ -63,79 +64,6 @@ if (mode === "DEV") {
     timemin = 3000;
 }
 logs = 1
-// Lấy ngẫu nhiên số lượng = maxtab profile để gửi đến master lấy dữ liệu schedule về thao tác
-function GenDirToGetData(maxTab, listAccounts) {
-    // Lấy id profile đã tương tác trước đó
-    maxid = []
-    checkLogoutId = []
-    var blockAccounts = fs.readFileSync("accountBlock.txt", { flag: "as+" });
-
-    if (blockAccounts) {
-        blockAccounts = blockAccounts.toString();
-        blockAccounts = blockAccounts.split("\n")
-    } else {
-        blockAccounts = []
-    }
-
-    var savedid = fs.readFileSync("saveidshopee.txt", { flag: "as+" });
-    if ((savedid.length + maxTab) >= (listAccounts.length - 1)) {  // reset file saveid về trống khi số lượng đã bằng với số lượng tk của trường PROFILE trong file .ENV
-        savedid = [];
-        fs.writeFileSync('saveidshopee.txt', savedid.toString())
-    }
-    if (savedid) {
-        savedid = savedid.toString();
-        savedid = savedid.split("\n");
-    } else {
-        savedid = []
-    }
-
-    randomId = typeof 123      // Ép kiểu dữ liệu về dạng số
-    maxTab = parseInt(maxTab); // Ép kiểu dữ liệu về int
-    idnotsave = [];
-    idCanUser = [];
-    // mảng
-
-    let accountnNotBlock = []
-    // lấy các profile chưa có trong file block account
-    listAccounts.forEach(item => {
-        // Tìm các id profile trong file .ENV
-        if (!blockAccounts.includes(item)) {
-            // Tìm id đó trong file saveid. nếu chưa có thì lưu vào mảng id chưa tương tác idnotsave[]
-            accountnNotBlock.push(item);
-        }
-    })
-
-    // lấy các profile chưa có trong file savedid
-    accountnNotBlock.forEach(item => {
-        // Tìm các id profile trong file .ENV
-        if (!savedid.includes(item)) {
-
-            idnotsave.push(item);
-        }
-    })
-
-    if (idnotsave.length != 0) {
-
-        randomId = Math.floor(Math.random() * (idnotsave.length - 1));           // Lấy ngẫu nhiêu 1 id trong mảng id chưa tương tác bên trên
-        if ((randomId + maxTab) >= idnotsave.length) {
-            randomId = idnotsave.length - maxTab;                         // Nếu số random + maxtab lớn hơn tổng số id trong mảng idnotsave sẽ lấy các giá trị cuối mảng
-        }
-
-        for (let a = randomId; a < (randomId + maxTab); a++) {           // Lưu các id vừa lấy để gửi lên server trong mảng idnotsave lưu vào mảng maxid.
-            maxid.push(idnotsave[a])
-        }
-
-        maxid.forEach(item => {
-            savedid.push(item);                                            // Update lại vào file saveid
-            fs.appendFileSync('saveidshopee.txt', item + "\n")
-        })
-        return maxid;
-    } else {
-        savedid = [];
-        fs.writeFileSync('saveidshopee.txt', savedid.toString())
-        return false
-    }
-}
 
 loginShopee = async (page, accounts) => {
 
@@ -146,9 +74,9 @@ loginShopee = async (page, accounts) => {
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
-        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+        let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitFor(timeout)
-        loginclass = await page.$$('.navbar__link--account');
+        let loginclass = await page.$$('.navbar__link--account');
         if (loginclass.length) {
             await loginclass[1].click()
         } else {
@@ -176,54 +104,40 @@ loginShopee = async (page, accounts) => {
         }
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitFor(15000)
-        checkcode = await page.$$('[autocomplete="one-time-code"]')
+        let checkcode = await page.$$('[autocomplete="one-time-code"]')
 
         if (checkcode.length) {
-           
             console.log("account bi khoá")
-           
             return 2
         }
 
-        checkblock = await page.$('[role="alert"]')
+        let checkblock = await page.$('[role="alert"]')
+
         if (checkblock) {
             console.log("account bị khoá")
-        
             return 2
         }
 
-        checkblock = await page.$('.stardust-icon-cross-with-circle')
-        if (checkblock) {
-            console.log("account bị khoá")
-        
-            return 2
+        let checkblock2 = await page.$('.stardust-icon-cross-with-circle')
+        if(checkblock2){
+            let checkblock3 = await page.evaluate(() => {
+                // Class có tài khoản bị cấm       
+                let titles = document.querySelector('.stardust-icon-cross-with-circle').parentElement.parentElement.children[1].textContent;
+                return titles
+            })
+    
+            if (checkblock3 == "Tài khoản đã bị cấm") {
+                console.log("account bị khoá")
+                return 2
+            }
         }
-
+        
 
         try {
             await page.waitForSelector('.shopee-searchbar-input');
         } catch (error) {
-            
-            // await deleteProfile(accounts[0])
-            // accountInfo = {
-            //     user: subAccount[0],
-            //     pass: subAccount[1],
-            //     status: 0,
-            //     message: "Account bị khoá"
-            // }
-            // try {
-            //     let datatest = await axios.get(linkShopeeAccountUpdate, {
-            //         params: {
-            //             data: {
-            //                 dataToServer: accountInfo,
-            //             }
-            //         }
-            //     })
-            //     console.log(datatest.data)
-            // } catch (error) {
-            //     console.log(error)
-            //     //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
-            // }
+            console.log("Đăng nhập lỗi")
+
             return false
         }
 
@@ -444,15 +358,16 @@ getproduct = async (page, saveProduct, limit, idShops) => {
 
 }
 
-getproductByProductId = async (page, product) => {
+getproductByProductId = async (page, product, max_page) => {
+    console.log("------ Tìm kiếm vị trí từ khoá trên trang ------")
     try {
         let thuHangSanPham
         // Next dến trang có vị trí cũ của sản phẩm
-        product_page = product.product_page
-        product_index = product.product_index
+        let product_page = product.product_page
+        let product_index = product.product_index
 
         await page.waitForSelector('[data-sqe="name"]')
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        let timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -472,10 +387,10 @@ getproductByProductId = async (page, product) => {
 
         if (phobien) {
             await page.keyboard.press('PageDown');
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
             await page.waitFor(timeout);
             await page.keyboard.press('PageDown');
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
             await page.waitFor(timeout);
         }
 
@@ -491,26 +406,23 @@ getproductByProductId = async (page, product) => {
             })
             return listProductLinks
         })
+
         getProductPageTotal = await page.evaluate(() => {
 
-            // Class có link bài đăng trên profile          
+            // Lấy tổng số trang kết quả tìm kiếm          
             let titles = document.querySelectorAll('.shopee-mini-page-controller__total');
-            
             return titles[0].textContent
         })
-        getProductPageTotal=parseInt(getProductPageTotal)
-        console.log("Tổng số trang kết quả tìm kiếm: " + getProductPageTotal)
+
+        getProductPageTotal = parseInt(getProductPageTotal)
+        // console.log("Tổng số trang kết quả tìm kiếm: " + getProductPageTotal)
         let productIndex = 0
         let productId
-        // tìm vị trí sản phẩm có tên cần click
-        let page_link = await page.url()
-        product_page2 = page_link.split("&page=")[1]
-        product_page2=parseInt(product_page2)
 
-        if (product_page2 == undefined) {
-            product_page2 = 0
-        }
-
+        // tìm vị trí sản phẩm cần click
+        productPagess = await page.url()
+        productPagess = productPagess.split("page=")[1]
+        product_page2 = parseInt(productPagess)
         let productIds
 
         getProduct.forEach((item, index) => {
@@ -548,13 +460,14 @@ getproductByProductId = async (page, product) => {
                 }
             }
         })
-        if (product.max_page == 0 || product.max_page == null) {
-            product.max_page = 3
-        }
+
+        console.log("Đang tìm sản phẩm trên trang: " + max_page)
+        max_page = max_page - 1
+
         if (thuHangSanPham) {
             return thuHangSanPham;
         } else {
-            if (product_page2 == (product.max_page-1)) {
+            if (max_page == 0) {
                 thuHangSanPham = {
                     id: product.id,
                     sanpham: product.product_name,
@@ -564,27 +477,17 @@ getproductByProductId = async (page, product) => {
                     vitri: "Not"
                 }
                 return thuHangSanPham;
-            }
-            if(product_page2<(getProductPageTotal-1)){
+            } else {
                 next = await page.$$('.shopee-icon-button--right')
                 if (next.length) {
                     await next[0].click()
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                     await page.waitFor(timeout);
-                    return await getproductByProductId(page, product)
+                    return await getproductByProductId(page, product,max_page)
                 }
-            }else{
-                thuHangSanPham = {
-                    id: product.id,
-                    sanpham: product.product_name,
-                    product_id: product.product_id,
-                    shopId: product.shop_id,
-                    trang: "Not",
-                    vitri: "Not"
-                }
-                return thuHangSanPham;
             }
-            
+
+
         }
 
     } catch (error) {
@@ -1378,12 +1281,12 @@ runAllTime = async () => {
         //console.log("IP cũ: "+ await publicIp.v4());
         let linkgetdataShopeeDir = ""
         let checkDcomOff
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham+"&max_tab=" + maxTab
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham + "&max_tab=" + maxTab
         console.log(linkgetdataShopeeDir)
         getDataShopee = await axios.get(linkgetdataShopeeDir)
 
         dataShopee = getDataShopee.data
-        
+
         keywords = []
 
         if (clickSanPham == 1) {
@@ -1447,7 +1350,7 @@ runAllTime = async () => {
 
             data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
 
-               await sleep(15000*index)
+                await sleep(15000 * index)
                 // Nếu có dữ liệu schedule trả về
                 //key = key.split("\t")
                 let subAccount = []
@@ -1540,7 +1443,7 @@ runAllTime = async () => {
 
                         // login account shopee                    
                         let checklogin = await loginShopee(page, subAccount)
-                        
+
                         if (checklogin) {
                             console.log("---------- san pham pho bien ----------")
 
@@ -1608,7 +1511,7 @@ runAllTime = async () => {
                                 fs.appendFileSync('thuhang.txt', "\n" + "K có kết quả: ")
                             }
                             await browser.close();
-                        } else if(checklogin==2){
+                        } else if (checklogin == 2) {
 
                             accountInfo = {
                                 user: subAccount[0],
@@ -1632,7 +1535,7 @@ runAllTime = async () => {
                             await browser.close();
                             await deleteProfile(accounts[0])
                         }
-                        
+
 
                     } catch (error) {
                         console.log(error)
@@ -1690,9 +1593,9 @@ runAllTime = async () => {
 
                         // login account shopee                    
                         let checklogin = await loginShopee(page, subAccount)
-                        console.log("index = "+ index + " --- check login account: " + subAccount[0] + " --- "+ checklogin)
+                        console.log("index = " + index + " --- check login account: " + subAccount[0] + " --- " + checklogin)
 
-                        if(checklogin == 2 ){
+                        if (checklogin == 2) {
                             console.log("------ Cập nhật tk bị khoá -----------")
                             accountInfo = {
                                 user: subAccount[0],
@@ -1700,7 +1603,7 @@ runAllTime = async () => {
                                 status: 0,
                                 message: "Account bị khoá"
                             }
-                        
+
                             try {
                                 let datatest = await axios.get(linkShopeeAccountUpdate, {
                                     params: {
@@ -1735,7 +1638,7 @@ runAllTime = async () => {
                                 }
 
                                 // Check actions can thao tac cua shop
-                                shopInfo = []
+                                let shopInfo = []
                                 try {
                                     let datatest = await axios.get(getShopActionsDir, {
                                         params: {
@@ -1747,28 +1650,52 @@ runAllTime = async () => {
                                     shopInfo = datatest.data
 
                                 } catch (error) {
-                                    console.log("Không gửi được dữ liệu thứ hạng mới đến server")
+                                    console.log("Không check được actions của shop")
                                     console.log(error)
                                 }
-                                console.log("Shop id")
-
-                                console.log(shopInfo.fullname)
-                                console.log("Product data id: "+productForUser.id)
-
+                                console.log("Shop id: " + shopInfo.fullname)                           
+                                console.log("Product data id: " + productForUser.id)
 
                                 if (shopInfo) {
-                                    options = JSON.parse(shopInfo.options)
+                                    let options = JSON.parse(shopInfo.options)
                                     //    console.log("options add cart: "+ options.add_cart)
                                     //    process.exit()
                                     productForUser.username = subAccount[0]
                                     productForUser.password = subAccount[1]
                                     productForUser.slave = slavenumber
                                     //product.ip  = newIpAdress
+                                    console.log("product link" + productForUser.product_link)
+                                    console.log("product id" + productForUser.product_id)
                                     await searchKeyWord(page, productForUser.keyword)
+                                    await page.waitFor (5000)
+                                    getProductPageTotal = await page.evaluate(() => {
+                                        // Class có link bài đăng trên profile          
+                                        let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;
+                                        return titles
+                                    })
+                                    maxPage = parseInt(getProductPageTotal)
+                                    console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
                                     await updateAtions("search", productForUser)
+
+                                    viTriTrangCuaSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
+                                    if (viTriTrangCuaSanPham > 1) {
+                                        viTriTrangCuaSanPham = viTriTrangCuaSanPham - 1
+                                        // Link tìm kiếm sản phẩm vị trí -1
+                                        urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + viTriTrangCuaSanPham
+                                        urlSearch = encodeURI(urlSearch)
+                                        await page.goto(urlSearch)
+
+                                    }
+                                    console.log("Vị trí trang của sản phẩm theo từ khoá: " + viTriTrangCuaSanPham)
+                                    productInfo = await getproductByProductId(page, productForUser, 3)
+                                    productInfo.trang = viTriTrangCuaSanPham
+
+                                    if (viTriTrangCuaSanPham == false) {
+                                        console.log("Không tìm thấy vị trí sản phẩm theo từ khoá")
+                                    }
                                     // Check vị trí sản phẩm theo page, index
                                     // search lần đầu , search lần 2, 
-                                    productInfo = await getproductByProductId(page, productForUser)
+
                                     // if(product.product_page == null || product.product_page == "Not"){
                                     //     productInfo = await getproductByProductId(page, product)
                                     // }else{
@@ -1796,11 +1723,12 @@ runAllTime = async () => {
                                         console.log("Không gửi được dữ liệu thứ hạng mới đến server")
                                         console.log(error)
                                     }
+
                                     if ((productInfo.vitri != "Not")) {
-                                        productsAll = await page.$$('[data-sqe="link"]')
+                                        let productsAll = await page.$$('[data-sqe="link"]')
                                         productsAll[productInfo.vitri].click()
                                     } else {
-                                        console.log("Goto product"+ productForUser.product_link)
+                                        console.log("Goto product: " + productForUser.product_link)
                                         await page.goto(productForUser.product_link)
                                     }
                                     // Goto product link
@@ -1851,8 +1779,8 @@ runAllTime = async () => {
                             // }
                             await browser.close();
                         }
-                        
-                        
+
+
                     } catch (error) {
                         console.log(error)
                     }
