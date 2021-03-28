@@ -119,19 +119,19 @@ loginShopee = async (page, accounts) => {
         }
 
         let checkblock2 = await page.$('.stardust-icon-cross-with-circle')
-        if(checkblock2){
+        if (checkblock2) {
             let checkblock3 = await page.evaluate(() => {
                 // Class có tài khoản bị cấm       
                 let titles = document.querySelector('.stardust-icon-cross-with-circle').parentElement.parentElement.children[1].textContent;
                 return titles
             })
-    
+
             if (checkblock3 == "Tài khoản đã bị cấm") {
                 console.log("account bị khoá")
                 return 2
             }
         }
-        
+
 
         try {
             await page.waitForSelector('.shopee-searchbar-input');
@@ -281,7 +281,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         getProduct = []
         getProduct = await page.evaluate(() => {
 
-            // Class có link bài đăng trên profile          
+            //  
             let titles = document.querySelectorAll('[data-sqe="link"]');
             listProductLinks = []
             titles.forEach((item) => {
@@ -361,10 +361,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
 getproductByProductId = async (page, product, max_page) => {
     console.log("------ Tìm kiếm vị trí từ khoá trên trang ------")
     try {
-        let thuHangSanPham
-        // Next dến trang có vị trí cũ của sản phẩm
-        let product_page = product.product_page
-        let product_index = product.product_index
+        let thuHangSanPham        
 
         await page.waitForSelector('[data-sqe="name"]')
         let timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -394,20 +391,37 @@ getproductByProductId = async (page, product, max_page) => {
             await page.waitFor(timeout);
         }
 
-        getProduct = []
+        let getProduct = []
         // Lấy vị trí sản phẩm theo id sản phẩm
         getProduct = await page.evaluate(() => {
 
             // Class có link bài đăng trên profile          
             let titles = document.querySelectorAll('[data-sqe="link"]');
-            listProductLinks = []
+            // check sản phẩm ads
+            //document.querySelectorAll('[data-sqe="link"]')[0].children[0].children[0].children[0].children[1].children[0].dataset.sqe
+            let listProductLinks = []
             titles.forEach((item) => {
-                listProductLinks.push(item.href)
+                let checkads2 = 0
+                let checkAds = item.children[0].children[0].children[0].children
+                //console.log(checkAds.length)
+                checkAds.forEach(item2 => {
+                    if ((item2.children.length)) {
+                        if ((item2.children[0].dataset.sqe == "ad")) {
+                            checkads2 = 1
+                        }
+                    }
+                })
+
+                if (checkads2 == 1) {
+                    listProductLinks.push("")
+                } else {
+                    listProductLinks.push(item.href)
+                }
             })
             return listProductLinks
         })
 
-        getProductPageTotal = await page.evaluate(() => {
+        let getProductPageTotal = await page.evaluate(() => {
 
             // Lấy tổng số trang kết quả tìm kiếm          
             let titles = document.querySelectorAll('.shopee-mini-page-controller__total');
@@ -420,45 +434,28 @@ getproductByProductId = async (page, product, max_page) => {
         let productId
 
         // tìm vị trí sản phẩm cần click
-        productPagess = await page.url()
+        let productPagess = await page.url()
         productPagess = productPagess.split("page=")[1]
-        product_page2 = parseInt(productPagess)
+        let product_page2 = parseInt(productPagess)
         let productIds
 
         getProduct.forEach((item, index) => {
-            if (product_page2 < 6) {
-                if ((index < 45) && (index > 4)) {
-                    productIds = item.split(product.product_id)
-                    if (productIds.length == 2) {
-                        productId = product.id
-                        productIndex = index;
-                        thuHangSanPham = {
-                            id: product.id,
-                            sanpham: product.product_name,
-                            product_id: product.product_id,
-                            shopId: product.shop_id,
-                            trang: product_page2,
-                            vitri: productIndex
-                        }
-                        return true
-                    }
+
+            productIds = item.split(product.product_id)
+            if (productIds.length == 2) {
+                productId = product.id
+                productIndex = index;
+                thuHangSanPham = {
+                    id: product.id,
+                    sanpham: product.product_name,
+                    product_id: product.product_id,
+                    shopId: product.shop_id,
+                    trang: product_page2,
+                    vitri: productIndex
                 }
-            } else {
-                productIds = item.split(product.product_id)
-                if (productIds.length == 2) {
-                    productId = product.id
-                    productIndex = index;
-                    thuHangSanPham = {
-                        id: product.id,
-                        sanpham: product.product_name,
-                        product_id: product.product_id,
-                        shopId: product.shop_id,
-                        trang: product_page2,
-                        vitri: productIndex
-                    }
-                    return true
-                }
+                return true
             }
+
         })
 
         console.log("Đang tìm sản phẩm trên trang: " + max_page)
@@ -483,11 +480,9 @@ getproductByProductId = async (page, product, max_page) => {
                     await next[0].click()
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                     await page.waitFor(timeout);
-                    return await getproductByProductId(page, product,max_page)
+                    return await getproductByProductId(page, product, max_page)
                 }
             }
-
-
         }
 
     } catch (error) {
@@ -495,107 +490,6 @@ getproductByProductId = async (page, product, max_page) => {
         return false
     }
 }
-
-getproductByOldIndex = async (page, product) => {
-    try {
-        console.log("------ Tìm sản phẩm theo vị trí cũ ------")
-        let thuHangSanPham
-        // Next dến trang có vị trí cũ của sản phẩm
-        product_page = product.product_page
-        product_index = product.product_index
-        check_page = Math.floor(product_page / 5)
-
-        if (check_page > 1)
-            await page.waitForSelector('[data-sqe="name"]')
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
-        await page.keyboard.press('PageDown');
-        await page.waitFor(3000);
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
-        await page.keyboard.press('PageDown');
-        await page.waitFor(3000);
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
-
-        if (phobien) {
-            await page.keyboard.press('PageDown');
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout);
-            await page.keyboard.press('PageDown');
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout);
-        }
-
-        getProduct = []
-        // Lấy vị trí sản phẩm theo id sản phẩm
-        getProduct = await page.evaluate(() => {
-
-            // Class có link bài đăng trên profile          
-            let titles = document.querySelectorAll('[data-sqe="link"]');
-            listProductLinks = []
-            titles.forEach((item) => {
-                listProductLinks.push(item.href)
-            })
-            return listProductLinks
-        })
-
-        let productIndex = 0
-        let productId
-        // tìm vị trí sản phẩm có tên cần click
-        let page_link = await page.url()
-        product_page2 = page_link.split("&page=")[1]
-        if (product_page2 == undefined) {
-            product_page2 = 0
-        }
-
-        let productIds
-
-        getProduct.forEach((item, index) => {
-            if ((index < 45) && (index > 4)) {
-                productIds = item.split(product.product_id)
-                if (productIds.length == 2) {
-                    productId = product.id
-                    productIndex = index;
-                    thuHangSanPham = {
-                        sanpham: product.product_name,
-                        id: productId,
-                        shopId: product.shop_id,
-                        trang: product_page2,
-                        vitri: productIndex
-                    }
-                    return true
-                }
-            }
-        })
-
-        if (thuHangSanPham) {
-            return thuHangSanPham;
-        } else {
-            if (product_page2 == 99) {
-                thuHangSanPham = {
-                    sanpham: product.product_name,
-                    id: productId,
-                    shopId: product.shop_id,
-                    trang: "Not",
-                    vitri: "Not"
-                }
-                return thuHangSanPham;
-            }
-
-        }
-
-    } catch (error) {
-        console.log(error)
-        return false
-    }
-}
-
 
 // chọn thuộc tính sản phẩm
 chooseVariation = async (page, limit) => {
@@ -803,19 +697,6 @@ viewShop = async (page, url) => {
     await page.waitFor(timeout)
     await page.keyboard.press('Home');
 }
-
-heartProduct = async (page) => {
-
-}
-
-heartShop = async (page) => {
-
-}
-
-followShop = async (page) => {
-
-}
-
 
 
 actionShopee = async (page, options, product) => {
@@ -1121,26 +1002,6 @@ orderProduct = async (page, productInfo) => {
         fs.appendFileSync('error.txt', error.toString() + "\n")
     }
 
-}
-
-
-function generateRandom(min, max, num1, limit) {
-    var rtn = Math.floor(Math.random() * (max - min)) + min;
-    let check = 0
-    num1.forEach(element => {
-        if (element == rtn) {
-            check++
-        }
-    });
-    if (limit == 0) {
-        console.log("Vui lòng thêm số lượng click lớn")
-        return false
-    } else if (check != 0) {
-        limit--
-        return generateRandom(min, max, num1, limit)
-    } else {
-        return rtn
-    }
 }
 
 
@@ -1653,7 +1514,7 @@ runAllTime = async () => {
                                     console.log("Không check được actions của shop")
                                     console.log(error)
                                 }
-                                console.log("Shop id: " + shopInfo.fullname)                           
+                                console.log("Shop id: " + shopInfo.fullname)
                                 console.log("Product data id: " + productForUser.id)
 
                                 if (shopInfo) {
@@ -1664,10 +1525,10 @@ runAllTime = async () => {
                                     productForUser.password = subAccount[1]
                                     productForUser.slave = slavenumber
                                     //product.ip  = newIpAdress
-                                    console.log("product link" + productForUser.product_link)
-                                    console.log("product id" + productForUser.product_id)
+                                    console.log("product link: " + productForUser.product_link)
+                                    console.log("product id: " + productForUser.product_id)
                                     await searchKeyWord(page, productForUser.keyword)
-                                    await page.waitFor (5000)
+                                    await page.waitFor(5000)
                                     getProductPageTotal = await page.evaluate(() => {
                                         // Class có link bài đăng trên profile          
                                         let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;

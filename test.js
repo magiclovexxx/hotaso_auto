@@ -38,7 +38,7 @@ runAllTime = async () => {
     //     console.log(error)
 
     // }
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 2; i++) {
 
         page = 50 * i
         //shopeesearch = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=v%C3%AD%20n%E1%BB%AF&limit=50&newest=50&order=desc&page_type=search&version=2"
@@ -98,23 +98,65 @@ runAllTime = async () => {
 
     }
 
-
-
 }
 
 checkheader = async () => {
     const browser = await puppeteer.launch({
         headless: false
     });
+    
     const page = await browser.newPage();
-    page.on('request', req => {
-        console.log(req.headers());
+    // page.on('request', req => {
+    //     console.log(req.headers());
+    // });
+
+    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+    height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+    await page.setViewport({
+        width: width,
+        height: height
     });
-    console.log ((await page.goto('https://shopee.vn')).request().headers())
+
+    console.log ((await page.goto('https://shopee.vn/search?keyword=v%C3%AD%20n%E1%BB%AF')).request().headers())
+await page.waitFor (10000)
+    getProduct = await page.evaluate(() => {
+
+        // Class có link bài đăng trên profile          
+        let titles = document.querySelectorAll('[data-sqe="link"]');
+        // check sản phẩm ads
+        //document.querySelectorAll('[data-sqe="link"]')[0].children[0].children[0].children[0].children[1].children[0].dataset.sqe
+        let listProductLinks = []
+        titles.forEach((item) => {
+            let checkads2 = 0
+            let checkAds = item.children[0].children[0].children[0].children
+            //console.log(checkAds.length)
+            checkAds.forEach(item2 => {
+                
+                if((item2.children.length)){
+                    if((item2.children[0].dataset.sqe=="ad")){
+                        checkads2 = 1
+                    }
+                }
+                
+                
+            })
+
+            if(checkads2 ==1){
+                listProductLinks.push("")
+            }else{
+                listProductLinks.push(item.href)
+            }
+            
+        })
+        return listProductLinks
+    })
+    console.log(getProduct)
+    console.log(getProduct.length)
 }
 
 (async () => {
-    await runAllTime()
-   // await checkheader()
+    //await runAllTime()
+    await checkheader()
 
 })();
