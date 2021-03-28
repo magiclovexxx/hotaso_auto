@@ -52,7 +52,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             data.items.forEach(item => {   
                 
                 //console.log(item.item_basic.itemid)             
-                if(item.item_basic.itemid == productId){
+                if(item.item_basic.itemid == productId && item.ads_keyword==null){
                     checkProduct=1;                   
                 }
             });

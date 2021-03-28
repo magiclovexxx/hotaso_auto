@@ -361,7 +361,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
 getproductByProductId = async (page, product, max_page) => {
     console.log("------ Tìm kiếm vị trí từ khoá trên trang ------")
     try {
-        let thuHangSanPham        
+        let thuHangSanPham
 
         await page.waitForSelector('[data-sqe="name"]')
         let timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -717,7 +717,10 @@ actionShopee = async (page, options, product) => {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
         nextRightButton = await page.$$('.icon-arrow-right-bold')
-        await nextRightButton[1].click();
+        if (nextRightButton.length) {
+            await nextRightButton[1].click();
+        }
+
     }
 
     // click tắt ảnh sản phẩm    
@@ -769,7 +772,10 @@ actionShopee = async (page, options, product) => {
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
             addToCard = await page.$$('.btn-tinted')
-            await addToCard[0].click()
+            if (addToCard.length) {
+                await addToCard[0].click()
+            }
+
             console.log("Thêm vào giỏ hàng")
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await updateAtions("add_cart", product)
@@ -1176,7 +1182,7 @@ runAllTime = async () => {
 
             })
             data = datatest.data
-            console.log(data)
+            //console.log(data)
         } catch (error) {
             console.log(error)
             //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
@@ -1344,26 +1350,25 @@ runAllTime = async () => {
                                 }
 
                                 products = await page.$$('[data-sqe="link"]')
-                                if (productInfo.vitri > 4 && productInfo.vitri < 45) {
-                                    products[productInfo.vitri].click()
-                                    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
-                                    await page.waitFor(timeout)
-                                    productLink = await page.url()
-                                    await actionShopee(page)
-                                    await page.waitFor(1000);
 
-                                    if (productInfo.randomOrder >= 1) {
-                                        randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
-                                        if (randomOrder % productInfo.randomOrder == 0) {
-                                            //    await orderProduct(page, productInfo)
-                                        }
-                                    }
+                                products[productInfo.vitri].click()
+                                timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000
+                                await page.waitFor(timeout)
+                                productLink = await page.url()
+                                await actionShopee(page)
+                                await page.waitFor(1000);
 
-                                    if (lienQuan != 1) {
-                                        await viewShop(page, productLink)
+                                if (productInfo.randomOrder >= 1) {
+                                    randomOrder = Math.floor(Math.random() * (productInfo.randomOrder + 1))
+                                    if (randomOrder % productInfo.randomOrder == 0) {
+                                        //    await orderProduct(page, productInfo)
                                     }
-                                    await removeCart(page)
                                 }
+
+                                if (lienQuan != 1) {
+                                    await viewShop(page, productLink)
+                                }
+                                await removeCart(page)
 
                             } else {
                                 // nếu đã check hết product sẽ xoá file saveProduct.txt                                
@@ -1526,6 +1531,7 @@ runAllTime = async () => {
                                     productForUser.slave = slavenumber
                                     //product.ip  = newIpAdress
                                     console.log("product link: " + productForUser.product_link)
+                                    console.log("product name: " + productForUser.product_name)
                                     console.log("product id: " + productForUser.product_id)
                                     await searchKeyWord(page, productForUser.keyword)
                                     await page.waitFor(5000)
