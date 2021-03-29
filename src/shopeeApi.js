@@ -47,7 +47,10 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         }
         data = datatest.data
         let checkProduct = 0
-        console.log(data.items[0].item_basic.itemid)  
+        if(data.items[0]){
+            console.log(data.items[0].item_basic.itemid)  
+        }
+        
         if(data.items.length){
             data.items.forEach(item => {   
                 

@@ -1456,6 +1456,7 @@ runAllTime = async () => {
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                         await page.waitFor(timeout)
+                        await page.waitFor(9999999)
 
                         // login account shopee                    
                         let checklogin = await loginShopee(page, subAccount)
@@ -1535,11 +1536,13 @@ runAllTime = async () => {
                                     console.log("product id: " + productForUser.product_id)
                                     await searchKeyWord(page, productForUser.keyword)
                                     await page.waitFor(5000)
+
                                     getProductPageTotal = await page.evaluate(() => {
                                         // Class có link bài đăng trên profile          
                                         let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;
                                         return titles
                                     })
+                                    
                                     maxPage = parseInt(getProductPageTotal)
                                     console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
                                     await updateAtions("search", productForUser)
