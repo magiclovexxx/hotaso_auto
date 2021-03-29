@@ -1455,9 +1455,7 @@ runAllTime = async () => {
                         await page.waitFor(5000)
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-                        await page.waitFor(timeout)
-                        await page.waitFor(9999999)
-
+                        await page.waitFor(timeout)                        
                         // login account shopee                    
                         let checklogin = await loginShopee(page, subAccount)
                         console.log("index = " + index + " --- check login account: " + subAccount[0] + " --- " + checklogin)
