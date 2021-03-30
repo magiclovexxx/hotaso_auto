@@ -1231,13 +1231,16 @@ runAllTime = async () => {
                 console.log("Cập nhật code");
                 // Update version mới vào file version.txt
                 //fs.writeFileSync('version.txt', newVersion)
-                const myShellScript = exec('update.sh /');
-                myShellScript.stdout.on('data', (data) => {
-                    // do whatever you want here with data
-                });
-                myShellScript.stderr.on('data', (data) => {
-                    console.error(data);
-                });
+                if(mode !== "DEV"){
+                    const myShellScript = exec('update.sh /');
+                    myShellScript.stdout.on('data', (data) => {
+                        // do whatever you want here with data
+                    });
+                    myShellScript.stderr.on('data', (data) => {
+                        console.error(data);
+                    });
+                }
+                
                 return false
             }
 
@@ -1518,6 +1521,8 @@ runAllTime = async () => {
                                 // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
                                 let productForUser
                                 console.log("index: " + index)
+                                console.log(" ---- product ---- ")
+                                console.log(productForUser)
                                 //console.log("account: " + subAccount[0])
                                 if (index < products.length) {
                                     productForUser = products[index];
@@ -1536,7 +1541,7 @@ runAllTime = async () => {
                                         }
                                     })
                                     shopInfo = datatest.data
-
+                                    console.log(shopInfo)
                                 } catch (error) {
                                     console.log("Không check được actions của shop")
                                     console.log(error)
@@ -1550,8 +1555,8 @@ runAllTime = async () => {
                                     productForUser.password = subAccount[1]
                                     productForUser.slave = slavenumber
                                     let newIp = await publicIp.v4()
-                                    product.ip  = newIp;
-                                    console.log("Ip mới" + newIp)
+                                    productForUser.ip  = newIp;
+                                    console.log("Ip mới: " + newIp)
                                     console.log("Shop id: " + shopInfo.fullname)
                                     console.log("Product data id: " + productForUser.id)
                                     console.log("product link: " + productForUser.product_link)
