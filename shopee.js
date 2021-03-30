@@ -786,7 +786,6 @@ actionShopee = async (page, options, product) => {
             return false
         }
     }
-
 }
 
 removeCart = async (page) => {
@@ -1534,13 +1533,17 @@ runAllTime = async () => {
                                     console.log("product id: " + productForUser.product_id)
                                     await searchKeyWord(page, productForUser.keyword)
                                     await updateAtions("search", productForUser)
-                                    await page.waitForSelector('.shopee-mini-page-controller__total')
+                                    await page.waitFor(5000)
 
-                                    getProductPageTotal = await page.evaluate(() => {
-                                        // Class có link bài đăng trên profile          
-                                        let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;
-                                        return titles
-                                    })
+                                    try{
+                                        getProductPageTotal = await page.evaluate(() => {
+                                            // Class có link bài đăng trên profile          
+                                            let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;
+                                            return titles
+                                        })
+                                    }catch {
+                                        getProductPageTotal = 3
+                                    }
                                     
                                     maxPage = parseInt(getProductPageTotal)
                                     console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
