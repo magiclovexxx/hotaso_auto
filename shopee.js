@@ -9,7 +9,7 @@ var randomMac = require('random-mac');
 const exec = require('child_process').exec;
 const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
-//const publicIp = require('public-ip');
+const publicIp = require('public-ip');
 
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
@@ -739,7 +739,7 @@ actionShopee = async (page, options, product) => {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
         nextRightButton = await page.$$('.icon-arrow-right-bold')
-        if (nextRightButton.length) {
+        if (nextRightButton.length>=2) {
             await nextRightButton[1].click();
         }
 
@@ -1321,8 +1321,7 @@ runAllTime = async () => {
                                 }
                             }
                         }
-                        // console.log("IP mới: "+await publicIp.v4());
-                        //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+                       
                         await page.waitFor(10000)
                         try {
                             await page.goto("https://shopee.vn")
@@ -1467,7 +1466,7 @@ runAllTime = async () => {
                     });
 
                     try {
-                        // console.log("IP cũ: "+await publicIp.v4());
+                       
                         if ((index == 0) && (mode !== "DEV")) {
                             // đổi ip
                             console.log("Đổi ip mạng")
@@ -1475,9 +1474,7 @@ runAllTime = async () => {
                                 // await changeIpDcomV2()
                             }
                         }
-                        // newIpAdress = await publicIp.v4()
-                        // console.log("IP mới: "+ newIpAdress);
-                        //  timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+                       
                         await page.waitFor(5000)
                         await page.goto("https://shopee.vn")
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1546,18 +1543,21 @@ runAllTime = async () => {
                                 }
                                
                                 if (shopInfo.fullname) {
-                                    console.log("Shop id: " + shopInfo.fullname)
-                                    console.log("Product data id: " + productForUser.id)
                                     let options = JSON.parse(shopInfo.options)
                                     //    console.log("options add cart: "+ options.add_cart)
                                     //    process.exit()
                                     productForUser.username = subAccount[0]
                                     productForUser.password = subAccount[1]
                                     productForUser.slave = slavenumber
-                                    //product.ip  = newIpAdress
+                                    let newIp = await publicIp.v4()
+                                    product.ip  = newIp;
+                                    console.log("Ip mới" + newIp)
+                                    console.log("Shop id: " + shopInfo.fullname)
+                                    console.log("Product data id: " + productForUser.id)
                                     console.log("product link: " + productForUser.product_link)
                                     console.log("product name: " + productForUser.product_name)
                                     console.log("product id: " + productForUser.product_id)
+                                    console.log("Từ khoá: " + productForUser.keyword)
                                     await searchKeyWord(page, productForUser.keyword)
                                     await updateAtions("search", productForUser)
                                     await page.waitFor(5000)
@@ -1682,8 +1682,6 @@ runAllTime = async () => {
                             // }
                             await browser.close();
                         }
-
-
                     } catch (error) {
                         console.log(error)
                     }
