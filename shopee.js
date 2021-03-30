@@ -1533,7 +1533,8 @@ runAllTime = async () => {
                                     console.log("product name: " + productForUser.product_name)
                                     console.log("product id: " + productForUser.product_id)
                                     await searchKeyWord(page, productForUser.keyword)
-                                    await page.waitFor(5000)
+                                    await updateAtions("search", productForUser)
+                                    await page.waitForSelector('.shopee-mini-page-controller__total')
 
                                     getProductPageTotal = await page.evaluate(() => {
                                         // Class có link bài đăng trên profile          
@@ -1543,8 +1544,7 @@ runAllTime = async () => {
                                     
                                     maxPage = parseInt(getProductPageTotal)
                                     console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
-                                    await updateAtions("search", productForUser)
-
+    
                                     viTriTrangCuaSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
                                     if (viTriTrangCuaSanPham > 1) {
                                         viTriTrangCuaSanPham = viTriTrangCuaSanPham - 1
