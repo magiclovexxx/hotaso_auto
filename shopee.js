@@ -473,7 +473,7 @@ getproductByProductId = async (page, product, max_page) => {
                     product_id: product.product_id,
                     shopId: product.shop_id,
                     trang: product_page2,
-                    vitri: ads
+                    vitri: "ads"
                 }
                 return true
             }
@@ -820,8 +820,13 @@ removeCart = async (page) => {
     checkcart = await page.evaluate(() => {
 
         // Class có link bài đăng trên profile       
-        let titles = document.querySelector('.shopee-cart-number-badge').innerText;
-        return titles
+        let title
+        let titles = document.querySelector('.shopee-cart-number-badge')
+        if(titles){
+            title = titles.innerText;
+        }
+        
+        return title
     })
 
     carts = Math.floor(Math.random() * (50 - 35)) + 35;
@@ -1225,7 +1230,7 @@ runAllTime = async () => {
             if (newVersion !== checkVersion) {
                 console.log("Cập nhật code");
                 // Update version mới vào file version.txt
-                fs.writeFileSync('version.txt', newVersion)
+                //fs.writeFileSync('version.txt', newVersion)
                 const myShellScript = exec('update.sh /');
                 myShellScript.stdout.on('data', (data) => {
                     // do whatever you want here with data
