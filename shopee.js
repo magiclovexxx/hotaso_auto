@@ -401,6 +401,7 @@ getproductByProductId = async (page, product, max_page) => {
             //document.querySelectorAll('[data-sqe="link"]')[0].children[0].children[0].children[0].children[1].children[0].dataset.sqe
             let listProductLinks = []
             titles.forEach((item) => {
+                let prod 
                 let checkads2 = 0
                 let checkAds = item.children[0].children[0].children[0].children
                 //console.log(checkAds.length)
@@ -413,10 +414,17 @@ getproductByProductId = async (page, product, max_page) => {
                 })
 
                 if (checkads2 == 1) {
-                    listProductLinks.push("")
+                    prod = {
+                        ads : 1,
+                    }
                 } else {
-                    listProductLinks.push(item.href)
+                    prod = {
+                        ads : 0,
+                    }
                 }
+                prod.link = item.href
+
+                listProductLinks.push(prod)
             })
             return listProductLinks
         })
@@ -441,8 +449,8 @@ getproductByProductId = async (page, product, max_page) => {
 
         getProduct.forEach((item, index) => {
 
-            productIds = item.split(product.product_id)
-            if (productIds.length == 2) {
+            productIds = item.link.split(product.product_id)
+            if (productIds.length == 2 && item.ads ==0) {
                 productId = product.id
                 productIndex = index;
                 thuHangSanPham = {
@@ -452,6 +460,20 @@ getproductByProductId = async (page, product, max_page) => {
                     shopId: product.shop_id,
                     trang: product_page2,
                     vitri: productIndex
+                }
+                return true
+            }
+
+            if (productIds.length == 2 && item.ads ==1) {
+                productId = product.id
+                productIndex = index;
+                thuHangSanPham = {
+                    id: product.id,
+                    sanpham: product.product_name,
+                    product_id: product.product_id,
+                    shopId: product.shop_id,
+                    trang: product_page2,
+                    vitri: ads
                 }
                 return true
             }
@@ -1517,10 +1539,10 @@ runAllTime = async () => {
                                     console.log("Không check được actions của shop")
                                     console.log(error)
                                 }
-                                console.log("Shop id: " + shopInfo.fullname)
-                                console.log("Product data id: " + productForUser.id)
-
-                                if (shopInfo) {
+                               
+                                if (shopInfo.fullname) {
+                                    console.log("Shop id: " + shopInfo.fullname)
+                                    console.log("Product data id: " + productForUser.id)
                                     let options = JSON.parse(shopInfo.options)
                                     //    console.log("options add cart: "+ options.add_cart)
                                     //    process.exit()
@@ -1548,8 +1570,13 @@ runAllTime = async () => {
                                     maxPage = parseInt(getProductPageTotal)
                                     console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
     
-                                    viTriTrangCuaSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
-                                    if (viTriTrangCuaSanPham > 1) {
+                                    if(productForUser.check_index <3){
+                                        viTriTrangCuaSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
+                                    }else{
+                                        viTriTrangCuaSanPham = false
+                                    }
+                                    
+                                    if (viTriTrangCuaSanPham > 1 ) {
                                         viTriTrangCuaSanPham = viTriTrangCuaSanPham - 1
                                         // Link tìm kiếm sản phẩm vị trí -1
                                         urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + viTriTrangCuaSanPham
@@ -1595,7 +1622,7 @@ runAllTime = async () => {
                                         console.log(error)
                                     }
 
-                                    if ((productInfo.vitri != "Not")) {
+                                    if ((productInfo.vitri != "Not" && productInfo.vitri != "ads")) {
                                         let productsAll = await page.$$('[data-sqe="link"]')
                                         productsAll[productInfo.vitri].click()
                                     } else {
