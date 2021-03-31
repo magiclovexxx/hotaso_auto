@@ -705,7 +705,12 @@ viewShop = async (page, url) => {
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitFor(timeout)
     viewShopClick = await page.$$('.shopee-avatar__placeholder')
-    viewShopClick[1].click()
+    if(viewShopClick.length>=2){
+        viewShopClick[1].click()
+    }else{
+        viewShopClick[0].click()
+    }
+    
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitFor(timeout)
 
