@@ -9,7 +9,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
     
     keyword = product.keyword
     productId = product.product_id
-   let productIndex = null
+   let productIndex = false
     for (let i = 0; i < maxPage; i++) {
         console.log("Trang: " + i)
         maxproduct = 50 * i
@@ -45,27 +45,33 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             console.log(error)
             return false
         }
-        data = datatest.data
-        let checkProduct = 0
-        if(data.items[0]){
-            console.log(data.items[0].item_basic.itemid)  
+
+        try{
+            data = datatest.data
+            let checkProduct = 0
+            if(data.items.length){
+                console.log(data.items[0].item_basic.itemid)  
+            }
+            
+            if(data.items.length){
+                data.items.forEach(item => {   
+                    
+                    //console.log(item.item_basic.itemid)             
+                    if(item.item_basic.itemid == productId){
+                        checkProduct=1;                   
+                    }
+                });
+            }
+            if (checkProduct==1){
+                
+                productIndex = i
+    
+               break;
+            }
+        }catch(error){
+            console.log(error)
         }
         
-        if(data.items.length){
-            data.items.forEach(item => {   
-                
-                //console.log(item.item_basic.itemid)             
-                if(item.item_basic.itemid == productId && item.ads_keyword==null){
-                    checkProduct=1;                   
-                }
-            });
-        }
-        if (checkProduct==1){
-            
-            productIndex = i
-
-           break;
-        }
     }
     if(productIndex || productIndex == 0){
         return productIndex

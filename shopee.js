@@ -133,7 +133,6 @@ loginShopee = async (page, accounts) => {
             }
         }
 
-
         try {
             await page.waitForSelector('.shopee-searchbar-input');
         } catch (error) {
@@ -160,7 +159,6 @@ searchKeyWord = async (page, keyword) => {
         await page.click('.shopee-searchbar-input__input')
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout);
-        console.log(keyword)
         await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
         timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
         await page.waitFor(timeout);
@@ -1224,6 +1222,7 @@ runAllTime = async () => {
         getDataShopee = await axios.get(linkgetdataShopeeDir)
         dataShopee = getDataShopee.data
 
+
     }
 
 
@@ -1728,7 +1727,6 @@ runAllTime = async () => {
                                                     console.log("follow shop: " + options.follow_shop)
                                                     followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
                                                     if (followClick.length) {
-
                                                         await followClick[0].click()
                                                     }
                                                     await updateAtions("follow_shop", productForUser)
