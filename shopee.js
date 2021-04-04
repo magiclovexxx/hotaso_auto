@@ -831,11 +831,12 @@ actionShopee = async (page, options, product) => {
             addToCard = await page.$$('.btn-tinted')
             if (addToCard.length) {
                 await addToCard[0].click()
+                await updateAtions("add_cart", product)
             }
 
             console.log("Thêm vào giỏ hàng")
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await updateAtions("add_cart", product)
+           
             await page.waitFor(timeout)
 
         } else {
@@ -1723,13 +1724,16 @@ runAllTime = async () => {
 
                                             if (options.follow_shop) {
                                                 check1 = await checkAtions("follow_shop", productForUser)
-                                                if (!check1) {
+                                                if (check1 == 0) {
                                                     console.log("follow shop: " + options.follow_shop)
                                                     followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
                                                     if (followClick.length) {
                                                         await followClick[0].click()
+                                                        await updateAtions("follow_shop", productForUser)
+                                                    }else{
+
                                                     }
-                                                    await updateAtions("follow_shop", productForUser)
+                                                    
                                                 }
                                             }
                                         }
