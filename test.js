@@ -99,6 +99,46 @@ runAllTime = async () => {
     }
 
 }
+danhSachSanPham = async () => {
+    LinkdanhSachSanPhamChuaTuongTac = "https://hotaso.tranquoctoan.com/api_user/danhSachSanPhamChuaTuongTac"
+    user = "thientran_eh"
+    productIds = [
+        '3547866745', '5445438507', '6747766525',
+        '3945196407', '6045778397', '5345769249',
+        '5345766497', '3552766313', '5545129747',
+        '4946393047', '3652762379', '7247772219',
+        '6852662611', '5845567119', '6145778539',
+        '5852801833', '5552035163', '3456087058',
+        '4955992272', '7145414330', '6556089627',
+        '5445427567', '4352040441', '4253078554',
+        '7575837944', '6953070484', '6551265515',
+        '5353084528', '7845423312', '6451268876'
+      ]
+
+      let dataCheck1 = {
+        account:user,
+        productIds : productIds,
+        shop_id : "",
+        action : "like"
+    }
+    try {
+        let datatest = await axios.get(LinkdanhSachSanPhamChuaTuongTac, {
+            params: {
+                data: {
+                    dataToServer: dataCheck1,
+                }
+            }
+        })
+        
+        checkAtion = datatest.data
+        console.log(checkAtion)
+       
+    } catch (error) {
+        console.log(error)
+        //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+    }
+}
+
 
 checkheader = async () => {
     const browser = await puppeteer.launch({
@@ -119,7 +159,7 @@ checkheader = async () => {
     });
 
     console.log ((await page.goto('https://shopee.vn/search?keyword=v%C3%AD%20n%E1%BB%AF')).request().headers())
-await page.waitFor (10000)
+    await page.waitFor (10000)
     getProduct = await page.evaluate(() => {
 
         // Class có link bài đăng trên profile          
@@ -157,6 +197,7 @@ await page.waitFor (10000)
 
 (async () => {
     //await runAllTime()
-    await checkheader()
+    //await checkheader()
+    await danhSachSanPham()
 
 })();
