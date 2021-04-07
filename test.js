@@ -79,9 +79,9 @@ runAllTime = async () => {
         console.log(data.item.name)
         //console.log("Trang: " + i)
 
-       // fs.appendFileSync('check.txt', "Trang: " + i + "\n", { flag: "as+" })
+        // fs.appendFileSync('check.txt', "Trang: " + i + "\n", { flag: "as+" })
 
-        
+
         // datatest.data.items.forEach(element => {
         //     fs.appendFileSync('check.txt', i + " - " + element.item_basic.itemid + " - " + element.item_basic.name + "\n", { flag: "as+" })
         //     // console.log(element.item_basic.name)    
@@ -113,13 +113,12 @@ danhSachSanPham = async () => {
         '5445427567', '4352040441', '4253078554',
         '7575837944', '6953070484', '6551265515',
         '5353084528', '7845423312', '6451268876'
-      ]
+    ]
 
-      let dataCheck1 = {
-        account:user,
-        productIds : productIds,
-        shop_id : "",
-        action : "like"
+    let dataCheck1 = {
+        account: user,
+        shop_id: "",
+        action: "like"
     }
     try {
         let datatest = await axios.get(LinkdanhSachSanPhamChuaTuongTac, {
@@ -129,14 +128,25 @@ danhSachSanPham = async () => {
                 }
             }
         })
-        
-        checkAtion = datatest.data
-        console.log(checkAtion)
-       
+
+        danhSachSanPhamDaTuongTac = datatest.data
+        //console.log(danhSachSanPhamDaTuongTac)
+
     } catch (error) {
         console.log(error)
         //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
     }
+
+    let danhSachSanPhamChuatuongTac = []
+    // Danh sách sản phẩm chưa tương tác
+    productIds.forEach((item) => {
+        if (!danhSachSanPhamDaTuongTac.includes(item)) {
+            danhSachSanPhamChuatuongTac.push(item)
+        }
+    })
+
+    console.log("--- Danh sách sp chưa tương tác ---")
+    console.log(danhSachSanPhamChuatuongTac)
 }
 
 
@@ -144,7 +154,7 @@ checkheader = async () => {
     const browser = await puppeteer.launch({
         headless: false
     });
-    
+
     const page = await browser.newPage();
     // page.on('request', req => {
     //     console.log(req.headers());
@@ -158,8 +168,8 @@ checkheader = async () => {
         height: height
     });
 
-    console.log ((await page.goto('https://shopee.vn/search?keyword=v%C3%AD%20n%E1%BB%AF')).request().headers())
-    await page.waitFor (10000)
+    console.log((await page.goto('https://shopee.vn/search?keyword=v%C3%AD%20n%E1%BB%AF')).request().headers())
+    await page.waitFor(10000)
     getProduct = await page.evaluate(() => {
 
         // Class có link bài đăng trên profile          
@@ -172,22 +182,22 @@ checkheader = async () => {
             let checkAds = item.children[0].children[0].children[0].children
             //console.log(checkAds.length)
             checkAds.forEach(item2 => {
-                
-                if((item2.children.length)){
-                    if((item2.children[0].dataset.sqe=="ad")){
+
+                if ((item2.children.length)) {
+                    if ((item2.children[0].dataset.sqe == "ad")) {
                         checkads2 = 1
                     }
                 }
-                
-                
+
+
             })
 
-            if(checkads2 ==1){
+            if (checkads2 == 1) {
                 listProductLinks.push("")
-            }else{
+            } else {
                 listProductLinks.push(item.href)
             }
-            
+
         })
         return listProductLinks
     })
