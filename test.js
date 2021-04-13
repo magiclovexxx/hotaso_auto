@@ -196,6 +196,15 @@ checkheader = async () => {
 }
 
 (async () => {
+    for(let i=0; i<700; i++){
+        try {
+            datatest = await axios.get('https://hotaso.tranquoctoan.com/cron/newhistory')
+
+        } catch (error) {
+            console.log("Không lấy dc data")
+            console.log(error)
+        }
+    }
     //await runAllTime()
     //await checkheader()
     await danhSachSanPham()

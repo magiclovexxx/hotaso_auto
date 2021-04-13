@@ -1588,7 +1588,7 @@ runAllTime = async () => {
                                 // Lấy danh sách các sản phẩm chưa like
                                 let dataCheck1 = {
                                     account:key[0],
-                                    productIds = listProductLinks,
+                                    productIds : listProductLinks,
                                     shop_id : productForUser.shop_id,
                                     action : "like"
                                 }
