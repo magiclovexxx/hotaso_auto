@@ -5,21 +5,21 @@ const randomUseragent = require('random-useragent');
 
 const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
     // lay cookie
-
     
-    keyword = product.keyword
+    keyword = product.keyword.toLowerCase()
     productId = product.product_id
-   let productIndex = false
-    for (let i = 0; i < maxPage; i++) {
+    console.log("Id sản phẩm: " + productId)
+   let productIndex = 0
+    for (let i = 1; i <= maxPage; i++) {
         console.log("Trang: " + i)
-        maxproduct = 50 * i
+        maxproduct = 50 * (i-1)
         search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword="+keyword+"&limit=50&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
         search_api = encodeURI(search_api)
         //console.log(shopeesearch)
-        if (i == 0) {
+        if (i == 1) {
             ref = "https://shopee.vn"
         }
-        if (i == 1) {
+        if (i == 2) {
             ref = "https://shopee.vn/search?keyword="+keyword
           
         } else {
@@ -33,7 +33,8 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             'if-none-match-': ' 55b03-362c8065febe2677f1d3f36f302b86c8'
 
         }
-
+        let datatest
+        console.log(search_api)
         try {
             datatest = await axios.get(search_api, {
 
@@ -47,25 +48,31 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         }
 
         try{
-            data = datatest.data
+            let data = datatest.data
             let checkProduct = 0
-            if(data.items.length){
-                console.log(data.items[0].item_basic.itemid)  
-            }
-            
-            if(data.items.length){
-                data.items.forEach(item => {   
-                    
-                    //console.log(item.item_basic.itemid)             
-                    if(item.item_basic.itemid == productId){
-                        checkProduct=1;                   
+          
+            if(data.items){
+                let itemid3  = "" 
+                itemid3 = data.items[0].item_basic.itemid
+                itemid3= String(itemid3)
+                console.log("----" + itemid3)  
+                
+                data.items.forEach(item => {                       
+                   
+                    let itemid2  = ""   
+                    itemid2 = item.item_basic.itemid  
+                    itemid2 = String(itemid2)
+                   // console.log(itemid2) 
+
+                    if( itemid2 === productId){
+                        console.log("Item id: " + itemid2)  
+                        checkProduct=1; 
+                                        
                     }
                 });
             }
-            if (checkProduct==1){
-                
-                productIndex = i
-    
+            if (checkProduct==1){                
+                productIndex = i    
                break;
             }
         }catch(error){
@@ -73,10 +80,10 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         }
         
     }
-    if(productIndex || productIndex == 0){
+    if(productIndex){
         return productIndex
     }else {
-        return false
+        return 0
     }
     
 }
