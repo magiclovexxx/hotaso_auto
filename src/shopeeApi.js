@@ -48,26 +48,26 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         }
 
         try{
-            let data = datatest.data
-            let checkProduct = 0
+            data = datatest.data
+            checkProduct = 0
           
             if(data.items){
                 let itemid3  = "" 
                 itemid3 = data.items[0].item_basic.itemid
-                itemid3= String(itemid3)
+               
                 console.log("----" + itemid3)  
                 
                 data.items.forEach(item => {                       
                    
                     let itemid2  = ""   
                     itemid2 = item.item_basic.itemid  
-                    itemid2 = String(itemid2)
-                   // console.log(itemid2) 
+                   
+                    console.log(itemid2) 
 
-                    if( itemid2 === productId){
-                        console.log("Item id: " + itemid2)  
+                    if( itemid2 == productId){
+                        console.log("đã tìm thấy sản phẩm id: " + itemid2)  
                         checkProduct=1; 
-                                        
+                        //break;    
                     }
                 });
             }

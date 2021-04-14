@@ -1054,25 +1054,25 @@ runAllTime = async () => {
             await genRandomMac()
            
             await sleep(10000)
-            checkNetwork = 0
-            await require('dns').resolve('www.google.com', function (err) {
-                if (err) {
-                    console.log("No connection1");
-                    checkNetwork = 0
+            // checkNetwork = 0
+            // await require('dns').resolve('www.google.com', function (err) {
+            //     if (err) {
+            //         console.log("No connection1");
+            //         checkNetwork = 0
 
-                } else {
-                    console.log("Connected");
-                    checkNetwork = 1
+            //     } else {
+            //         console.log("Connected");
+            //         checkNetwork = 1
 
-                }
-            });
+            //     }
+            // });
 
-            if(checkNetwork == 0){
-                await disconnectDcomV2()
-                await sleep(5000)
-                await connectDcomV2()
-                await sleep(20000)
-            }
+            // if(checkNetwork == 0){
+            //     await disconnectDcomV2()
+            //     await sleep(5000)
+            //     await connectDcomV2()
+            //     await sleep(20000)
+            // }
         }
     }
 
