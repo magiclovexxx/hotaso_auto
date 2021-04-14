@@ -2,7 +2,7 @@ const axios = require('axios').default;
 const puppeteer = require('puppeteer');
 const randomUseragent = require('random-useragent');
 
-const thaTimCacSanPhamCuaShop = async (page, product) => {
+const thaTimCacSanPhamCuaShop = async (page, product_heart) => {
 // Lấy tổng số trang sản phẩm của shop
 let getProductPageTotal
 try {
@@ -47,12 +47,12 @@ if (getProductPageTotal >= 1 ) {
 
             // Lấy danh sách các sản phẩm đã like
           
-            product.action= "heart_product"
+            product_heart.action= "heart_product"
             //console.log("Link: " + LinkdanhSachSanPhamChuaTuongTac)
             let datatest = await axios.get(LinkdanhSachSanPhamChuaTuongTac, {
                 params: {
                     data: {
-                        dataToServer: product,
+                        dataToServer: product_heart,
                     }
                 }
             })
@@ -99,13 +99,13 @@ try{
         for (let j = 1; j<randomProduct; j++ ){
             if (danhSachSanPhamChuatuongTac[j]) {
                 await clickHearts[danhSachSanPhamChuatuongTac[j].vitri].click()
-                product.type = "like"
-                product.heart_product_id = danhSachSanPhamChuatuongTac[j].productId
-                product.heart_product_image = danhSachSanPhamChuatuongTac[j].product_image
-                product.heart_product_name = danhSachSanPhamChuatuongTac[j].product_name
-                product.heart_product_link = danhSachSanPhamChuatuongTac[j].product_link
+                product_heart.type = "like"
+                product_heart.heart_product_id = danhSachSanPhamChuatuongTac[j].productId
+                product_heart.heart_product_image = danhSachSanPhamChuatuongTac[j].product_image
+                product_heart.heart_product_name = danhSachSanPhamChuatuongTac[j].product_name
+                product_heart.heart_product_link = danhSachSanPhamChuatuongTac[j].product_link
 
-                await updateAtions("heart_product", product)
+                await updateAtions("heart_product", product_heart)
                 timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
                 await page.waitFor(timeout)
                 
