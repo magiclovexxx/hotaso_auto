@@ -5,28 +5,28 @@ const randomUseragent = require('random-useragent');
 
 const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
     // lay cookie
-    
+
     keyword = product.keyword.toLowerCase()
     productId = product.product_id
     console.log("Id sản phẩm: " + productId)
-   let productIndex = 0
+    let productIndex = 0
     for (let i = 1; i <= maxPage; i++) {
         console.log("Trang: " + i)
-        maxproduct = 50 * (i-1)
-        search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword="+keyword+"&limit=50&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
+        maxproduct = 50 * (i - 1)
+        search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=" + keyword + "&limit=50&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
         search_api = encodeURI(search_api)
         //console.log(shopeesearch)
         if (i == 1) {
             ref = "https://shopee.vn"
         }
         if (i == 2) {
-            ref = "https://shopee.vn/search?keyword="+keyword
-          
+            ref = "https://shopee.vn/search?keyword=" + keyword
+
         } else {
-            ref = "https://shopee.vn/search?keyword="+keyword+"page=" + i
+            ref = "https://shopee.vn/search?keyword=" + keyword + "page=" + i
         }
 
-        ref = encodeURI(ref) 
+        ref = encodeURI(ref)
 
         headersearch = {
             referer: ref,
@@ -47,51 +47,129 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             return false
         }
 
-        try{
+        try {
             data = datatest.data
             checkProduct = 0
-          
-            if(data.items){
-                let itemid3  = "" 
-                itemid3 = data.items[0].item_basic.itemid
-               
-                console.log("----" + itemid3)  
-                
-                data.items.forEach(item => {                       
-                   
-                    let itemid2  = ""   
-                    itemid2 = item.item_basic.itemid  
-                   
-                    console.log(itemid2) 
 
-                    if( itemid2 == productId){
-                        console.log("đã tìm thấy sản phẩm id: " + itemid2)  
-                        checkProduct=1; 
+            if (data.items) {
+                let itemid3 = ""
+                itemid3 = data.items[0].item_basic.itemid
+
+                //console.log("----" + itemid3)
+
+                data.items.forEach(item => {
+
+                    let itemid2 = ""
+                    itemid2 = item.item_basic.itemid
+
+                    //console.log(itemid2)
+
+                    if (itemid2 == productId) {
+                        console.log("đã tìm thấy sản phẩm id: " + itemid2)
+                        checkProduct = 1;
                         //break;    
                     }
                 });
             }
-            if (checkProduct==1){                
-                productIndex = i    
-               break;
+            if (checkProduct == 1) {
+                productIndex = i
+                break;
             }
-        }catch(error){
+        } catch (error) {
             console.log(error)
         }
-        
+
     }
-    if(productIndex){
+    if (productIndex) {
         return productIndex
-    }else {
+    } else {
         return 0
     }
-    
-}
-
-const thaTimSanPham = async (product) => {
 
 }
 
+followShop = async (cookies, ref, shopId) => {
+    cookie1 = ""
+    cookies.forEach((row, index) => {
+        cookie1 = cookie1 + row.name + "=" + row.value
+        if (index != (cookies.length - 1)) {
+            cookie1 = cookie1 + "; "
+        }
+
+    })
+
+    var data = JSON.stringify({ "shopid": shopId });
+
+    var config = {
+        method: 'post',
+        url: 'https://shopee.vn/api/v4/shop/follow',
+        headers: {
+            'content-type': 'application/json',
+            'referer': ref,
+            'cookie': cookie1
+        },
+        data: data
+    };
+
+    axios(config)
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+
+}
+function csrftoken() {
+    karakter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    PanjangKarakter = karakter.length;
+    acakString = '';
+    for (let i = 0; i < 32; i++) {
+        PanjangKarakter = PanjangKarakter - 1
+        acakString += karakter[Math.floor(Math.random() * (PanjangKarakter))];
+
+
+    }
+    return acakString;
+}
+
+thaTimSanPham = async (cookies, ref, shopId, productId) => {
+    var xtoken = csrftoken()
+    cookie1 = ""
+    csrftoken()
+    cookies.forEach(row => {
+        if (row.name == "csrftoken") {
+            cookie1 = cookie1 + row.name + "=" + xtoken + ";"
+        } else {
+            cookie1 = cookie1 + row.name + "=" + row.value + ";"
+        }
+
+    })
+
+    //var data = JSON.stringify({ "shopid": shopId });
+    url = "https://shopee.vn/api/v0/buyer/like/shop/" + shopId + "/item/" + productId
+    var config = {
+        method: 'post',
+        url: url,
+        headers: {
+            'x-csrftoken': xtoken,
+            'referer': ref,
+            'cookie': cookie1
+        },
+        //data: data
+    };
+
+    axios(config)
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+
+}
 
 const layDanhSachSanPhamCuaShop = async (shop) => {
 
@@ -108,6 +186,7 @@ module.exports = {
 
     timViTriTrangSanPhamTheoTuKhoa,
     thaTimSanPham,
-    layDanhSachSanPhamCuaShop
+    layDanhSachSanPhamCuaShop,
+    followShop
 
 }

@@ -8,7 +8,7 @@ const exec = require('child_process').exec;
 const puppeteer = require('puppeteer');
 headersearch = {
 
-    cookie: '_gcl_au=1.1.699808476.1607702732; SPC_IA=-1; SPC_EC=-; SPC_F=FXGW8llunAQuf5baIJM19NtcxbG2f9tj; REC_T_ID=b28c0ef6-3bca-11eb-a793-b49691844b48; SPC_U=-; _fbp=fb.1.1607702732348.1633153129; _hjid=0ecfc287-f2da-4004-826d-8ad89e4b90b8; _gcl_aw=GCL.1608656038.EAIaIQobChMIi8qo2Ybi7QIVTT5gCh2--ggXEAYYAiABEgK-1_D_BwE; _med=cpc; _gac_UA-61914164-6=1.1608656040.EAIaIQobChMIi8qo2Ybi7QIVTT5gCh2--ggXEAYYAiABEgK-1_D_BwE; SPC_SI=mall.pFUIKPdyxP5VnhVg50pEFlynHNuJRRuW; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; _gid=GA1.2.1577912680.1609217942; csrftoken=7VQS9mkU5q5Q7WVXoz3ZpaISzMY6pmF0; cto_bundle=oonKA185cGlHMUdYYkQxRyUyQmdadTdzRjJFVk1KRHIycVBUUk1TcHloa3U2eVMwUkkyUnM5bkdvOGJwUUdERVRRZFZSRHQ0VmJaeFhBek9RbVVIMkwyY0FNTU13QXVCWTVGWXExcE1URFRTT25LMXY2UjBqeHpKT00wdXJCZG9hdlZoWjNhUFduTDZMWXJuendJRm5ocnF4TXVDQSUzRCUzRA; _ga_M32T05RVZT=GS1.1.1609303653.16.1.1609307858.0; _ga=GA1.1.802594605.1607702734; SPC_R_T_ID="MHYDKro2Fd4NUQJZR4w7Fo6d9p0Riyckd4IyA9QwUfZ9dHG982W1hn7Bh6ixp6C5652W0aR87Qs0OcPQ1JpOLzC7LCayCB0AgMfqsvAw21s="; SPC_T_IV="JlfVIc0gll7Lnf2hf9gUZw=="; SPC_R_T_IV="JlfVIc0gll7Lnf2hf9gUZw=="; SPC_T_ID="MHYDKro2Fd4NUQJZR4w7Fo6d9p0Riyckd4IyA9QwUfZ9dHG982W1hn7Bh6ixp6C5652W0aR87Qs0OcPQ1JpOLzC7LCayCB0AgMfqsvAw21s="',
+    cookie: '_gcl_au=1.1.699808476.1607702732; SPC_IA=-1; SPC_EC=-; SPC_F=FXGW8llunAQuf5baIJM19NtcxbG2f9tj; REC_T_ID=b28c0ef6-3bca-11eb-a793-b49691844b48; SPC_U=-; _fbp=fb.1.1607702732348.1633153129; _hjid=0ecfc287-f2da-4004-826d-8ad89e4b90b8; _gcl_aw=GCL.1608656038.EAIaIQobChMIi8qo2Ybi7QIVTT5gCh2--ggXEAYYAiABEgK-1_D_BwE; _med=cpc; _gac_UA-61914164-6=1.1608656040.EAIaIQobChMIi8qo2Ybi7QIVTT5gCh2--ggXEAYYAiABEgK-1_D_BwE; SPC_SI=mall.pFUIKPdyxP5VnhVg50pEFlynHNuJRRuW; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; _gid=GA1.2.1577912680.1609217942; csrftoken=hoi5IadKlRLfriDALQFEEUQTfaGFLIWO; cto_bundle=oonKA185cGlHMUdYYkQxRyUyQmdadTdzRjJFVk1KRHIycVBUUk1TcHloa3U2eVMwUkkyUnM5bkdvOGJwUUdERVRRZFZSRHQ0VmJaeFhBek9RbVVIMkwyY0FNTU13QXVCWTVGWXExcE1URFRTT25LMXY2UjBqeHpKT00wdXJCZG9hdlZoWjNhUFduTDZMWXJuendJRm5ocnF4TXVDQSUzRCUzRA; _ga_M32T05RVZT=GS1.1.1609303653.16.1.1609307858.0; _ga=GA1.1.802594605.1607702734; SPC_R_T_ID="MHYDKro2Fd4NUQJZR4w7Fo6d9p0Riyckd4IyA9QwUfZ9dHG982W1hn7Bh6ixp6C5652W0aR87Qs0OcPQ1JpOLzC7LCayCB0AgMfqsvAw21s="; SPC_T_IV="JlfVIc0gll7Lnf2hf9gUZw=="; SPC_R_T_IV="JlfVIc0gll7Lnf2hf9gUZw=="; SPC_T_ID="MHYDKro2Fd4NUQJZR4w7Fo6d9p0Riyckd4IyA9QwUfZ9dHG982W1hn7Bh6ixp6C5652W0aR87Qs0OcPQ1JpOLzC7LCayCB0AgMfqsvAw21s="',
     referer: 'https://shopee.vn/',
     'if-none-match-': ' 55b03-362c8065febe2677f1d3f36f302b86c8'
 
@@ -173,40 +173,339 @@ getKeyword = async () => {
 
    
 }
-
-likeApi = async () => {
-    ref = "https://shopee.vn/shop/41347209/search"
-    headersearch = {
-
-        cookie: 'SPC_F=FXGW8llunAQuf5baIJM19NtcxbG2f9tj; REC_T_ID=b28c0ef6-3bca-11eb-a793-b49691844b48; _fbp=fb.1.1607702732348.1633153129; _hjid=0ecfc287-f2da-4004-826d-8ad89e4b90b8; G_ENABLED_IDPS=google; _gcl_au=1.1.820952038.1615519092; SPC_CLIENTID=RlhHVzhsbHVuQVF1ywgyfgcpmuqhjnkt; UYOMAPJWEMDGJ=; SPC_IVS=; SL_wptGlobTipTmp=1; SL_GWPT_Show_Hide_tmp=1; csrftoken=6XhtUlc2LN5Va1lAj4VASFJ3nagqUiCX; welcomePkgShown=true; SPC_SC_SA_UD=; SPC_SC_SA_TK=; SC_DFP=JSPq2FITfRxSJN7CglahERqSERR4cr5w; SPC_U=59835481; SPC_EC=8LzCCFjj03jNGJFCcCdZA3C890xf6gmr9oHOTTv54cp+4Z3FzpZ04c1aReNB3mscsIckOBVEj6Vwgxo75yUDCp30/EEeU9Mo3esR+RhLwO4QJVOZc89CMyfqh3Fi+0yJvCjvZWy9HIUfQlzHkIZBEw==; SPC_SC_UD=59835481; SPC_STK="oP6Wb/HMM0i7gOZASuRm54ek86S2HSB6aMsLlj4l27T8O5VuWgZXoRPAC1Tpcpkd3OXHIfmp3wgMP3m/4VuoC1w75efmiAFhTHACMc50uP/SMlyrkDPaupkO3tfPwZ9JTqS1eBKmz7uZF23AQ1bjY6SuraMx2cGhdkCBC3OLHro="; SPC_SC_TK=8f2e988e1bf1ea2f82a686b7de4363fe; SPC_IA=1; _med=refer; _gid=GA1.2.1088538504.1618306720; SPC_SI=mall.JLrT3oN4fvSdK5QvgWjfCkAoal0Cc9yR; root_csrftoken=6f951fd4-958e-46a0-a378-9f9e6429fc3d; _hjAbsoluteSessionInProgress=0; _ga=GA1.2.802594605.1607702734; cto_bundle=NPKUT185cGlHMUdYYkQxRyUyQmdadTdzRjJFVkVqMnREMXFpVG1Od2VtTjhnazFJUkQlMkZnUTUxMEh0Z0o2clRQaHhQJTJCNWxSM2JYSDQwcWNaJTJGZGloSThUNEFrR2NRNTdNc20yc0czWTBOeE1hTFVKbFVGRHFLWUgwMURaJTJGUTluMnJBSXV1TzV3VXNvSjBtYXpJVVVsM1h4UVozb1h3JTNEJTNE; SPC_R_T_ID="2VhsZ3fp/ApYl7H6yTpFVIrdEouZP3A07z8Fy26fvEZrLUY0QCMTQukSkbVy37lArj+T56zHceQMSwKF1eD6osuKgYao2aSm56nZ6UnUYXU="; SPC_T_IV="KTRx97TMSlLZy+ARN1zziA=="; SPC_R_T_IV="KTRx97TMSlLZy+ARN1zziA=="; SPC_T_ID="2VhsZ3fp/ApYl7H6yTpFVIrdEouZP3A07z8Fy26fvEZrLUY0QCMTQukSkbVy37lArj+T56zHceQMSwKF1eD6osuKgYao2aSm56nZ6UnUYXU="; _dc_gtm_UA-61914164-6=1; _ga_M32T05RVZT=GS1.1.1618439591.83.1.1618441123.49',
-        referer: ref,
-        'if-none-match-': '55b03-ff02d66557b09ab6e5cb5a4780992ba7',
-        "x-csrftoken" : "6XhtUlc2LN5Va1lAj4VASFJ3nagqUiCX",
-        "user-agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.76",
-        "accept-encoding": "gzip, deflate, br",
-    }
-    api_link = "https://banhang.shopee.vn/api/marketing/v3/pas/suggest/keyword/?"
-    api_link = "https://shopee.vn/api/v0/buyer/like/shop/41347209/item/1825268282/"
-    keyword = "Ví nữ cầm tay mini"
-    
-    productIds = [
+function csrftoken() {
+    karakter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    PanjangKarakter = karakter.length;
+    acakString = '';
+    for (let i = 0; i < 32; i++) {
+        PanjangKarakter = PanjangKarakter-1
+        acakString += karakter[Math.floor(Math.random() * (PanjangKarakter ))];
         
-    ]
+        
+    }
+    return acakString;
+}
 
-    try {
-        axios.post(api_link, {
-            headers: headersearch
-          })
-          .then((response) => {
-            console.log(response)
-           
-          })
-          .catch((error) => {
-           
-          })
-        }catch(error){
-            console.log(error)
-        }
+followShop = async () => {
+    var xtoken = csrftoken()
+  cookie1 =  [
+    {
+      name: 'SPC_T_ID',
+      value: '"BaUN/9IVWzGIC8Ztn78vYC84v9FUUE80sZ2VO2BcDcL1tiqJsfRfsBmUa2mITjPY4GSDk5aqTf+yP68oDZsSbBhc8T5obtIILrMqhD9B2sk="',
+      domain: 'shopee.vn',
+      path: '/',
+      expires: 2249273881.574535,
+      size: 118,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_T_IV',
+      value: '"tPHLjnD8CBhfVN5W02todQ=="',
+      domain: 'shopee.vn',
+      path: '/',
+      expires: 2249273881.574458,
+      size: 34,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_R_T_ID',
+      value: '"BaUN/9IVWzGIC8Ztn78vYC84v9FUUE80sZ2VO2BcDcL1tiqJsfRfsBmUa2mITjPY4GSDk5aqTf+yP68oDZsSbBhc8T5obtIILrMqhD9B2sk="',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2249273881.574378,
+      size: 120,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_ga',
+      value: 'GA1.2.1204780930.1616738570',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1681625872,
+      size: 30,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_dc_gtm_UA-61914164-6',
+      value: '1',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1618553932,
+      size: 22,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_ga_M32T05RVZT',
+      value: 'GS1.1.1618551542.18.1.1618553872.60',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1681625872,
+      size: 49,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_R_T_IV',
+      value: '"tPHLjnD8CBhfVN5W02todQ=="',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2249273881.574497,
+      size: 36,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_gid',
+      value: 'GA1.2.1298794536.1618547381',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1618640272,
+      size: 31,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_SI',
+      value: 'mall.vwEOlhEmLgrqgTRv7fLdmUCRlHQ9tNee',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1618640281.840121,
+      size: 43,
+      httpOnly: true,
+      secure: true,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_gcl_au',
+      value: '1.1.504149764.1616738566',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1624514565,
+      size: 31,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_CLIENTID',
+      value: 'YTFMUTlhNWNOcHY5xsgleersomlxljso',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2247458591.241191,
+      size: 44,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_U',
+      value: '402152443',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2249273881.840065,
+      size: 14,
+      httpOnly: false,
+      secure: true,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'G_ENABLED_IDPS',
+      value: 'google',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 253402257600,
+      size: 20,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_hjid',
+      value: 'e0320224-78fb-43b4-8e4d-ec886fa9624a',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1648274570,
+      size: 41,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      sameSite: 'Lax',
+      priority: 'Medium'
+    },
+    {
+      name: 'AMP_TOKEN',
+      value: '%24NOT_FOUND',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1618555143,
+      size: 21,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_hjAbsoluteSessionInProgress',
+      value: '0',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1618555681,
+      size: 29,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      sameSite: 'Lax',
+      priority: 'Medium'
+    },
+    {
+      name: 'REC_T_ID',
+      value: 'e2857f9f-8df8-11eb-95de-3c15fb3af340',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2247458566.284116,
+      size: 44,
+      httpOnly: true,
+      secure: true,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_F',
+      value: 'a1LQ9a5cNpv9aEc9EpEjGk7orGX3rb8G',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2247458566.345423,
+      size: 37,
+      httpOnly: false,
+      secure: true,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: '_fbp',
+      value: 'fb.1.1616738566487.1237170206',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1626329881,
+      size: 33,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      sameSite: 'Lax',
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_EC',
+      value: 'NWLrzeji6n+5mzzCUEsr8Vj4I9etaEA4VwZ8RIF6ifr+bV728CAEqxdtTHy7eSB85LA1u1D/IulIhkqIFxp6BKviLKQkqmdQXeM8DpTCWW7WRh1+LTb1PhfMY4dcxbkJ7LsgxLCb3Fklhd8E+KurvfarnA0hLIVNJlRDYPAdIio=',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 2249273881.839826,
+      size: 178,
+      httpOnly: true,
+      secure: true,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'cto_bundle',
+      value: 't_-XJV9vTHZjbDluMVYxUWF2OHA3aGZMWERud0thY0NhVGkwU3h6Nmd1QzZCNmc4aTduNCUyQjR0Q0xDNkJDcjJDcXVVeXRabjR3aXo2MEVEaE9Rc1lmekpqbm5lQmN0V2ZLM09jSUU3ZyUyRkFGaiUyQkdYdndha25HNUt2dVpkSkk5S1Riem5vWm0xRzhoMk0zREglMkZSYkIxa1plQiUyQmxnJTNEJTNE',
+      domain: '.shopee.vn',
+      path: '/',
+      expires: 1652565652,
+      size: 238,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    },
+    {
+      name: 'csrftoken',
+      value: 'JqojUzxMEkCCxQGztZkn1OzlSLiyENc2',
+      domain: 'shopee.vn',
+      path: '/',
+      expires: -1,
+      size: 41,
+      httpOnly: false,
+      secure: false,
+      session: true,
+      priority: 'Medium'
+    },
+    {
+      name: 'SPC_IA',
+      value: '-1',
+      domain: 'shopee.vn',
+      path: '/',
+      expires: 2249028615.939693,
+      size: 8,
+      httpOnly: false,
+      secure: false,
+      session: false,
+      priority: 'Medium'
+    }
+  ]
+
+      cookie2 = ""
+      cookie1.forEach(row =>{
+          if(row.name == "csrftoken"){
+            cookie2 = cookie2 + row.name + "=" + xtoken + ";"
+          }else{
+            cookie2 = cookie2 + row.name + "=" + row.value + ";"
+          }
+        
+    }) 
+    //cookie2 = 'SPC_T_ID="ARVJPTtdpN98LavTgYpEmk11y8Cdpd99CXCt1rv3ec9AcL1Nz4WChIVI00TICvaXC+s/RSKufz+hTRTWGvr9tJTwaGYTgvhFS1E2e1bDzDA="; SPC_T_IV="bktTGXRnUbjNE0GoNIQxew=="; SPC_R_T_ID="ARVJPTtdpN98LavTgYpEmk11y8Cdpd99CXCt1rv3ec9AcL1Nz4WChIVI00TICvaXC+s/RSKufz+hTRTWGvr9tJTwaGYTgvhFS1E2e1bDzDA="; _ga=GA1.2.448962567.1617101190; _ga_M32T05RVZT=GS1.1.1618552008.15.1.1618554550.56; _dc_gtm_UA-61914164-6=1; cto_bundle=XFQXJV9KWGJFeFlrckk1YUNIMnhFck53WG9yR08zUnQ3VkpRNFRpb1NodVZmYjlzZHhVTlAxOUt3R2FwOUhjMERNbWwzZkd0bGtMRjdTSGdqMW9WSG4yVVElMkZhMkNZb3poTmpaJTJCMlJSaG4xVzhzSHpmOGxqTlJtbVY5WGJ5bVc1SFEwbkRNUEtjUHNXcVhLSVQ3VnBybXU2VnF3JTNEJTNE; _gcl_au=1.1.915858285.1617101187; SPC_CLIENTID=amVQRFpRZjhYbDREhreufiayayhjlolm; SPC_U=402722075; G_ENABLED_IDPS=google; _hjid=6b491a45-742a-4f0f-891c-48f67d46c465; SPC_EC=zCCCs6rcg5dKQMBACML8hsHS4aOwwA5cGNfas/8PuWopgYkQ3jjvbfHGLx1tzXzXCFahKxM775oaflEJIJXJ1dxbvZXOaTHlgP2HRKCRi1T3tyLLZPQxfNqPe0piWRil7o86Ljz5dqlf9E27iN6vfWEAszPgEW6j6lXupynd2ZM=; _fbp=fb.1.1617101187405.1989365948; SPC_F=jePDZQf8Xl4DDT0zlaqlDWn1ZAZNrtyY; SPC_R_T_IV="bktTGXRnUbjNE0GoNIQxew=="; _gid=GA1.2.836391838.1618547592; SPC_SI=mall.GHzJyQHnvtFmlDjIGeq6mAtgftfQ5slI; _hjAbsoluteSessionInProgress=1; AMP_TOKEN=%24NOT_FOUND; REC_T_ID=2f38675c-9145-11eb-bb45-f898ef6c80fb; csrftoken=SvAbTOlXDB4petEkKHiRqjp6aXJuMSOf; SPC_IA=-1'
+    
+    ref = "https://shopee.vn/shop/19608398/search"
+
+console.log(xtoken)
+//var data = JSON.stringify({"shopid":397564304});
+var url = "https://shopee.vn/api/v0/buyer/like/shop/19608398/item/1406642221/"
+var config = {
+  method: 'post',
+  url: url,
+  headers: { 
+    'x-csrftoken': xtoken,
+    'referer': ref, 
+    'cookie': cookie2
+  },
+};
+
+console.log(config)
+
+axios(config)
+.then(function (response) {
+  console.log(response.data);
+})
+.catch(function (error) {
+  console.log(error);
+});
+
         
 
    
@@ -270,7 +569,7 @@ checkheader = async () => {
 getKeyword = 
 
 (async () => {
-   await likeApi()
+   await followShop()
    //await getKeyword()
     //await runAllTime()
     //await checkheader()

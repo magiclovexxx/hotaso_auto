@@ -634,11 +634,14 @@ actionShopee = async (page, options, product) => {
         check1 = await checkAtions("heart_product", product)
         if (!check1) {
             console.log("Thả tim sản phẩm: " + options.heart_product)
-            heartClick = await page.$$('.justify-center>.flex.items-center>svg')
-            if (heartClick.length) {
-                await heartClick[0].click()
-                await updateAtions("heart_product", product)
-            }
+            let cookies1 = await page.cookies()
+            let refer = await page.url()
+            await shopeeApi.thaTimSanPham(cookies1,refer, product.shop_id, product.product_id)
+            // heartClick = await page.$$('.justify-center>.flex.items-center>svg')
+            // if (heartClick.length) {
+            //     await heartClick[0].click()
+            //     await updateAtions("heart_product", product)
+            // }
         }
     }
 
@@ -1052,7 +1055,7 @@ runAllTime = async () => {
         if (mode != "DEV") {
             // Đổi MAC
             await genRandomMac()
-           
+
             await sleep(10000)
             // checkNetwork = 0
             // await require('dns').resolve('www.google.com', function (err) {
@@ -1502,6 +1505,7 @@ runAllTime = async () => {
                                     console.log("Từ khoá: " + productForUser.keyword)
                                     await searchKeyWord(page, productForUser.keyword)
                                     await updateAtions("search", productForUser)
+
                                     await page.waitFor(5000)
                                     let getProductPageTotal
                                     try {
@@ -1536,6 +1540,7 @@ runAllTime = async () => {
 
                                         urlSearch = encodeURI(urlSearch)
                                         await page.goto(urlSearch)
+
 
                                     }
                                     console.log("Vị trí trang của sản phẩm theo từ khoá: " + viTriTrangCuaSanPham)
@@ -1608,16 +1613,23 @@ runAllTime = async () => {
                                         await updateAtions("view_shop", productForUser)
 
                                         if (options.follow_shop) {
+                                            cookies22 = await page.cookies()
+                                            refer = await page.url()
+                                            shopId = parseInt(productForUser.shop_id)
+
                                             check1 = await checkAtions("follow_shop", productForUser)
                                             if (check1 == 0) {
-                                                console.log("follow shop: " + options.follow_shop)
-                                                followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
-                                                if (followClick.length) {
-                                                    await followClick[0].click()
-                                                    await updateAtions("follow_shop", productForUser)
-                                                } else {
 
-                                                }
+                                                console.log("follow shop: " + options.follow_shop)
+                                                await shopeeApi.followShop(cookies22,refer,shopId)
+
+                                                // followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
+                                                // if (followClick.length) {
+                                                //     await followClick[0].click()
+                                                //     await updateAtions("follow_shop", productForUser)
+                                                // } else {
+
+                                                // }
 
                                             }
                                         }
