@@ -6,8 +6,8 @@ const randomUseragent = require('random-useragent');
 const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
     // lay cookie
 
-    keyword = product.keyword.toLowerCase()
-    productId = product.product_id
+    let keyword = product.keyword.toLowerCase()
+    let productId = product.product_id
     console.log("Id sản phẩm: " + productId)
     let productIndex = 0
     for (let i = 1; i <= maxPage; i++) {

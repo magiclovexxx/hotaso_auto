@@ -1541,7 +1541,6 @@ runAllTime = async () => {
                                         urlSearch = encodeURI(urlSearch)
                                         await page.goto(urlSearch)
 
-
                                     }
                                     console.log("Vị trí trang của sản phẩm theo từ khoá: " + viTriTrangCuaSanPham)
                                     productInfo = await actionsShopee.getproductByProductId(page, productForUser, 2)
