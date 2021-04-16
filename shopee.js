@@ -636,11 +636,11 @@ actionShopee = async (page, options, product) => {
             console.log("Thả tim sản phẩm: " + options.heart_product)
             let cookies1 = await page.cookies()
             let refer = await page.url()
-            await shopeeApi.thaTimSanPham(cookies1,refer, product.shop_id, product.product_id)
+            await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
             // heartClick = await page.$$('.justify-center>.flex.items-center>svg')
             // if (heartClick.length) {
             //     await heartClick[0].click()
-                 await updateAtions("heart_product", product)
+            await updateAtions("heart_product", product)
             // }
         }
     }
@@ -1621,12 +1621,12 @@ runAllTime = async () => {
                                             if (check1 == 0) {
 
                                                 console.log("follow shop: " + options.follow_shop)
-                                                await shopeeApi.followShop(cookies22,refer,shopId)
+                                                await shopeeApi.followShop(cookies22, refer, shopId)
 
                                                 // followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
                                                 // if (followClick.length) {
                                                 //     await followClick[0].click()
-                                                     await updateAtions("follow_shop", productForUser)
+                                                await updateAtions("follow_shop", productForUser)
                                                 // } else {
 
                                                 // }
