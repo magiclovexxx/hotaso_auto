@@ -640,7 +640,7 @@ actionShopee = async (page, options, product) => {
             // heartClick = await page.$$('.justify-center>.flex.items-center>svg')
             // if (heartClick.length) {
             //     await heartClick[0].click()
-            //     await updateAtions("heart_product", product)
+                 await updateAtions("heart_product", product)
             // }
         }
     }
@@ -1545,7 +1545,7 @@ runAllTime = async () => {
                                     }
                                     console.log("Vị trí trang của sản phẩm theo từ khoá: " + viTriTrangCuaSanPham)
                                     productInfo = await actionsShopee.getproductByProductId(page, productForUser, 2)
-                                    productInfo.trang = viTriTrangCuaSanPham
+                                    //productInfo.trang = viTriTrangCuaSanPham
 
                                     if (viTriTrangCuaSanPham == 0) {
                                         console.log("Không tìm thấy vị trí sản phẩm theo từ khoá")
@@ -1626,7 +1626,7 @@ runAllTime = async () => {
                                                 // followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
                                                 // if (followClick.length) {
                                                 //     await followClick[0].click()
-                                                //     await updateAtions("follow_shop", productForUser)
+                                                     await updateAtions("follow_shop", productForUser)
                                                 // } else {
 
                                                 // }

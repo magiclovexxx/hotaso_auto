@@ -207,7 +207,7 @@ const getproductByProductId = async (page, product, max_page) => {
         productPagess = productPagess.split("page=")[1]
         let product_page2 = parseInt(productPagess)
         let productIds
-
+        console.log(getProduct)
         getProduct.forEach((item, index) => {
 
             productIds = item.link.split(product.product_id)
