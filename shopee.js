@@ -1441,10 +1441,10 @@ runAllTime = async () => {
                                 console.log(" ---- shopid ---- ")
                                 console.log(productForUser.shop_id)
                                 // Link tất cả sản phẩm của shop
-                                let linkShopProducts = "https://shopee.vn/shop/" + productForUser.shop_id + "/search"
-                                await page.goto(linkShopProducts)
-                                await page.waitFor(3000)
-                                await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
+                                //let linkShopProducts = "https://shopee.vn/shop/" + productForUser.shop_id + "/search"
+                                //await page.goto(linkShopProducts)
+                                //await page.waitFor(3000)
+                                //await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
                                 // Nếu danh sách sp chưa like trên trang hiện tại = 0
 
                             }
@@ -1632,11 +1632,11 @@ runAllTime = async () => {
 
                                             }
                                         }
-                                        await page.waitFor(2000)
-                                        let linkShopProducts = "https://shopee.vn/shop/" + productForUser.shop_id + "/search"
-                                        await page.goto(linkShopProducts)
-                                        await page.waitFor(3000)
-                                        await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
+                                        // await page.waitFor(2000)
+                                        // let linkShopProducts = "https://shopee.vn/shop/" + productForUser.shop_id + "/search"
+                                        // await page.goto(linkShopProducts)
+                                        // await page.waitFor(3000)
+                                        // await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
 
 
                                     }
