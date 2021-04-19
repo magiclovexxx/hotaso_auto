@@ -1579,6 +1579,19 @@ runAllTime = async () => {
                                         console.log("Không gửi được dữ liệu thứ hạng mới đến server")
                                         console.log(error)
                                     }
+                                    product_api="https://shopee.vn/api/v2/item/get?itemid="+productForUser.product_id+ "&shopid="+productForUser.shop_id
+
+                                    await page.on('response', async(resp) => {
+                                        var url = resp.url()
+                                        if(url == product_api){
+                                            console.log("Lấy thông tin sản phẩm "); 
+                                            let productInfo1 = await resp.json()
+                                            productInfo2 = productInfo1.item
+                                            console.log(productInfo2.image)
+                                            productForUser.product_image = productInfo2.image
+                                        }
+                                        
+                                    });
 
                                     if ((productInfo.vitri != "Not" && productInfo.vitri != "ads")) {
                                         let productsAll = await page.$$('[data-sqe="link"]')
