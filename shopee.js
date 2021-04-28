@@ -1052,7 +1052,7 @@ runAllTime = async () => {
             console.log("Slave đang ở trang thái OFF")
             return false
         }
-        if (mode == "DEV") {
+        if (mode != "DEV") {
             // Đổi MAC
             await genRandomMac()
 
