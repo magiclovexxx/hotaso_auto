@@ -1052,28 +1052,38 @@ runAllTime = async () => {
             console.log("Slave đang ở trang thái OFF")
             return false
         }
-        if (mode != "DEV") {
+        if (mode == "DEV") {
             // Đổi MAC
             await genRandomMac()
 
             await sleep(10000)
             checkNetwork = 0
-            await require('dns').resolve('www.google.com', function (err) {
-                if (err) {
-                    console.log("No connection1");
-                    checkNetwork = 0
-
-                } else {
-                    console.log("Connected");
-                    checkNetwork = 1
-
+            for(let a=1; a < 100; a++){
+                console.log("check connection " + a);
+                await require('dns').resolve('www.google.com', function (err) {
+                    if (err) {
+                        console.log("No connection " + a);
+                        checkNetwork = 0
+                        
+    
+                    } else {
+                        console.log("Connected");
+                        checkNetwork = 1
+    
+                    }
+                });
+                if(checkNetwork == 1){
+                    break
+                }else{
+                    await sleep(5000)
                 }
-            });
+            }
+            
 
             if(checkNetwork == 0){
                // await disconnectDcomV2()
-               await genRandomMac()
-                await sleep(20000)
+               //await genRandomMac()
+               // await sleep(20000)
                // await connectDcomV2()
                // await sleep(20000)
             }
