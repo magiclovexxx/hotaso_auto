@@ -1097,9 +1097,33 @@ runAllTime = async () => {
         let checkDcomOff
         linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham + "&max_tab=" + maxTab
         console.log(linkgetdataShopeeDir)
-        getDataShopee = await axios.get(linkgetdataShopeeDir)
-        dataShopee = getDataShopee.data
 
+        await require('dns').resolve('www.google.com', function (err) {
+            if (err) {
+                console.log("No connection " + a);
+                checkNetwork = 0
+                
+
+            } else {
+                console.log("Connected");
+                checkNetwork = 1
+
+            }
+        });
+        if( checkNetwork == 1){
+            try{
+                getDataShopee = await axios.get(linkgetdataShopeeDir)
+            }catch (error){
+                console.log(error)
+            }
+            
+        }else{
+            return
+        }
+        
+        dataShopee = getDataShopee.data
+        //console.log(dataShopee)
+        //process.exit()
         keywords = []
 
         if (clickSanPham == 1) {
