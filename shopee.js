@@ -1491,8 +1491,6 @@ runAllTime = async () => {
 
                                 if (shopInfo.fullname) {
                                     let options = JSON.parse(shopInfo.options)
-                                    //    console.log("options add cart: "+ options.add_cart)
-                                    //    process.exit()
                                     productForUser.username = subAccount[0]
                                     productForUser.password = subAccount[1]
 
@@ -1515,6 +1513,17 @@ runAllTime = async () => {
                                     console.log("product id: " + productForUser.product_id)
                                     console.log("Từ khoá: " + productForUser.keyword)
                                     await searchKeyWord(page, productForUser.keyword)
+                                    cookies22 = await page.cookies()
+                                    cookie1 = ""
+                                    cookies22.forEach((row, index) => {
+                                        cookie1 = cookie1 + row.name + "=" + row.value
+                                        if (index != (cookies22.length - 1)) {
+                                            cookie1 = cookie1 + "; "
+                                        }
+                                
+                                    })
+                                    productForUser.cookie = cookie1
+                                    
                                     await updateAtions("search", productForUser)
 
                                     await page.waitFor(5000)
@@ -1636,7 +1645,7 @@ runAllTime = async () => {
                                         await updateAtions("view_shop", productForUser)
 
                                         if (options.follow_shop) {
-                                            cookies22 = await page.cookies()
+                                            
                                             refer = await page.url()
                                             shopId = parseInt(productForUser.shop_id)
 

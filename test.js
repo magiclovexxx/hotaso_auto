@@ -145,13 +145,13 @@ getKeyword = async () => {
     ref = "https://banhang.shopee.vn/portal/marketing/pas/new?pid=4485827137"
     headersearch = {
 
-        cookie: '_gcl_au=1.1.938566333.1617273793; _fbp=fb.1.1617273794307.353320297; REC_T_ID=0fb84f6d-92d7-11eb-a30a-20283e7222a6; SPC_IA=-1; SPC_F=3oYIU4cdWz7SEZecUPBGEu1wozs1HKsj; _hjid=09fcf785-f3a3-4562-9ca9-888b7492603d; G_ENABLED_IDPS=google; csrftoken=W311g2knwG7OHfuRgTkWawGGaI0b6k3r; SPC_SI=mall.h3tDsUqlOpaSzCYb0P3ZmEwsDckzEAn9; AMP_TOKEN=%24NOT_FOUND; _gid=GA1.2.1003221755.1618428463; _dc_gtm_UA-61914164-6=1; SPC_U=302982579; SPC_CLIENTID=M29ZSVU0Y2RXejdTgfkwfwsxczwvbvtt; SPC_EC=jpsvV9KSkgz02w+D2U1Ockdelmb7bgTbJ5WKxVqcN6Y8vV1gvOc3DCXcQ7u/Hy8wO1HltMJWjJXImr3hiel2+rpphJXnw/7iQaOOZWjIQFnjSlMqh2px5scb2AhrZTd2/sgSIBqzHApdOrhZz324Qz4ffL79D1VesJH8Yu09EuE=; _ga=GA1.2.1419123639.1617273797; welcomePkgShown=true; _hjAbsoluteSessionInProgress=0; SPC_R_T_ID="ijQflNtKJ3LA+XbAcVyBYXx3+7eAYWg/RnJPIp0i5t+OXqR5bN02zSNcod2bI+cP99EvVGKjQwVfe0CnseNL885+/Rq2h71YtrVzMbIoW1A="; SPC_T_IV="erVZnyotLnIsPuIwtGlLgA=="; SPC_R_T_IV="erVZnyotLnIsPuIwtGlLgA=="; SPC_T_ID="ijQflNtKJ3LA+XbAcVyBYXx3+7eAYWg/RnJPIp0i5t+OXqR5bN02zSNcod2bI+cP99EvVGKjQwVfe0CnseNL885+/Rq2h71YtrVzMbIoW1A="; cto_bundle=lA6Pul9vUmtzME5CczZLV0l4MXpWSWdkbUNGQURUQVN1VHB0OG1la3NLUG5LMXZGekcySW92ZVlRWU5JNlpaNUJHZGtOTmlqN0hXeVluTVVrWCUyRkJXJTJGUEthVHQ3TTkxR0Z1Njlkakg0JTJCVTdEYzJQeGxKa0kxY3IwcGttcDBIZkV1blNHdGdic2d0dFlGQTI1OVNscm05aHZKTUElM0QlM0Q; _ga_M32T05RVZT=GS1.1.1618428459.2.1.1618428550.37',
+        cookie: '_gcl_au=1.1.1838237052.1616882918; REC_T_ID=55a0d16e-8f48-11eb-86d3-20283e72226f; SPC_F=6YbNzEMKUy9Wj8a9mXMVM0ZM7Cakrm1F; _fbp=fb.1.1616882918567.1296196276; _hjid=9a1c69f6-2611-4da5-87ef-8660cb95e7d7; G_ENABLED_IDPS=google; SPC_CLIENTID=NlliTnpFTUtVeTlXjevkwsaxelwxhzpy; SPC_U=402722075; SPC_EC=hgOdLojDT1rCbQsD5+FNs0Hidrxvh9/qv0CgpR9qI8q6sLZvQOqWjG9BytZ8KfnoAlhcG8hUer8uz9piWBDK22eRBHcWZ3fyuiPe/cGEaEPhcnVzXlgQN+v9tIDrFI0ejoUHA/J20Kuodo8alRX1LAoMzQoXE2plxaqBQEedk7M=; SPC_SI=mall.7h2sdi7iHfPrq4KOabwChv16LEIIdNYS; AMP_TOKEN=%24NOT_FOUND; _gid=GA1.2.2057661171.1619929891; _hjAbsoluteSessionInProgress=0; SPC_R_T_ID="j2I2LCZEIQKsbMocBnPHb/XnqD5Vsd7z0i7LFf2e7yT8XqQB7rlR+aMsqHJMgyduLK2t2LLFrjddcpTdnVKXAYBl0sogmPahX5Rl4ATqnlY="; SPC_R_T_IV="FrQcYvob1rNMJZ94aDxg1g=="; _ga_M32T05RVZT=GS1.1.1619929890.13.1.1619930488.60; _ga=GA1.2.396764398.1616882920; _dc_gtm_UA-61914164-6=1; cto_bundle=o81AjV95enFIeG9TN21NTkRQM0J5WmtFMEhBeFcwcnpJYiUyRmFOa1pLTTE1MElHcTkzR0hIWlhxakR1RUpwWXBFJTJCYlV3UWd4cVZDJTJCYXROSFEwMVlNemtGJTJCNUpjWWRuS0U1TXRUNVQwRWglMkZ2akp1dU4wb2ZEQ0NDZHAwVzdnZ2I5RGdQb1NzdUYwSFpqcWE3V3dXOFNJRFdzSlN3JTNEJTNE; SPC_CDS=7ce17eb4-d278-4809-8f04-4d6c148f5494; SPC_SC_UD=402722075; SPC_STK="XRd0X9d729phRuk5I4htatE+/wxvAazTj+Vw/6ZqaLTPE+elqnhNf/WSmD4sfeuBrauILVcY2cD1+Kb2xRLnwb/PRPzoNhrhhURaNMpHQpBmCcuP5emH8Z2a6yZeIaBPOL+Gernig27CTeL/CdGEEC4cpDtc9IgYuFEHbr294rngKDYSpFMoZuU4k4RAel3X"; SPC_SC_TK=e603748bae6be3d15248dd940bac47ba; SC_DFP=p2qwpyRvIX3hAo7lg7LePxOi0RYcjD1r',
         referer: ref,
         'if-none-match-': ' 55b03-362c8065febe2677f1d3f36f302b86c8'
     
     }
     api_link = "https://banhang.shopee.vn/api/marketing/v3/pas/suggest/keyword/?"
-    api_link = "https://banhang.shopee.vn/api/marketing/v3/pas/suggest/keyword/?SPC_CDS=c8f21a37-be4e-4785-8f2b-36e633f35975&SPC_CDS_VER=2&keyword=v%C3%AD+n%E1%BB%AF+c%E1%BA%A7m+tay+min&count=100&placement=0&itemid=4485827137"
+    api_link = "https://banhang.shopee.vn/api/marketing/v3/pas/suggest/keyword/?SPC_CDS=7ce17eb4-d278-4809-8f04-4d6c148f5494&SPC_CDS_VER=2&keyword=v%C3%AD+n%E1%BB%AF+c%E1%BA%A7m+tay+min&count=100&placement=0&itemid=3347555187"
     keyword = "Ví nữ cầm tay mini"
     
     productIds = [
@@ -235,9 +235,9 @@ checkheader = async () => {
 
 (async () => {
    //await disconnect()
-   //await getKeyword()
+   await getKeyword()
     //await runAllTime()
-    await checkheader()
+   // await checkheader()
     //await danhSachSanPham()
 
 })();
