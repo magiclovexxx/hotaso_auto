@@ -41,8 +41,11 @@ mode = process.env.MODE
 if (mode === "DEV") {
     apiUrl = "http://hotaso.tranquoctoan.com"
 
+    apiServer = "http://hotaso.tranquoctoan.com:3000"
+
 } else {
     apiUrl = "http://hotaso.vn"
+    apiServer = "http://hotaso.vn:4000"
     maxTab = 5
 }
 
@@ -52,7 +55,10 @@ linkShopeeAccountUpdate = apiUrl + "/api_user/shopeeAccountUpdate" // Link updat
 linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
 dataShopeeDir = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
 shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
+
 updateActionsDir = apiUrl + "/api_user/updateActions"     // Update actions
+updateHistory = apiServer + "/update-history"     // Update history
+
 checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
 getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
 getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
@@ -528,14 +534,23 @@ updateAtions = async (action, product) => {
     dataupdate.action = action
 
     update = 0
+    //datatest = 
     try {
-        let datatest = await axios.get(updateActionsDir, {
-            params: {
-                data: {
-                    dataToServer: dataupdate,
+      
+             datatest = await axios.get(updateHistory, {
+                data:dataupdate
+                
+            })
+ 
+             datatest = await axios.get(updateActionsDir, {
+                params: {
+                    data: {
+                        dataToServer: dataupdate,
+                    }
                 }
-            }
-        })
+            })
+       
+        
         update = datatest.data
         console.log("update action: " + action + ":" + update)
     } catch (error) {
@@ -1075,7 +1090,7 @@ runAllTime = async () => {
                 if(checkNetwork == 1){
                     break
                 }else{
-                    await sleep(5000)
+                    await sleep(2000)
                 }
             }
             
