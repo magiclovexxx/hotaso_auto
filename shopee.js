@@ -521,12 +521,15 @@ checkAtions = async (action, product) => {
         checkAtion = datatest.data
         console.log(checkAtion)
         console.log("check action: " + action + ":" + checkAtion)
+        return checkAtion
+
     } catch (error) {
         console.log(error)
         //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
+        return 0
     }
 
-    return checkAtion
+    
 }
 
 updateAtions = async (action, product) => {
@@ -1137,6 +1140,7 @@ runAllTime = async () => {
         }
 
         dataShopee = getDataShopee.data
+        shopee_point = dataShopee.shopee_point
         //console.log(dataShopee)
         //process.exit()
         keywords = []
@@ -1488,6 +1492,7 @@ runAllTime = async () => {
                                 productForUser.username = subAccount[0]
                                 productForUser.password = subAccount[1]
                                 productForUser.slave = slavenumber
+                                productForUser.shopee_point = shopee_point
                                 console.log(" ---- shopid ---- ")
                                 console.log(productForUser.shop_id)
                                 // Link tất cả sản phẩm của shop
@@ -1532,6 +1537,7 @@ runAllTime = async () => {
                                     let options = JSON.parse(shopInfo.options)
                                     productForUser.username = subAccount[0]
                                     productForUser.password = subAccount[1]
+                                    productForUser.shopee_point = shopee_point
 
                                     // if(mode == "DEV"){
                                     //     productForUser.shop_id = "406672344"
