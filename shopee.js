@@ -59,7 +59,9 @@ shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // L
 updateActionsDir = apiUrl + "/api_user/updateActions"     // Update actions
 updateHistory = apiServer + "/update-history"     // Update history
 
-checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
+//checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
+checkActionsDir = apiServer + "/check-action"     // check actions
+
 getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
 getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
 getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
@@ -512,11 +514,9 @@ checkAtions = async (action, product) => {
 
     try {
         let datatest = await axios.get(checkActionsDir, {
-            params: {
-                data: {
-                    dataToServer: datacheck,
-                }
-            }
+
+            data: datacheck
+
         })
         checkAtion = datatest.data
         console.log(checkAtion)
@@ -536,21 +536,21 @@ updateAtions = async (action, product) => {
     update = 0
     //datatest = 
     try {
-      
-             datatest = await axios.get(updateHistory, {
-                data:dataupdate
-                
-            })
- 
-             datatest = await axios.get(updateActionsDir, {
-                params: {
-                    data: {
-                        dataToServer: dataupdate,
-                    }
+
+        datatest = await axios.get(updateHistory, {
+            data: dataupdate
+
+        })
+
+        datatest = await axios.get(updateActionsDir, {
+            params: {
+                data: {
+                    dataToServer: dataupdate,
                 }
-            })
-       
-        
+            }
+        })
+
+
         update = datatest.data
         console.log("update action: " + action + ":" + update)
     } catch (error) {
@@ -630,7 +630,7 @@ actionShopee = async (page, options, product) => {
     let viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
     let checkvideo = await page.$$('video')
     if (checkvideo.length) {
-        timeout = Math.floor(Math.random() * (13000 - 7000)) + 7000;
+        timeout = Math.floor(Math.random() * (8000 - 5000)) + 5000;
         await page.waitFor(timeout)
     }
     for (let i = 0; i <= viewRandomImages; i++) {
@@ -1073,34 +1073,34 @@ runAllTime = async () => {
 
             await sleep(10000)
             checkNetwork = 0
-            for(let a=1; a < 100; a++){
+            for (let a = 1; a < 100; a++) {
                 console.log("check connection " + a);
                 await require('dns').resolve('www.google.com', function (err) {
                     if (err) {
                         console.log("No connection " + a);
                         checkNetwork = 0
-                        
-    
+
+
                     } else {
                         console.log("Connected");
                         checkNetwork = 1
-    
+
                     }
                 });
-                if(checkNetwork == 1){
+                if (checkNetwork == 1) {
                     break
-                }else{
+                } else {
                     await sleep(2000)
                 }
             }
-            
 
-            if(checkNetwork == 0){
-               // await disconnectDcomV2()
-               //await genRandomMac()
-               // await sleep(20000)
-               // await connectDcomV2()
-               // await sleep(20000)
+
+            if (checkNetwork == 0) {
+                // await disconnectDcomV2()
+                //await genRandomMac()
+                // await sleep(20000)
+                // await connectDcomV2()
+                // await sleep(20000)
             }
         }
     }
@@ -1117,7 +1117,7 @@ runAllTime = async () => {
             if (err) {
                 console.log("No connection " + a);
                 checkNetwork = 0
-                
+
 
             } else {
                 console.log("Connected");
@@ -1125,17 +1125,17 @@ runAllTime = async () => {
 
             }
         });
-        if( checkNetwork == 1){
-            try{
+        if (checkNetwork == 1) {
+            try {
                 getDataShopee = await axios.get(linkgetdataShopeeDir)
-            }catch (error){
+            } catch (error) {
                 console.log(error)
             }
-            
-        }else{
+
+        } else {
             return
         }
-        
+
         dataShopee = getDataShopee.data
         //console.log(dataShopee)
         //process.exit()
@@ -1559,10 +1559,10 @@ runAllTime = async () => {
                                         if (index != (cookies22.length - 1)) {
                                             cookie1 = cookie1 + "; "
                                         }
-                                
+
                                     })
                                     productForUser.cookie = cookie1
-                                    
+
                                     await updateAtions("search", productForUser)
 
                                     await page.waitFor(5000)
@@ -1638,18 +1638,18 @@ runAllTime = async () => {
                                         console.log("Không gửi được dữ liệu thứ hạng mới đến server")
                                         console.log(error)
                                     }
-                                    product_api="https://shopee.vn/api/v2/item/get?itemid="+productForUser.product_id+ "&shopid="+productForUser.shop_id
+                                    product_api = "https://shopee.vn/api/v2/item/get?itemid=" + productForUser.product_id + "&shopid=" + productForUser.shop_id
 
-                                    await page.on('response', async(resp) => {
+                                    await page.on('response', async (resp) => {
                                         var url = resp.url()
-                                        if(url == product_api){
-                                            console.log("Lấy thông tin sản phẩm "); 
+                                        if (url == product_api) {
+                                            console.log("Lấy thông tin sản phẩm ");
                                             let productInfo1 = await resp.json()
                                             productInfo2 = productInfo1.item
                                             console.log(productInfo2.image)
                                             productForUser.product_image = productInfo2.image
                                         }
-                                        
+
                                     });
 
                                     if ((productInfo.vitri != "Not" && productInfo.vitri != "ads")) {
@@ -1684,7 +1684,7 @@ runAllTime = async () => {
                                         await updateAtions("view_shop", productForUser)
 
                                         if (options.follow_shop) {
-                                            
+
                                             refer = await page.url()
                                             shopId = parseInt(productForUser.shop_id)
 
