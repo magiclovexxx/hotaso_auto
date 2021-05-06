@@ -162,102 +162,113 @@ loginShopee = async (page, accounts) => {
 
 
 searchKeyWord = async (page, keyword) => {
-    timeout = Math.floor(Math.random() * (2000 - 100)) + 500;
-    await page.waitFor(timeout);
-    const checkSearchInput = await page.$$('.shopee-searchbar-input__input');
-    if (checkSearchInput.length) {
-        await page.click('.shopee-searchbar-input__input')
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+    try {
+        timeout = Math.floor(Math.random() * (2000 - 100)) + 500;
         await page.waitFor(timeout);
-        await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
-        timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-        await page.waitFor(timeout);
-        await page.keyboard.press('Enter')
-    } else {
-        //  await page.waitForSelector('.shopee-searchbar-input')
-        await page.click('.shopee-searchbar-input')
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout);
-        await page.click('.shopee-searchbar-input')
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout);
-        await page.click('.shopee-searchbar-input')
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout);
-        console.log(keyword)
-        await page.type('.shopee-searchbar-input', keyword, { delay: 100 })
-        timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-        await page.waitFor(timeout);
-        await page.keyboard.press('Enter')
-        await page.waitForNavigation()
+        const checkSearchInput = await page.$$('.shopee-searchbar-input__input');
+        if (checkSearchInput.length) {
+            await page.click('.shopee-searchbar-input__input')
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout);
+            await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
+            timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+            await page.waitFor(timeout);
+            await page.keyboard.press('Enter')
+        } else {
+            //  await page.waitForSelector('.shopee-searchbar-input')
+            await page.click('.shopee-searchbar-input')
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout);
+            await page.click('.shopee-searchbar-input')
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout);
+            await page.click('.shopee-searchbar-input')
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout);
+            console.log(keyword)
+            await page.type('.shopee-searchbar-input', keyword, { delay: 100 })
+            timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+            await page.waitFor(timeout);
+            await page.keyboard.press('Enter')
+            await page.waitForNavigation()
+        }
+    } catch (error) {
+        console.log(error)
     }
+
 }
 
 populateClick = async (page, listcategories) => {
-    timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
-    await page.waitFor(timeout);
 
-    timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
-    await page.waitFor(timeout);
-    checkpopup = await page.$$('.shopee-popup__close-btn')
-    if (checkpopup.length) {
-        await page.click('.shopee-popup__close-btn')
-    }
-
-    timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
-    await page.waitFor(timeout);
-
-    randomidcategory = Math.floor(Math.random() * (listcategories.length - 1))
-    randomcategory = listcategories[randomidcategory]
-
-    // category chính
-    let categoryId = await page.evaluate((xx) => {
-
-        // Class có link bài đăng trên profile       
-        let titles = document.querySelectorAll('.home-category-list__category-grid');
-        let idcategory
-        titles.forEach((item, index) => {
-            if (item.href == xx.password) {
-                idcategory = index
-                return true
-            }
-        })
-        return idcategory
-    }, randomcategory)
-
-    console.log(categoryId)
-
-    checkCategory = await page.$$('.home-category-list__category-grid');
-    await checkCategory[categoryId].click()
-    timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
-    await page.waitFor(timeout);
-
-    if (randomcategory.pages) {
-
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.keyboard.press('PageDown');
-        await page.waitFor(timeout);
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.keyboard.press('PageDown');
+    try {
+        timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
         await page.waitFor(timeout);
 
-        let categoryChildId = await page.evaluate((xx) => {
+        timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
+        await page.waitFor(timeout);
+        checkpopup = await page.$$('.shopee-popup__close-btn')
+        if (checkpopup.length) {
+            await page.click('.shopee-popup__close-btn')
+        }
+
+        timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
+        await page.waitFor(timeout);
+
+        randomidcategory = Math.floor(Math.random() * (listcategories.length - 1))
+        randomcategory = listcategories[randomidcategory]
+
+        // category chính
+        let categoryId = await page.evaluate((xx) => {
 
             // Class có link bài đăng trên profile       
-            let titles = document.querySelectorAll('.shopee-category-list__sub-category');
-            let idcategorychild
+            let titles = document.querySelectorAll('.home-category-list__category-grid');
+            let idcategory
             titles.forEach((item, index) => {
-                if (item.href == xx.pages) {
-                    idcategorychild = index
+                if (item.href == xx.password) {
+                    idcategory = index
                     return true
                 }
             })
-            return idcategorychild
+            return idcategory
         }, randomcategory)
 
-        checkCategoryChild = await page.$$('.shopee-category-list__sub-category');
-        await checkCategoryChild[categoryChildId].click()
+        console.log(categoryId)
+
+        checkCategory = await page.$$('.home-category-list__category-grid');
+        await checkCategory[categoryId].click()
+        timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
+        await page.waitFor(timeout);
+
+        if (randomcategory.pages) {
+
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.keyboard.press('PageDown');
+            await page.waitFor(timeout);
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.keyboard.press('PageDown');
+            await page.waitFor(timeout);
+
+            let categoryChildId = await page.evaluate((xx) => {
+
+                // Class có link bài đăng trên profile       
+                let titles = document.querySelectorAll('.shopee-category-list__sub-category');
+                let idcategorychild
+                titles.forEach((item, index) => {
+                    if (item.href == xx.pages) {
+                        idcategorychild = index
+                        return true
+                    }
+                })
+                return idcategorychild
+            }, randomcategory)
+
+            checkCategoryChild = await page.$$('.shopee-category-list__sub-category');
+            await checkCategoryChild[categoryChildId].click()
+        }
+    } catch (error) {
+        console.log(error)
     }
+
 }
 
 getproduct = async (page, saveProduct, limit, idShops) => {
@@ -416,95 +427,99 @@ chooseVariation = async (page, limit) => {
             chooseVariation(page, limit)
         }
     } catch (error) {
-        fs.appendFileSync('error.txt', "\n" + "chooseVariation error")
-        fs.appendFileSync('error.txt', error.toString() + "\n")
+        console.log(error)
     }
 
 }
 
 viewReview = async (page) => {
-    timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-    await page.waitFor(timeout)
-    allRview = await page.$$('.product-rating-overview__filter')
-    //console.log(allRview.length)
-    if (allRview.length > 1) {
-        randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
-        // click vào ngẫu nhiên 
-        await allRview[randomReview1].click()
-        // lướt xuống xem
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    try {
+        timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
         await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
-
-        // xem ngẫu nhiên n ảnh
-        allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
-
-        if (allmedia.length > 2) {
-            randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-            for (i = 0; i < randomDown; i++) {
-                randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitFor(timeout)
-                if (allmedia[randomDown2]) {
-                    await allmedia[randomDown2].click()
-                }
-            }
-        }
-
-        // lên đầu phần review
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
-        await page.keyboard.press('PageUp');
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
-        await page.keyboard.press('PageUp');
-
-        randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
-        // click vào ngẫu nhiên lần 2
-        if (allRview[randomReview1]) {
+        allRview = await page.$$('.product-rating-overview__filter')
+        //console.log(allRview.length)
+        if (allRview.length > 1) {
+            randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
+            // click vào ngẫu nhiên 
             await allRview[randomReview1].click()
-        }
-        // lướt xuống xem
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-
-        allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
-
-        if (allmedia.length > 2) {
-            randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-            for (i = 0; i < randomDown; i++) {
-                randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
-                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitFor(timeout)
-                if (allmedia[randomDown2]) {
-                    await allmedia[randomDown2].click()
-                }
-            }
-        }
-
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-        //click xem sản phẩm khác của shop
-        clickNext = await page.$$('.carousel-arrow--next')
-
-        if (clickNext.length) {
-            clickNext[0].click()
+            // lướt xuống xem
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
-            clickNext[0].click()
-        }
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageDown');
 
+            // xem ngẫu nhiên n ảnh
+            allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
+
+            if (allmedia.length > 2) {
+                randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+                for (i = 0; i < randomDown; i++) {
+                    randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+                    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                    await page.waitFor(timeout)
+                    if (allmedia[randomDown2]) {
+                        await allmedia[randomDown2].click()
+                    }
+                }
+            }
+
+            // lên đầu phần review
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageUp');
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageUp');
+
+            randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
+            // click vào ngẫu nhiên lần 2
+            if (allRview[randomReview1]) {
+                await allRview[randomReview1].click()
+            }
+            // lướt xuống xem
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+
+            allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
+
+            if (allmedia.length > 2) {
+                randomDown = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+                for (i = 0; i < randomDown; i++) {
+                    randomDown2 = Math.floor(Math.random() * (allmedia.length - 1)) + 1;
+                    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                    await page.waitFor(timeout)
+                    if (allmedia[randomDown2]) {
+                        await allmedia[randomDown2].click()
+                    }
+                }
+            }
+
+            await page.keyboard.press('PageDown');
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            //click xem sản phẩm khác của shop
+            clickNext = await page.$$('.carousel-arrow--next')
+
+            if (clickNext.length) {
+                clickNext[0].click()
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                await page.waitFor(timeout)
+                clickNext[0].click()
+            }
+
+        }
+    } catch (error) {
+        console.log(error)
     }
+
 }
 
 
@@ -529,7 +544,7 @@ checkAtions = async (action, product) => {
         return 0
     }
 
-    
+
 }
 
 updateAtions = async (action, product) => {
@@ -565,29 +580,34 @@ updateAtions = async (action, product) => {
 }
 
 viewShop = async (page, url) => {
-    console.log("---- View shop ----")
-    await page.goto(url)
-    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
-    viewShopClick = await page.$$('.shopee-avatar__placeholder')
-    if (viewShopClick.length >= 2) {
-        viewShopClick[1].click()
-    } else {
-        viewShopClick[0].click()
-    }
-
-    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
-
-    randomDown = Math.floor(Math.random() * (5 - 2)) + 3;
-    for (i = 0; i < randomDown; i++) {
+    try {
+        console.log("---- View shop ----")
+        await page.goto(url)
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
+        viewShopClick = await page.$$('.shopee-avatar__placeholder')
+        if (viewShopClick.length >= 2) {
+            viewShopClick[1].click()
+        } else {
+            viewShopClick[0].click()
+        }
+
+        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+        await page.waitFor(timeout)
+
+        randomDown = Math.floor(Math.random() * (5 - 2)) + 3;
+        for (i = 0; i < randomDown; i++) {
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageDown');
+        }
+        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+        await page.waitFor(timeout)
+        await page.keyboard.press('Home');
+    } catch (error) {
+        console.log(error)
     }
-    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
-    await page.keyboard.press('Home');
+
 }
 
 likeProductOfShop = async (page, url) => {
@@ -623,139 +643,149 @@ likeProductOfShop = async (page, url) => {
 
 
 actionShopee = async (page, options, product) => {
-    await page.waitForSelector('.product-briefing')
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.click('.product-briefing>div>div>div');
-
-    // xem ngẫu nhiên n ảnh sản phẩm
-    console.log("---- Xem ảnh sản phẩm ----")
-    let viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
-    let checkvideo = await page.$$('video')
-    if (checkvideo.length) {
-        timeout = Math.floor(Math.random() * (8000 - 5000)) + 5000;
-        await page.waitFor(timeout)
-    }
-    for (let i = 0; i <= viewRandomImages; i++) {
+    try {
+        await page.waitForSelector('.product-briefing')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
-        let nextRightButton = await page.$$('.icon-arrow-right-bold')
-        if (nextRightButton.length >= 2) {
-            await nextRightButton[1].click();
+        await page.click('.product-briefing>div>div>div');
+
+        // xem ngẫu nhiên n ảnh sản phẩm
+        console.log("---- Xem ảnh sản phẩm ----")
+        let viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
+        let checkvideo = await page.$$('video')
+        if (checkvideo.length) {
+            timeout = Math.floor(Math.random() * (8000 - 5000)) + 5000;
+            await page.waitFor(timeout)
         }
-    }
-
-    // click tắt ảnh sản phẩm    
-    await page.mouse.click(10, 30)
-
-    if (options.heart_product) {
-        check1 = await checkAtions("heart_product", product)
-        if (!check1) {
-            console.log("Thả tim sản phẩm: " + options.heart_product)
-            let cookies1 = await page.cookies()
-            let refer = await page.url()
-            await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
-            // heartClick = await page.$$('.justify-center>.flex.items-center>svg')
-            // if (heartClick.length) {
-            //     await heartClick[0].click()
-            await updateAtions("heart_product", product)
-            // }
-        }
-    }
-
-    // lướt đọc sản phẩm
-    viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
-    for (let i = 0; i <= viewRandomImages; i++) {
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
-        await page.keyboard.press('PageDown');
-        // đến phần review thì dừng lại
-        goToRview = await page.$$('.product-rating-overview__filter')
-        if (goToRview.length) {
-            break;
-        }
-    }
-    console.log(options)
-    if (options.view_review) {
-        console.log("---- Xem review ----")
-        await viewReview(page)
-        await updateAtions("view_review", product)
-        await page.waitFor(timeout)
-    }
-
-    await page.keyboard.press('Home');
-
-    if (options.add_cart) {
-        console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
-        // click chọn màu
-        let checkVariation = chooseVariation(page, 5)
-        if (checkVariation) {
-
-            // click thêm vào giỏ hàng
+        for (let i = 0; i <= viewRandomImages; i++) {
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout)
-            addToCard = await page.$$('.btn-tinted')
-            if (addToCard.length) {
-                await addToCard[0].click()
-                await updateAtions("add_cart", product)
+            let nextRightButton = await page.$$('.icon-arrow-right-bold')
+            if (nextRightButton.length >= 2) {
+                await nextRightButton[1].click();
             }
-
-            console.log("Thêm vào giỏ hàng")
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-
-            await page.waitFor(timeout)
-
-        } else {
-            console.log("Không chọn được mẫu mã")
-            return false
         }
+
+        // click tắt ảnh sản phẩm    
+        await page.mouse.click(10, 30)
+
+        if (options.heart_product) {
+            check1 = await checkAtions("heart_product", product)
+            if (!check1) {
+                console.log("Thả tim sản phẩm: " + options.heart_product)
+                let cookies1 = await page.cookies()
+                let refer = await page.url()
+                await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
+                // heartClick = await page.$$('.justify-center>.flex.items-center>svg')
+                // if (heartClick.length) {
+                //     await heartClick[0].click()
+                await updateAtions("heart_product", product)
+                // }
+            }
+        }
+
+        // lướt đọc sản phẩm
+        viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
+        for (let i = 0; i <= viewRandomImages; i++) {
+            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            await page.waitFor(timeout)
+            await page.keyboard.press('PageDown');
+            // đến phần review thì dừng lại
+            goToRview = await page.$$('.product-rating-overview__filter')
+            if (goToRview.length) {
+                break;
+            }
+        }
+        console.log(options)
+        if (options.view_review) {
+            console.log("---- Xem review ----")
+            await viewReview(page)
+            await updateAtions("view_review", product)
+            await page.waitFor(timeout)
+        }
+
+        await page.keyboard.press('Home');
+
+        if (options.add_cart) {
+            console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
+            // click chọn màu
+            let checkVariation = chooseVariation(page, 5)
+            if (checkVariation) {
+
+                // click thêm vào giỏ hàng
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+                await page.waitFor(timeout)
+                addToCard = await page.$$('.btn-tinted')
+                if (addToCard.length) {
+                    await addToCard[0].click()
+                    await updateAtions("add_cart", product)
+                }
+
+                console.log("Thêm vào giỏ hàng")
+                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+
+                await page.waitFor(timeout)
+
+            } else {
+                console.log("Không chọn được mẫu mã")
+                return false
+            }
+        }
+    } catch (error) {
+        console.log(error)
     }
+
 }
 
 removeCart = async (page) => {
-    // check đầy giỏ hàng
-    console.log("---- Xoá sản phẩm khỏi giỏ hàng ----")
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitFor(timeout)
-    await page.keyboard.press('Home');
-    let checkcart = typeof 123
-    checkcart = await page.evaluate(() => {
-
-        // Số sản phẩm trong giỏ hàng       
-        let title
-        let titles = document.querySelector('.shopee-cart-number-badge')
-        if (titles) {
-            title = titles.innerText;
-        }
-
-        return title
-    })
-
-    let carts = Math.floor(Math.random() * (50 - 35)) + 35;
-
-    if (checkcart > 4) {
-        await page.goto('https://shopee.vn/cart/')
-        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+    try {
+        // check đầy giỏ hàng
+        console.log("---- Xoá sản phẩm khỏi giỏ hàng ----")
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitFor(timeout)
-        await page.waitForSelector('.cart-item__action')
-        actionDeletes = await page.$$('.cart-item__action')
+        await page.keyboard.press('Home');
+        let checkcart = typeof 123
+        checkcart = await page.evaluate(() => {
 
-        for (let i = actionDeletes.length; i > 2; i--) {
-            timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
-            await actionDeletes[i - 1].click();
-            timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
-            checkcart2 = await page.$$('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
-            if (checkcart2.length) {
-                await checkcart2.click()
-            } else {
-                break
+            // Số sản phẩm trong giỏ hàng       
+            let title
+            let titles = document.querySelector('.shopee-cart-number-badge')
+            if (titles) {
+                title = titles.innerText;
             }
-            timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+
+            return title
+        })
+
+        let carts = Math.floor(Math.random() * (50 - 35)) + 35;
+
+        if (checkcart > 4) {
+            await page.goto('https://shopee.vn/cart/')
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
+            await page.waitForSelector('.cart-item__action')
+            actionDeletes = await page.$$('.cart-item__action')
+
+            for (let i = actionDeletes.length; i > 2; i--) {
+                timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+                await page.waitFor(timeout)
+                await actionDeletes[i - 1].click();
+                timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+                await page.waitFor(timeout)
+                checkcart2 = await page.$$('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
+                if (checkcart2.length) {
+                    await checkcart2.click()
+                } else {
+                    break
+                }
+                timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+                await page.waitFor(timeout)
+            }
         }
+    } catch (error) {
+        console.log(error)
     }
+
 }
 
 orderProduct = async (page, productInfo) => {
@@ -968,6 +998,18 @@ connectDcomV2 = async () => {
 
 }
 
+restart = async () => {
+
+    const connectdcom1 = await exec('shutdown /r /t 3600');
+    connectdcom1.stdout.on('data', (data) => {
+        // do whatever you want here with data
+    });
+    connectdcom1.stderr.on('data', (data) => {
+        console.error(data);
+    });
+
+}
+
 deleteProfile = async (profile) => {
     // Xoá profile block
     deleteDir = profileDir + profile
@@ -1061,51 +1103,56 @@ runAllTime = async () => {
     }
 
     if (checkNetwork == 1) {
-        console.log("connected");
-        getSlaveInfo = getSlaveInfo + "?slave=" + slavenumber
-        slaveInfo = await axios.get(getSlaveInfo)
-        slaveInfo = slaveInfo.data
-        //console.log(slaveInfo)
-        if (slaveInfo.status == 0) {
-            console.log("Slave đang ở trang thái OFF")
-            return false
-        }
-        if (mode != "DEV") {
-            // Đổi MAC
-            await genRandomMac()
+        try {
+            console.log("connected");
+            getSlaveInfo = getSlaveInfo + "?slave=" + slavenumber
+            slaveInfo = await axios.get(getSlaveInfo)
+            slaveInfo = slaveInfo.data
+            //console.log(slaveInfo)
+            if (slaveInfo.status == 0) {
+                console.log("Slave đang ở trang thái OFF")
+                return false
+            }
+            if (mode != "DEV") {
+                // Đổi MAC
+                await genRandomMac()
 
-            await sleep(10000)
-            checkNetwork = 0
-            for (let a = 1; a < 100; a++) {
-                console.log("check connection " + a);
-                await require('dns').resolve('www.google.com', function (err) {
-                    if (err) {
-                        console.log("No connection " + a);
-                        checkNetwork = 0
+                await sleep(10000)
+                checkNetwork = 0
+                for (let a = 1; a < 100; a++) {
+                    console.log("check connection " + a);
+                    await require('dns').resolve('www.google.com', function (err) {
+                        if (err) {
+                            console.log("No connection " + a);
+                            checkNetwork = 0
 
 
+                        } else {
+                            console.log("Connected");
+                            checkNetwork = 1
+
+                        }
+                    });
+                    if (checkNetwork == 1) {
+                        break
                     } else {
-                        console.log("Connected");
-                        checkNetwork = 1
-
+                        await sleep(2000)
                     }
-                });
-                if (checkNetwork == 1) {
-                    break
-                } else {
-                    await sleep(2000)
+                }
+
+
+                if (checkNetwork == 0) {
+                    // await disconnectDcomV2()
+                    //await genRandomMac()
+                    // await sleep(20000)
+                    // await connectDcomV2()
+                    // await sleep(20000)
                 }
             }
-
-
-            if (checkNetwork == 0) {
-                // await disconnectDcomV2()
-                //await genRandomMac()
-                // await sleep(20000)
-                // await connectDcomV2()
-                // await sleep(20000)
-            }
+        } catch (error) {
+            console.log(error)
         }
+
     }
 
 
@@ -1727,6 +1774,8 @@ runAllTime = async () => {
                         }
                     } catch (error) {
                         console.log(error)
+                    } finally {
+                        await browser.close();
                     }
                     await browser.close();
                     console.log("----------- STOP ---------------")
