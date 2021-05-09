@@ -8,10 +8,15 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
     let keyword = product.keyword.toLowerCase()
     let productId = product.product_id
+    let viTriSanPham={}
     console.log("Id sản phẩm: " + productId)
     let productIndex = 0
     for (let i = 1; i <= maxPage; i++) {
-        console.log("Trang: " + i)
+
+        viTriSanPham = {
+            trang: 0,
+            vitri: 0
+        }
         maxproduct = 50 * (i - 1)
         search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=" + keyword + "&limit=50&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
         search_api = encodeURI(search_api)
@@ -30,7 +35,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
         headersearch = {
             referer: ref,
-            'if-none-match-': ' 55b03-362c8065febe2677f1d3f36f302b86c8'
+            //'if-none-match-': ' 55b03-362c8065febe2677f1d3f36f302b86c8'
 
         }
         let datatest
@@ -50,29 +55,36 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         try {
             data = datatest.data
             checkProduct = 0
-
-            if (data.items) {
+            
+            if (data.items.length>0) {
+                console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
                 let itemid3 = ""
                 itemid3 = data.items[0].item_basic.itemid
 
                 //console.log("----" + itemid3)
 
-                data.items.forEach(item => {
-
+                data.items.forEach((item,index) => {
+                    
                     let itemid2 = ""
                     itemid2 = item.item_basic.itemid
-
+                    checkAds = item.ads_keyword
                     //console.log(itemid2)
 
-                    if (itemid2 == productId) {
+                    if (itemid2 == productId && checkAds == null) {
+                        
+                        viTriSanPham = {
+                            trang: i,
+                            vitri: index+1
+                        }
                         console.log("đã tìm thấy sản phẩm id: " + itemid2)
-                        checkProduct = 1;
-                        //break;    
+                        console.log(viTriSanPham)
+                           
                     }
                 });
             }
-            if (checkProduct == 1) {
-                productIndex = i
+             
+            if (viTriSanPham.trang) {
+                
                 break;
             }
         } catch (error) {
@@ -80,11 +92,8 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         }
 
     }
-    if (productIndex) {
-        return productIndex
-    } else {
-        return 0
-    }
+
+    return viTriSanPham
 
 }
 
