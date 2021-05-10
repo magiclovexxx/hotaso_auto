@@ -41,11 +41,11 @@ mode = process.env.MODE
 if (mode === "DEV") {
     apiUrl = "http://hotaso.tranquoctoan.com"
 
-    apiServer = "http://hotaso.tranquoctoan.com:3000"
+    apiServer = "http://history.hotaso.vn:3000"
 
 } else {
     apiUrl = "http://hotaso.vn"
-    apiServer = "http://hotaso.vn:4000"
+    apiServer = "http://history.hotaso.vn:4000"
     maxTab = 5
 }
 
@@ -1774,22 +1774,22 @@ runAllTime = async () => {
                                     });
 
                                     if (productForUser.vitri > 0) {
-                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
-                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
-                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
-                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
-                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
-                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
 
