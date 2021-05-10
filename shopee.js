@@ -454,10 +454,10 @@ viewReview = async (page) => {
             allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
 
             if (allmedia.length > 3) {
-                
+
                 randomDown = Math.floor(Math.random() * (3 - 1)) + 1;
                 for (i = 1; i < randomDown; i++) {
-                    
+
                     randomDown2 = Math.floor(Math.random() * (3 - 1)) + 1;
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                     await page.waitFor(timeout)
@@ -583,7 +583,7 @@ updateAtions = async (action, product) => {
 
 viewShop = async (page, url) => {
     shopInfo = {
-        cover:"",
+        cover: "",
         name: ""
 
     }
@@ -593,14 +593,14 @@ viewShop = async (page, url) => {
         await page.goto(url)
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitFor(timeout)
-        
+
 
         await page.on('response', async (resp) => {
             var url = resp.url()
             let productInfo1, productInfo2
             let checkUrlShop = url.split("get_shop_detail")
 
-            if (checkUrlShop.length > 1) { 
+            if (checkUrlShop.length > 1) {
                 productInfo1 = await resp.json()
                 productInfo2 = productInfo1.data
                 console.log("Thông tin shop " + productInfo2.cover);
@@ -1623,8 +1623,8 @@ runAllTime = async () => {
                                     await page.on('response', async (resp) => {
                                         var url = resp.url()
                                         let productInfo1, productInfo2
-                                        
-                                        
+
+
                                         let checkUrlproduct = url.split("search_items")
 
                                         if (checkUrlproduct.length > 1) {
@@ -1668,8 +1668,8 @@ runAllTime = async () => {
 
                                     await updateAtions("search", productForUser)
                                     let getViTriSanPham = {
-                                        trang:0,
-                                        vitri:0
+                                        trang: 0,
+                                        vitri: 0
                                     }
 
                                     await page.waitFor(5000)
@@ -1699,7 +1699,7 @@ runAllTime = async () => {
                                         // }
 
                                         // ------------- //
-                                       // await page.waitFor(999999)
+                                        // await page.waitFor(999999)
 
                                         if (getViTriSanPham.trang > 1) {
                                             pageUrl = getViTriSanPham.trang - 1
@@ -1718,14 +1718,14 @@ runAllTime = async () => {
                                         productForUser.urlSearch = urlSearch
                                         let getViTriSanPham2 = await actionsShopee.getproductByProductId(page, productForUser, 2)
                                         //productInfo.trang = viTriTrangCuaSanPham
-                                        if(getViTriSanPham2.vitri > 0){
+                                        if (getViTriSanPham2.vitri > 0) {
                                             productForUser.trang = getViTriSanPham2.trang
                                             productForUser.vitri = getViTriSanPham2.vitri
-                                        }else{
+                                        } else {
                                             productForUser.trang = getViTriSanPham.trang
                                             productForUser.vitri = getViTriSanPham.vitri
                                         }
-                                        
+
                                     } else {
                                         productForUser.trang = 1
                                         productForUser.vitri = viTriSanPhamTrang1
@@ -1769,8 +1769,26 @@ runAllTime = async () => {
                                     });
 
                                     if (productForUser.vitri > 0) {
+                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        await page.keyboard.press('PageDown');
+                                        await page.waitFor(timeout);
+                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        await page.keyboard.press('PageDown');
+                                        await page.waitFor(timeout);
+                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        await page.keyboard.press('PageDown');
+                                        await page.waitFor(timeout);
+                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        await page.keyboard.press('PageDown');
+                                        await page.waitFor(timeout);
+                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        await page.keyboard.press('PageDown');
+                                        await page.waitFor(timeout);
+                                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                        await page.keyboard.press('PageDown');
+                                        await page.waitFor(timeout);
                                         let productsAll = await page.$$('[data-sqe="link"]')
-                                        productsAll[productForUser.vitri-1].click()
+                                        productsAll[productForUser.vitri - 1].click()
                                     } else {
 
                                         console.log("Goto product: " + productForUser.product_link)
