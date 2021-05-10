@@ -581,8 +581,8 @@ updateAtions = async (action, product) => {
     return update
 }
 
-viewShop = async (page, url) => {
-    let shopInfo = {
+viewShop = async (page, url, product) => {
+    let shopInfo3 = {
         cover: "",
         name: ""
 
@@ -603,15 +603,16 @@ viewShop = async (page, url) => {
             if (checkUrlShop.length > 1) {
                 productInfo1 = await resp.json()
                 productInfo2 = productInfo1.data
-                console.log("Thông tin shop " + productInfo2.cover);
-                shopInfo.avatar = productInfo2.account.portrait
-                shopInfo.username = productInfo2.account.username
-                shopInfo.name = productInfo2.name
-                shopInfo.shop_id = productInfo2.shopid
-                console.log("----- Shop info ------")
-                console.log(shopInfo)
+                if(product.shop_id == productInfo2.shopid){
+                    console.log("Thông tin shop " + productInfo2.cover);
+                    shopInfo3.avatar = productInfo2.account.portrait
+                    shopInfo3.username = productInfo2.account.username
+                    shopInfo3.name = productInfo2.name
+                    shopInfo3.shop_id = productInfo2.shopid
+                    console.log("----- Shop info ------")
+                    console.log(shopInfo3)
+                }
             }
-
         });
 
         viewShopClick = await page.$$('.shopee-avatar__placeholder')
@@ -636,7 +637,7 @@ viewShop = async (page, url) => {
     } catch (error) {
         console.log(error)
     }
-    return shopInfo
+    return shopInfo3
 
 }
 
@@ -1820,10 +1821,10 @@ runAllTime = async () => {
 
                                     console.log("Option view shop: " + options.view_shop)
                                     if (options.view_shop) {
-                                        let shopInfo2 = await viewShop(page, productLink)
-                                        productForUser.shopAvatar = shopInfo2.avatar
-                                        productForUser.shopName = shopInfo2.name
-                                        productForUser.shopUserName = shopInfo2.username
+                                        let shopInfo_2 = await viewShop(page, productLink, productForUser)
+                                        productForUser.shopAvatar = shopInfo_2.avatar
+                                        productForUser.shopName = shopInfo_2.name
+                                        productForUser.shopUserName = shopInfo_2.username
                                         await updateAtions("view_shop", productForUser)
 
                                         if (options.follow_shop) {
