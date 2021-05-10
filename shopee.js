@@ -582,7 +582,7 @@ updateAtions = async (action, product) => {
 }
 
 viewShop = async (page, url) => {
-    shopInfo = {
+    let shopInfo = {
         cover: "",
         name: ""
 
@@ -598,8 +598,8 @@ viewShop = async (page, url) => {
         await page.on('response', async (resp) => {
             var url = resp.url()
             let productInfo1, productInfo2
-            let checkUrlShop = url.split("get_shop_detail")
-
+            let checkUrlShop = url.split("api/v4/shop/get_shop_detail?username=")
+            
             if (checkUrlShop.length > 1) {
                 productInfo1 = await resp.json()
                 productInfo2 = productInfo1.data
@@ -607,6 +607,9 @@ viewShop = async (page, url) => {
                 shopInfo.avatar = productInfo2.account.portrait
                 shopInfo.username = productInfo2.account.username
                 shopInfo.name = productInfo2.name
+                shopInfo.shop_id = productInfo2.shopid
+                console.log("----- Shop info ------")
+                console.log(shopInfo)
             }
 
         });
@@ -1788,7 +1791,7 @@ runAllTime = async () => {
                                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
-                                        
+
                                         let productsAll = await page.$$('[data-sqe="link"]')
                                         productsAll[productForUser.vitri - 1].click()
                                     } else {
