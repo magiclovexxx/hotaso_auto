@@ -604,7 +604,8 @@ viewShop = async (page, url) => {
                 productInfo1 = await resp.json()
                 productInfo2 = productInfo1.data
                 console.log("Thông tin shop " + productInfo2.cover);
-                shopInfo.cover = productInfo2.cover
+                shopInfo.avatar = productInfo2.account.portrait
+                shopInfo.username = productInfo2.account.username
                 shopInfo.name = productInfo2.name
             }
 
@@ -1787,6 +1788,7 @@ runAllTime = async () => {
                                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                         await page.keyboard.press('PageDown');
                                         await page.waitFor(timeout);
+                                        
                                         let productsAll = await page.$$('[data-sqe="link"]')
                                         productsAll[productForUser.vitri - 1].click()
                                     } else {
@@ -1816,8 +1818,9 @@ runAllTime = async () => {
                                     console.log("Option view shop: " + options.view_shop)
                                     if (options.view_shop) {
                                         let shopInfo2 = await viewShop(page, productLink)
-                                        productForUser.shopCover = shopInfo2.cover
+                                        productForUser.shopAvatar = shopInfo2.avatar
                                         productForUser.shopName = shopInfo2.name
+                                        productForUser.shopUserName = shopInfo2.username
                                         await updateAtions("view_shop", productForUser)
 
                                         if (options.follow_shop) {
