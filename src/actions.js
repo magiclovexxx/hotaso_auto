@@ -142,7 +142,7 @@ const getproductByProductId = async (page, product, max_page) => {
                 productInfo2 = productInfo1.items
                 
                 productInfo2.forEach((item, index) => {
-                    if (item.itemid == product.product_id && item.ads_keyword == null) {
+                    if ((item.itemid == product.product_id) && (item.ads_keyword == null)) {
                         // tìm vị trí sản phẩm cần click
 
                         thuHangSanPham = {

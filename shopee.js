@@ -1219,12 +1219,15 @@ runAllTime = async () => {
 
         dataShopee = getDataShopee.data
         shopee_point = dataShopee.shopee_point
-        //console.log(dataShopee)
+        
+        
         //process.exit()
         keywords = []
 
         if (clickSanPham == 1) {
             keywords = products = dataShopee.products
+            console.log("Data shopee: " )
+            console.log(keywords)
         } else {
             dataShopee.keywords.forEach(item => {
                 if (item.username) {
@@ -1638,7 +1641,7 @@ runAllTime = async () => {
                                             productInfo2 = productInfo1.items
                                             //console.log("Tổng sản phẩm trên trang đầu tiên " + productInfo2.length);
                                             productInfo2.forEach((item, index) => {
-                                                if (item.itemid == productForUser.product_id) {
+                                                if (item.itemid == productForUser.product_id && (item.ads_keyword == null)) {
 
                                                     viTriSanPhamTrang1 = index + 1
                                                 }
