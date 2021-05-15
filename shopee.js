@@ -298,7 +298,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.waitFor(timeout);
         }
-        getProduct = []
+        let getProduct = []
         getProduct = await page.evaluate(() => {
 
             //  
@@ -378,30 +378,50 @@ getproduct = async (page, saveProduct, limit, idShops) => {
 
 }
 
+get_variation_enable = async (page) => {
 
+    let variation1 = await page.evaluate(() => {
+
+        //  tất cả variation
+        let titles = document.querySelectorAll('.product-variation');
+        let list_variation = []
+        titles.forEach((item, index) => {
+            let x = item.textContent
+            list_variation.push(x)
+        })
+        return list_variation
+    })
+
+    // variation disable
+    let variation_disable = await page.evaluate(() => {
+        let titles_disable = document.querySelectorAll('.product-variation--disabled');
+        let list_variation_disable = []
+        titles_disable.forEach((item) => {
+            let x = item.textContent
+            list_variation_disable.push(x)
+        })
+
+        return list_variation_disable
+    })
+
+    list_variation_enable = []
+    variation1.forEach((item2, index) => {
+        if (!variation_disable.includes(item2)) {
+            list_variation_enable.push(index)
+        }
+
+    })
+
+    return list_variation_enable
+}
 
 // chọn thuộc tính sản phẩm
 chooseVariation = async (page, limit) => {
+    let variation_enable
     try {
         console.log("---- Chọn ngẫu nhiên phân loại sản phẩm ----")
         let checkSelected = []
         limit -= 1
-        checkvaritations = await page.$$('.flex.flex-column>.flex.items-center>.flex.items-center')
-
-        if (checkvaritations.length == 4) {
-            lengthvarirations = await page.evaluate(() => {
-
-                varitations1 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
-                varitations2 = document.querySelectorAll('.flex.flex-column>.flex.items-center>.flex.items-center')[2].children.length
-                variationslengt = {
-                    varitations1: varitations1,
-                    varitations2: varitations2
-                }
-                return variationslengt
-            })
-        }
-
-        if (limit == 0) return false
 
         varitations = await page.$$('.product-variation')
         if (!varitations.length) {
@@ -410,23 +430,31 @@ chooseVariation = async (page, limit) => {
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitFor(timeout)
 
-        for (i = 0; i <= varitations.length; i++) {
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout)
-            varitation = Math.floor(Math.random() * (varitations.length - 1))
-            if (varitations[varitation]) {
-                //await varitations[varitation].click()
+        if (varitations.length >= 3) {
+            vari_1 = Math.floor(Math.random() * (varitations.length - 3));
+            for (i = (varitations.length - 1); i >= vari_1; i--) {
+                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                await page.waitFor(timeout)
+                variation_enable = await get_variation_enable(page)
+                console.log("List variation active")
+                console.log(variation_enable)
+                if (variation_enable.includes(i)) {
+                    await varitations[i].click()
+                }
+
+
             }
-        }
-
-        checkSelected = await page.$$('.product-variation--selected')
-
-        if (checkSelected.length) {
-            return true
         } else {
-            await chooseVariation(page, limit)
+            variation_enable = await get_variation_enable(page)
+            console.log("List variation active")
+            console.log(variation_enable)
+            await varitations[variation_enable[0]].click()
+
         }
+        return 1
+
     } catch (error) {
+        return 0
         console.log(error)
     }
 
@@ -599,11 +627,11 @@ viewShop = async (page, url, product) => {
             var url = resp.url()
             let productInfo1, productInfo2
             let checkUrlShop = url.split("api/v4/shop/get_shop_detail?username=")
-            
+
             if (checkUrlShop.length > 1) {
                 productInfo1 = await resp.json()
                 productInfo2 = productInfo1.data
-                if(product.shop_id == productInfo2.shopid){
+                if (product.shop_id == productInfo2.shopid) {
                     console.log("Thông tin shop " + productInfo2.cover);
                     shopInfo3.avatar = productInfo2.account.portrait
                     shopInfo3.username = productInfo2.account.username
@@ -685,7 +713,7 @@ actionShopee = async (page, options, product) => {
         let viewRandomImages = Math.floor(Math.random() * (6 - 4)) + 4;
         let checkvideo = await page.$$('video')
         if (checkvideo.length) {
-            timeout = Math.floor(Math.random() * (5000 - 2000)) + 2000;
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
         }
         for (let i = 0; i <= viewRandomImages; i++) {
@@ -740,7 +768,7 @@ actionShopee = async (page, options, product) => {
         if (options.add_cart) {
             console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
             // click chọn màu
-            let checkVariation = chooseVariation(page, 5)
+            let checkVariation = await chooseVariation(page, 5)
             if (checkVariation) {
 
                 // click thêm vào giỏ hàng
@@ -1007,9 +1035,12 @@ function sleep(ms) {
 }
 
 disconnectDcomV2 = async () => {
-    const disDcom = await exec('disconnect.bat /');
+    // disconnect dcom
+    console.log('disconnect card mang')
+    const disDcom = await exec('netsh interface set interface name=Cellular disable');
     disDcom.stdout.on('data', (data) => {
         // do whatever you want here with data
+        //console.log(data);
     });
     disDcom.stderr.on('data', (data) => {
         console.error(data);
@@ -1124,14 +1155,14 @@ runAllTime = async () => {
         }
     });
     await sleep(2000)
-    if (checkNetwork == 0) {
-        console.log("No connection2");
-        // if (mode != "DEV") {
-        await connectDcomV2()
-        await sleep(15000)
+    // if (checkNetwork == 0) {
+    //     console.log("No connection2");
+    //     // if (mode != "DEV") {
+    //     await connectDcomV2()
+    //     await sleep(15000)
 
-        //  }    
-    }
+    //     //  }    
+    // }
 
     if (checkNetwork == 1) {
         try {
@@ -1144,8 +1175,11 @@ runAllTime = async () => {
                 console.log("Slave đang ở trang thái OFF")
                 return false
             }
-            if (mode != "DEV") {
+            if (1) {
+            //if (mode != "DEV") {
                 // Đổi MAC
+                await disconnectDcomV2()
+                await sleep(3000)
                 await genRandomMac()
 
                 await sleep(10000)
@@ -1184,7 +1218,7 @@ runAllTime = async () => {
             console.log(error)
         }
 
-    }
+   
 
 
     try {
@@ -1219,15 +1253,15 @@ runAllTime = async () => {
 
         dataShopee = getDataShopee.data
         shopee_point = dataShopee.shopee_point
-        
-        
+
+
         //process.exit()
         keywords = []
 
         if (clickSanPham == 1) {
             keywords = products = dataShopee.products
-            console.log("Data shopee: " )
-            console.log(keywords)
+            console.log("Data shopee: ")
+            console.log(keywords.length)
         } else {
             dataShopee.keywords.forEach(item => {
                 if (item.username) {
@@ -1309,7 +1343,8 @@ runAllTime = async () => {
 
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
-                        return (ua.osName === 'Windows' && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osVersion != "Win95");
+                        return (ua.osName === 'Windows' && ua.osName != "Win95" && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osVersion != "Win95");
+
                     });
 
                     await page.setUserAgent(userAgent)
@@ -1495,7 +1530,7 @@ runAllTime = async () => {
 
                     const page = (await browser.pages())[0];
                     userAgent = randomUseragent.getRandom(function (ua) {
-
+                        //return (ua.osName =="Win95");
                         return (ua.osName === 'Windows' && ua.osName != 'Win95' && ua.osVersion >= 6 && ua.osVersion != 98 && ua.osVersion != "Win95");
                     });
                     await page.setUserAgent(userAgent)
@@ -1771,6 +1806,7 @@ runAllTime = async () => {
                                             let productInfo1 = await resp.json()
                                             productInfo2 = productInfo1.item
                                             console.log(productInfo2.image)
+                                            productForUser.product_image = ""
                                             productForUser.product_image = productInfo2.image
                                         }
 
@@ -1880,6 +1916,7 @@ runAllTime = async () => {
         console.log(error)
         return false
     }
+}
 };
 
 //Cron 1 phút 1 lần 
