@@ -637,6 +637,7 @@ viewShop = async (page, url, product) => {
                     shopInfo3.username = productInfo2.account.username
                     shopInfo3.name = productInfo2.name
                     shopInfo3.shop_id = productInfo2.shopid
+                    shopInfo3.followed = productInfo2.followed
                     console.log("----- Shop info ------")
                     console.log(shopInfo3)
                 }
@@ -729,7 +730,8 @@ actionShopee = async (page, options, product) => {
         await page.mouse.click(10, 30)
 
         if (options.heart_product) {
-            check1 = await checkAtions("heart_product", product)
+            //check1 = await checkAtions("heart_product", product)
+            check1 = product.liked
             if (!check1) {
                 console.log("Thả tim sản phẩm: " + options.heart_product)
                 let cookies1 = await page.cookies()
@@ -1175,8 +1177,8 @@ runAllTime = async () => {
                 console.log("Slave đang ở trang thái OFF")
                 return false
             }
-            if (1) {
-            //if (mode != "DEV") {
+            //if (1) {
+            if (mode != "DEV") {
                 // Đổi MAC
                 await disconnectDcomV2()
                 await sleep(3000)
@@ -1808,6 +1810,7 @@ runAllTime = async () => {
                                             console.log(productInfo2.image)
                                             productForUser.product_image = ""
                                             productForUser.product_image = productInfo2.image
+                                            productForUser.liked = productInfo2.liked
                                         }
 
                                     });
@@ -1844,6 +1847,9 @@ runAllTime = async () => {
                                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                     await page.waitFor(timeout)
                                     await updateAtions("view_product", productForUser)
+
+                                    console.log("check tha tim: " + productForUser.liked)
+
                                     await actionShopee(page, options, productForUser)
                                     productLink = await page.url()
 
@@ -1871,10 +1877,12 @@ runAllTime = async () => {
                                             refer = await page.url()
                                             shopId = parseInt(productForUser.shop_id)
 
-                                            check1 = await checkAtions("follow_shop", productForUser)
-                                            if (check1 == 0) {
+                                            //check1 = await checkAtions("follow_shop", productForUser)
+                                            check1 = shopInfo_2.followed
+                                            console.log("check follow shop: " + check1)
 
-                                                console.log("follow shop: " + options.follow_shop)
+                                            if (check1 == false) {
+                                                
                                                 await shopeeApi.followShop(cookies22, refer, shopId)
 
                                                 // followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
