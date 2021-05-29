@@ -64,19 +64,13 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
                 //console.log("----" + itemid3)
 
                 data.items.forEach((item,index) => {
-                    
-                    let itemid2 = ""
-                    itemid2 = item.item_basic.itemid
-                    checkAds = item.ads_keyword
-                    //console.log(itemid2)
-
-                    if (itemid2 == productId && checkAds == null) {
-                        
+                   
+                    if (item.item_basic.itemid == productId && item.ads_keyword == null) {
                         viTriSanPham = {
                             trang: i,
                             vitri: index+1
                         }
-                        console.log("đã tìm thấy sản phẩm id: " + itemid2)
+                        console.log("đã tìm thấy sản phẩm id: " + item.item_basic.itemid)
                         console.log(viTriSanPham)
                            
                     }
