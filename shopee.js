@@ -48,7 +48,7 @@ if (mode === "DEV") {
 } else {
     apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
-    maxTab = 5
+    maxTab = 7
 }
 
 
