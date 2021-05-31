@@ -702,6 +702,7 @@ likeProductOfShop = async (page, url) => {
 
 
     await page.goto(url)
+
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitFor(timeout)
     viewShopClick = await page.$$('.shopee-avatar__placeholder')
@@ -834,6 +835,7 @@ removeCart = async (page) => {
         let carts = Math.floor(Math.random() * (50 - 35)) + 35;
 
         if (checkcart > 4) {
+            
             await page.goto('https://shopee.vn/cart/')
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
@@ -1472,9 +1474,12 @@ runAllTime = async () => {
                 await page.waitFor(10000)
                 try {
                     await page.goto("https://shopee.vn")
-                } catch (error) {
-                    console.log("Mạng chậm không kết nối dc")
-                    return false
+                } catch (err) {
+                    //HERE
+                    console.error(err.message);
+                    await browser.close();
+                    await deleteProfile(subAccount[0])
+                    return false;
                 }
 
                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1655,7 +1660,15 @@ runAllTime = async () => {
             }
 
             await page.waitFor(5000)
-            await page.goto("https://shopee.vn")
+            try {
+                await page.goto("https://shopee.vn")
+            } catch (err) {
+                //HERE
+                console.error(err.message);
+                await browser.close();
+                await deleteProfile(subAccount[0])
+                return false;
+            }
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
             // login account shopee                    
@@ -1854,12 +1867,12 @@ runAllTime = async () => {
 
                         if (productForUser.check_index < 3) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
-                            
-                            if(getViTriSanPham.trang == 0 && getViTriSanPham.vitri ==0){
+
+                            if (getViTriSanPham.trang == 0 && getViTriSanPham.vitri == 0) {
                                 console.log(" --- Không tìm thấy sản phẩm --- ")
                                 productForUser.trang = 0
                                 productForUser.vitri = 0
-                               
+
                                 await axios.get(shopeeUpdateSeoSanPhamDir, {
                                     params: {
                                         data: {
@@ -1872,9 +1885,9 @@ runAllTime = async () => {
                                     })
                                     .catch(function (error) {
                                         console.log(error);
-                                     
+
                                     })
-                                
+
                                 // await browser.close();
                                 // await deleteProfile(subAccount[0])
                                 // return false;
@@ -1894,19 +1907,27 @@ runAllTime = async () => {
                                 urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                                 urlSearch = encodeURI(urlSearch)
                                 productForUser.urlSearch = urlSearch
-                                await page.goto(urlSearch)
+                                try {
+                                    await page.goto(urlSearch)
+                                } catch (err) {
+                                    //HERE
+                                    console.error(err.message);
+                                    await browser.close();
+                                    await deleteProfile(subAccount[0])
+                                    return false;
+                                }
                                 await page.waitFor(5000)
                             }
-    
+
                             for (let a = 1; a < 4; a++) {
                                 if (viTriSanPhamTrang1 != 0) {
                                     console.log("url_trang_tim_kiem_san_pham 22: " + url_trang_tim_kiem_san_pham)
                                     console.log("viTriSanPhamTrang1 22: " + viTriSanPhamTrang1)
-    
+
                                     productForUser.trang = parseInt(pageUrl) + a
                                     productForUser.vitri = viTriSanPhamTrang1
                                     console.log("vi_tri_trang_san_pham 22: " + productForUser.trang)
-    
+
                                     console.log("Update seo sản phẩm")
                                     await axios.get(shopeeUpdateSeoSanPhamDir, {
                                         params: {
@@ -1920,11 +1941,11 @@ runAllTime = async () => {
                                         })
                                         .catch(function (error) {
                                             console.log(error);
-                                           
+
                                         })
                                     break;
                                 }
-    
+
                                 next = await page.$$('.shopee-icon-button--right')
                                 if (next.length) {
                                     await next[0].click()
@@ -1932,11 +1953,11 @@ runAllTime = async () => {
                                     await page.waitFor(timeout);
                                 }
                             }
-    
+
                             today = new Date().toLocaleString();
-    
+
                             if (productForUser.vitri >= 1) {
-    
+
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
                                 await page.waitFor(timeout);
@@ -1957,15 +1978,31 @@ runAllTime = async () => {
                                 await page.waitFor(timeout);
                                 let productsAll = await page.$$('[data-sqe="link"]')
                                 productsAll[productForUser.vitri - 1].click()
-                            } else{
-                                await page.goto(productForUser.product_link)
+                            } else {
+                                try {
+                                    await page.goto(productForUser.product_link)
+                                } catch (err) {
+                                    //HERE
+                                    console.error(err.message);
+                                    await browser.close();
+                                    await deleteProfile(subAccount[0])
+                                    return false;
+                                }
                             }
                         } else {
-                            await page.goto(productForUser.product_link)
+                            try {
+                                await page.goto(productForUser.product_link)
+                            } catch (err) {
+                                //HERE
+                                console.error(err.message);
+                                await browser.close();
+                                await deleteProfile(subAccount[0])
+                                return false;
+                            }
                         }
 
                         // Link tìm kiếm sản phẩm vị trí -1
-                        
+
                         // Goto product link
 
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
