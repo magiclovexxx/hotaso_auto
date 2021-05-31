@@ -8,7 +8,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
     let keyword = product.keyword.toLowerCase()
     let productId = product.product_id
-    let iTriSanPham = {
+    let viTriSanPham = {
         trang: 0,
         vitri: 0
     }
@@ -47,51 +47,45 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
         await axios.get(search_api, {
             headers: headersearch
-          })
-          .then(function (response) {
-            console.log("Không lấy dc dữ liệu check vị trí từ sp theo từ khoá")
-            data = response.data
-          })
-          .catch(function (error) {
-            console.log(error);
-           
-          }) 
+        })
+            .then(function (response) {
+                data = response.data
+            })
+            .catch(function (error) {
+                console.log(error);
+                viTriSanPham.vitri = "xxx"
+                viTriSanPham.trang = "xxx"
+                return viTriSanPham
+            })
 
-        try {
-           
-            checkProduct = 0
-            
-            if (data.items.length>0) {
-                console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
-                let itemid3 = ""
-                itemid3 = data.items[0].item_basic.itemid
+        checkProduct = 0
 
-                //console.log("----" + itemid3)
+        if (data.items.length > 0) {
+            console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
+            let itemid3 = ""
+            itemid3 = data.items[0].item_basic.itemid
 
-                data.items.forEach((item,index) => {
-                   
-                    if (item.item_basic.itemid == productId && item.ads_keyword == null) {
-                        viTriSanPham = {
-                            trang: i,
-                            vitri: index+1
-                        }
-                        console.log("đã tìm thấy sản phẩm id: " + item.item_basic.itemid)
-                        console.log(viTriSanPham)
-                           
+            //console.log("----" + itemid3)
+
+            data.items.forEach((item, index) => {
+
+                if (item.item_basic.itemid == productId && item.ads_keyword == null) {
+                    viTriSanPham = {
+                        trang: i,
+                        vitri: index + 1
                     }
-                });
-            }
-             
-            if (viTriSanPham.trang) {
-                
-                break;
-            }
-        } catch (error) {
-            console.log(error)
+                }
+            });
+        }
+
+        if (viTriSanPham.trang > 0) {
+
+            break;
         }
 
     }
-
+    console.log(" ------ Vị trí sản phẩm check được ------")
+    console.log(viTriSanPham)
     return viTriSanPham
 
 }
