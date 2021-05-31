@@ -8,7 +8,10 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
     let keyword = product.keyword.toLowerCase()
     let productId = product.product_id
-    let viTriSanPham={}
+    let iTriSanPham = {
+        trang: 0,
+        vitri: 0
+    }
     console.log("Id sản phẩm: " + productId)
     let productIndex = 0
     for (let i = 1; i <= maxPage; i++) {
@@ -40,20 +43,22 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         }
         let datatest
         console.log(search_api)
+        var data
+
+        await axios.get(search_api, {
+            headers: headersearch
+          })
+          .then(function (response) {
+            console.log("Không lấy dc dữ liệu check vị trí từ sp theo từ khoá")
+            data = response.data
+          })
+          .catch(function (error) {
+            console.log(error);
+           
+          }) 
+
         try {
-            datatest = await axios.get(search_api, {
-
-                headers: headersearch
-            })
-
-        } catch (error) {
-            console.log("Không lấy dc data")
-            console.log(error)
-            return false
-        }
-
-        try {
-            data = datatest.data
+           
             checkProduct = 0
             
             if (data.items.length>0) {

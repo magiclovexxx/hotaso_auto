@@ -48,7 +48,7 @@ if (mode === "DEV") {
 } else {
     apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
-    maxTab = 7
+    maxTab = 5
 }
 
 
@@ -586,11 +586,20 @@ updateAtions = async (action, product) => {
     update = 0
     //datatest = 
     try {
-
-        datatest = await axios.get(updateHistory, {
-            data: dataupdate
-
-        })
+        await axios.get(updateHistory, {
+            params: {
+                data: dataupdate
+            }
+          })
+          .then(function (response) {
+            console.log(response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });  
 
         datatest = await axios.get(updateActionsDir, {
             params: {
@@ -599,7 +608,6 @@ updateAtions = async (action, product) => {
                 }
             }
         })
-
 
         update = datatest.data
         console.log("update action: " + action + ":" + update)
@@ -759,7 +767,7 @@ actionShopee = async (page, options, product) => {
                 break;
             }
         }
-        
+
         if (options.view_review) {
             console.log("---- Xem review ----")
             await viewReview(page)
@@ -1144,8 +1152,12 @@ function sleep(ms) {
     });
 }
 
-runAllTime = async () => {
 
+
+runAllTime = async () => {
+    slaveInfo = []
+    getDataShopee = []
+    dataShopee = []
     // lấy dữ liệu từ master
     checkNetwork = 0
     await require('dns').resolve('www.google.com', function (err) {
@@ -1169,17 +1181,32 @@ runAllTime = async () => {
     //     //  }    
     // }
 
+
     if (checkNetwork == 1) {
         try {
             console.log("connected");
             getSlaveInfo = getSlaveInfo + "?slave=" + slavenumber
-            slaveInfo = await axios.get(getSlaveInfo)
-            slaveInfo = slaveInfo.data
-            //console.log(slaveInfo)
+
+            await axios.get(getSlaveInfo)
+                .then(function (response) {
+                    // handle success
+                    //console.log(response.data);
+                    slaveInfo = response.data
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                    return false
+                })
+                .then(function () {
+                    // always executed
+                });
+
             if (slaveInfo.status == 0) {
                 console.log("Slave đang ở trang thái OFF")
                 return false
             }
+
             //if (1) {
             if (mode != "DEV") {
                 // Đổi MAC
@@ -1191,18 +1218,17 @@ runAllTime = async () => {
                 checkNetwork = 0
                 for (let a = 1; a < 100; a++) {
                     console.log("check connection " + a);
+
                     await require('dns').resolve('www.google.com', function (err) {
                         if (err) {
                             console.log("No connection " + a);
                             checkNetwork = 0
-
-
                         } else {
                             console.log("Connected");
                             checkNetwork = 1
-
                         }
                     });
+
                     if (checkNetwork == 1) {
                         break
                     } else {
@@ -1229,7 +1255,9 @@ runAllTime = async () => {
         try {
 
             let linkgetdataShopeeDir = ""
-            let checkDcomOff
+
+            maxTab = slaveInfo.max_tab;
+
             linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham + "&max_tab=" + maxTab
             console.log(linkgetdataShopeeDir)
 
@@ -1237,36 +1265,40 @@ runAllTime = async () => {
                 if (err) {
                     console.log("No connection " + a);
                     checkNetwork = 0
-
-
                 } else {
                     console.log("Connected");
                     checkNetwork = 1
-
                 }
             });
+
             if (checkNetwork == 1) {
-                try {
-                    getDataShopee = await axios.get(linkgetdataShopeeDir)
-                } catch (error) {
-                    console.log(error)
-                }
+
+                await axios.get(linkgetdataShopeeDir)
+                    .then(function (response) {
+
+                        dataShopee = response.data
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                        return false
+                    })
+                    .then(function () {
+                        // always executed
+                    });
 
             } else {
-                return
+                return false
             }
 
-            dataShopee = getDataShopee.data
             shopee_point = dataShopee.shopee_point
-
 
             //process.exit()
             keywords = []
 
             if (clickSanPham == 1) {
                 keywords = products = dataShopee.products
-                console.log("Data shopee: ")
-                console.log(keywords.length)
+                console.log("Data shopee: " + keywords.length)
             } else {
                 dataShopee.keywords.forEach(item => {
                     if (item.username) {
@@ -1286,16 +1318,20 @@ runAllTime = async () => {
             //data = GenDirToGetData(maxTab, accounts)
             data = 0
             getSlaveAccountDir = getSlaveAccountDir + "?slave=" + slavenumber + "&max_tab=" + maxTab
-            try {
-                let datatest = await axios.get(getSlaveAccountDir, {
+            data = []
 
+            await axios.get(getSlaveAccountDir)
+                .then(function (response) {
+                    data = response.data
                 })
-                data = datatest.data
-                //console.log(data)
-            } catch (error) {
-                console.log(error)
-                //console.log("Không gửi được dữ liệu thứ hạng mới đến master")
-            }
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                    return false
+                })
+                .then(function () {
+                    // always executed
+                });
 
             if (data.length) {
                 // get version hien tai trong file version.txt
@@ -1595,10 +1631,8 @@ runAllTime = async () => {
                                     // }
 
                                 });
-                                // }
                             }
                         }
-
 
                         try {
 
@@ -1803,13 +1837,7 @@ runAllTime = async () => {
                                         if (productForUser.check_index < 3) {
                                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
                                         }
-                                        // if (maxPage < 10) {
-                                        //     getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
-                                        // }
-
-                                        // ------------- //
-                                        // await page.waitFor(999999)
-
+                            
                                         if (getViTriSanPham.trang > 1) {
                                             pageUrl = getViTriSanPham.trang - 1
                                         } else {
@@ -1837,20 +1865,21 @@ runAllTime = async () => {
                                                 productForUser.vitri = viTriSanPhamTrang1
                                                 console.log("vi_tri_trang_san_pham 22: " + productForUser.trang)
 
-                                                try {
-                                                    let datatest = await axios.get(shopeeUpdateSeoSanPhamDir, {
-                                                        params: {
-                                                            data: {
-                                                                dataToServer: productForUser,
-                                                            }
+                                                console.log("Update seo sản phẩm")
+                                                await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                                    params: {
+                                                        data: {
+                                                            dataToServer: productForUser,
                                                         }
-                                                    })
-                                                    console.log("Cập nhật thứ hạng sp: " + datatest.data)
-                                                    // console.log(datatest.data)
-                                                } catch (error) {
-                                                    console.log("Không gửi được dữ liệu thứ hạng mới đến server")
-                                                    console.log(error)
-                                                }
+                                                    }
+                                                  })
+                                                  .then(function (response) {
+                                                    console.log(response.data)
+                                                  })
+                                                  .catch(function (error) {
+                                                    console.log(error);
+                                                    return false
+                                                  }) 
 
                                                 break;
 
@@ -1873,7 +1902,7 @@ runAllTime = async () => {
                                             await searchKeyWord(page, productForUser.product_name)
                                         }
 
-                                        if (productForUser.vitri >=1 ) {
+                                        if (productForUser.vitri >= 1) {
 
                                             timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                             await page.keyboard.press('PageDown');
