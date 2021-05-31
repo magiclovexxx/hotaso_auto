@@ -586,9 +586,7 @@ updateAtions = async (action, product) => {
     //datatest = 
 
     await axios.get(updateHistory, {
-        params: {
             data: dataupdate
-        }
     })
         .then(function (response) {
             console.log(response.data);
@@ -1371,67 +1369,67 @@ runAllTime = async () => {
         subAccount[0] = acc.username
         subAccount[1] = acc.password.split("\r")[0]
 
-        try {
-            let profileChrome = profileDir + subAccount[0]
-            console.log("Profile chrome link: " + profileChrome)
-            const browser = await puppeteer.launch({
-                executablePath: chromiumDir,
-                headless: headless_mode,
-                devtools: false,
-                args: [
-                    `--user-data-dir=${profileChrome}`      // load profile chromium
-                ]
-            });
 
-            const page = (await browser.pages())[0];
-            userAgent = randomUseragent.getRandom(function (ua) {
-                //return (ua.osName =="Win95");
-                return (ua.osName === 'Windows' && ua.osVersion === "10");
-            });
-            await page.setUserAgent(userAgent)
-            console.log(userAgent)
-            // Random kích cỡ màn hình
-            width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-            height = Math.floor(Math.random() * (800 - 600)) + 600;;
+        let profileChrome = profileDir + subAccount[0]
+        console.log("Profile chrome link: " + profileChrome)
+        const browser = await puppeteer.launch({
+            executablePath: chromiumDir,
+            headless: headless_mode,
+            devtools: false,
+            args: [
+                `--user-data-dir=${profileChrome}`      // load profile chromium
+            ]
+        });
 
-            await page.setViewport({
-                width: width,
-                height: height
-            });
+        const page = (await browser.pages())[0];
+        userAgent = randomUseragent.getRandom(function (ua) {
+            //return (ua.osName =="Win95");
+            return (ua.osName === 'Windows' && ua.osVersion === "10");
+        });
+        await page.setUserAgent(userAgent)
+        console.log(userAgent)
+        // Random kích cỡ màn hình
+        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+        height = Math.floor(Math.random() * (800 - 600)) + 600;;
 
+        await page.setViewport({
+            width: width,
+            height: height
+        });
+
+        await page.setRequestInterception(true);
+
+        if (disable_css == 1 || disable_image == 1) {
             await page.setRequestInterception(true);
 
-            if (disable_css == 1 || disable_image == 1) {
-                await page.setRequestInterception(true);
+            // --- Chặn load css --- /
+            if (disable_image == 1) {
+                page.on('request', (req) => {
 
-                // --- Chặn load css --- /
-                if (disable_image == 1) {
-                    page.on('request', (req) => {
+                    if (req.resourceType() === 'image') {
+                        req.abort();
+                    } else {
+                        req.continue();
+                    }
 
-                        if (req.resourceType() === 'image') {
-                            req.abort();
-                        } else {
-                            req.continue();
-                        }
+                    // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
+                    //     req.abort();
+                    // } else {
+                    //     req.continue();
+                    // }
 
-                        // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-                        //     req.abort();
-                        // } else {
-                        //     req.continue();
-                        // }
-
-                    });
-                }
+                });
             }
+        }
 
-            if ((index == 0) && (mode !== "DEV")) {
-                // đổi ip
-                console.log("Đổi ip mạng")
-                if (dcomVersion == "V2") {
-                    // await changeIpDcomV2()
-                }
+        if ((index == 0) && (mode !== "DEV")) {
+            // đổi ip
+            console.log("Đổi ip mạng")
+            if (dcomVersion == "V2") {
+                // await changeIpDcomV2()
             }
-
+        }
+        try {
             await page.waitFor(5000)
             try {
                 await page.goto("https://shopee.vn")
