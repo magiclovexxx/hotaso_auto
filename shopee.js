@@ -1798,22 +1798,23 @@ runAllTime = async () => {
                         }
                         await page.waitFor(1000);
                         await removeCart(page)
+                        await browser.close();
 
                     }
                 }
-                //await browser.close();
-                return 0
-                //await deleteProfile(subAccount[0])
+                
+                //return 0
+                await deleteProfile(subAccount[0])
             }
             console.log("----------- STOP ---------------")
-            //await browser.close();
-            await deleteProfile(subAccount[0])
-            return 0
+            await browser.close();
+            //await deleteProfile(subAccount[0])
+            //return 0
             
         } catch (error) {
             console.log(error)
             //await browser.close();
-            return 0
+            //return 0
             // await deleteProfile(subAccount[0])
         }
     })
