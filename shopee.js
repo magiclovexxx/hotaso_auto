@@ -1163,16 +1163,7 @@ runAllTime = async () => {
     dataShopee = []
     // lấy dữ liệu từ master
     checkNetwork = 0
-    await require('dns').resolve('www.google.com', async function (err) {
-        if (err) {
-            console.log("No connection " + a);
-            checkNetwork = 0
-            await sleep(10000)
-        } else {
-            console.log("Check mang lan 1 Connected");
-            checkNetwork = 1
-        }
-    });
+    await sleep(5000)
 
     //if (1) {
     if (mode != "DEV") {
@@ -1181,6 +1172,7 @@ runAllTime = async () => {
         await sleep(3000)
         await genRandomMac()
         await sleep(10000)
+    }
         checkNetwork = 0
         for (let a = 1; a < 100; a++) {
             console.log("check connection " + a);
@@ -1201,7 +1193,7 @@ runAllTime = async () => {
                 await sleep(2000)
             }
         }
-    }
+    
 
     if (checkNetwork == 1) {
 
@@ -1325,75 +1317,75 @@ runAllTime = async () => {
     }
 
     data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
-        try {
-            await sleep(15000 * index)
-            // Nếu có dữ liệu schedule trả về
-            //key = key.split("\t")
-            let subAccount = []
-            subAccount[0] = acc.username
-            subAccount[1] = acc.password.split("\r")[0]
+
+        await sleep(15000 * index)
+        // Nếu có dữ liệu schedule trả về
+        //key = key.split("\t")
+        let subAccount = []
+        subAccount[0] = acc.username
+        subAccount[1] = acc.password.split("\r")[0]
 
 
-            let profileChrome = profileDir + subAccount[0]
-            console.log("Profile chrome link: " + profileChrome)
-            const browser = await puppeteer.launch({
-                executablePath: chromiumDir,
-                headless: headless_mode,
-                devtools: false,
-                args: [
-                    `--user-data-dir=${profileChrome}`      // load profile chromium
-                ]
-            });
+        let profileChrome = profileDir + subAccount[0]
+        console.log("Profile chrome link: " + profileChrome)
+        const browser = await puppeteer.launch({
+            executablePath: chromiumDir,
+            headless: headless_mode,
+            devtools: false,
+            args: [
+                `--user-data-dir=${profileChrome}`      // load profile chromium
+            ]
+        });
 
-            const page = (await browser.pages())[0];
-            userAgent = randomUseragent.getRandom(function (ua) {
-                //return (ua.osName =="Win95");
-                return (ua.osName === 'Windows' && ua.osVersion === "10");
-            });
-            await page.setUserAgent(userAgent)
-            console.log(userAgent)
-            // Random kích cỡ màn hình
-            width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-            height = Math.floor(Math.random() * (800 - 600)) + 600;;
+        const page = (await browser.pages())[0];
+        userAgent = randomUseragent.getRandom(function (ua) {
+            //return (ua.osName =="Win95");
+            return (ua.osName === 'Windows' && ua.osVersion === "10");
+        });
+        await page.setUserAgent(userAgent)
+        console.log(userAgent)
+        // Random kích cỡ màn hình
+        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+        height = Math.floor(Math.random() * (800 - 600)) + 600;;
 
-            await page.setViewport({
-                width: width,
-                height: height
-            });
+        await page.setViewport({
+            width: width,
+            height: height
+        });
 
+        await page.setRequestInterception(true);
+
+        if (disable_css == 1 || disable_image == 1) {
             await page.setRequestInterception(true);
 
-            if (disable_css == 1 || disable_image == 1) {
-                await page.setRequestInterception(true);
+            // --- Chặn load css --- /
+            if (disable_image == 1) {
+                page.on('request', (req) => {
 
-                // --- Chặn load css --- /
-                if (disable_image == 1) {
-                    page.on('request', (req) => {
+                    if (req.resourceType() === 'image') {
+                        req.abort();
+                    } else {
+                        req.continue();
+                    }
 
-                        if (req.resourceType() === 'image') {
-                            req.abort();
-                        } else {
-                            req.continue();
-                        }
+                    // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
+                    //     req.abort();
+                    // } else {
+                    //     req.continue();
+                    // }
 
-                        // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-                        //     req.abort();
-                        // } else {
-                        //     req.continue();
-                        // }
-
-                    });
-                }
+                });
             }
+        }
 
-            if ((index == 0) && (mode !== "DEV")) {
-                // đổi ip
-                console.log("Đổi ip mạng")
-                if (dcomVersion == "V2") {
-                    // await changeIpDcomV2()
-                }
+        if ((index == 0) && (mode !== "DEV")) {
+            // đổi ip
+            console.log("Đổi ip mạng")
+            if (dcomVersion == "V2") {
+                // await changeIpDcomV2()
             }
-
+        }
+        try {
             await page.waitFor(5000)
             try {
                 await page.goto("https://shopee.vn")
@@ -1802,7 +1794,7 @@ runAllTime = async () => {
 
                     }
                 }
-                
+
                 //return 0
                 await deleteProfile(subAccount[0])
             }
@@ -1810,15 +1802,15 @@ runAllTime = async () => {
             await browser.close();
             //await deleteProfile(subAccount[0])
             //return 0
-            
+
         } catch (error) {
             console.log(error)
-            //await browser.close();
+            await browser.close();
             //return 0
             // await deleteProfile(subAccount[0])
         }
     })
-
+    //return 0
 };
 
 //Cron 1 phút 1 lần 
