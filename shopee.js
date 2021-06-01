@@ -1163,7 +1163,17 @@ runAllTime = async () => {
     dataShopee = []
     // lấy dữ liệu từ master
     checkNetwork = 0
-    
+    await require('dns').resolve('www.google.com', async function (err) {
+        if (err) {
+            console.log("No connection " + a);
+            checkNetwork = 0
+            await sleep(10000)
+        } else {
+            console.log("Check mang lan 1 Connected");
+            checkNetwork = 1
+        }
+    });
+
     //if (1) {
     if (mode != "DEV") {
         // Đổi MAC
@@ -1788,24 +1798,24 @@ runAllTime = async () => {
                         }
                         await page.waitFor(1000);
                         await removeCart(page)
+                        
                     }
                 }
                 await browser.close();
                 return 0
                 //await deleteProfile(subAccount[0])
             }
-
+            console.log("----------- STOP ---------------")
             await browser.close();
             await deleteProfile(subAccount[0])
             return 0
-            console.log("----------- STOP ---------------")
+            
         } catch (error) {
             console.log(error)
             await browser.close();
             return 0
             // await deleteProfile(subAccount[0])
         }
-
     })
 
 };

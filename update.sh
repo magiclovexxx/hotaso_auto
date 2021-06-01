@@ -7,4 +7,4 @@ pm2-startup install
 pm2 start shopee.js
 pm2 save
 pm2 restart all
-pause
+pm2 log
