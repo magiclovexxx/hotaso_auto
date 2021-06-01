@@ -586,7 +586,7 @@ updateAtions = async (action, product) => {
     //datatest = 
 
     await axios.get(updateHistory, {
-            data: dataupdate
+        data: dataupdate
     })
         .then(function (response) {
             console.log(response.data);
@@ -1163,63 +1163,13 @@ runAllTime = async () => {
     dataShopee = []
     // lấy dữ liệu từ master
     checkNetwork = 0
-    await require('dns').resolve('www.google.com', function (err) {
-        if (err) {
-            console.log("No connection1");
-            checkNetwork = 0
-
-        } else {
-            console.log("Connected");
-            checkNetwork = 1
-
-        }
-    });
-    await sleep(2000)
-    // if (checkNetwork == 0) {
-    //     console.log("No connection2");
-    //     // if (mode != "DEV") {
-    //     await connectDcomV2()
-    //     await sleep(15000)
-
-    //     //  }    
-    // }
-
-
-    if (checkNetwork == 0) {
-        return false
-    }
-
-
-    console.log("connected");
-    getSlaveInfo = getSlaveInfo + "?slave=" + slavenumber
-
-    await axios.get(getSlaveInfo)
-        .then(function (response) {
-            // handle success
-            //console.log(response.data);
-            slaveInfo = response.data
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-            return false
-        })
-        .then(function () {
-            // always executed
-        });
-
-    if (slaveInfo.status == 0) {
-        console.log("Slave đang ở trang thái OFF")
-        return false
-    }
-
+    
     //if (1) {
     if (mode != "DEV") {
         // Đổi MAC
         await disconnectDcomV2()
         await sleep(3000)
         await genRandomMac()
-
         await sleep(10000)
         checkNetwork = 0
         for (let a = 1; a < 100; a++) {
@@ -1241,36 +1191,40 @@ runAllTime = async () => {
                 await sleep(2000)
             }
         }
-
-
-        if (checkNetwork == 0) {
-            // await disconnectDcomV2()
-            //await genRandomMac()
-            // await sleep(20000)
-            // await connectDcomV2()
-            // await sleep(20000)
-        }
     }
 
-
-    let linkgetdataShopeeDir = ""
-
-    maxTab = slaveInfo.max_tab;
-
-    linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham + "&max_tab=" + maxTab
-    console.log(linkgetdataShopeeDir)
-
-    await require('dns').resolve('www.google.com', function (err) {
-        if (err) {
-            console.log("No connection " + a);
-            checkNetwork = 0
-        } else {
-            console.log("Connected");
-            checkNetwork = 1
-        }
-    });
-
     if (checkNetwork == 1) {
+
+        console.log("connected");
+        getSlaveInfo = getSlaveInfo + "?slave=" + slavenumber
+
+        await axios.get(getSlaveInfo)
+            .then(function (response) {
+                // handle success
+                //console.log(response.data);
+                slaveInfo = response.data
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+                return false
+            })
+            .then(function () {
+                // always executed
+            });
+
+        if (slaveInfo.status == 0) {
+            console.log("Slave đang ở trang thái OFF")
+            return false
+        }
+
+        let linkgetdataShopeeDir = ""
+
+        maxTab = slaveInfo.max_tab;
+
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham + "&max_tab=" + maxTab
+        console.log(linkgetdataShopeeDir)
+
 
         await axios.get(linkgetdataShopeeDir)
             .then(function (response) {
@@ -1361,75 +1315,75 @@ runAllTime = async () => {
     }
 
     data.forEach(async (acc, index) => {   // Foreach object Chạy song song các tab chromium
+        try {
+            await sleep(15000 * index)
+            // Nếu có dữ liệu schedule trả về
+            //key = key.split("\t")
+            let subAccount = []
+            subAccount[0] = acc.username
+            subAccount[1] = acc.password.split("\r")[0]
 
-        await sleep(15000 * index)
-        // Nếu có dữ liệu schedule trả về
-        //key = key.split("\t")
-        let subAccount = []
-        subAccount[0] = acc.username
-        subAccount[1] = acc.password.split("\r")[0]
 
+            let profileChrome = profileDir + subAccount[0]
+            console.log("Profile chrome link: " + profileChrome)
+            const browser = await puppeteer.launch({
+                executablePath: chromiumDir,
+                headless: headless_mode,
+                devtools: false,
+                args: [
+                    `--user-data-dir=${profileChrome}`      // load profile chromium
+                ]
+            });
 
-        let profileChrome = profileDir + subAccount[0]
-        console.log("Profile chrome link: " + profileChrome)
-        const browser = await puppeteer.launch({
-            executablePath: chromiumDir,
-            headless: headless_mode,
-            devtools: false,
-            args: [
-                `--user-data-dir=${profileChrome}`      // load profile chromium
-            ]
-        });
+            const page = (await browser.pages())[0];
+            userAgent = randomUseragent.getRandom(function (ua) {
+                //return (ua.osName =="Win95");
+                return (ua.osName === 'Windows' && ua.osVersion === "10");
+            });
+            await page.setUserAgent(userAgent)
+            console.log(userAgent)
+            // Random kích cỡ màn hình
+            width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+            height = Math.floor(Math.random() * (800 - 600)) + 600;;
 
-        const page = (await browser.pages())[0];
-        userAgent = randomUseragent.getRandom(function (ua) {
-            //return (ua.osName =="Win95");
-            return (ua.osName === 'Windows' && ua.osVersion === "10");
-        });
-        await page.setUserAgent(userAgent)
-        console.log(userAgent)
-        // Random kích cỡ màn hình
-        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-        height = Math.floor(Math.random() * (800 - 600)) + 600;;
+            await page.setViewport({
+                width: width,
+                height: height
+            });
 
-        await page.setViewport({
-            width: width,
-            height: height
-        });
-
-        await page.setRequestInterception(true);
-
-        if (disable_css == 1 || disable_image == 1) {
             await page.setRequestInterception(true);
 
-            // --- Chặn load css --- /
-            if (disable_image == 1) {
-                page.on('request', (req) => {
+            if (disable_css == 1 || disable_image == 1) {
+                await page.setRequestInterception(true);
 
-                    if (req.resourceType() === 'image') {
-                        req.abort();
-                    } else {
-                        req.continue();
-                    }
+                // --- Chặn load css --- /
+                if (disable_image == 1) {
+                    page.on('request', (req) => {
 
-                    // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-                    //     req.abort();
-                    // } else {
-                    //     req.continue();
-                    // }
+                        if (req.resourceType() === 'image') {
+                            req.abort();
+                        } else {
+                            req.continue();
+                        }
 
-                });
+                        // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
+                        //     req.abort();
+                        // } else {
+                        //     req.continue();
+                        // }
+
+                    });
+                }
             }
-        }
 
-        if ((index == 0) && (mode !== "DEV")) {
-            // đổi ip
-            console.log("Đổi ip mạng")
-            if (dcomVersion == "V2") {
-                // await changeIpDcomV2()
+            if ((index == 0) && (mode !== "DEV")) {
+                // đổi ip
+                console.log("Đổi ip mạng")
+                if (dcomVersion == "V2") {
+                    // await changeIpDcomV2()
+                }
             }
-        }
-        try {
+
             await page.waitFor(5000)
             try {
                 await page.goto("https://shopee.vn")
@@ -1846,7 +1800,7 @@ runAllTime = async () => {
         } catch (error) {
             console.log(error)
             await browser.close();
-            await deleteProfile(subAccount[0])
+            // await deleteProfile(subAccount[0])
         }
 
     })
