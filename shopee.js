@@ -1283,7 +1283,7 @@ runAllTime = async () => {
             // always executed
         });
 
-    if (data.length == 0) {
+    if (data.length > maxTab) {
         return false
     }
     // get version hien tai trong file version.txt
@@ -1791,15 +1791,18 @@ runAllTime = async () => {
                     }
                 }
                 await browser.close();
+                return 0
                 //await deleteProfile(subAccount[0])
             }
 
             await browser.close();
             await deleteProfile(subAccount[0])
+            return 0
             console.log("----------- STOP ---------------")
         } catch (error) {
             console.log(error)
             await browser.close();
+            return 0
             // await deleteProfile(subAccount[0])
         }
 
