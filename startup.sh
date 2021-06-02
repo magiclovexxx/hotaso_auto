@@ -1,3 +1,3 @@
 #!/bin/bash
-cd C:/Users/Admin/Desktop/hotaso_shopee/
-./update.sh
+cd C:/Users/Admin/Desktop/hotaso_auto/
+./start.sh

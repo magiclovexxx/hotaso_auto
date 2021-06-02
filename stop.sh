@@ -1,1 +1,2 @@
-pm2 stop shopee.js
+#!/bin/bash
+pm2 stop all
