@@ -11,6 +11,7 @@ const exec = require('child_process').exec;
 const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
 const publicIp = require('public-ip');
+const { isBuffer } = require('util');
 
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
@@ -584,21 +585,6 @@ updateAtions = async (action, product) => {
 
     update = 0
     //datatest = 
-
-    await axios.get(updateHistory, {
-        data: dataupdate
-    })
-        .then(function (response) {
-            console.log(response.data);
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
-
-
     await axios.get(updateActionsDir, {
         params: {
             data: {
@@ -615,6 +601,23 @@ updateAtions = async (action, product) => {
         .then(function () {
             // always executed
         });
+
+        dataupdate.cookie = ""
+    await axios.get(updateHistory, {
+        data: dataupdate
+    })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+        .then(function () {
+            // always executed
+        });
+
+
+   
 
     return update
 }
@@ -1325,7 +1328,6 @@ runAllTime = async () => {
         subAccount[0] = acc.username
         subAccount[1] = acc.password.split("\r")[0]
 
-
         let profileChrome = profileDir + subAccount[0]
         console.log("Profile chrome link: " + profileChrome)
         const browser = await puppeteer.launch({
@@ -1338,10 +1340,15 @@ runAllTime = async () => {
         });
 
         const page = (await browser.pages())[0];
-        userAgent = randomUseragent.getRandom(function (ua) {
-            //return (ua.osName =="Win95");
-            return (ua.osName === 'Windows' && ua.osVersion === "10");
-        });
+        if(!acc.user_agent){
+            userAgent = randomUseragent.getRandom(function (ua) {
+                //return (ua.osName =="Win95");
+                return (ua.osName === 'Windows' && ua.osVersion === "10");
+            });
+        }else{
+            userAgent = acc.user_agent
+        }
+        
         await page.setUserAgent(userAgent)
         console.log(userAgent)
         // Random kích cỡ màn hình
@@ -1353,6 +1360,21 @@ runAllTime = async () => {
             height: height
         });
 
+        if(acc.cookie.length){
+            try{
+                let cookie111 = JSON.parse(acc.cookie)
+                //console.log(cookie111)
+                cookie111.forEach(async (item)  =>   {
+                    await page.setCookie(item);
+                })
+                
+            }catch(e){
+                console.log(e)
+                console.log(" looix coookie ")
+
+            }
+           
+        }
         await page.setRequestInterception(true);
 
         if (disable_css == 1 || disable_image == 1) {
@@ -1514,7 +1536,7 @@ runAllTime = async () => {
                         viTriSanPhamTrang1 = 0;
                         url_trang_tim_kiem_san_pham = "";
                         await page.on('response', async (resp) => {
-                            var url = resp.url()
+                            let url = resp.url()
                             let productInfo1, productInfo2
 
                             let checkUrlproduct = url.split("search/search_items?by=relevancy&keyword=")
@@ -1535,9 +1557,8 @@ runAllTime = async () => {
                                 })
 
                             }
-
-                            product_api = "https://shopee.vn/api/v2/item/get?itemid=" + productForUser.product_id + "&shopid=" + productForUser.shop_id
-                            if (url == product_api) {
+                            check_link_san_pham  = url.split("item/get?itemid")
+                            if (check_link_san_pham.length >1) {
                                 console.log(" --- Lấy thông tin sản phẩm ---");
                                 let productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.item
@@ -1560,8 +1581,11 @@ runAllTime = async () => {
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
                         await searchKeyWord(page, productForUser.keyword)
-                        cookies22 = await page.cookies()
+                        
+                        cookies22 = productForUser.cookie = await page.cookies()
+                        productForUser.user_agent = userAgent
                         cookie1 = ""
+
                         cookies22.forEach((row, index) => {
                             cookie1 = cookie1 + row.name + "=" + row.value
                             if (index != (cookies22.length - 1)) {
@@ -1569,7 +1593,8 @@ runAllTime = async () => {
                             }
 
                         })
-                        productForUser.cookie = cookie1
+                       
+                       
 
                         await updateAtions("search", productForUser)
                         let getViTriSanPham = {
