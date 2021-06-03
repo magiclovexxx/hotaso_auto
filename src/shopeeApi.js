@@ -60,27 +60,32 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             })
 
         checkProduct = 0
-
-        if (data.items.length > 0) {
-            console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
-            let itemid3 = ""
-            itemid3 = data.items[0].item_basic.itemid
-
-            //console.log("----" + itemid3)
-
-            data.items.forEach((item, index) => {
-
-                if (item.item_basic.itemid == productId && item.ads_keyword == null) {
-                    viTriSanPham = {
-                        trang: i,
-                        vitri: index + 1
+        try{
+            if (data.items.length > 0) {
+                console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
+                let itemid3 = ""
+                itemid3 = data.items[0].item_basic.itemid
+    
+                //console.log("----" + itemid3)
+    
+                data.items.forEach((item, index) => {
+    
+                    if (item.item_basic.itemid == productId && item.ads_keyword == null) {
+                        viTriSanPham = {
+                            trang: i,
+                            vitri: index + 1
+                        }
                     }
-                }
-            });
+                });
+            }
+        }catch(error){
+            viTriSanPham.vitri = "xxx"
+            viTriSanPham.trang = "xxx"
+            console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
+            return viTriSanPham
         }
 
         if (viTriSanPham.trang > 0) {
-
             break;
         }
 

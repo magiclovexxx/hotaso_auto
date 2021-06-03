@@ -99,60 +99,64 @@ loginShopee = async (page, accounts) => {
             console.log("Không tìm thấy nút login")
             return 0
         }
-
-        timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-        await page.waitFor(timeout)
-
-        await page.click('[name="loginKey"]')
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
-        await page.type('[name="loginKey"]', accounts[0], { delay: 100 })    // Nhập comment 
-        await page.click('[name="password"]')
-        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
-        await page.type('[name="password"]', accounts[1], { delay: 200 })    // Nhập comment 
-        await page.click('[name="password"]')
-        timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-        await page.waitFor(timeout)
-        const loginbutton = await page.$$('div>button:nth-child(4)');
-        if (loginbutton.length) {
-            await loginbutton[0].click()
-        }
-        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-        await page.waitFor(15000)
-        let checkcode = await page.$$('[autocomplete="one-time-code"]')
-
-        if (checkcode.length) {
-            console.log("account bi khoá")
-            return 2
-        }
-
-        let checkblock = await page.$('[role="alert"]')
-
-        if (checkblock) {
-            console.log("account bị khoá")
-            return 2
-        }
-
-        let checkblock2 = await page.$('.stardust-icon-cross-with-circle')
-        if (checkblock2) {
-            let checkblock3 = await page.evaluate(() => {
-                // Class có tài khoản bị cấm       
-                let titles = document.querySelector('.stardust-icon-cross-with-circle').parentElement.parentElement.children[1].textContent;
-                return titles
-            })
-
-            if (checkblock3 == "Tài khoản đã bị cấm") {
+        try{
+            timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
+            await page.waitFor(timeout)
+    
+            await page.click('[name="loginKey"]')
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout)
+            await page.type('[name="loginKey"]', accounts[0], { delay: 100 })    // Nhập comment 
+            await page.click('[name="password"]')
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await page.waitFor(timeout)
+            await page.type('[name="password"]', accounts[1], { delay: 200 })    // Nhập comment 
+            await page.click('[name="password"]')
+            timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
+            await page.waitFor(timeout)
+            const loginbutton = await page.$$('div>button:nth-child(4)');
+            if (loginbutton.length) {
+                await loginbutton[0].click()
+            }
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            await page.waitFor(15000)
+            let checkcode = await page.$$('[autocomplete="one-time-code"]')
+    
+            if (checkcode.length) {
+                console.log("account bi khoá")
+                return 2
+            }
+    
+            let checkblock = await page.$('[role="alert"]')
+    
+            if (checkblock) {
                 console.log("account bị khoá")
                 return 2
             }
+    
+            let checkblock2 = await page.$('.stardust-icon-cross-with-circle')
+            if (checkblock2) {
+                let checkblock3 = await page.evaluate(() => {
+                    // Class có tài khoản bị cấm       
+                    let titles = document.querySelector('.stardust-icon-cross-with-circle').parentElement.parentElement.children[1].textContent;
+                    return titles
+                })
+    
+                if (checkblock3 == "Tài khoản đã bị cấm") {
+                    console.log("account bị khoá")
+                    return 2
+                }
+            }
+        }catch(e){
+            console.log("Đăng nhập lỗi")
+            return false
         }
+        
 
         try {
             await page.waitForSelector('.shopee-searchbar-input');
         } catch (error) {
             console.log("Đăng nhập lỗi")
-
             return false
         }
 
@@ -446,8 +450,6 @@ chooseVariation = async (page, limit) => {
                 if (variation_enable.includes(i)) {
                     await varitations[i].click()
                 }
-
-
             }
         } else {
             variation_enable = await get_variation_enable(page)
@@ -459,8 +461,8 @@ chooseVariation = async (page, limit) => {
         return 1
 
     } catch (error) {
-        return 0
         console.log(error)
+        return 0
     }
 
 }
@@ -589,16 +591,16 @@ updateAtions = async (action, product) => {
     //datatest = 
     await axios.post(updateActionsDir, {
         data: dataupdate
-      })
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    
-    
-        dataupdate.cookie = ""
+    })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+
+    dataupdate.cookie = ""
     await axios.get(updateHistory, {
         data: dataupdate
     })
@@ -619,7 +621,6 @@ viewShop = async (page, url, product) => {
     let shopInfo3 = {
         cover: "",
         name: ""
-
     }
     try {
         console.log("---- View shop ----")
@@ -627,8 +628,6 @@ viewShop = async (page, url, product) => {
         await page.goto(url)
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitFor(timeout)
-
-
         await page.on('response', async (resp) => {
             var url = resp.url()
             let productInfo1, productInfo2
@@ -673,7 +672,6 @@ viewShop = async (page, url, product) => {
         console.log(error)
     }
     return shopInfo3
-
 }
 
 likeProductOfShop = async (page, url) => {
@@ -789,7 +787,6 @@ actionShopee = async (page, options, product) => {
                     await updateAtions("add_cart", product)
 
                 }
-
                 console.log("Thêm vào giỏ hàng")
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
 
@@ -1060,7 +1057,6 @@ disconnectDcomV2 = async () => {
 }
 
 connectDcomV2 = async () => {
-
     const connectdcom1 = await exec('connect.bat /');
     connectdcom1.stdout.on('data', (data) => {
         // do whatever you want here with data
@@ -1068,7 +1064,6 @@ connectDcomV2 = async () => {
     connectdcom1.stderr.on('data', (data) => {
         console.error(data);
     });
-
 }
 
 restart = async () => {
@@ -1169,27 +1164,27 @@ runAllTime = async () => {
         await genRandomMac()
         await sleep(10000)
     }
-        checkNetwork = 0
-        for (let a = 1; a < 100; a++) {
-            console.log("check connection " + a);
+    checkNetwork = 0
+    for (let a = 1; a < 100; a++) {
+        console.log("check connection " + a);
 
-            await require('dns').resolve('www.google.com', function (err) {
-                if (err) {
-                    console.log("No connection " + a);
-                    checkNetwork = 0
-                } else {
-                    console.log("Connected");
-                    checkNetwork = 1
-                }
-            });
-
-            if (checkNetwork == 1) {
-                break
+        await require('dns').resolve('www.google.com', function (err) {
+            if (err) {
+                console.log("No connection " + a);
+                checkNetwork = 0
             } else {
-                await sleep(2000)
+                console.log("Connected");
+                checkNetwork = 1
             }
+        });
+
+        if (checkNetwork == 1) {
+            break
+        } else {
+            await sleep(2000)
         }
-    
+    }
+
 
     if (checkNetwork == 1) {
 
@@ -1223,7 +1218,7 @@ runAllTime = async () => {
         linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham + "&max_tab=" + maxTab
         console.log(linkgetdataShopeeDir)
 
-
+        // Lấy dữ liệu từ từ khoá từ sv
         await axios.get(linkgetdataShopeeDir)
             .then(function (response) {
 
@@ -1334,15 +1329,15 @@ runAllTime = async () => {
         });
 
         const page = (await browser.pages())[0];
-        if(!acc.user_agent){
+        if (!acc.user_agent) {
             userAgent = randomUseragent.getRandom(function (ua) {
-               
+
                 return (ua.osName === 'Windows' && ua.osVersion === "10");
             });
-        }else{
+        } else {
             userAgent = acc.user_agent
         }
-        
+
         await page.setUserAgent(userAgent)
         console.log(userAgent)
         // Random kích cỡ màn hình
@@ -1354,18 +1349,19 @@ runAllTime = async () => {
             height: height
         });
 
-        if(acc.cookie.length){
-            try{
+
+        try {
+            if (acc.cookie.length) {
                 let cookie111 = JSON.parse(acc.cookie)
                 //console.log(cookie111)
-                cookie111.forEach(async (item)  =>   {
+                cookie111.forEach(async (item) => {
                     await page.setCookie(item);
                 })
-                
-            }catch(e){
-                console.log(" ---- Lỗi set coookie ----")
             }
+        } catch (e) {
+            console.log(" ---- Lỗi set coookie ----")
         }
+
         await page.setRequestInterception(true);
 
         if (disable_css == 1 || disable_image == 1) {
@@ -1405,10 +1401,14 @@ runAllTime = async () => {
                 //HERE
                 console.error(err.message);
                 await browser.close();
-                await deleteProfile(subAccount[0])
+                try {
+                    await deleteProfile(subAccount[0])
+                } catch (error) {
+
+                }
                 return false;
             }
-            
+
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
             // login account shopee                    
@@ -1443,7 +1443,11 @@ runAllTime = async () => {
                     });
 
                 await browser.close();
-                await deleteProfile(subAccount[0])
+                try {
+                    await deleteProfile(subAccount[0])
+                } catch (error) {
+
+                }
             }
             if (checklogin) {
                 let productForUser
@@ -1548,8 +1552,8 @@ runAllTime = async () => {
                                 })
 
                             }
-                            check_link_san_pham  = url.split("item/get?itemid")
-                            if (check_link_san_pham.length >1) {
+                            check_link_san_pham = url.split("item/get?itemid")
+                            if (check_link_san_pham.length > 1) {
                                 console.log(" --- Lấy thông tin sản phẩm ---");
                                 let productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.item
@@ -1572,7 +1576,7 @@ runAllTime = async () => {
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
                         await searchKeyWord(page, productForUser.keyword)
-                        
+
                         cookies22 = productForUser.cookie = await page.cookies()
                         productForUser.user_agent = userAgent
                         cookie1 = ""
@@ -1655,7 +1659,11 @@ runAllTime = async () => {
                                     //HERE
                                     console.error(err.message);
                                     await browser.close();
-                                    await deleteProfile(subAccount[0])
+                                    try {
+                                        await deleteProfile(subAccount[0])
+                                    } catch (error) {
+
+                                    }
                                     return false;
                                 }
                                 await page.waitFor(5000)
@@ -1727,7 +1735,11 @@ runAllTime = async () => {
                                     //HERE
                                     console.error(err.message);
                                     await browser.close();
-                                    await deleteProfile(subAccount[0])
+                                    try {
+                                        await deleteProfile(subAccount[0])
+                                    } catch (error) {
+
+                                    }
                                     return false;
                                 }
                             }
@@ -1738,7 +1750,11 @@ runAllTime = async () => {
                                 //HERE
                                 console.error(err.message);
                                 await browser.close();
-                                await deleteProfile(subAccount[0])
+                                try {
+                                    await deleteProfile(subAccount[0])
+                                } catch (error) {
+
+                                }
                                 return false;
                             }
                         }
@@ -1781,17 +1797,9 @@ runAllTime = async () => {
                                 console.log("check follow shop: " + check1)
 
                                 if (check1 == false) {
-
                                     await shopeeApi.followShop(cookies22, refer, shopId)
 
-                                    // followClick = await page.$$('.shopee-button-outline.shopee-button-outline--complement.shopee-button-outline--fill ')
-                                    // if (followClick.length) {
-                                    //     await followClick[0].click()
                                     await updateAtions("follow_shop", productForUser)
-                                    // } else {
-
-                                    // }
-
                                 }
                             }
                             // await page.waitFor(2000)
@@ -1800,7 +1808,6 @@ runAllTime = async () => {
                             // await page.waitFor(3000)
                             // await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
 
-
                         }
                         await page.waitFor(1000);
                         await removeCart(page)
@@ -1808,23 +1815,23 @@ runAllTime = async () => {
 
                     }
                 }
+                try {
+                    await deleteProfile(subAccount[0])
+                } catch (error) {
 
-                //return 0
-                await deleteProfile(subAccount[0])
+                }
+
             }
             console.log("----------- STOP ---------------")
             await browser.close();
-            //await deleteProfile(subAccount[0])
-            //return 0
 
         } catch (error) {
             console.log(error)
             await browser.close();
-            //return 0
-            // await deleteProfile(subAccount[0])
+
         }
     })
-    //return 0
+   
 };
 
 //Cron 1 phút 1 lần 
