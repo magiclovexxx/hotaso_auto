@@ -55,6 +55,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
                 console.log(error);
                 viTriSanPham.vitri = "xxx"
                 viTriSanPham.trang = "xxx"
+                console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
                 return viTriSanPham
             })
 

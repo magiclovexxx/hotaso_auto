@@ -1328,14 +1328,15 @@ runAllTime = async () => {
             headless: headless_mode,
             devtools: false,
             args: [
-                `--user-data-dir=${profileChrome}`      // load profile chromium
+                `--user-data-dir=${profileChrome}`,      // load profile chromium
+                '--disable-gpu', '--no-sandbox', '--lang=en-US', '--disable-setuid-sandbox', '--disable-dev-shm-usage'
             ]
         });
 
         const page = (await browser.pages())[0];
         if(!acc.user_agent){
             userAgent = randomUseragent.getRandom(function (ua) {
-                //return (ua.osName =="Win95");
+               
                 return (ua.osName === 'Windows' && ua.osVersion === "10");
             });
         }else{
@@ -1362,11 +1363,8 @@ runAllTime = async () => {
                 })
                 
             }catch(e){
-                console.log(e)
-                console.log(" looix coookie ")
-
+                console.log(" ---- Lỗi set coookie ----")
             }
-           
         }
         await page.setRequestInterception(true);
 
@@ -1376,7 +1374,6 @@ runAllTime = async () => {
             // --- Chặn load css --- /
             if (disable_image == 1) {
                 page.on('request', (req) => {
-
                     if (req.resourceType() === 'image') {
                         req.abort();
                     } else {
@@ -1411,6 +1408,7 @@ runAllTime = async () => {
                 await deleteProfile(subAccount[0])
                 return false;
             }
+            
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitFor(timeout)
             // login account shopee                    
