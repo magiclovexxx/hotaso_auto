@@ -45,10 +45,12 @@ if (mode === "DEV") {
     apiUrl = "http://hotaso.tranquoctoan.com"
 
     apiServer = "http://history.hotaso.vn:3000"
+    updateActionsUrl = "https://hotaso.tranquoctoan.com"
 
 } else {
     apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
+    updateActionsUrl = "https://hotaso.vn"
     maxTab = 5
 }
 
@@ -59,7 +61,7 @@ linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee
 dataShopeeDir = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
 shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
 
-updateActionsDir = apiUrl + "/api_user/updateActions"     // Update actions
+updateActionsDir = updateActionsUrl + "/api_user/updateActions"     // Update actions
 updateHistory = apiServer + "/update-history"     // Update history
 
 //checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
@@ -585,23 +587,17 @@ updateAtions = async (action, product) => {
 
     update = 0
     //datatest = 
-    await axios.get(updateActionsDir, {
-        params: {
-            data: {
-                dataToServer: dataupdate,
-            }
-        }
-    })
-        .then(function (response) {
-            update = response.data
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
-
+    await axios.post(updateActionsDir, {
+        data: dataupdate
+      })
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    
+    
         dataupdate.cookie = ""
     await axios.get(updateHistory, {
         data: dataupdate
@@ -615,9 +611,6 @@ updateAtions = async (action, product) => {
         .then(function () {
             // always executed
         });
-
-
-   
 
     return update
 }
@@ -1593,15 +1586,13 @@ runAllTime = async () => {
                             }
 
                         })
-                       
-                       
 
+                        console.log(" --- tìm kiếm ----")
                         await updateAtions("search", productForUser)
                         let getViTriSanPham = {
                             trang: 0,
                             vitri: 0
                         }
-
                         await page.waitFor(5000)
 
                         let getProductPageTotal
