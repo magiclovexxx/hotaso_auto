@@ -1,3 +1,4 @@
 #!/bin/bash
-cd C:/Users/Admin/Desktop/hotaso_auto/
+cd C:/Users/Administrator/Desktop/hotaso_auto/
 ./start.sh
+pause
