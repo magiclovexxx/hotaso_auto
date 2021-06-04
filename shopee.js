@@ -589,9 +589,16 @@ updateAtions = async (action, product) => {
 
     update = 0
     //datatest = 
+
     await axios.post(updateActionsDir, {
         data: dataupdate
-    })
+    },
+        {
+            headers: {
+                Connection: 'keep-alive',
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+            }
+        })
         .then(function (response) {
             console.log(response.data);
         })
@@ -628,6 +635,9 @@ viewShop = async (page, url, product) => {
     await page.goto(url)
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitFor(timeout)
+    await page.keyboard.press('PageDown');
+    await page.waitFor(timeout)
+        
     await page.on('response', async (resp) => {
         var url = resp.url()
         let productInfo1, productInfo2
@@ -1450,6 +1460,9 @@ runAllTime = async () => {
                         // }
                         viTriSanPhamTrang1 = 0;
                         url_trang_tim_kiem_san_pham = "";
+                        ;
+                        page.removeAllListeners('response');
+
                         await page.on('response', async (resp) => {
                             let url = resp.url()
                             let productInfo1, productInfo2
