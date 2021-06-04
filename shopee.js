@@ -1165,6 +1165,7 @@ runAllTime = async () => {
         await genRandomMac()
         await sleep(10000)
     }
+    
     checkNetwork = 0
     for (let a = 1; a < 100; a++) {
         console.log("check connection " + a);
