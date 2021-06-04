@@ -86,7 +86,7 @@ loginShopee = async (page, accounts) => {
     //await page.goto("https://shopee.vn")
     // await page.waitFor(3000)
 
-    const logincheck = await page.$$('.shopee-avatar');
+    const logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
@@ -1165,7 +1165,7 @@ runAllTime = async () => {
         await genRandomMac()
         await sleep(10000)
     }
-    
+
     checkNetwork = 0
     for (let a = 1; a < 100; a++) {
         console.log("check connection " + a);
@@ -1409,7 +1409,10 @@ runAllTime = async () => {
                     // server check tài khoản còn tiền để sử dụng không
 
                     // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
-                    for await (let pro of keywords) {
+                    // for await (let pro of keywords) {
+                    // keywords.forEach(async (pro) => {
+                    for (let o = 0; o < keywords.length; o++) {
+                        let pro = keywords[o];
                         try {
                             await page.goto("https://shopee.vn")
                         } catch (err) {
