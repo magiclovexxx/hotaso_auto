@@ -1,2 +1,4 @@
 #!/bin/bash
-pm2 start shopee.js
+git stash
+git pull origin master
+pm2 start shopee.js --watch
