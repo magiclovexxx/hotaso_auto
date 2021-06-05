@@ -1382,15 +1382,9 @@ runAllTime = async () => {
             } catch (err) {
                 //HERE
                 console.error(err.message);
-                await page.close();
+               
                 await browser.close();
-                try {
-                    console.log("Không load được shopee")
-                    await deleteProfile(subAccount[0])
-                } catch (error) {
-
-                }
-                return false;
+               
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1427,11 +1421,7 @@ runAllTime = async () => {
                     });
                 await page.close();
                 await browser.close();
-                try {
-                    await deleteProfile(subAccount[0])
-                } catch (error) {
-
-                }
+               
             }
             if (checklogin) {
 
@@ -1453,13 +1443,7 @@ runAllTime = async () => {
                             console.error(err.message);
                             await page.close();
                             await browser.close();
-                            try {
-                                console.log("Không load được sản phẩm tiếp theo")
-                                await deleteProfile(subAccount[0])
-                            } catch (error) {
-
-                            }
-                            return false;
+                          
                         }
 
                         let productForUser
@@ -1623,13 +1607,7 @@ runAllTime = async () => {
                                     console.error(err.message);
                                     await page.close();
                                     await browser.close();
-                                    try {
-                                        console.log("Không load được trang trước trang của sản phẩm")
-                                        await deleteProfile(subAccount[0])
-                                    } catch (error) {
-
-                                    }
-                                    return false;
+                                   
                                 }
                                 await page.waitFor(5000)
                             }
@@ -1701,13 +1679,7 @@ runAllTime = async () => {
                                     console.error(err.message);
                                     await page.close();
                                     await browser.close();
-                                    try {
-                                        console.log("Không load được link sản phẩm")
-                                        await deleteProfile(subAccount[0])
-                                    } catch (error) {
-
-                                    }
-                                    return false;
+                                   
                                 }
                             }
                         } else {
@@ -1718,13 +1690,7 @@ runAllTime = async () => {
                                 console.error(err.message);
                                 await page.close();
                                 await browser.close();
-                                try {
-                                    console.log("Không load được link sản phẩm")
-                                    await deleteProfile(subAccount[0])
-                                } catch (error) {
-
-                                }
-                                return false;
+                                
                             }
                         }
 
@@ -1790,29 +1756,20 @@ runAllTime = async () => {
                     await page.close();
                     await browser.close();
                 }
-                try {
-                    console.log("Lỗi khi xoá thư mục")
-                    await deleteProfile(subAccount[0])
-                } catch (error) {
-                    await browser.close();
-                }finally {
-                    await browser.close();
-                    
-                }
-
+               
             }
             console.log("----------- STOP ---------------")
-           
-           
-
+ 
         } catch (error) {
             console.log(error)
             await browser.close();
+            await deleteProfile(subAccount[0])
         }finally {
             await browser.close();
+            await deleteProfile(subAccount[0])
         }
     })
-    shell.exec('Taskkill /F /IM Chrome.exe');
+ 
 
 };
 
