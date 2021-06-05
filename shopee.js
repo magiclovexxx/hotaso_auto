@@ -1746,6 +1746,8 @@ runAllTime = async () => {
                     await page.close();
                     await browser.close();
                 }
+            }else{
+                await browser.close();
             }
             console.log("----------- STOP ---------------")
  
@@ -1756,6 +1758,7 @@ runAllTime = async () => {
         }finally {
             await browser.close();
         }
+       
     })
 
     sleep
