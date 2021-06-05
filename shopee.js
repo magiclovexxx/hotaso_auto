@@ -1798,12 +1798,12 @@ runAllTime = async () => {
 
             }
             console.log("----------- STOP ---------------")
-            await page.close();
+           
             await browser.close();
 
         } catch (error) {
             console.log(error)
-            await page.close();
+           ;
             await browser.close();
 
         }
