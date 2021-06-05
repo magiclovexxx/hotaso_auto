@@ -1344,7 +1344,7 @@ runAllTime = async () => {
         });
     
         process.on("unhandledRejection",async () => {
-            console.log("Có lỗi gì đó méo biết")git
+            console.log("Có lỗi gì đó méo biết")
             //handleClose(`I was rejected`);
             await browser.close();
         });
