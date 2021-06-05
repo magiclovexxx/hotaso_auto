@@ -637,7 +637,7 @@ viewShop = async (page, url, product) => {
     await page.waitFor(timeout)
     await page.keyboard.press('PageDown');
     await page.waitFor(timeout)
-        
+
     await page.on('response', async (resp) => {
         var url = resp.url()
         let productInfo1, productInfo2
@@ -1165,16 +1165,6 @@ runAllTime = async () => {
     dataShopee = []
     // lấy dữ liệu từ master
     checkNetwork = 0
-    await sleep(5000)
-
-    //if (1) {
-    if (mode != "DEV") {
-        // Đổi MAC
-        await disconnectDcomV2()
-        await sleep(3000)
-        await genRandomMac()
-        await sleep(10000)
-    }
 
     checkNetwork = 0
     for (let a = 1; a < 100; a++) {
@@ -1261,6 +1251,41 @@ runAllTime = async () => {
         }
 
         return false
+    }
+
+    await sleep(5000)
+
+    if (slaveInfo.netword == "dcom") {
+
+        if (mode != "DEV") {
+            // Đổi MAC
+            await disconnectDcomV2()
+            await sleep(3000)
+            await genRandomMac()
+        }
+    } else {
+        
+
+    }
+
+    for (let a = 1; a < 100; a++) {
+        console.log("check connection " + a);
+
+        await require('dns').resolve('www.google.com', function (err) {
+            if (err) {
+                console.log("No connection " + a);
+                checkNetwork = 0
+            } else {
+                console.log("Connected");
+                checkNetwork = 1
+            }
+        });
+
+        if (checkNetwork == 1) {
+            break
+        } else {
+            await sleep(2000)
+        }
     }
 
     data.forEach(async (data_for_tab, index) => {   // Foreach object Chạy song song các tab chromium
@@ -1756,9 +1781,11 @@ runAllTime = async () => {
                             await page.waitFor(1000);
                             await removeCart(page)
                             await page.waitFor(1000);
+
                         }
 
                     }
+                    await page.close();
                     await browser.close();
                 }
                 try {
