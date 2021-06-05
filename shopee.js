@@ -628,7 +628,12 @@ viewShop = async (page, url, product) => {
     }
 
     console.log("---- View shop ----")
-
+    try {
+        await page.goto(url)
+    } catch (error) {
+        console.log(error)
+        return shopInfo3
+    }
     await page.goto(url)
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitFor(timeout)
@@ -1383,8 +1388,6 @@ runAllTime = async () => {
                 //HERE
                 console.error(err.message);
                
-                await browser.close();
-               
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1420,7 +1423,7 @@ runAllTime = async () => {
                         // always executed
                     });
                 await page.close();
-                await browser.close();
+                await browser.close();       
                
             }
             if (checklogin) {
@@ -1441,9 +1444,7 @@ runAllTime = async () => {
                         } catch (err) {
                             //HERE
                             console.error(err.message);
-                            await page.close();
-                            await browser.close();
-                          
+                         
                         }
 
                         let productForUser
@@ -1605,9 +1606,6 @@ runAllTime = async () => {
                                 } catch (err) {
                                     //HERE
                                     console.error(err.message);
-                                    await page.close();
-                                    await browser.close();
-                                   
                                 }
                                 await page.waitFor(5000)
                             }
@@ -1677,9 +1675,6 @@ runAllTime = async () => {
                                 } catch (err) {
                                     //HERE
                                     console.error(err.message);
-                                    await page.close();
-                                    await browser.close();
-                                   
                                 }
                             }
                         } else {
@@ -1688,9 +1683,6 @@ runAllTime = async () => {
                             } catch (err) {
                                 //HERE
                                 console.error(err.message);
-                                await page.close();
-                                await browser.close();
-                                
                             }
                         }
 
