@@ -1336,19 +1336,6 @@ runAllTime = async () => {
             height: height
         });
 
-
-        process.on("uncaughtException", async () => {
-            //handleClose(`I crashed`);
-            console.log("Có lỗi gì đó méo biết")
-            await browser.close();
-        });
-    
-        process.on("unhandledRejection",async () => {
-            console.log("Có lỗi gì đó méo biết")
-            //handleClose(`I was rejected`);
-            await browser.close();
-        });
-
         try {
             if (acc.cookie.length) {
                 let cookie111 = JSON.parse(acc.cookie)
