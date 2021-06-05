@@ -1749,27 +1749,28 @@ runAllTime = async () => {
                             await page.waitFor(1000);
                             await removeCart(page)
                             await page.waitFor(1000);
-
                         }
-
                     }
                     await page.close();
                     await browser.close();
                 }
-               
             }
             console.log("----------- STOP ---------------")
  
         } catch (error) {
             console.log(error)
             await browser.close();
-            await deleteProfile(subAccount[0])
+           
         }finally {
             await browser.close();
-            await deleteProfile(subAccount[0])
         }
     })
- 
+
+    shell.exec('Taskkill /F /IM Chrome.exe');
+    
+    data.forEach(async item => {
+        await deleteProfile(item.sub_account.username)
+    })
 
 };
 
