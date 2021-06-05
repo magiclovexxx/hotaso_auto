@@ -3,6 +3,8 @@ shopeeUpdateSeoSanPhamDir = "http://auto.tranquoctoan.com/api_user/shopeeUpdateS
 var fs = require('fs');
 let page
 const exec = require('child_process').exec;
+var shell = require('shelljs');
+
 
 const puppeteer = require('puppeteer');
 headersearch = {
@@ -262,7 +264,8 @@ axios.post('https://hotaso.tranquoctoan.com/api_user/updateActions', {
 }
 
 (async () => {
-    await test_post()
+    shell.exec('Taskkill /F /IM Chrome.exe');
+    //await test_post()
    //await disconnect()
    //await getKeyword()
     //await runAllTime()

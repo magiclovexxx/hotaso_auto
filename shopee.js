@@ -1811,7 +1811,7 @@ runAllTime = async () => {
             await browser.close();
         }
     })
-    shell.exec('pkill chrome');
+    shell.exec('Taskkill /F /IM Chrome.exe');
 
 };
 
