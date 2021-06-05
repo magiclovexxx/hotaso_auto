@@ -12,6 +12,7 @@ const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
 const publicIp = require('public-ip');
 const { isBuffer } = require('util');
+var shell = require('shelljs');
 
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
@@ -1794,20 +1795,23 @@ runAllTime = async () => {
                     await deleteProfile(subAccount[0])
                 } catch (error) {
 
+                }finally {
+                    await browser.close();
                 }
 
             }
             console.log("----------- STOP ---------------")
            
-            await browser.close();
+           
 
         } catch (error) {
             console.log(error)
-           ;
+          
+        }finally {
             await browser.close();
-
         }
     })
+    shell.exec('pkill chrome');
 
 };
 
