@@ -145,14 +145,14 @@ loginShopee = async (page, accounts) => {
                 }
             }
         } catch (e) {
+            console.log(e)
             console.log("Đăng nhập lỗi")
             return false
         }
-
-
         try {
             await page.waitForSelector('.shopee-searchbar-input');
         } catch (error) {
+            console.log(e)
             console.log("Đăng nhập lỗi")
             return false
         }
@@ -1758,6 +1758,7 @@ runAllTime = async () => {
         }
     })
 
+    sleep
     shell.exec('Taskkill /F /IM Chrome.exe');
     
     data.forEach(async item => {
