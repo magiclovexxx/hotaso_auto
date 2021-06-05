@@ -92,14 +92,10 @@ loginShopee = async (page, accounts) => {
         await page.mouse.click(10, 30)
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitFor(timeout)
-        let loginclass = await page.$$('.navbar__link--account');
-        if (loginclass.length) {
-            await loginclass[1].click()
-        } else {
-            console.log("Không tìm thấy nút login")
-            return 0
-        }
+        
+    
         try {
+            await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F")
             timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
             await page.waitFor(timeout)
 
