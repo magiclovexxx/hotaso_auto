@@ -1337,6 +1337,18 @@ runAllTime = async () => {
         });
 
 
+        process.on("uncaughtException", async () => {
+            //handleClose(`I crashed`);
+            console.log("Có lỗi gì đó méo biết")
+            await browser.close();
+        });
+    
+        process.on("unhandledRejection",async () => {
+            console.log("Có lỗi gì đó méo biết")git
+            //handleClose(`I was rejected`);
+            await browser.close();
+        });
+
         try {
             if (acc.cookie.length) {
                 let cookie111 = JSON.parse(acc.cookie)
@@ -1582,9 +1594,6 @@ runAllTime = async () => {
 
                                     })
 
-                                // await browser.close();
-                                // await deleteProfile(subAccount[0])
-                                // return false;
                             }
 
                             // if(getViTriSanPham.trang == "xxx" && getViTriSanPham.vitri == "xxx"){
@@ -1761,13 +1770,6 @@ runAllTime = async () => {
        
     })
 
-    sleep
-    shell.exec('Taskkill /F /IM Chrome.exe');
-    
-    data.forEach(async item => {
-        await deleteProfile(item.sub_account.username)
-    })
-
 };
 
 //Cron 1 phút 1 lần 
@@ -1776,13 +1778,15 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
         await runAllTime()
+        
+        await shell.exec('Rmdir /S /q '+profileDir);
 
     })();
 } else {
 
     (async () => {
         await runAllTime()
-
+        await shell.exec('Rmdir /S /q '+profileDir);
     })();
 }
 

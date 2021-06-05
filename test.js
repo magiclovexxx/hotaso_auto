@@ -265,6 +265,7 @@ axios.post('https://hotaso.tranquoctoan.com/api_user/updateActions', {
 
 (async () => {
     shell.exec('Taskkill /F /IM Chrome.exe');
+    
     //await test_post()
    //await disconnect()
    //await getKeyword()
