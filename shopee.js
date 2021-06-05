@@ -1264,7 +1264,7 @@ runAllTime = async () => {
             await genRandomMac()
         }
     } else {
-        
+
 
     }
 
@@ -1385,6 +1385,7 @@ runAllTime = async () => {
             } catch (err) {
                 //HERE
                 console.error(err.message);
+                await page.close();
                 await browser.close();
                 try {
                     console.log("Không load được shopee")
@@ -1427,7 +1428,7 @@ runAllTime = async () => {
                     .then(function () {
                         // always executed
                     });
-
+                await page.close();
                 await browser.close();
                 try {
                     await deleteProfile(subAccount[0])
@@ -1453,6 +1454,7 @@ runAllTime = async () => {
                         } catch (err) {
                             //HERE
                             console.error(err.message);
+                            await page.close();
                             await browser.close();
                             try {
                                 console.log("Không load được sản phẩm tiếp theo")
@@ -1622,6 +1624,7 @@ runAllTime = async () => {
                                 } catch (err) {
                                     //HERE
                                     console.error(err.message);
+                                    await page.close();
                                     await browser.close();
                                     try {
                                         console.log("Không load được trang trước trang của sản phẩm")
@@ -1699,6 +1702,7 @@ runAllTime = async () => {
                                 } catch (err) {
                                     //HERE
                                     console.error(err.message);
+                                    await page.close();
                                     await browser.close();
                                     try {
                                         console.log("Không load được link sản phẩm")
@@ -1715,6 +1719,7 @@ runAllTime = async () => {
                             } catch (err) {
                                 //HERE
                                 console.error(err.message);
+                                await page.close();
                                 await browser.close();
                                 try {
                                     console.log("Không load được link sản phẩm")
@@ -1797,10 +1802,12 @@ runAllTime = async () => {
 
             }
             console.log("----------- STOP ---------------")
+            await page.close();
             await browser.close();
 
         } catch (error) {
             console.log(error)
+            await page.close();
             await browser.close();
 
         }
