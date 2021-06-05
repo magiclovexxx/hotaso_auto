@@ -1388,11 +1388,9 @@ runAllTime = async () => {
                     console.log("Không load được shopee")
                     await deleteProfile(subAccount[0])
                 } catch (error) {
-                    await browser.close();
+
                 }
                 return false;
-            }finally{
-                await browser.close();
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1432,9 +1430,7 @@ runAllTime = async () => {
                 try {
                     await deleteProfile(subAccount[0])
                 } catch (error) {
-                    await browser.close();
-                }finally{
-                    await browser.close();
+
                 }
             }
             if (checklogin) {
@@ -1461,11 +1457,9 @@ runAllTime = async () => {
                                 console.log("Không load được sản phẩm tiếp theo")
                                 await deleteProfile(subAccount[0])
                             } catch (error) {
-                                await browser.close();
+
                             }
                             return false;
-                        }finally{
-                            await browser.close();
                         }
 
                         let productForUser
@@ -1633,11 +1627,9 @@ runAllTime = async () => {
                                         console.log("Không load được trang trước trang của sản phẩm")
                                         await deleteProfile(subAccount[0])
                                     } catch (error) {
-                                        await browser.close();
+
                                     }
                                     return false;
-                                }finally{
-                                    await browser.close();
                                 }
                                 await page.waitFor(5000)
                             }
@@ -1716,8 +1708,6 @@ runAllTime = async () => {
 
                                     }
                                     return false;
-                                }finally{
-                                    await browser.close();
                                 }
                             }
                         } else {
@@ -1732,11 +1722,9 @@ runAllTime = async () => {
                                     console.log("Không load được link sản phẩm")
                                     await deleteProfile(subAccount[0])
                                 } catch (error) {
-                                    await browser.close();
+
                                 }
                                 return false;
-                            }finally{
-                                await browser.close();
                             }
                         }
 
@@ -1799,7 +1787,7 @@ runAllTime = async () => {
                         }
 
                     }
-                   
+                    await page.close();
                     await browser.close();
                 }
                 try {
