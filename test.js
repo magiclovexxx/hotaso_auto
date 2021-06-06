@@ -238,7 +238,7 @@ checkheader = async () => {
         
     });
     await page.goto('https://shopee.vn/Bo-m%E1%BA%A1ch-ch%E1%BB%A7-huananzhi-X79-Luxury-X79-4D-8D-X99-gaming-TF-X99-T8-X99-T8D-X99-F8D-socket-2011-i.42137125.6420096356')
-    await page.waitFor(10000)
+    await page.waitForTimeout(10000)
     
 }
 

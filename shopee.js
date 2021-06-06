@@ -85,38 +85,38 @@ logs = 1
 loginShopee = async (page, accounts) => {
 
     //await page.goto("https://shopee.vn")
-    // await page.waitFor(3000)
+    // await page.waitForTimeout(3000)
 
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         
     
         try {
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F")
             timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
 
             await page.click('[name="loginKey"]')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.type('[name="loginKey"]', accounts[0], { delay: 100 })    // Nhập comment 
             await page.click('[name="password"]')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.type('[name="password"]', accounts[1], { delay: 200 })    // Nhập comment 
             await page.click('[name="password"]')
             timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             const loginbutton = await page.$$('div>button:nth-child(4)');
             if (loginbutton.length) {
                 await loginbutton[0].click()
             }
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitFor(15000)
+            await page.waitForTimeout(15000)
             let checkcode = await page.$$('[autocomplete="one-time-code"]')
 
             if (checkcode.length) {
@@ -158,7 +158,7 @@ loginShopee = async (page, accounts) => {
         }
 
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         return true
 
     } else {
@@ -170,31 +170,31 @@ loginShopee = async (page, accounts) => {
 searchKeyWord = async (page, keyword) => {
     try {
         timeout = Math.floor(Math.random() * (2000 - 100)) + 500;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
         const checkSearchInput = await page.$$('.shopee-searchbar-input__input');
         if (checkSearchInput.length) {
             await page.click('.shopee-searchbar-input__input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
             timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             await page.keyboard.press('Enter')
         } else {
             //  await page.waitForSelector('.shopee-searchbar-input')
             await page.click('.shopee-searchbar-input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             await page.click('.shopee-searchbar-input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             await page.click('.shopee-searchbar-input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             console.log(keyword)
             await page.type('.shopee-searchbar-input', keyword, { delay: 100 })
             timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             await page.keyboard.press('Enter')
             await page.waitForNavigation()
         }
@@ -208,17 +208,17 @@ populateClick = async (page, listcategories) => {
 
     try {
         timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
 
         timeout = Math.floor(Math.random() * (2000 - 1100)) + 1100;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
         checkpopup = await page.$$('.shopee-popup__close-btn')
         if (checkpopup.length) {
             await page.click('.shopee-popup__close-btn')
         }
 
         timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
 
         randomidcategory = Math.floor(Math.random() * (listcategories.length - 1))
         randomcategory = listcategories[randomidcategory]
@@ -243,16 +243,16 @@ populateClick = async (page, listcategories) => {
         checkCategory = await page.$$('.home-category-list__category-grid');
         await checkCategory[categoryId].click()
         timeout = Math.floor(Math.random() * (3000 - 2100)) + 2100;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
 
         if (randomcategory.pages) {
 
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.keyboard.press('PageDown');
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
             await page.keyboard.press('PageDown');
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
 
             let categoryChildId = await page.evaluate((xx) => {
 
@@ -282,27 +282,27 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         let thuHangSanPham
         await page.waitForSelector('[data-sqe="name"]')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
         await page.keyboard.press('PageDown');
-        await page.waitFor(3000);
-        await page.keyboard.press('PageDown');
-        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
-        await page.keyboard.press('PageDown');
-        await page.waitFor(3000);
+        await page.waitForTimeout(3000);
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
+        await page.keyboard.press('PageDown');
+        await page.waitForTimeout(3000);
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout);
+        await page.waitForTimeout(timeout);
+        await page.keyboard.press('PageDown');
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitForTimeout(timeout);
         if (phobien) {
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout);
+            await page.waitForTimeout(timeout);
         }
         let getProduct = []
         getProduct = await page.evaluate(() => {
@@ -370,7 +370,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
             if (next.length) {
                 await next[0].click()
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitFor(timeout);
+                await page.waitForTimeout(timeout);
                 return await getproduct(page, saveProduct, limit, idShops)
             } else {
                 console.log("Đây là trang tìm kiếm cuối cùng")
@@ -434,13 +434,13 @@ chooseVariation = async (page, limit) => {
             return true
         }
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
 
         if (varitations.length >= 3) {
             vari_1 = Math.floor(Math.random() * (varitations.length - 3));
             for (i = (varitations.length - 1); i >= vari_1; i--) {
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
                 variation_enable = await get_variation_enable(page)
                 console.log("List variation active")
                 console.log(variation_enable)
@@ -467,7 +467,7 @@ chooseVariation = async (page, limit) => {
 viewReview = async (page) => {
     try {
         timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         allRview = await page.$$('.product-rating-overview__filter')
         //console.log(allRview.length)
         if (allRview.length > 2) {
@@ -476,10 +476,10 @@ viewReview = async (page) => {
             await allRview[randomReview1].click()
             // lướt xuống xem
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
 
             // xem ngẫu nhiên n ảnh
@@ -492,7 +492,7 @@ viewReview = async (page) => {
 
                     randomDown2 = Math.floor(Math.random() * (3 - 1)) + 1;
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                    await page.waitFor(timeout)
+                    await page.waitForTimeout(timeout)
                     if (allmedia[randomDown2]) {
                         await allmedia[randomDown2].click()
                     }
@@ -501,10 +501,10 @@ viewReview = async (page) => {
 
             // lên đầu phần review
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageUp');
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageUp');
 
             randomReview1 = timeout = Math.floor(Math.random() * (allRview.length - 1)) + 1;
@@ -514,13 +514,13 @@ viewReview = async (page) => {
             }
             // lướt xuống xem
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
 
             allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
 
@@ -529,7 +529,7 @@ viewReview = async (page) => {
                 for (i = 0; i < randomDown; i++) {
                     randomDown2 = Math.floor(Math.random() * (3 - 1)) + 1;
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                    await page.waitFor(timeout)
+                    await page.waitForTimeout(timeout)
                     if (allmedia[randomDown2]) {
                         await allmedia[randomDown2].click()
                     }
@@ -538,14 +538,14 @@ viewReview = async (page) => {
 
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             //click xem sản phẩm khác của shop
             clickNext = await page.$$('.carousel-arrow--next')
 
             if (clickNext.length) {
                 clickNext[0].click()
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
                 //clickNext[0].click()
             }
 
@@ -642,9 +642,9 @@ viewShop = async (page, url, product) => {
     }
    
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
+    await page.waitForTimeout(timeout)
     await page.keyboard.press('PageDown');
-    await page.waitFor(timeout)
+    await page.waitForTimeout(timeout)
 
     await page.on('response', async (resp) => {
         var url = resp.url()
@@ -678,16 +678,16 @@ viewShop = async (page, url, product) => {
         return shopInfo3
     }
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
+    await page.waitForTimeout(timeout)
 
     randomDown = Math.floor(Math.random() * (5 - 2)) + 3;
     for (i = 0; i < randomDown; i++) {
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         await page.keyboard.press('PageDown');
     }
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
+    await page.waitForTimeout(timeout)
     await page.keyboard.press('Home');
 
     return shopInfo3
@@ -715,7 +715,7 @@ likeProductOfShop = async (page, url) => {
     await page.goto(url)
 
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-    await page.waitFor(timeout)
+    await page.waitForTimeout(timeout)
     viewShopClick = await page.$$('.shopee-avatar__placeholder')
     if (viewShopClick.length >= 2) {
         viewShopClick[1].click()
@@ -730,7 +730,7 @@ actionShopee = async (page, options, product) => {
     try {
         await page.waitForSelector('.product-briefing')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         await page.click('.product-briefing>div>div>div');
 
         // xem ngẫu nhiên n ảnh sản phẩm
@@ -739,11 +739,11 @@ actionShopee = async (page, options, product) => {
         let checkvideo = await page.$$('video')
         if (checkvideo.length) {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
         }
         for (let i = 0; i <= viewRandomImages; i++) {
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
             if (nextRightButton.length >= 2) {
                 await nextRightButton[1].click();
@@ -773,7 +773,7 @@ actionShopee = async (page, options, product) => {
         viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
         for (let i = 0; i <= viewRandomImages; i++) {
             timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
             // đến phần review thì dừng lại
             goToRview = await page.$$('.product-rating-overview__filter')
@@ -786,7 +786,7 @@ actionShopee = async (page, options, product) => {
             console.log("---- Xem review ----")
             await viewReview(page)
             await updateAtions("view_review", product)
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
         }
 
         await page.keyboard.press('Home');
@@ -799,7 +799,7 @@ actionShopee = async (page, options, product) => {
 
                 // click thêm vào giỏ hàng
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
                 addToCard = await page.$$('.btn-tinted')
                 if (addToCard.length) {
                     await addToCard[0].click()
@@ -809,7 +809,7 @@ actionShopee = async (page, options, product) => {
                 console.log("Thêm vào giỏ hàng")
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
 
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
 
             } else {
                 console.log("Không chọn được mẫu mã")
@@ -827,7 +827,7 @@ removeCart = async (page) => {
         // check đầy giỏ hàng
         console.log("---- Xoá sản phẩm khỏi giỏ hàng ----")
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         await page.keyboard.press('Home');
         let checkcart = typeof 123
         checkcart = await page.evaluate(() => {
@@ -848,16 +848,16 @@ removeCart = async (page) => {
 
             await page.goto('https://shopee.vn/cart/')
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.waitForSelector('.cart-item__action')
             actionDeletes = await page.$$('.cart-item__action')
 
             for (let i = actionDeletes.length; i > 2; i--) {
                 timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
                 await actionDeletes[i - 1].click();
                 timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
                 checkcart2 = await page.$$('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
                 if (checkcart2.length) {
                     await checkcart2.click()
@@ -865,7 +865,7 @@ removeCart = async (page) => {
                     break
                 }
                 timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-                await page.waitFor(timeout)
+                await page.waitForTimeout(timeout)
             }
         }
     } catch (error) {
@@ -882,11 +882,11 @@ orderProduct = async (page, productInfo) => {
     fs.appendFileSync('logs.txt', "\n" + "Order: " + "\n" + JSON.stringify(productInfo, null, 4))
     // check đầy giỏ hàng
     // await page.goto("https://shopee.vn/")    
-    // await page.waitFor(29999)
+    // await page.waitForTimeout(29999)
     // await page.goto("https://shopee.vn/V%C3%AD-n%E1%BB%AF-mini-cao-c%E1%BA%A5p-ng%E1%BA%AFn-cute-nh%E1%BB%8F-g%E1%BB%8Dn-b%E1%BB%8F-t%C3%BAi-th%E1%BB%9Di-trang-gi%C3%A1-r%E1%BA%BB-VD70-i.19608398.1406593363")
     // await chooseVariation(page)
     // timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-    // await page.waitFor(timeout)
+    // await page.waitForTimeout(timeout)
     buttonBye = await page.$$('.btn-solid-primary.btn--l')
     if (buttonBye.length) {
         console.log("Click nút mua ngay")
@@ -898,20 +898,20 @@ orderProduct = async (page, productInfo) => {
     }
     try {
         timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         buttonBy2 = await page.$$('.shopee-button-solid--primary')
         if (buttonBy2.length) {
             await buttonBy2[0].click()
         } else {
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await page.keyboard.press('PageDown');
             timeout = Math.floor(Math.random() * (2500 - 2000)) + 2000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             buttonBy2 = await page.$$('.shopee-button-solid--primary')
             if (buttonBy2.length) {
                 await buttonBy2[0].click()
@@ -921,7 +921,7 @@ orderProduct = async (page, productInfo) => {
 
         }
         timeout = Math.floor(Math.random() * (3500 - 3000)) + 3000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
 
         checkAddress = await page.$$('[placeholder="Họ & Tên"]')
         console.log(checkAddress.length)
@@ -936,56 +936,56 @@ orderProduct = async (page, productInfo) => {
             fullname = fullname2 + " " + fullname
             await page.type('[placeholder="Họ & Tên"]', fullname, { delay: 100 })    // Nhập Tên 
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
 
             await page.click('[placeholder="Số điện thoại"]')    // Nhập comment 
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             phone = "XXXXXXXX".replace(/X/g, function () {
                 return "0123456789".charAt(Math.floor(Math.random() * 10))
             });
             phone = "09" + phone
             await page.type('[placeholder="Số điện thoại"]', phone, { delay: 100 })    // Nhập SDT 
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             address = await page.$$('.address-modal__form_input')
             await address[2].click()    // Click Tỉnh thành phố 
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             // Chọn ngẫu nhiên tỉnh
             tinhThanhPho = await page.$$(".select-with-status__dropdown-item")
             tinhThanhPho[Math.floor(Math.random() * 63)].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             await address[3].click()      // Click Quận 
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             quanHuyen = await page.$$(".select-with-status__dropdown-item")
             quanHuyen[Math.floor(Math.random() * quanHuyen.length)].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
 
             await address[4].click()      // Click Phường                
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             phuongXa = await page.$$(".select-with-status__dropdown-item")
             phuongXa[Math.floor(Math.random() * phuongXa.length)].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
 
             //Nhập địa chỉ
             fullAddress = "Số" + Math.floor(Math.random() * (1000)) + " " + address[address.length]
             await page.type('[placeholder="Toà nhà, Tên Đường..."]', fullAddress)
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             // click hoan thanh
             btnHoanThanh = await page.$$('.btn--s.btn--inline')
             btnHoanThanh[0].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
         }
         timeout = Math.floor(Math.random() * (3500 - 2000)) + 2000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         // Chon don vi van chuyen
         console.log("Chon don vi van chuyen")
         await page.evaluate(() => {
@@ -993,7 +993,7 @@ orderProduct = async (page, productInfo) => {
         }
         )
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         // Chọn giao hàng các ngày trong tuần
         //Tất cả các ngày trong tuầnPhù hợp với địa chỉ nhà riêng, luôn có người nhận hàng
 
@@ -1001,7 +1001,7 @@ orderProduct = async (page, productInfo) => {
         if (clicktime.length) {
             await clicktime[0].click()
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             // click hoanf thanh
             click2 = await page.$$('.logistics-selection-modal__submit-btn')
             click2[0].click()
@@ -1009,14 +1009,14 @@ orderProduct = async (page, productInfo) => {
         }
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (3500 - 2000)) + 2000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         // chon phuong thuc thanh toan khi nhan hangf
         console.log("Chon phương thức thanh toán")
         btnThanhToan = await page.$$('.product-variation')
         if (btnThanhToan.length) {
             btnThanhToan[2].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
         }
 
         // Click dat hang
@@ -1024,7 +1024,7 @@ orderProduct = async (page, productInfo) => {
         btnThanhToan = await page.$$('.stardust-button--primary.stardust-button--large')
         btnThanhToan[0].click()
         timeout = Math.floor(Math.random() * (5500 - 5000)) + 5000;
-        await page.waitFor(timeout)
+        await page.waitForTimeout(timeout)
         //huy don hang
         btnHuyDon = await page.$$('.shopee-button-outline--primary')
 
@@ -1032,18 +1032,18 @@ orderProduct = async (page, productInfo) => {
             console.log("Click huỷ đơn hàng")
             btnHuyDon[1].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             console.log("Chọn lý do huỷ đơn")
             btnOptHuyDon = await page.$$('.stardust-radio')
             randomOptionHuyDon = Math.floor(Math.random() * (btnOptHuyDon.length - 1))
             btnOptHuyDon[randomOptionHuyDon].click()
 
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
             btnHuyDonHang = await page.$$('.shopee-alert-popup>div>.shopee-button-solid.shopee-button-solid--primary')
             btnHuyDonHang[0].click()
             timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
         } else {
             console.log("Không tìm thấy nút huỷ đơn")
         }
@@ -1312,7 +1312,7 @@ runAllTime = async () => {
         let profileChrome = profileDir + subAccount[0]
         console.log("Profile chrome link: " + profileChrome)
         const browser = await puppeteer.launch({
-            executablePath: chromiumDir,
+            //executablePath: chromiumDir,
             headless: headless_mode,
             devtools: false,
             args: [
@@ -1386,7 +1386,7 @@ runAllTime = async () => {
             }
         }
         try {
-            await page.waitFor(5000)
+            await page.waitForTimeout(5000)
             try {
                 await page.goto("https://shopee.vn")
             } catch (err) {
@@ -1396,7 +1396,8 @@ runAllTime = async () => {
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitFor(timeout)
+            await page.waitForTimeout(timeout)
+           
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
             console.log("index = " + index + " --- check login account: " + subAccount[0] + " --- " + checklogin)
@@ -1548,7 +1549,7 @@ runAllTime = async () => {
                             trang: 0,
                             vitri: 0
                         }
-                        await page.waitFor(5000)
+                        await page.waitForTimeout(5000)
 
                         let getProductPageTotal
                         try {
@@ -1609,7 +1610,7 @@ runAllTime = async () => {
                                     //HERE
                                     console.error(err.message);
                                 }
-                                await page.waitFor(5000)
+                                await page.waitForTimeout(5000)
                             }
 
                             for (let a = 1; a < 4; a++) {
@@ -1643,7 +1644,7 @@ runAllTime = async () => {
                                 if (next.length) {
                                     await next[0].click()
                                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                                    await page.waitFor(timeout);
+                                    await page.waitForTimeout(timeout);
                                 }
                             }
 
@@ -1653,22 +1654,22 @@ runAllTime = async () => {
 
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
-                                await page.waitFor(timeout);
+                                await page.waitForTimeout(timeout);
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
-                                await page.waitFor(timeout);
+                                await page.waitForTimeout(timeout);
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
-                                await page.waitFor(timeout);
+                                await page.waitForTimeout(timeout);
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
-                                await page.waitFor(timeout);
+                                await page.waitForTimeout(timeout);
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
-                                await page.waitFor(timeout);
+                                await page.waitForTimeout(timeout);
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
                                 await page.keyboard.press('PageDown');
-                                await page.waitFor(timeout);
+                                await page.waitForTimeout(timeout);
                                 let productsAll = await page.$$('[data-sqe="link"]')
                                 productsAll[productForUser.vitri - 1].click()
                             } else {
@@ -1691,7 +1692,7 @@ runAllTime = async () => {
                         // Goto product link
 
                         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-                        await page.waitFor(timeout)
+                        await page.waitForTimeout(timeout)
                         await updateAtions("view_product", productForUser)
                         console.log("check tha tim: " + productForUser.liked)
                         await actionShopee(page, options, productForUser)
@@ -1733,30 +1734,30 @@ runAllTime = async () => {
                                         await updateAtions("follow_shop", productForUser)
                                     }
                                 }
-                                // await page.waitFor(2000)
+                                // await page.waitForTimeout(2000)
                                 // let linkShopProducts = "https://shopee.vn/shop/" + productForUser.shop_id + "/search"
                                 // await page.goto(linkShopProducts)
-                                // await page.waitFor(3000)
+                                // await page.waitForTimeout(3000)
                                 // await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
 
                             }
-                            await page.waitFor(1000);
+                            await page.waitForTimeout(1000);
                             await removeCart(page)
-                            await page.waitFor(1000);
+                            await page.waitForTimeout(1000);
                         }
                     }
-                    await page.close();
+                  
                     await browser.close();
                 }
             }else{
-                await page.close();
+               
                 await browser.close();
             }
             console.log("----------- STOP ---------------")
  
         } catch (error) {
             console.log(error)
-            await page.close();
+            
             await browser.close();
            
         }finally {

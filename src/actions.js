@@ -107,7 +107,7 @@ const thaTimCacSanPhamCuaShop = async (page, product_heart) => {
 
                     await updateAtions("heart_product", product_heart)
                     timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-                    await page.waitFor(timeout)
+                    await page.waitForTimeout(timeout)
 
                 }
             }
@@ -129,9 +129,9 @@ const getproductByProductId = async (page, product, max_page) => {
         }
         if (product.urlSearch) {
             await page.goto(urlSearch)
-            await page.waitFor(4000)
+            await page.waitForTimeout(4000)
         }
-        await page.waitFor(4000)
+        await page.waitForTimeout(4000)
         await page.on('response', async (resp) => {
             var url = resp.url()
             let checkUrl = url.split("search_items")
@@ -183,7 +183,7 @@ const getproductByProductId = async (page, product, max_page) => {
                 if (next.length) {
                     await next[0].click()
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                    await page.waitFor(timeout);
+                    await page.waitForTimeout(timeout);
                     product.urlSearch = ""
                     return await getproductByProductId(page, product, max_page)
                 }
