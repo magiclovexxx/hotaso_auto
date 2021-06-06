@@ -87,7 +87,7 @@ loginShopee = async (page, accounts) => {
     //await page.goto("https://shopee.vn")
     // await page.waitFor(3000)
 
-    const logincheck = await page.$$('.navbar__username');
+    let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
