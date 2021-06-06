@@ -1317,7 +1317,10 @@ runAllTime = async () => {
             devtools: false,
             args: [
                 `--user-data-dir=${profileChrome}`,      // load profile chromium
-                '--disable-gpu', '--no-sandbox', '--lang=en-US', '--disable-setuid-sandbox', '--disable-dev-shm-usage'
+                '--disable-gpu', '--no-sandbox', '--lang=en-US', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-renderer-backgrounding'
             ]
         });
 
