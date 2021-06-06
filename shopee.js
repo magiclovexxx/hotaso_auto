@@ -634,7 +634,13 @@ viewShop = async (page, url, product) => {
         console.log(error)
         return shopInfo3
     }
-    await page.goto(url)
+    try {
+        await page.goto(url)
+    } catch (error) {
+        console.log(error)
+        return shopInfo3
+    }
+   
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitFor(timeout)
     await page.keyboard.press('PageDown');
