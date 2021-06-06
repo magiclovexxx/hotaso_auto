@@ -86,7 +86,11 @@ loginShopee = async (page, accounts) => {
 
     //await page.goto("https://shopee.vn")
     // await page.waitForTimeout(3000)
-
+        try {
+            await page.waitForSelector('.navbar__username')
+        } catch (error) {
+            console.log(" Không tìm thấy class check login")
+        }
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
@@ -97,8 +101,8 @@ loginShopee = async (page, accounts) => {
     
         try {
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F")
-            timeout = Math.floor(Math.random() * (7000 - 5000)) + 5000;
-            await page.waitForTimeout(timeout)
+           
+            await page.waitForSelector('[name="loginKey"]')
 
             await page.click('[name="loginKey"]')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -169,9 +173,10 @@ loginShopee = async (page, accounts) => {
 
 searchKeyWord = async (page, keyword) => {
     try {
-        timeout = Math.floor(Math.random() * (2000 - 100)) + 500;
-        await page.waitForTimeout(timeout);
-        const checkSearchInput = await page.$$('.shopee-searchbar-input__input');
+        
+        await page.waitForSelector('.shopee-searchbar-input__input')
+
+        let  checkSearchInput = await page.$$('.shopee-searchbar-input__input');
         if (checkSearchInput.length) {
             await page.click('.shopee-searchbar-input__input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -196,7 +201,7 @@ searchKeyWord = async (page, keyword) => {
             timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
             await page.waitForTimeout(timeout);
             await page.keyboard.press('Enter')
-            await page.waitForNavigation()
+            
         }
     } catch (error) {
         console.log(error)
@@ -630,6 +635,7 @@ viewShop = async (page, url, product) => {
     console.log("---- View shop ----")
     try {
         await page.goto(url)
+       
     } catch (error) {
         console.log(error)
         return shopInfo3
@@ -667,6 +673,7 @@ viewShop = async (page, url, product) => {
         }
     });
     try {
+        await page.waitForSelector('.shopee-avatar__placeholder')
         viewShopClick = await page.$$('.shopee-avatar__placeholder')
         if (viewShopClick.length >= 2) {
             viewShopClick[1].click()
@@ -1341,8 +1348,8 @@ runAllTime = async () => {
         height = Math.floor(Math.random() * (800 - 600)) + 600;;
 
         await page.setViewport({
-            width: width,
-            height: height
+            width: 1280,
+            height: 800
         });
 
         try {
@@ -1394,7 +1401,7 @@ runAllTime = async () => {
                 await page.goto("https://shopee.vn")
             } catch (err) {
                 //HERE
-                console.error(err.message);
+                console.error(err);
                
             }
 
@@ -1431,7 +1438,7 @@ runAllTime = async () => {
                     .then(function () {
                         // always executed
                     });
-                await page.close();
+                
                 await browser.close();       
                
             }
@@ -1450,12 +1457,13 @@ runAllTime = async () => {
                         let pro = keywords[o];
                         try {
                             await page.goto("https://shopee.vn")
+                          
                         } catch (err) {
                             //HERE
-                            console.error(err.message);
+                            console.error(err);
                          
                         }
-
+                       
                         let productForUser
                         let check_product_exit = "Có tồn tại"
                         productForUser = pro
@@ -1609,9 +1617,10 @@ runAllTime = async () => {
                                 productForUser.urlSearch = urlSearch
                                 try {
                                     await page.goto(urlSearch)
+                                    
                                 } catch (err) {
                                     //HERE
-                                    console.error(err.message);
+                                    console.error(err);
                                 }
                                 await page.waitForTimeout(5000)
                             }
@@ -1678,17 +1687,19 @@ runAllTime = async () => {
                             } else {
                                 try {
                                     await page.goto(productForUser.product_link)
+                                   
                                 } catch (err) {
                                     //HERE
-                                    console.error(err.message);
+                                    console.error(err);
                                 }
                             }
                         } else {
                             try {
                                 await page.goto(productForUser.product_link)
+                                
                             } catch (err) {
                                 //HERE
-                                console.error(err.message);
+                                console.error(err);
                             }
                         }
 
