@@ -1743,12 +1743,14 @@ runAllTime = async () => {
                     await browser.close();
                 }
             }else{
+                await page.close();
                 await browser.close();
             }
             console.log("----------- STOP ---------------")
  
         } catch (error) {
             console.log(error)
+            await page.close();
             await browser.close();
            
         }finally {
