@@ -86,11 +86,11 @@ loginShopee = async (page, accounts) => {
 
     //await page.goto("https://shopee.vn")
     // await page.waitForTimeout(3000)
-        try {
-            await page.waitForSelector('.navbar__username')
-        } catch (error) {
-            console.log(" Không tìm thấy class check login")
-        }
+        // try {
+        //     await page.waitForSelector('.navbar__username')
+        // } catch (error) {
+        //     console.log(" Không tìm thấy class check login")
+        // }
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
@@ -1251,7 +1251,7 @@ runAllTime = async () => {
     newVersion = dataShopee.version;
     console.log("Version server: " + dataShopee.version);
     // if (0) {
-    if (newVersion !== checkVersion) {
+    if (newVersion !== checkVersion && dataShopee.version !== undefined) {
         console.log("Cập nhật code");
         // Update version mới vào file version.txt
         //fs.writeFileSync('version.txt', newVersion)
@@ -1302,7 +1302,7 @@ runAllTime = async () => {
             await sleep(2000)
         }
     }
-
+    
     data.forEach(async (data_for_tab, index) => {   // Foreach object Chạy song song các tab chromium
 
         await sleep(15000 * index)
@@ -1318,17 +1318,29 @@ runAllTime = async () => {
 
         let profileChrome = profileDir + subAccount[0]
         console.log("Profile chrome link: " + profileChrome)
+
+        let param =  [
+            `--user-data-dir=${profileChrome}`,      // load profile chromium
+            '--disable-gpu', '--no-sandbox', '--lang=en-US', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding'
+        ]
+        let proxy1
+        if(slaveInfo.network == "proxy"){
+            //'--proxy-server=103.90.230.170:9043'
+            proxy1 = dataShopee.proxy
+            let proxy_for_slave = "--proxy-server="+proxy1.proxy_ip+":"+proxy1.proxy_port
+            param.push(proxy_for_slave)
+            param.push('--ignore-certificate-errors')
+        }
+        console.log(param)
+
         const browser = await puppeteer.launch({
             //executablePath: chromiumDir,
             headless: headless_mode,
             devtools: false,
-            args: [
-                `--user-data-dir=${profileChrome}`,      // load profile chromium
-                '--disable-gpu', '--no-sandbox', '--lang=en-US', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
-                '--disable-background-timer-throttling',
-                '--disable-backgrounding-occluded-windows',
-                '--disable-renderer-backgrounding'
-            ]
+            args: param
         });
 
         const page = (await browser.pages())[0];
@@ -1351,8 +1363,12 @@ runAllTime = async () => {
             width: 1280,
             height: 800
         });
-
-        try {
+        if(slaveInfo.network == "proxy"){
+            let proxy_pass = proxy1.proxy_password.split("\r")[0]
+            console.log(" proxxy pass: "+ proxy1.proxy_username + " ---" +  proxy_pass)
+            await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
+        }
+       try {
             if (acc.cookie.length) {
                 let cookie111 = JSON.parse(acc.cookie)
                 //console.log(cookie111)
