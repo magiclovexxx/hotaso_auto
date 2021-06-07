@@ -1270,17 +1270,14 @@ runAllTime = async () => {
 
     await sleep(5000)
 
-    if (slaveInfo.network == "dcom") {
-
+    if (slaveInfo.network !== "dcom") {
         if (mode != "DEV") {
             // Đổi MAC
             await disconnectDcomV2()
             await sleep(3000)
             await genRandomMac()
         }
-    } else {
-
-
+        
     }
 
     for (let a = 1; a < 100; a++) {
