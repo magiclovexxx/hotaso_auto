@@ -1144,7 +1144,7 @@ genRandomMac = async () => {
     // })
     currentNet = "Cellular"
     commandLineChange = {
-        netword: currentNet,
+        network: currentNet,
         mac: macAndress
     }
     //commandLineChange = "tmac -n "+netName + " -m " + macAndress + " -re -s"
@@ -1152,7 +1152,7 @@ genRandomMac = async () => {
 
     console.log(commandLineChange)
     console.log("change mac")
-    param = " " + commandLineChange.netword + " " + commandLineChange.mac
+    param = " " + commandLineChange.network + " " + commandLineChange.mac
     console.log(param)
     const changeMac = exec('changemac.bat' + param + ' /');
     changeMac.stdout.on('data', (data) => {
@@ -1270,7 +1270,7 @@ runAllTime = async () => {
 
     await sleep(5000)
 
-    if (slaveInfo.netword == "dcom") {
+    if (slaveInfo.network == "dcom") {
 
         if (mode != "DEV") {
             // Đổi MAC
