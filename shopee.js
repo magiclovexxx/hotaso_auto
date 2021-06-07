@@ -1320,10 +1320,17 @@ runAllTime = async () => {
 
         let param =  [
             `--user-data-dir=${profileChrome}`,      // load profile chromium
-            '--disable-gpu', '--no-sandbox', '--lang=en-US', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--no-sandbox',
+            '--lang=en-US',
+            '--disable-setuid-sandbox', 
+            '--disable-dev-shm-usage',
             '--disable-background-timer-throttling',
             '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding'
+            '--disable-renderer-backgrounding',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
         ]
         let proxy1
         if(slaveInfo.network == "proxy"){
