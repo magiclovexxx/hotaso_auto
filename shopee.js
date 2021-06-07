@@ -157,7 +157,7 @@ loginShopee = async (page, accounts) => {
         try {
             await page.waitForSelector('.shopee-searchbar-input');
         } catch (error) {
-            console.log(e)
+            console.log(error)
             console.log("Đăng nhập lỗi")
             return false
         }
