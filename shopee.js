@@ -624,7 +624,6 @@ updateAtions = async (action, product) => {
             // always executed
         });
 
-    return update
 }
 
 viewShop = async (page, url, product) => {
@@ -852,7 +851,7 @@ removeCart = async (page) => {
 
         let carts = Math.floor(Math.random() * (50 - 35)) + 35;
 
-        if (checkcart > 4) {
+        if (checkcart > 10) {
 
             await page.goto('https://shopee.vn/cart/')
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -860,7 +859,7 @@ removeCart = async (page) => {
             await page.waitForSelector('.cart-item__action')
             actionDeletes = await page.$$('.cart-item__action')
 
-            for (let i = actionDeletes.length; i > 2; i--) {
+            for (let i = actionDeletes.length; i > 3; i--) {
                 timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
                 await page.waitForTimeout(timeout)
                 await actionDeletes[i - 1].click();
@@ -1319,7 +1318,7 @@ runAllTime = async () => {
         console.log("Profile chrome link: " + profileChrome)
 
         let param =  [
-            `--user-data-dir=${profileChrome}`,      // load profile chromium
+            //`--user-data-dir=${profileChrome}`,      // load profile chromium
             '--disable-gpu',
             '--no-sandbox',
             '--lang=en-US',
@@ -1547,7 +1546,6 @@ runAllTime = async () => {
                                     check_product_exit = "Không tồn tại"
                                     console.log("---- Sản phẩm không tồn tại ----")
                                 }
-
                             }
 
                         });
@@ -1750,7 +1748,6 @@ runAllTime = async () => {
                                 await updateAtions("view_shop", productForUser)
 
                                 if (options.follow_shop) {
-
                                     refer = await page.url()
                                     shopId = parseInt(productForUser.shop_id)
 
@@ -1766,26 +1763,20 @@ runAllTime = async () => {
                                 }
                             }
                             await page.waitForTimeout(1000);
-                            await removeCart(page)
-                            await page.waitForTimeout(1000);
                         }
                     }
-                    
+                    await removeCart(page)
+                    await page.waitForTimeout(1000);
                 }
-            }else{
-               
             }
-            console.log("----------- STOP ---------------")
+            console.log("----------- Kết thúc tương tác ---------------")
  
         } catch (error) {
             console.log(error)
             
-        }finally {
-            
         }
         await browser.close();
     })
-
 };
 
 //Cron 1 phút 1 lần 
@@ -1795,14 +1786,14 @@ if (mode === "DEV") {
     (async () => {
         await runAllTime()
         
-        await shell.exec('Rmdir /S /q '+profileDir);
+        //await shell.exec('Rmdir /S /q '+profileDir);
 
     })();
 } else {
 
     (async () => {
         await runAllTime()
-        await shell.exec('Rmdir /S /q '+profileDir);
+        //await shell.exec('Rmdir /S /q '+profileDir);
     })();
 }
 
