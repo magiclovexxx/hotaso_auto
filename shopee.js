@@ -26,6 +26,7 @@ let dcomVersion = process.env.DCOM
 phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 // Danh sách profile fb trong file .env
 maxTab = process.env.MAXTAB_SHOPEE  // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
+max_turn = process.env.MAX_TURN  // Số lượng keyword trên slave
 headless_mode = process.env.HEADLESS_MODE     // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
@@ -1270,7 +1271,8 @@ runAllTime = async () => {
 
     await sleep(5000)
 
-    if (slaveInfo.network !== "dcom") {
+    if (slaveInfo.network == "dcom") {
+        console.log("--- Đổi IP DCOM ---")
         if (mode != "DEV") {
             // Đổi MAC
             await disconnectDcomV2()
@@ -1331,8 +1333,7 @@ runAllTime = async () => {
             param.push(proxy_for_slave)
             param.push('--ignore-certificate-errors')
         }
-        console.log(param)
-
+       
         const browser = await puppeteer.launch({
             //executablePath: chromiumDir,
             headless: headless_mode,
@@ -1451,9 +1452,6 @@ runAllTime = async () => {
                     .then(function () {
                         // always executed
                     });
-                
-                await browser.close();       
-               
             }
             if (checklogin) {
 
@@ -1466,7 +1464,11 @@ runAllTime = async () => {
                     // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
                     // for await (let pro of keywords) {
                     // keywords.forEach(async (pro) => {
-                    for (let o = 0; o < keywords.length; o++) {
+                        if(!max_turn){
+                            max_turn = keywords.length
+                        }
+                       
+                    for (let o = 0; o < max_turn; o++) {
                         let pro = keywords[o];
                         try {
                             await page.goto("https://shopee.vn")
@@ -1613,12 +1615,6 @@ runAllTime = async () => {
                                     })
 
                             }
-
-                            // if(getViTriSanPham.trang == "xxx" && getViTriSanPham.vitri == "xxx"){
-                            //     await browser.close();
-                            //     await deleteProfile(subAccount[0])
-                            //     return false;
-                            // }
                         }
 
                         if (getViTriSanPham.trang >= 1) {
@@ -1761,36 +1757,26 @@ runAllTime = async () => {
                                         await updateAtions("follow_shop", productForUser)
                                     }
                                 }
-                                // await page.waitForTimeout(2000)
-                                // let linkShopProducts = "https://shopee.vn/shop/" + productForUser.shop_id + "/search"
-                                // await page.goto(linkShopProducts)
-                                // await page.waitForTimeout(3000)
-                                // await actionsShopee.thaTimCacSanPhamCuaShop(page, productForUser)
-
                             }
                             await page.waitForTimeout(1000);
                             await removeCart(page)
                             await page.waitForTimeout(1000);
                         }
                     }
-                  
-                    await browser.close();
+                    
                 }
             }else{
                
-                await browser.close();
             }
             console.log("----------- STOP ---------------")
  
         } catch (error) {
             console.log(error)
             
-            await browser.close();
-           
         }finally {
-            await browser.close();
+            
         }
-       
+        await browser.close();
     })
 
 };
