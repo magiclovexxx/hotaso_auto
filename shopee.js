@@ -30,6 +30,7 @@ max_turn = process.env.MAX_TURN  // Số lượng keyword trên slave
 headless_mode = process.env.HEADLESS_MODE     // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
+os_slave = process.env.OS     // k load css
 disable_image = 1
 
 if (headless_mode == "0") {
@@ -1292,7 +1293,9 @@ runAllTime = async () => {
             await genRandomMac()
         }
 
-    }else{
+    }
+    
+    if (slaveInfo.network == "proxy" && os_slave !="LINUX") {
         if(mode != "DEV"){
             //await change_info_pc()
             console.log("----- Change info -----")
@@ -1429,7 +1432,7 @@ runAllTime = async () => {
 
         if ((index == 0) && (mode !== "DEV")) {
             // đổi ip
-            console.log("Đổi ip mạng")
+            //console.log("Đổi ip mạng")
             if (dcomVersion == "V2") {
                 // await changeIpDcomV2()
             }
@@ -1808,15 +1811,19 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
         await runAllTime()
-
-        await shell.exec('Rmdir /S /q ' + profileDir);
+        if(os_slave == "LINUX"){
+            await shell.exec('rm -rf ' + profileDir);
+        }else{await shell.exec('Rmdir /S /q ' + profileDir);}
+        
 
     })();
 } else {
 
     (async () => {
         await runAllTime()
-        await shell.exec('Rmdir /S /q ' + profileDir);
+        if(os_slave == "LINUX"){
+            await shell.exec('rm -rf ' + profileDir);
+        }else{await shell.exec('Rmdir /S /q ' + profileDir);}
     })();
 }
 
