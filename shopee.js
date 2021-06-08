@@ -1292,9 +1292,9 @@ runAllTime = async () => {
         console.log("--- Đổi IP DCOM ---")
         if (mode != "DEV") {
             // Đổi MAC
-            await disconnectDcomV2()
+            //await disconnectDcomV2()
             await sleep(3000)
-            await genRandomMac()
+            //await genRandomMac()
         }
 
     }
