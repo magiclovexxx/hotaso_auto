@@ -1187,7 +1187,6 @@ function sleep(ms) {
 }
 
 
-
 runAllTime = async () => {
     slaveInfo = []
     getDataShopee = []
@@ -1221,7 +1220,6 @@ runAllTime = async () => {
 		console.log("----- Change info -----")
 		await shell.exec('changeinfo.bat');
 	}
-
 
     if (checkNetwork == 1) {
 
