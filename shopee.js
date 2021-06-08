@@ -1289,7 +1289,7 @@ runAllTime = async () => {
             // Đổi MAC
             //await disconnectDcomV2()
             await sleep(3000)
-            //await genRandomMac()
+            await genRandomMac()
         }
 
     }else{
