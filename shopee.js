@@ -1193,11 +1193,7 @@ runAllTime = async () => {
     dataShopee = []
     // lấy dữ liệu từ master
     checkNetwork = 0
-    if(mode != "DEV"){
-		//await change_info_pc()
-		console.log("----- Change info -----")
-		await shell.exec('changeinfo.bat');
-	}
+
     checkNetwork = 0
     for (let a = 1; a < 100; a++) {
         console.log("check connection " + a);
@@ -1296,6 +1292,12 @@ runAllTime = async () => {
             //await genRandomMac()
         }
 
+    }else{
+        if(mode != "DEV"){
+            //await change_info_pc()
+            console.log("----- Change info -----")
+            await shell.exec('changeinfo.bat');
+        }
     }
 
     for (let a = 1; a < 100; a++) {
