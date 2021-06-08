@@ -87,22 +87,22 @@ loginShopee = async (page, accounts) => {
 
     //await page.goto("https://shopee.vn")
     // await page.waitForTimeout(3000)
-        // try {
-        //     await page.waitForSelector('.navbar__username')
-        // } catch (error) {
-        //     console.log(" Không tìm thấy class check login")
-        // }
+    // try {
+    //     await page.waitForSelector('.navbar__username')
+    // } catch (error) {
+    //     console.log(" Không tìm thấy class check login")
+    // }
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitForTimeout(timeout)
-        
-    
+
+
         try {
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F")
-           
+
             await page.waitForSelector('[name="loginKey"]')
 
             await page.click('[name="loginKey"]')
@@ -174,10 +174,10 @@ loginShopee = async (page, accounts) => {
 
 searchKeyWord = async (page, keyword) => {
     try {
-        
+
         await page.waitForSelector('.shopee-searchbar-input__input')
 
-        let  checkSearchInput = await page.$$('.shopee-searchbar-input__input');
+        let checkSearchInput = await page.$$('.shopee-searchbar-input__input');
         if (checkSearchInput.length) {
             await page.click('.shopee-searchbar-input__input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -202,7 +202,7 @@ searchKeyWord = async (page, keyword) => {
             timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
             await page.waitForTimeout(timeout);
             await page.keyboard.press('Enter')
-            
+
         }
     } catch (error) {
         console.log(error)
@@ -638,7 +638,7 @@ viewShop = async (page, url, product) => {
     console.log("---- View shop ----")
     try {
         await page.goto(url)
-       
+
     } catch (error) {
         console.log(error)
         return shopInfo3
@@ -649,7 +649,7 @@ viewShop = async (page, url, product) => {
         console.log(error)
         return shopInfo3
     }
-   
+
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitForTimeout(timeout)
     await page.keyboard.press('PageDown');
@@ -1085,6 +1085,17 @@ disconnectDcomV2 = async () => {
 
 }
 
+change_info_pc = async () => {
+    console.log(" ---- Change info -----")
+    let  change_info = await exec('changeinfo.bat');
+    change_info.stdout.on('data', (data) => {
+        // do whatever you want here with data
+    });
+    change_info.stderr.on('data', (data) => {
+        console.error(data);
+    });
+}
+
 connectDcomV2 = async () => {
     const connectdcom1 = await exec('connect.bat /');
     connectdcom1.stdout.on('data', (data) => {
@@ -1205,6 +1216,12 @@ runAllTime = async () => {
         }
     }
 
+    if(mode != "DEV"){
+		//await change_info_pc()
+		console.log("----- Change info -----")
+		await shell.exec('changeinfo.bat');
+	}
+
 
     if (checkNetwork == 1) {
 
@@ -1281,7 +1298,7 @@ runAllTime = async () => {
             await sleep(3000)
             await genRandomMac()
         }
-        
+
     }
 
     for (let a = 1; a < 100; a++) {
@@ -1303,7 +1320,7 @@ runAllTime = async () => {
             await sleep(2000)
         }
     }
-    
+
     data.forEach(async (data_for_tab, index) => {   // Foreach object Chạy song song các tab chromium
 
         await sleep(15000 * index)
@@ -1320,12 +1337,12 @@ runAllTime = async () => {
         let profileChrome = profileDir + subAccount[0]
         console.log("Profile chrome link: " + profileChrome)
 
-        let param =  [
+        let param = [
             `--user-data-dir=${profileChrome}`,      // load profile chromium
             '--disable-gpu',
             '--no-sandbox',
             '--lang=en-US',
-            '--disable-setuid-sandbox', 
+            '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
             '--disable-background-timer-throttling',
             '--disable-backgrounding-occluded-windows',
@@ -1335,14 +1352,14 @@ runAllTime = async () => {
             '--no-first-run',
         ]
         let proxy1
-        if(slaveInfo.network == "proxy"){
+        if (slaveInfo.network == "proxy") {
             //'--proxy-server=103.90.230.170:9043'
             proxy1 = dataShopee.proxy
-            let proxy_for_slave = "--proxy-server="+proxy1.proxy_ip+":"+proxy1.proxy_port
+            let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
             param.push(proxy_for_slave)
             param.push('--ignore-certificate-errors')
         }
-       
+
         const browser = await puppeteer.launch({
             //executablePath: chromiumDir,
             headless: headless_mode,
@@ -1370,12 +1387,12 @@ runAllTime = async () => {
             width: 1280,
             height: 800
         });
-        if(slaveInfo.network == "proxy"){
+        if (slaveInfo.network == "proxy") {
             let proxy_pass = proxy1.proxy_password.split("\r")[0]
-            console.log(" proxxy pass: "+ proxy1.proxy_username + " ---" +  proxy_pass)
+            console.log(" proxxy pass: " + proxy1.proxy_username + " ---" + proxy_pass)
             await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
         }
-       try {
+        try {
             if (acc.cookie.length) {
                 let cookie111 = JSON.parse(acc.cookie)
                 //console.log(cookie111)
@@ -1425,12 +1442,12 @@ runAllTime = async () => {
             } catch (err) {
                 //HERE
                 console.error(err);
-               
+
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
-           
+
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
             console.log("index = " + index + " --- check login account: " + subAccount[0] + " --- " + checklogin)
@@ -1474,21 +1491,21 @@ runAllTime = async () => {
                     // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
                     // for await (let pro of keywords) {
                     // keywords.forEach(async (pro) => {
-                        if(!max_turn){
-                            max_turn = keywords.length
-                        }
-                       
+                    if (!max_turn) {
+                        max_turn = keywords.length
+                    }
+
                     for (let o = 0; o < max_turn; o++) {
                         let pro = keywords[o];
                         try {
                             await page.goto("https://shopee.vn")
-                          
+
                         } catch (err) {
                             //HERE
                             console.error(err);
-                         
+
                         }
-                       
+
                         let productForUser
                         let check_product_exit = "Có tồn tại"
                         productForUser = pro
@@ -1636,7 +1653,7 @@ runAllTime = async () => {
                                 productForUser.urlSearch = urlSearch
                                 try {
                                     await page.goto(urlSearch)
-                                    
+
                                 } catch (err) {
                                     //HERE
                                     console.error(err);
@@ -1707,7 +1724,7 @@ runAllTime = async () => {
                             } else {
                                 try {
                                     await page.goto(productForUser.product_link)
-                                   
+
                                 } catch (err) {
                                     //HERE
                                     console.error(err);
@@ -1716,7 +1733,7 @@ runAllTime = async () => {
                         } else {
                             try {
                                 await page.goto(productForUser.product_link)
-                                
+
                             } catch (err) {
                                 //HERE
                                 console.error(err);
@@ -1776,10 +1793,10 @@ runAllTime = async () => {
                 }
             }
             console.log("----------- Kết thúc tương tác ---------------")
- 
+
         } catch (error) {
             console.log(error)
-            
+
         }
         await browser.close();
         sleep(5000)
@@ -1792,15 +1809,15 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
         await runAllTime()
-        
-        await shell.exec('Rmdir /S /q '+profileDir);
+
+        await shell.exec('Rmdir /S /q ' + profileDir);
 
     })();
 } else {
 
     (async () => {
         await runAllTime()
-        await shell.exec('Rmdir /S /q '+profileDir);
+        await shell.exec('Rmdir /S /q ' + profileDir);
     })();
 }
 

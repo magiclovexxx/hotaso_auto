@@ -1,4 +1,5 @@
 profile/
+SuperChangeInfo/*.json
 saveid.txt
 logout.txt
 account.txt
