@@ -160,6 +160,7 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
     var config = {
         method: 'post',
         url: url,
+        timeout: 5000,
         headers: {
             'x-csrftoken': xtoken,
             'referer': ref,

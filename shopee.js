@@ -569,7 +569,8 @@ checkAtions = async (action, product) => {
     await axios.get(checkActionsDir, {
         params: {
             data: datacheck
-        }
+        },
+        timeout: 5000
     })
         .then(function (response) {
             console.log(response.data);
@@ -594,7 +595,8 @@ updateAtions = async (action, product) => {
     //datatest = 
 
     await axios.post(updateActionsDir, {
-        data: dataupdate
+        data: dataupdate,
+        timeout: 5000
     },
         {
             headers: {
@@ -612,7 +614,8 @@ updateAtions = async (action, product) => {
 
     dataupdate.cookie = ""
     await axios.get(updateHistory, {
-        data: dataupdate
+        data: dataupdate,
+        timeout: 5000
     })
         .then(function (response) {
             console.log(response.data);
@@ -1446,7 +1449,8 @@ runAllTime = async () => {
                         data: {
                             dataToServer: accountInfo,
                         }
-                    }
+                    },
+                    timeout: 5000
                 })
                     .then(function (response) {
                         console.log(response.data);
@@ -1609,7 +1613,8 @@ runAllTime = async () => {
                                         data: {
                                             dataToServer: productForUser,
                                         }
-                                    }
+                                    },
+                                    timeout: 5000
                                 })
                                     .then(function (response) {
                                         console.log(response.data)
@@ -1654,7 +1659,8 @@ runAllTime = async () => {
                                             data: {
                                                 dataToServer: productForUser,
                                             }
-                                        }
+                                        },
+                                        timeout: 5000
                                     })
                                         .then(function (response) {
                                             console.log(response.data)
