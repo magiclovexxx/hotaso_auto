@@ -1321,7 +1321,7 @@ runAllTime = async () => {
         console.log("Profile chrome link: " + profileChrome)
 
         let param =  [
-            //`--user-data-dir=${profileChrome}`,      // load profile chromium
+            `--user-data-dir=${profileChrome}`,      // load profile chromium
             '--disable-gpu',
             '--no-sandbox',
             '--lang=en-US',
@@ -1782,6 +1782,7 @@ runAllTime = async () => {
             
         }
         await browser.close();
+        sleep(5000)
     })
 };
 
@@ -1792,14 +1793,14 @@ if (mode === "DEV") {
     (async () => {
         await runAllTime()
         
-        //await shell.exec('Rmdir /S /q '+profileDir);
+        await shell.exec('Rmdir /S /q '+profileDir);
 
     })();
 } else {
 
     (async () => {
         await runAllTime()
-        //await shell.exec('Rmdir /S /q '+profileDir);
+        await shell.exec('Rmdir /S /q '+profileDir);
     })();
 }
 
