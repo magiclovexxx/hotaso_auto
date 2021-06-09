@@ -1555,7 +1555,7 @@ runAllTime = async () => {
                                 })
 
                             }
-                            check_link_san_pham = url.split("item/get?itemid")
+                            check_link_san_pham = url.split("item/get?itemid="+productForUser.product_id)
                             if (check_link_san_pham.length > 1) {
                                 console.log(" --- Lấy thông tin sản phẩm ---");
                                 try {
