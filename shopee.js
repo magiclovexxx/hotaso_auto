@@ -1309,6 +1309,7 @@ runAllTime = async () => {
             //await disconnectDcomV2()
             await sleep(3000)
             await genRandomMac()
+            checkNetwork = 0
         }
 
     }
