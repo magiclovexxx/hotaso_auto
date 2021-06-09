@@ -1285,7 +1285,7 @@ runAllTime = async () => {
         console.log("Cập nhật code");
         // Update version mới vào file version.txt
         //fs.writeFileSync('version.txt', newVersion)
-        if (mode !== "DEV") {
+        if (mode !== "DEV" && os_slave != "LINUX") {
             const myShellScript = exec('update.sh /');
             myShellScript.stdout.on('data', (data) => {
                 // do whatever you want here with data
@@ -1293,6 +1293,8 @@ runAllTime = async () => {
             myShellScript.stderr.on('data', (data) => {
                 console.error(data);
             });
+        }else{ 
+            await shell.exec('git stash; git pull origin master');
         }
 
         return false
