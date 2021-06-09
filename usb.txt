@@ -1,2 +1,0 @@
-"C:\Users\admin\Downloads\RemoveDrive\x64\RemoveDrive.exe" [driver letter. example e:] -f
-"C:\Users\admin\Downloads\RestartSrDev\x64\RestartSrDev.exe" *

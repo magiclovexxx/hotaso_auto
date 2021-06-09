@@ -100,9 +100,14 @@ loginShopee = async (page, accounts) => {
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitForTimeout(timeout)
 
-
+        let ref = await page.url()
         try {
-            await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F")
+            let ref = await page.url()
+            await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
+                waitUntil: "networkidle0",
+                timeout: 30000,
+                referer: ref
+            })
 
             await page.waitForSelector('[name="loginKey"]')
 
@@ -207,7 +212,9 @@ searchKeyWord = async (page, keyword) => {
         }
     } catch (error) {
         console.log(error)
+        return false
     }
+    return true
 
 }
 
@@ -638,14 +645,14 @@ viewShop = async (page, url, product) => {
 
     console.log("---- View shop ----")
     try {
-        await page.goto(url)
 
-    } catch (error) {
-        console.log(error)
-        return shopInfo3
-    }
-    try {
-        await page.goto(url)
+        let ref = await page.url()
+        await page.goto(url, {
+            waitUntil: "networkidle0",
+            timeout: 30000,
+            referer: ref
+        })
+
     } catch (error) {
         console.log(error)
         return shopInfo3
@@ -686,7 +693,7 @@ viewShop = async (page, url, product) => {
         }
     } catch (error) {
         console.log(error)
-        return shopInfo3
+        return false
     }
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitForTimeout(timeout)
@@ -723,7 +730,12 @@ likeProductOfShop = async (page, url) => {
     // Next sang trang sau like tiếp
 
 
-    await page.goto(url)
+    let ref = await page.url()
+    await page.goto(url, {
+        waitUntil: "networkidle0",
+        timeout: 30000,
+        referer: ref
+    })
 
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitForTimeout(timeout)
@@ -830,7 +842,6 @@ actionShopee = async (page, options, product) => {
     } catch (error) {
         //console.log(error)
     }
-
 }
 
 removeCart = async (page) => {
@@ -857,7 +868,12 @@ removeCart = async (page) => {
 
         if (checkcart > 10) {
 
-            await page.goto('https://shopee.vn/cart/')
+            let ref = await page.url()
+            await page.goto('https://shopee.vn/cart/', {
+                waitUntil: "networkidle0",
+                timeout: 30000,
+                referer: ref
+            })
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
             await page.waitForSelector('.cart-item__action')
@@ -1088,7 +1104,7 @@ disconnectDcomV2 = async () => {
 
 change_info_pc = async () => {
     console.log(" ---- Change info -----")
-    let  change_info = await exec('changeinfo.bat');
+    let change_info = await exec('changeinfo.bat');
     change_info.stdout.on('data', (data) => {
         // do whatever you want here with data
     });
@@ -1294,9 +1310,9 @@ runAllTime = async () => {
         }
 
     }
-    
-    if (slaveInfo.network == "proxy" && os_slave !="LINUX") {
-        if(mode != "DEV"){
+
+    if (slaveInfo.network == "proxy" && os_slave != "LINUX") {
+        if (mode != "DEV") {
             //await change_info_pc()
             console.log("----- Change info -----")
             await shell.exec('changeinfo.bat');
@@ -1440,7 +1456,13 @@ runAllTime = async () => {
         try {
             await page.waitForTimeout(5000)
             try {
-                await page.goto("https://shopee.vn")
+
+                let ref = await page.url()
+                await page.goto('https://shopee.vn', {
+                    waitUntil: "networkidle0",
+                    timeout: 30000,
+                    referer: ref
+                })
             } catch (err) {
                 //HERE
                 console.error(err);
@@ -1500,8 +1522,12 @@ runAllTime = async () => {
                     for (let o = 0; o < max_turn; o++) {
                         let pro = keywords[o];
                         try {
-                            await page.goto("https://shopee.vn")
-
+                            let ref = await page.url()
+                            await page.goto('https://shopee.vn', {
+                                waitUntil: "networkidle0",
+                                timeout: 30000,
+                                referer: ref
+                            })
                         } catch (err) {
                             //HERE
                             console.error(err);
@@ -1555,7 +1581,7 @@ runAllTime = async () => {
                                 })
 
                             }
-                            check_link_san_pham = url.split("item/get?itemid="+productForUser.product_id)
+                            check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
                             if (check_link_san_pham.length > 1) {
                                 console.log(" --- Lấy thông tin sản phẩm ---");
                                 try {
@@ -1583,8 +1609,12 @@ runAllTime = async () => {
                         console.log("product name: " + productForUser.product_name)
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
-                        await searchKeyWord(page, productForUser.keyword)
 
+                        if (productForUser.check_index < 3) {
+                            await searchKeyWord(page, productForUser.keyword)
+                        } else {
+                            await searchKeyWord(page, productForUser.product_name)
+                        }
                         cookies22 = productForUser.cookie = await page.cookies()
                         productForUser.user_agent = userAgent
                         cookie1 = ""
@@ -1622,28 +1652,28 @@ runAllTime = async () => {
                         if (productForUser.check_index < 3) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
 
-                            if (getViTriSanPham.trang == 0 && getViTriSanPham.vitri == 0) {
-                                console.log(" --- Không tìm thấy sản phẩm --- ")
-                                productForUser.trang = 0
-                                productForUser.vitri = 0
+                            // if (getViTriSanPham.trang == 0 && getViTriSanPham.vitri == 0) {
+                            //     console.log(" --- Không tìm thấy sản phẩm --- ")
+                            //     productForUser.trang = 0
+                            //     productForUser.vitri = 0
 
-                                await axios.get(shopeeUpdateSeoSanPhamDir, {
-                                    params: {
-                                        data: {
-                                            dataToServer: productForUser,
-                                        }
-                                    },
-                                    timeout: 5000
-                                })
-                                    .then(function (response) {
-                                        console.log(response.data)
-                                    })
-                                    .catch(function (error) {
-                                        console.log(error);
+                            //     await axios.get(shopeeUpdateSeoSanPhamDir, {
+                            //         params: {
+                            //             data: {
+                            //                 dataToServer: productForUser,
+                            //             }
+                            //         },
+                            //         timeout: 5000
+                            //     })
+                            //         .then(function (response) {
+                            //             console.log(response.data)
+                            //         })
+                            //         .catch(function (error) {
+                            //             console.log(error);
 
-                                    })
+                            //         })
 
-                            }
+                            // }
                         }
 
                         if (getViTriSanPham.trang >= 1) {
@@ -1654,7 +1684,13 @@ runAllTime = async () => {
                                 urlSearch = encodeURI(urlSearch)
                                 productForUser.urlSearch = urlSearch
                                 try {
-                                    await page.goto(urlSearch)
+
+                                    let ref = await page.url()
+                                    await page.goto(urlSearch, {
+                                        waitUntil: "networkidle0",
+                                        timeout: 30000,
+                                        referer: ref
+                                    })
 
                                 } catch (err) {
                                     //HERE
@@ -1673,21 +1709,23 @@ runAllTime = async () => {
                                     console.log("vi_tri_trang_san_pham 22: " + productForUser.trang)
 
                                     console.log("Update seo sản phẩm")
-                                    await axios.get(shopeeUpdateSeoSanPhamDir, {
-                                        params: {
-                                            data: {
-                                                dataToServer: productForUser,
-                                            }
-                                        },
-                                        timeout: 5000
-                                    })
-                                        .then(function (response) {
-                                            console.log(response.data)
+                                    if (productForUser.check_index < 3) {
+                                        await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                            params: {
+                                                data: {
+                                                    dataToServer: productForUser,
+                                                }
+                                            },
+                                            timeout: 5000
                                         })
-                                        .catch(function (error) {
-                                            console.log(error);
+                                            .then(function (response) {
+                                                console.log(response.data)
+                                            })
+                                            .catch(function (error) {
+                                                console.log(error);
 
-                                        })
+                                            })
+                                    }
                                     break;
                                 }
 
@@ -1725,7 +1763,8 @@ runAllTime = async () => {
                                 productsAll[productForUser.vitri - 1].click()
                             } else {
                                 try {
-                                    await page.goto(productForUser.product_link)
+                                   
+                                   
 
                                 } catch (err) {
                                     //HERE
@@ -1734,12 +1773,16 @@ runAllTime = async () => {
                             }
                         } else {
                             try {
-                                await page.goto(productForUser.product_link)
+                                await page.goto(productForUser.product_link, {
+                                    waitUntil: "networkidle0",
+                                    timeout: 30000
+                                });
 
-                            } catch (err) {
-                                //HERE
-                                console.error(err);
+
+                            } catch (error) {
+                                console.log(error.message);
                             }
+
                         }
 
                         // Goto product link
@@ -1811,19 +1854,19 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
         await runAllTime()
-        if(os_slave == "LINUX"){
+        if (os_slave == "LINUX") {
             await shell.exec('rm -rf ' + profileDir);
-        }else{await shell.exec('Rmdir /S /q ' + profileDir);}
-        
+        } else { await shell.exec('Rmdir /S /q ' + profileDir); }
+
 
     })();
 } else {
 
     (async () => {
         await runAllTime()
-        if(os_slave == "LINUX"){
+        if (os_slave == "LINUX") {
             await shell.exec('rm -rf ' + profileDir);
-        }else{await shell.exec('Rmdir /S /q ' + profileDir);}
+        } else { await shell.exec('Rmdir /S /q ' + profileDir); }
     })();
 }
 
