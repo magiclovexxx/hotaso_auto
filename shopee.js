@@ -58,21 +58,20 @@ if (mode === "DEV") {
 }
 
 
-linkShopeeUpdate = apiUrl + "/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
-linkShopeeAccountUpdate = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
-linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
-dataShopeeDir = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
-shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
-
-updateActionsDir = updateActionsUrl + "/api_user/updateActions"     // Update actions
-updateHistory = apiServer + "/update-history"     // Update history
+linkShopeeUpdate            = apiUrl + "/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
+linkShopeeAccountUpdate     = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
+linkShopeeUpdateAds         = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
+dataShopeeDir               = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+shopeeUpdateSeoSanPhamDir   = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
+updateHistory               = apiUrl + "/check_die_slave_url"     // Check die slave
+updateActionsDir            = updateActionsUrl + "/api_user/updateActions"     // Update actions
+updateHistory               = apiServer + "/update-history"     // Update history
 
 //checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
-checkActionsDir = apiServer + "/check-action"     // check actions
-
-getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
-getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
-getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
+checkActionsDir             = apiServer + "/check-action"     // check actions
+getShopActionsDir           = apiUrl + "/api_user/getShopActions"     // check actions
+getSlaveAccountDir          = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
+getSlaveInfo                = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
 LinkdanhSachSanPhamChuaTuongTac = apiUrl + "/api_user/danhSachSanPhamChuaTuongTac"     // Lay thong tin cau hinh slave
 
 if (mode === "DEV") {
@@ -578,7 +577,7 @@ checkAtions = async (action, product) => {
         params: {
             data: datacheck
         },
-        timeout: 5000
+        timeout: 50000
     })
         .then(function (response) {
             console.log(response.data);
@@ -593,6 +592,26 @@ checkAtions = async (action, product) => {
             // always executed
         });
 
+}
+
+check_die_slave = async (slave) => {
+   let result
+    console.log("-------- Check die slave -----------")
+   //await axios.get(check_die_slave_url, {
+   //     data: slave,
+   //     timeout: 50000
+   // })
+   //     .then(function (response) {
+   //         console.log(response.data);
+   //         result = response.data
+   //     })
+   //     .catch(function (error) {
+   //         console.log(error);
+   //     })
+   //     .then(function () {
+   //         // always executed
+   //     });
+    return result
 }
 
 updateAtions = async (action, product) => {
@@ -623,7 +642,7 @@ updateAtions = async (action, product) => {
     dataupdate.cookie = ""
     await axios.get(updateHistory, {
         data: dataupdate,
-        timeout: 5000
+        timeout: 50000
     })
         .then(function (response) {
             console.log(response.data);
@@ -1293,7 +1312,7 @@ runAllTime = async () => {
             myShellScript.stderr.on('data', (data) => {
                 console.error(data);
             });
-        }else{ 
+        } else {
             await shell.exec('git stash; git pull origin master');
         }
 
@@ -1766,8 +1785,8 @@ runAllTime = async () => {
                                 productsAll[productForUser.vitri - 1].click()
                             } else {
                                 try {
-                                   
-                                   
+
+
 
                                 } catch (err) {
                                     //HERE
@@ -1846,10 +1865,18 @@ runAllTime = async () => {
             console.log(error)
 
         }
+        let pages2 = await browser.pages();
+        for (const page3 of pages2) {
+            await page3.close();
+        }
         await browser.close();
+       
         sleep(5000)
     })
+    setInterval(check_die_slave, 5000, slavenumber);
 };
+  
+  
 
 //Cron 1 phút 1 lần 
 
