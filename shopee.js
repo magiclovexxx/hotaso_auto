@@ -65,8 +65,9 @@ dataShopeeDir               = apiUrl + "/api_user/dataShopee"     // Link shopee
 shopeeUpdateSeoSanPhamDir   = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
 updateHistory               = apiUrl + "/check_die_slave_url"     // Check die slave
 updateActionsDir            = updateActionsUrl + "/api_user/updateActions"     // Update actions
-updateHistory               = apiServer + "/update-history"     // Update history
 
+updateHistory               = apiServer + "/update-history"     // Update history
+updateHistoryAll               = apiServer + "/update-history-all"     // Update history
 //checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
 checkActionsDir             = apiServer + "/check-action"     // check actions
 getShopActionsDir           = apiUrl + "/api_user/getShopActions"     // check actions
@@ -597,6 +598,7 @@ checkAtions = async (action, product) => {
 check_die_slave = async (slave) => {
    let result
     console.log("-------- Check die slave -----------")
+    await shell.exec('pm2 restart all'); 
    //await axios.get(check_die_slave_url, {
    //     data: slave,
    //     timeout: 50000
@@ -1429,7 +1431,7 @@ runAllTime = async () => {
         });
         if (slaveInfo.network == "proxy") {
             let proxy_pass = proxy1.proxy_password.split("\r")[0]
-            console.log(" proxxy pass: " + proxy1.proxy_username + " ---" + proxy_pass)
+            console.log(" proxxy ip: " + proxy1.proxy_ip + " proxxy pass: " + proxy1.proxy_username + " ---" + proxy_pass)
             await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
         }
         try {
@@ -1541,8 +1543,9 @@ runAllTime = async () => {
                         max_turn = keywords.length
                     }
 
+                    // Chạy lần lượt max_turn lượt tìm kiếm, tương tác từ khoá
                     for (let o = 0; o < max_turn; o++) {
-                        let pro = keywords[o];
+                      
                         try {
                             let ref = await page.url()
                             await page.goto('https://shopee.vn', {
@@ -1553,15 +1556,12 @@ runAllTime = async () => {
                         } catch (err) {
                             //HERE
                             console.error(err);
-
                         }
 
-                        let productForUser
+                        let productForUser                     // Mảng chứa thông tin sản phẩm, từ khoá cần tương tác
                         let check_product_exit = "Có tồn tại"
-                        productForUser = pro
-                        console.log(" ---- product ---- ")
-                        // console.log(productForUser)
-
+                        productForUser = keywords[o]
+                        
                         // Check actions can thao tac cua shop
 
                         let options = JSON.parse(productForUser.options)
@@ -1859,7 +1859,7 @@ runAllTime = async () => {
                     await page.waitForTimeout(1000);
                 }
             }
-            console.log("----------- Kết thúc tương tác ---------------")
+            console.log("----------- Kết thúc tương tác ---------------"+ index)
 
         } catch (error) {
             console.log(error)
@@ -1873,10 +1873,10 @@ runAllTime = async () => {
        
         sleep(5000)
     })
-    setInterval(check_die_slave, 5000, slavenumber);
+    
 };
   
-  
+//setInterval(check_die_slave, 600000, slavenumber);
 
 //Cron 1 phút 1 lần 
 
@@ -1886,7 +1886,8 @@ if (mode === "DEV") {
         await runAllTime()
         if (os_slave == "LINUX") {
             await shell.exec('rm -rf ' + profileDir);
-        } else { await shell.exec('Rmdir /S /q ' + profileDir); }
+        } else { 
+            await shell.exec('Rmdir /S /q ' + profileDir); }
 
 
     })();
