@@ -46,7 +46,6 @@ mode = process.env.MODE
 
 if (mode === "DEV") {
     apiUrl = "http://hotaso.tranquoctoan.com"
-
     apiServer = "http://history.hotaso.vn:3000"
     updateActionsUrl = "https://hotaso.tranquoctoan.com"
 
@@ -58,21 +57,22 @@ if (mode === "DEV") {
 }
 
 
-linkShopeeUpdate            = apiUrl + "/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
-linkShopeeAccountUpdate     = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
-linkShopeeUpdateAds         = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
-dataShopeeDir               = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
-shopeeUpdateSeoSanPhamDir   = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
-updateHistory               = apiUrl + "/check_die_slave_url"     // Check die slave
-updateActionsDir            = updateActionsUrl + "/api_user/updateActions"     // Update actions
+linkShopeeUpdate = apiUrl + "/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
+linkShopeeAccountUpdate = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
+linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
+dataShopeeDir = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
+updateHistory = apiUrl + "/check_die_slave_url"     // Check die slave
+updateActionsDir = apiUrl + "/api_user/updateActions"     // Update actions
+update_action_all = updateActionsUrl + "/api_user/update_action_all"     // Update actions
 
-updateHistory               = apiServer + "/update-history"     // Update history
-updateHistoryAll               = apiServer + "/update-history-all"     // Update history
+updateHistory = apiServer + "/update-history"     // Update history
+updateHistoryAll = apiServer + "/update-history-all"     // Update history
 //checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
-checkActionsDir             = apiServer + "/check-action"     // check actions
-getShopActionsDir           = apiUrl + "/api_user/getShopActions"     // check actions
-getSlaveAccountDir          = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
-getSlaveInfo                = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
+checkActionsDir = apiServer + "/check-action"     // check actions
+getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
+getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
+getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
 LinkdanhSachSanPhamChuaTuongTac = apiUrl + "/api_user/danhSachSanPhamChuaTuongTac"     // Lay thong tin cau hinh slave
 
 if (mode === "DEV") {
@@ -478,7 +478,7 @@ chooseVariation = async (page, limit) => {
 
 }
 
-viewReview = async (page) => {
+action_view_review = async (page) => {
     try {
         timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
         await page.waitForTimeout(timeout)
@@ -596,36 +596,51 @@ checkAtions = async (action, product) => {
 }
 
 check_die_slave = async (slave) => {
-   let result
+    let result
     console.log("-------- Check die slave -----------")
-    await shell.exec('pm2 restart all'); 
-   //await axios.get(check_die_slave_url, {
-   //     data: slave,
-   //     timeout: 50000
-   // })
-   //     .then(function (response) {
-   //         console.log(response.data);
-   //         result = response.data
-   //     })
-   //     .catch(function (error) {
-   //         console.log(error);
-   //     })
-   //     .then(function () {
-   //         // always executed
-   //     });
+    await shell.exec('pm2 restart all');
+    //await axios.get(check_die_slave_url, {
+    //     data: slave,
+    //     timeout: 50000
+    // })
+    //     .then(function (response) {
+    //         console.log(response.data);
+    //         result = response.data
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     })
+    //     .then(function () {
+    //         // always executed
+    //     });
     return result
 }
 
-updateAtions = async (action, product) => {
+updateAtions = async (product) => {
     dataupdate = product
-    dataupdate.action = action
 
     update = 0
     //datatest = 
 
-    await axios.post(updateActionsDir, {
+    await axios.get(updateHistoryAll, {
         data: dataupdate,
-        timeout: 5000
+        timeout: 50000
+    },
+        {
+            headers: {
+                Connection: 'keep-alive',
+            }
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    await axios.post(update_action_all, {
+        data: dataupdate,
+        timeout: 50000
     },
         {
             headers: {
@@ -641,24 +656,9 @@ updateAtions = async (action, product) => {
         });
 
 
-    dataupdate.cookie = ""
-    await axios.get(updateHistory, {
-        data: dataupdate,
-        timeout: 50000
-    })
-        .then(function (response) {
-            console.log(response.data);
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
-
 }
 
-viewShop = async (page, url, product) => {
+action_view_shop = async (page, url, product) => {
     let shopInfo3 = {
         cover: "",
         name: ""
@@ -769,8 +769,7 @@ likeProductOfShop = async (page, url) => {
 
 }
 
-
-actionShopee = async (page, options, product) => {
+action_view_product = async (page) => {
     try {
         await page.waitForSelector('.product-briefing')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
@@ -778,91 +777,84 @@ actionShopee = async (page, options, product) => {
         await page.click('.product-briefing>div>div>div');
 
         // xem ngẫu nhiên n ảnh sản phẩm
-        console.log("---- Xem ảnh sản phẩm ----")
         let viewRandomImages = Math.floor(Math.random() * (6 - 4)) + 4;
         let checkvideo = await page.$$('video')
         if (checkvideo.length) {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
         }
+        await page.waitForSelector('.icon-arrow-right-bold')
+
         for (let i = 0; i <= viewRandomImages; i++) {
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+            timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
             await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
             if (nextRightButton.length >= 2) {
                 await nextRightButton[1].click();
             }
         }
+    } catch (e) {
+        //console.log(e)
+    }
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitForTimeout(timeout)
+    // click tắt ảnh sản phẩm    
+    await page.mouse.click(10, 30)
 
-        // click tắt ảnh sản phẩm    
-        await page.mouse.click(10, 30)
+    // kéo xuống đọc sản phẩm
+    for (let i = 0; i <= 6; i++) {
+        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+        await page.waitForTimeout(timeout)
+        await page.keyboard.press('PageDown');
+    }
 
-        if (options.heart_product) {
-            //check1 = await checkAtions("heart_product", product)
-            check1 = product.liked
-            if (!check1) {
-                console.log("Thả tim sản phẩm: " + options.heart_product)
-                let cookies1 = await page.cookies()
-                let refer = await page.url()
-                await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
-                // heartClick = await page.$$('.justify-center>.flex.items-center>svg')
-                // if (heartClick.length) {
-                //     await heartClick[0].click()
-                await updateAtions("heart_product", product)
-                // }
-            }
-        }
+    return true
+}
 
-        // lướt đọc sản phẩm
-        viewRandomImages = Math.floor(Math.random() * (10 - 6)) + 6;
-        for (let i = 0; i <= viewRandomImages; i++) {
-            timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-            await page.waitForTimeout(timeout)
-            await page.keyboard.press('PageDown');
-            // đến phần review thì dừng lại
-            goToRview = await page.$$('.product-rating-overview__filter')
-            if (goToRview.length) {
-                break;
-            }
-        }
+action_heart_product = async (page, product) => {
+    console.log("Thả tim sản phẩm: ")
+    let cookies1 = await page.cookies()
+    let refer = await page.url()
+    let result = await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
 
-        if (options.view_review) {
-            console.log("---- Xem review ----")
-            await viewReview(page)
-            await updateAtions("view_review", product)
-            await page.waitForTimeout(timeout)
-        }
+    return result
 
-        await page.keyboard.press('Home');
+}
 
-        if (options.add_cart) {
-            console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
-            // click chọn màu
-            let checkVariation = await chooseVariation(page, 5)
-            if (checkVariation) {
+action_add_cart = async (page) => {
+    console.log("Thêm vào giỏ hàng")
+    await page.keyboard.press('Home');
 
-                // click thêm vào giỏ hàng
-                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-                await page.waitForTimeout(timeout)
-                addToCard = await page.$$('.btn-tinted')
-                if (addToCard.length) {
-                    await addToCard[0].click()
-                    await updateAtions("add_cart", product)
+    console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
+    // click chọn màu
+    let checkVariation = await chooseVariation(page, 5)
+    if (checkVariation) {
+        // click thêm vào giỏ hàng
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitForTimeout(timeout)
+        addToCard = await page.$$('.btn-tinted')
 
-                }
-                console.log("Thêm vào giỏ hàng")
-                timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-
-                await page.waitForTimeout(timeout)
-
-            } else {
-                console.log("Không chọn được mẫu mã")
+        if (addToCard.length) {
+            try {
+                await addToCard[0].click()
+            } catch (error) {
+                console.log(error)
                 return false
             }
+
+        } else {
+            return false
         }
-    } catch (error) {
-        //console.log(error)
+
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+
+        await page.waitForTimeout(timeout)
+
+    } else {
+        console.log("Không chọn được mẫu mã")
+        return false
     }
+
 }
 
 removeCart = async (page) => {
@@ -1545,7 +1537,7 @@ runAllTime = async () => {
 
                     // Chạy lần lượt max_turn lượt tìm kiếm, tương tác từ khoá
                     for (let o = 0; o < max_turn; o++) {
-                      
+
                         try {
                             let ref = await page.url()
                             await page.goto('https://shopee.vn', {
@@ -1560,14 +1552,16 @@ runAllTime = async () => {
 
                         let productForUser                     // Mảng chứa thông tin sản phẩm, từ khoá cần tương tác
                         let check_product_exit = "Có tồn tại"
+                        let actions = []                            // Luư lịch sử thao tác
                         productForUser = keywords[o]
-                        
+
                         // Check actions can thao tac cua shop
 
                         let options = JSON.parse(productForUser.options)
                         productForUser.username = subAccount[0]
                         productForUser.password = subAccount[1]
                         productForUser.shopee_point = shopee_point
+
 
                         // if(mode == "DEV"){
                         //     productForUser.shop_id = "406672344"
@@ -1597,7 +1591,7 @@ runAllTime = async () => {
 
                                         viTriSanPhamTrang1 = index + 1
                                         url_trang_tim_kiem_san_pham = url
-                                        console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
+                                        //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
                                         console.log("viTriSanPhamTrang1: " + viTriSanPhamTrang1)
                                     }
                                 })
@@ -1637,6 +1631,7 @@ runAllTime = async () => {
                         } else {
                             await searchKeyWord(page, productForUser.product_name)
                         }
+
                         cookies22 = productForUser.cookie = await page.cookies()
                         productForUser.user_agent = userAgent
                         cookie1 = ""
@@ -1646,11 +1641,15 @@ runAllTime = async () => {
                             if (index != (cookies22.length - 1)) {
                                 cookie1 = cookie1 + "; "
                             }
-
                         })
 
                         console.log(" --- tìm kiếm ----")
-                        await updateAtions("search", productForUser)
+                        let action1 = {
+                            time: new Date(),
+                            action: "search"
+                        }
+                        actions.push(action1)
+
                         let getViTriSanPham = {
                             trang: 0,
                             vitri: 0
@@ -1670,32 +1669,13 @@ runAllTime = async () => {
 
                         maxPage = parseInt(getProductPageTotal)
                         console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
-
                         if (productForUser.check_index < 3) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
-
-                            // if (getViTriSanPham.trang == 0 && getViTriSanPham.vitri == 0) {
-                            //     console.log(" --- Không tìm thấy sản phẩm --- ")
-                            //     productForUser.trang = 0
-                            //     productForUser.vitri = 0
-
-                            //     await axios.get(shopeeUpdateSeoSanPhamDir, {
-                            //         params: {
-                            //             data: {
-                            //                 dataToServer: productForUser,
-                            //             }
-                            //         },
-                            //         timeout: 5000
-                            //     })
-                            //         .then(function (response) {
-                            //             console.log(response.data)
-                            //         })
-                            //         .catch(function (error) {
-                            //             console.log(error);
-
-                            //         })
-
-                            // }
+                        } else {
+                            getViTriSanPham = {
+                                trang: 1,
+                                vitri: 7
+                            }
                         }
 
                         if (getViTriSanPham.trang >= 1) {
@@ -1760,33 +1740,48 @@ runAllTime = async () => {
                             }
 
                             today = new Date().toLocaleString();
+                            timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                            await page.keyboard.press('PageDown');
+                            await page.waitForTimeout(timeout);
+                            timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                            await page.keyboard.press('PageDown');
+                            await page.waitForTimeout(timeout);
+                            timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                            await page.keyboard.press('PageDown');
+                            await page.waitForTimeout(timeout);
+                            timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                            await page.keyboard.press('PageDown');
+                            await page.waitForTimeout(timeout);
+                            timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                            await page.keyboard.press('PageDown');
+                            await page.waitForTimeout(timeout);
+                            timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                            await page.keyboard.press('PageDown');
+                            await page.waitForTimeout(timeout);
 
                             if (productForUser.vitri >= 1) {
-
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.keyboard.press('PageDown');
-                                await page.waitForTimeout(timeout);
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.keyboard.press('PageDown');
-                                await page.waitForTimeout(timeout);
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.keyboard.press('PageDown');
-                                await page.waitForTimeout(timeout);
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.keyboard.press('PageDown');
-                                await page.waitForTimeout(timeout);
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.keyboard.press('PageDown');
-                                await page.waitForTimeout(timeout);
-                                timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                await page.keyboard.press('PageDown');
-                                await page.waitForTimeout(timeout);
                                 let productsAll = await page.$$('[data-sqe="link"]')
-                                productsAll[productForUser.vitri - 1].click()
+                                try {
+                                    productsAll[productForUser.vitri - 1].click()
+                                } catch (error) {
+                                    try {
+                                        await page.goto(productForUser.product_link, {
+                                            waitUntil: "networkidle0",
+                                            timeout: 30000
+                                        });
+
+                                    } catch (err) {
+                                        //HERE
+                                        console.error(err);
+                                    }
+                                }
+
                             } else {
                                 try {
-
-
+                                    await page.goto(productForUser.product_link, {
+                                        waitUntil: "networkidle0",
+                                        timeout: 30000
+                                    });
 
                                 } catch (err) {
                                     //HERE
@@ -1800,21 +1795,108 @@ runAllTime = async () => {
                                     timeout: 30000
                                 });
 
-
                             } catch (error) {
                                 console.log(error.message);
                             }
 
                         }
 
-                        // Goto product link
+                        console.log(" Check product ton tai: " + check_product_exit)
+                        if (check_product_exit === "Có tồn tại") {
+                            try {
+                                let check_action
+                                timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                                await page.waitForTimeout(timeout)
 
-                        timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-                        await page.waitForTimeout(timeout)
-                        await updateAtions("view_product", productForUser)
-                        console.log("check tha tim: " + productForUser.liked)
-                        await actionShopee(page, options, productForUser)
-                        productLink = await page.url()
+                                console.log("---- Xem ảnh sản phẩm ----")
+                                await action_view_product(page)
+
+                                action1 = {
+                                    time: new Date(),
+                                    action: "view_product"
+                                }
+                                actions.push(action1)
+
+                                if (options.heart_product) {
+                                    if (productForUser.liked == false) {
+                                        console.log("---- Thả tim sản phẩm ----")
+                                        check_action = await action_heart_product(page, productForUser)
+                                        console.log(check_action)
+
+                                        action1 = {
+                                            time: new Date(),
+                                            action: "heart_product"
+                                        }
+                                        actions.push(action1)
+                                    }
+                                }
+
+                                if (options.view_review) {
+                                    console.log("---- Xem review ----")
+                                    await action_view_review(page)
+                                    action1 = {
+                                        time: new Date(),
+                                        action: "view_review"
+                                    }
+                                    actions.push(action1)
+                                }
+
+                                if (options.add_cart) {
+                                    await action_add_cart(page)
+                                    console.log("---- Bỏ giỏ ---- " + productForUser.product_id)
+
+                                    action1 = {
+                                        time: new Date(),
+                                        action: "add_cart"
+                                    }
+                                    actions.push(action1)
+                                }
+
+                                if (options.view_shop) {
+                                    let productLink = await page.url()
+                                    shopInfo_2 = await action_view_shop(page, productLink, productForUser)
+                                    productForUser.shopAvatar = shopInfo_2.avatar
+                                    productForUser.shopName = shopInfo_2.name
+                                    productForUser.shopUserName = shopInfo_2.username
+
+                                    action1 = {
+                                        time: new Date(),
+                                        action: "view_shop"
+                                    }
+                                    actions.push(action1)
+                                }
+
+                                if (options.follow_shop) {
+                                    refer = await page.url()
+                                    shopId = parseInt(productForUser.shop_id)
+                                    check1 = shopInfo_2.followed
+                                    console.log("check follow shop: " + check1)
+                                    if (check1 == false) {
+                                        check_action = await shopeeApi.followShop(cookies22, refer, shopId)
+                                        console.log(check_action)
+                                        // if (check_action.data.follow_successful) {
+                                        let action1 = {
+                                            time: new Date(),
+                                            action: "follow_shop"
+                                        }
+                                        actions.push(action1)
+                                        // }
+                                        await page.waitForTimeout(1000);
+
+                                    }
+                                }
+
+                            } catch (error) {
+                                console.log(error)
+                            }
+                            console.log(" update all")
+                            productForUser.actions = actions
+
+                            await updateAtions(productForUser)
+
+                        }
+
+                        //productLink = await page.url()
 
                         // if (options.order) {
                         //     console.log("Đặt hàng: " + options.follow_shop)
@@ -1827,39 +1909,14 @@ runAllTime = async () => {
                         //     }
                         // }
 
-                        console.log(" Check product ton tai: " + check_product_exit)
-                        if (check_product_exit === "Có tồn tại") {
-                            console.log("Option view shop: " + options.view_shop)
-                            if (options.view_shop) {
-                                let shopInfo_2 = await viewShop(page, productLink, productForUser)
-                                productForUser.shopAvatar = shopInfo_2.avatar
-                                productForUser.shopName = shopInfo_2.name
-                                productForUser.shopUserName = shopInfo_2.username
-                                await updateAtions("view_shop", productForUser)
 
-                                if (options.follow_shop) {
-                                    refer = await page.url()
-                                    shopId = parseInt(productForUser.shop_id)
-
-                                    //check1 = await checkAtions("follow_shop", productForUser)
-                                    check1 = shopInfo_2.followed
-                                    console.log("check follow shop: " + check1)
-
-                                    if (check1 == false) {
-                                        await shopeeApi.followShop(cookies22, refer, shopId)
-
-                                        await updateAtions("follow_shop", productForUser)
-                                    }
-                                }
-                            }
-                            await page.waitForTimeout(1000);
-                        }
                     }
                     await removeCart(page)
                     await page.waitForTimeout(1000);
                 }
             }
-            console.log("----------- Kết thúc tương tác ---------------"+ index)
+
+            console.log("----------- Kết thúc tương tác ---------------" + index)
 
         } catch (error) {
             console.log(error)
@@ -1870,12 +1927,12 @@ runAllTime = async () => {
             await page3.close();
         }
         await browser.close();
-       
+
         sleep(5000)
     })
-    
+
 };
-  
+
 //setInterval(check_die_slave, 600000, slavenumber);
 
 //Cron 1 phút 1 lần 
@@ -1886,8 +1943,9 @@ if (mode === "DEV") {
         await runAllTime()
         if (os_slave == "LINUX") {
             await shell.exec('rm -rf ' + profileDir);
-        } else { 
-            await shell.exec('Rmdir /S /q ' + profileDir); }
+        } else {
+            await shell.exec('Rmdir /S /q ' + profileDir);
+        }
 
 
     })();

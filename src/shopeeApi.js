@@ -60,16 +60,16 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             })
 
         checkProduct = 0
-        try{
+        try {
             if (data.items.length > 0) {
                 console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
                 let itemid3 = ""
                 itemid3 = data.items[0].item_basic.itemid
-    
+
                 //console.log("----" + itemid3)
-    
+
                 data.items.forEach((item, index) => {
-    
+
                     if (item.item_basic.itemid == productId && item.ads_keyword == null) {
                         viTriSanPham = {
                             trang: i,
@@ -78,7 +78,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
                     }
                 });
             }
-        }catch(error){
+        } catch (error) {
             viTriSanPham.vitri = "xxx"
             viTriSanPham.trang = "xxx"
             console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
@@ -97,7 +97,8 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 }
 
 followShop = async (cookies, ref, shopId) => {
-    cookie1 = ""
+    let cookie1 = ""
+    let result
     cookies.forEach((row, index) => {
         cookie1 = cookie1 + row.name + "=" + row.value
         if (index != (cookies.length - 1)) {
@@ -122,11 +123,12 @@ followShop = async (cookies, ref, shopId) => {
     axios(config)
         .then(function (response) {
             console.log(response.data);
+            result = response.data
         })
         .catch(function (error) {
             console.log(error);
         });
-
+    return result
 
 }
 function csrftoken() {
@@ -143,6 +145,7 @@ function csrftoken() {
 }
 
 thaTimSanPham = async (cookies, ref, shopId, productId) => {
+    let result
     var xtoken = csrftoken()
     cookie1 = ""
     csrftoken()
@@ -172,11 +175,12 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
     axios(config)
         .then(function (response) {
             console.log(response.data);
+            result = response.data
         })
         .catch(function (error) {
             console.log(error);
         });
-
+    return result
 
 }
 
