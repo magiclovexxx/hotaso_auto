@@ -53,8 +53,8 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
             })
             .catch(function (error) {
                 console.log(error);
-                viTriSanPham.vitri = "xxx"
-                viTriSanPham.trang = "xxx"
+                viTriSanPham.vitri = "err"
+                viTriSanPham.trang = "err"
                 console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
                 return viTriSanPham
             })
@@ -79,13 +79,13 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
                 });
             }
         } catch (error) {
-            viTriSanPham.vitri = "xxx"
-            viTriSanPham.trang = "xxx"
+            viTriSanPham.vitri = "err"
+            viTriSanPham.trang = "err"
             console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
-            return viTriSanPham
+            
         }
 
-        if (viTriSanPham.trang > 0) {
+        if (viTriSanPham.trang > 0 || viTriSanPham.vitri == "err") {
             break;
         }
 

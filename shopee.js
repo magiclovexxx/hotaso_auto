@@ -63,7 +63,7 @@ linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee
 dataShopeeDir = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
 shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
 updateHistory = apiUrl + "/check_die_slave_url"     // Check die slave
-updateActionsDir = apiUrl + "/api_user/updateActions"     // Update actions
+updateActionsDir = updateActionsUrl + "/api_user/updateActions"     // Update actions
 update_action_all = updateActionsUrl + "/api_user/update_action_all"     // Update actions
 
 updateHistory = apiServer + "/update-history"     // Update history
@@ -616,7 +616,7 @@ check_die_slave = async (slave) => {
     return result
 }
 
-updateAtions = async (product) => {
+updateHistory = async (product) => {
     dataupdate = product
 
     update = 0
@@ -638,8 +638,15 @@ updateAtions = async (product) => {
             console.log(error);
         });
 
-    await axios.post(update_action_all, {
-        data: dataupdate,
+}
+
+updateAtions = async (product9) => {
+
+    update = 0
+    //datatest = 
+
+    await axios.post(updateActionsDir, {
+        data: product9,
         timeout: 50000
     },
         {
@@ -649,7 +656,7 @@ updateAtions = async (product) => {
             }
         })
         .then(function (response) {
-            console.log(response.data);
+            console.log("Update action: " + product9.action + " = " + response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -1513,7 +1520,7 @@ runAllTime = async () => {
                         console.log(response.data);
                     })
                     .catch(function (error) {
-                        console.log("Không cập nhật được kết quả")
+                        console.log("Không cập nhật được trạng thái tài khoản")
                         console.log(error);
                     })
                     .then(function () {
@@ -1570,9 +1577,12 @@ runAllTime = async () => {
                         //     productForUser.product_id = "5983738410"
                         //     productForUser.product_link = "https://shopee.vn/Qu%E1%BA%A7n-L%C3%B3t-N%E1%BB%AF-Cotton-kh%C3%A1ng-khu%E1%BA%A9n-tho%C3%A1ng-m%C3%A1t-%C4%91%C3%ADnh-n%C6%A1-duy%C3%AAn-d%C3%A1ng-%C4%91i%E1%BB%87u-%C4%91%C3%A0-MITEVA-QL06-i.406672344.5983738410"
                         // }
-                        viTriSanPhamTrang1 = 0;
-                        url_trang_tim_kiem_san_pham = "";
-                        ;
+                        let viTriSanPhamTrang1 = 0;
+                        let url_trang_tim_kiem_san_pham = "";
+                        let getViTriSanPham = {
+                            trang: 0,
+                            vitri: 0
+                        };
                         page.removeAllListeners('response');
 
                         await page.on('response', async (resp) => {
@@ -1626,11 +1636,7 @@ runAllTime = async () => {
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
-                        if (productForUser.check_index < 3) {
-                            await searchKeyWord(page, productForUser.keyword)
-                        } else {
-                            await searchKeyWord(page, productForUser.product_name)
-                        }
+                        await searchKeyWord(page, productForUser.keyword)
 
                         cookies22 = productForUser.cookie = await page.cookies()
                         productForUser.user_agent = userAgent
@@ -1649,11 +1655,10 @@ runAllTime = async () => {
                             action: "search"
                         }
                         actions.push(action1)
+                        productForUser.action = "search"
+                        await updateAtions(productForUser)
 
-                        let getViTriSanPham = {
-                            trang: 0,
-                            vitri: 0
-                        }
+                        
                         await page.waitForTimeout(5000)
 
                         let getProductPageTotal
@@ -1669,19 +1674,19 @@ runAllTime = async () => {
 
                         maxPage = parseInt(getProductPageTotal)
                         console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
-                        if (productForUser.check_index < 3) {
-                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
-                        } else {
-                            getViTriSanPham = {
-                                trang: 1,
-                                vitri: 7
-                            }
+                        getViTriSanPham = {
+                            trang: 0,
+                            vitri: 0
                         }
+                        if(productForUser.check_index > 5){
+                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
+                        }
+                        
 
-                        if (getViTriSanPham.trang >= 1) {
+                        if (getViTriSanPham.trang >= 1 && productForUser.check_index <=5) {
                             pageUrl = getViTriSanPham.trang - 1
                             if (pageUrl >= 1) {
-                                console.log(" --- Đến trang có vị trí sản phẩm ---- ")
+                                console.log(" --- Đến trang trước trang có vị trí sản phẩm 1 trang ---- ")
                                 urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                                 urlSearch = encodeURI(urlSearch)
                                 productForUser.urlSearch = urlSearch
@@ -1703,31 +1708,31 @@ runAllTime = async () => {
 
                             for (let a = 1; a < 4; a++) {
                                 if (viTriSanPhamTrang1 != 0) {
-                                    console.log("url_trang_tim_kiem_san_pham 22: " + url_trang_tim_kiem_san_pham)
-                                    console.log("viTriSanPhamTrang1 22: " + viTriSanPhamTrang1)
+                                    //console.log("url_trang_tim_kiem_san_pham 22: " + url_trang_tim_kiem_san_pham)
+                                    //console.log("viTriSanPhamTrang1 22: " + viTriSanPhamTrang1)
 
                                     productForUser.trang = parseInt(pageUrl) + a
                                     productForUser.vitri = viTriSanPhamTrang1
                                     console.log("vi_tri_trang_san_pham 22: " + productForUser.trang)
 
                                     console.log("Update seo sản phẩm")
-                                    if (productForUser.check_index < 3) {
-                                        await axios.get(shopeeUpdateSeoSanPhamDir, {
-                                            params: {
-                                                data: {
-                                                    dataToServer: productForUser,
-                                                }
-                                            },
-                                            timeout: 5000
-                                        })
-                                            .then(function (response) {
-                                                console.log(response.data)
-                                            })
-                                            .catch(function (error) {
-                                                console.log(error);
 
-                                            })
-                                    }
+                                    await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                        params: {
+                                            data: {
+                                                dataToServer: productForUser,
+                                            }
+                                        },
+                                        timeout: 5000
+                                    })
+                                        .then(function (response) {
+                                            console.log(response.data)
+                                        })
+                                        .catch(function (error) {
+                                            console.log(error);
+
+                                        })
+
                                     break;
                                 }
 
@@ -1788,7 +1793,42 @@ runAllTime = async () => {
                                     console.error(err);
                                 }
                             }
-                        } else {
+                        }
+
+                        // nếu ko tìm thấy vị trí sp
+                        if (getViTriSanPham.trang == 0) {
+                            productForUser.trang = 0
+                            productForUser.vitri = 0
+                            await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                params: {
+                                    data: {
+                                        dataToServer: productForUser,
+                                    }
+                                },
+                                timeout: 5000
+                            })
+                                .then(function (response) {
+                                    console.log(response.data)
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+
+                                })
+
+                            try {
+                                await page.goto(productForUser.product_link, {
+                                    waitUntil: "networkidle0",
+                                    timeout: 30000
+                                });
+
+                            } catch (error) {
+                                console.log(error.message);
+                            }
+
+                        }
+
+                        // nếu lỗi khi tìm vị trí sp 
+                        if (getViTriSanPham.trang == "err" || productForUser.check_index>5) {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
@@ -1816,6 +1856,8 @@ runAllTime = async () => {
                                     action: "view_product"
                                 }
                                 actions.push(action1)
+                                productForUser.action = "view_product"
+                                await updateAtions(productForUser)
 
                                 if (options.heart_product) {
                                     if (productForUser.liked == false) {
@@ -1839,6 +1881,8 @@ runAllTime = async () => {
                                         action: "view_review"
                                     }
                                     actions.push(action1)
+                                    productForUser.action = "view_review"
+                                    await updateAtions(productForUser)
                                 }
 
                                 if (options.add_cart) {
@@ -1850,6 +1894,8 @@ runAllTime = async () => {
                                         action: "add_cart"
                                     }
                                     actions.push(action1)
+                                    productForUser.action = "add_cart"
+                                    await updateAtions(productForUser)
                                 }
 
                                 if (options.view_shop) {
@@ -1864,6 +1910,8 @@ runAllTime = async () => {
                                         action: "view_shop"
                                     }
                                     actions.push(action1)
+                                    productForUser.action = "view_shop"
+                                    await updateAtions(productForUser)
                                 }
 
                                 if (options.follow_shop) {
@@ -1880,6 +1928,8 @@ runAllTime = async () => {
                                             action: "follow_shop"
                                         }
                                         actions.push(action1)
+                                        productForUser.action = "follow_shop"
+                                        await updateAtions(productForUser)
                                         // }
                                         await page.waitForTimeout(1000);
 
@@ -1892,7 +1942,7 @@ runAllTime = async () => {
                             console.log(" update all")
                             productForUser.actions = actions
 
-                            await updateAtions(productForUser)
+                            await updateHistory(productForUser)
 
                         }
 
