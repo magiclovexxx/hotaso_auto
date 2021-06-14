@@ -1658,7 +1658,7 @@ runAllTime = async () => {
                         productForUser.action = "search"
                         await updateAtions(productForUser)
 
-                        
+
                         await page.waitForTimeout(5000)
 
                         let getProductPageTotal
@@ -1678,12 +1678,13 @@ runAllTime = async () => {
                             trang: 0,
                             vitri: 0
                         }
-                        if(productForUser.check_index > 5){
+                        if (productForUser.check_index < 5) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
                         }
-                        
 
-                        if (getViTriSanPham.trang >= 1 && productForUser.check_index <=5) {
+                        console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id)
+                        console.log(getViTriSanPham)
+                        if (getViTriSanPham.trang >= 1 && productForUser.check_index <= 5) {
                             pageUrl = getViTriSanPham.trang - 1
                             if (pageUrl >= 1) {
                                 console.log(" --- Đến trang trước trang có vị trí sản phẩm 1 trang ---- ")
@@ -1796,7 +1797,7 @@ runAllTime = async () => {
                         }
 
                         // nếu ko tìm thấy vị trí sp
-                        if (getViTriSanPham.trang == 0) {
+                        if (getViTriSanPham.trang == 0 && productForUser.check_index <5) {
                             productForUser.trang = 0
                             productForUser.vitri = 0
                             await axios.get(shopeeUpdateSeoSanPhamDir, {
@@ -1828,7 +1829,7 @@ runAllTime = async () => {
                         }
 
                         // nếu lỗi khi tìm vị trí sp 
-                        if (getViTriSanPham.trang == "err" || productForUser.check_index>5) {
+                        if (getViTriSanPham.trang == "err" || productForUser.check_index > 5) {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",

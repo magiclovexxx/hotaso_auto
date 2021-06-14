@@ -42,7 +42,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
         }
         let datatest
-        console.log(search_api)
+        //console.log(search_api)
         var data
 
         await axios.get(search_api, {
@@ -62,7 +62,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
         checkProduct = 0
         try {
             if (data.items.length > 0) {
-                console.log("Trang: " + i + "   Tong san pham tren trang: " + data.items.length)
+                console.log("Trang: " + i + "  --  " + productId + "  -- Tong san pham tren trang: " + data.items.length)
                 let itemid3 = ""
                 itemid3 = data.items[0].item_basic.itemid
 
