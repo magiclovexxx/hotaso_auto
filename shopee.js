@@ -56,7 +56,6 @@ if (mode === "DEV") {
     maxTab = 5
 }
 
-
 linkShopeeUpdate = apiUrl + "/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
 linkShopeeAccountUpdate = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
 linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
@@ -1430,7 +1429,7 @@ runAllTime = async () => {
         });
         if (slaveInfo.network == "proxy") {
             let proxy_pass = proxy1.proxy_password.split("\r")[0]
-            console.log(" proxxy ip: " + proxy1.proxy_ip + " proxxy pass: " + proxy1.proxy_username + " ---" + proxy_pass)
+            console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port +":" + proxy1.proxy_username + ":" + proxy_pass)
             await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
         }
         try {
@@ -1638,7 +1637,8 @@ runAllTime = async () => {
 
                         await searchKeyWord(page, productForUser.keyword)
 
-                        cookies22 = productForUser.cookie = await page.cookies()
+                        cookies22 = await page.cookies()
+                        productForUser.cookie =cookies22
                         productForUser.user_agent = userAgent
                         cookie1 = ""
 
@@ -1657,7 +1657,7 @@ runAllTime = async () => {
                         actions.push(action1)
                         productForUser.action = "search"
                         await updateAtions(productForUser)
-
+                        productForUser.cookie = ""
 
                         await page.waitForTimeout(5000)
 
@@ -1717,7 +1717,7 @@ runAllTime = async () => {
                                     console.log("vi_tri_trang_san_pham 22: " + productForUser.trang)
 
                                     console.log("Update seo sản phẩm")
-
+                                    productForUser.cookie=""
                                     await axios.get(shopeeUpdateSeoSanPhamDir, {
                                         params: {
                                             data: {
@@ -1800,6 +1800,7 @@ runAllTime = async () => {
                         if (getViTriSanPham.trang == 0 && productForUser.check_index <5) {
                             productForUser.trang = 0
                             productForUser.vitri = 0
+                            productForUser.cookie=""
                             await axios.get(shopeeUpdateSeoSanPhamDir, {
                                 params: {
                                     data: {
