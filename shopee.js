@@ -64,9 +64,12 @@ shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // L
 updateHistory = apiUrl + "/check_die_slave_url"     // Check die slave
 updateActionsDir = updateActionsUrl + "/api_user/updateActions"     // Update actions
 update_action_all = updateActionsUrl + "/api_user/update_action_all"     // Update actions
+//save_history = updateActionsUrl + "/api_user/save_history"     // Update actions
 
 updateHistory = apiServer + "/update-history"     // Update history
 updateHistoryAll = apiServer + "/update-history-all"     // Update history
+saveHistory = apiServer + "/save-history"     // Update history
+
 //checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
 checkActionsDir = apiServer + "/check-action"     // check actions
 getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
@@ -621,7 +624,7 @@ updateHistory = async (product) => {
     update = 0
     //datatest = 
 
-    await axios.get(updateHistoryAll, {
+    await axios.get(saveHistory, {
         data: dataupdate,
         timeout: 50000
     },
@@ -639,7 +642,7 @@ updateHistory = async (product) => {
 
 }
 
-updateAtions = async (product9) => {
+updateActions = async (product9) => {
 
     update = 0
     //datatest = 
@@ -656,6 +659,22 @@ updateAtions = async (product9) => {
         })
         .then(function (response) {
             console.log("Update action: " + product9.action + " = " + response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    await axios.get(saveHistory, {
+        data: product9,
+        timeout: 50000
+    },
+        {
+            headers: {
+                Connection: 'keep-alive',
+            }
+        })
+        .then(function (response) {
+            console.log(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -1429,7 +1448,7 @@ runAllTime = async () => {
         });
         if (slaveInfo.network == "proxy") {
             let proxy_pass = proxy1.proxy_password.split("\r")[0]
-            console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port +":" + proxy1.proxy_username + ":" + proxy_pass)
+            console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
             await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
         }
         try {
@@ -1638,7 +1657,7 @@ runAllTime = async () => {
                         await searchKeyWord(page, productForUser.keyword)
 
                         cookies22 = await page.cookies()
-                        productForUser.cookie =cookies22
+                        productForUser.cookie = cookies22
                         productForUser.user_agent = userAgent
                         cookie1 = ""
 
@@ -1656,7 +1675,7 @@ runAllTime = async () => {
                         }
                         actions.push(action1)
                         productForUser.action = "search"
-                        await updateAtions(productForUser)
+                        await updateActions(productForUser)
                         productForUser.cookie = ""
 
                         await page.waitForTimeout(5000)
@@ -1717,7 +1736,7 @@ runAllTime = async () => {
                                     console.log("vi_tri_trang_san_pham 22: " + productForUser.trang)
 
                                     console.log("Update seo sản phẩm")
-                                    productForUser.cookie=""
+                                    productForUser.cookie = ""
                                     await axios.get(shopeeUpdateSeoSanPhamDir, {
                                         params: {
                                             data: {
@@ -1797,10 +1816,10 @@ runAllTime = async () => {
                         }
 
                         // nếu ko tìm thấy vị trí sp
-                        if (getViTriSanPham.trang == 0 && productForUser.check_index <5) {
+                        if (getViTriSanPham.trang == 0 && productForUser.check_index < 5) {
                             productForUser.trang = 0
                             productForUser.vitri = 0
-                            productForUser.cookie=""
+                            productForUser.cookie = ""
                             await axios.get(shopeeUpdateSeoSanPhamDir, {
                                 params: {
                                     data: {
@@ -1859,7 +1878,7 @@ runAllTime = async () => {
                                 }
                                 actions.push(action1)
                                 productForUser.action = "view_product"
-                                await updateAtions(productForUser)
+                                await updateActions(productForUser)
 
                                 if (options.heart_product) {
                                     if (productForUser.liked == false) {
@@ -1884,7 +1903,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "view_review"
-                                    await updateAtions(productForUser)
+                                    await updateActions(productForUser)
                                 }
 
                                 if (options.add_cart) {
@@ -1897,7 +1916,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "add_cart"
-                                    await updateAtions(productForUser)
+                                    await updateActions(productForUser)
                                 }
 
                                 if (options.view_shop) {
@@ -1913,7 +1932,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "view_shop"
-                                    await updateAtions(productForUser)
+                                    await updateActions(productForUser)
                                 }
 
                                 if (options.follow_shop) {
@@ -1931,7 +1950,7 @@ runAllTime = async () => {
                                         }
                                         actions.push(action1)
                                         productForUser.action = "follow_shop"
-                                        await updateAtions(productForUser)
+                                        await updateActions(productForUser)
                                         // }
                                         await page.waitForTimeout(1000);
 
@@ -1941,10 +1960,10 @@ runAllTime = async () => {
                             } catch (error) {
                                 console.log(error)
                             }
-                            console.log(" update all")
+                            //console.log(" update all")
                             productForUser.actions = actions
 
-                            await updateHistory(productForUser)
+                            // await updateHistory(productForUser)
 
                         }
 
