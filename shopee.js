@@ -1242,6 +1242,105 @@ function sleep(ms) {
 }
 
 
+gen_browser = async (option) =>{
+    let profile_dir = option.profile_dir
+    let proxy1 = option.proxy
+    let headless_mode = option.headless_mode
+
+    console.log("Profile chrome link: " + profile_dir)
+
+        let param = [
+            `--user-data-dir=${profile_dir}`,      // load profile chromium
+            '--disable-gpu',
+            '--no-sandbox',
+            '--lang=en-US',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+        ]
+       
+        if (slaveInfo.network == "proxy") {
+            //'--proxy-server=103.90.230.170:9043'
+            proxy1 = dataShopee.proxy
+            let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
+            param.push(proxy_for_slave)
+            param.push('--ignore-certificate-errors')
+        }
+
+        const browser = await puppeteer.launch({
+            //executablePath: chromiumDir,
+            headless: headless_mode,
+            devtools: false,
+            args: param
+        });
+        
+        return browser
+}
+
+gen_page = async (browser, option) => {
+
+    const page = (await browser.pages())[0];
+        
+        let user_agent1 = option.user_agent
+        let proxy1 = option.proxy1
+        let cookie1 = option.cookie
+        let network = option.network
+
+        await page.setUserAgent(user_agent1)
+        console.log(user_agent1)
+
+        // Random kích cỡ màn hình
+        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+        height = Math.floor(Math.random() * (800 - 600)) + 600;;
+
+        await page.setViewport({
+            width: 1280,
+            height: 800
+        });
+
+        if (network == "proxy") {
+            let proxy_pass = proxy1.proxy_password.split("\r")[0]
+            console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
+            await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
+        }
+
+        try {
+            if (cookie1.length) {
+                let cookie111 = JSON.parse(cookie1)
+                //console.log(cookie111)
+                cookie111.forEach(async (item) => {
+                    await page.setCookie(item);
+                })
+            }
+        } catch (e) {
+            console.log(" ---- Lỗi set coookie ----")
+        }
+
+        await page.setRequestInterception(true);
+
+        if (disable_css == 1 || disable_image == 1) {
+            await page.setRequestInterception(true);
+
+            // --- Chặn load css --- /
+            if (disable_image == 1) {
+                page.on('request', (req) => {
+                    if (req.resourceType() === 'image') {
+                        req.abort();
+                    } else {
+                        req.continue();
+                    }
+
+                });
+            }
+        }
+        return page
+}
+
 runAllTime = async () => {
     slaveInfo = []
     getDataShopee = []
@@ -1323,19 +1422,21 @@ runAllTime = async () => {
         console.log("Cập nhật code");
         // Update version mới vào file version.txt
         //fs.writeFileSync('version.txt', newVersion)
-        if (mode !== "DEV" && os_slave != "LINUX") {
-            const myShellScript = exec('update.sh /');
-            myShellScript.stdout.on('data', (data) => {
-                // do whatever you want here with data
-            });
-            myShellScript.stderr.on('data', (data) => {
-                console.error(data);
-            });
-        } else {
-            await shell.exec('git stash; git pull origin master');
+        if (mode !== "DEV") {
+            if (os_slave != "LINUX") {
+                const myShellScript = exec('update.sh /');
+                myShellScript.stdout.on('data', (data) => {
+                    // do whatever you want here with data
+                });
+                myShellScript.stderr.on('data', (data) => {
+                    console.error(data);
+                });
+            } else {
+                shell.exec('git stash; git pull origin master');
+            }
+        
+            return false
         }
-
-        return false
     }
 
     await sleep(5000)
@@ -1388,104 +1489,34 @@ runAllTime = async () => {
         let subAccount = []
         let acc = data_for_tab.sub_account
         let keywords = data_for_tab.product_for_sub_account
+        let user_agent
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
         subAccount[0] = acc.username
         subAccount[1] = acc.password.split("\r")[0]
 
-        let profileChrome = profileDir + subAccount[0]
-        console.log("Profile chrome link: " + profileChrome)
-
-        let param = [
-            `--user-data-dir=${profileChrome}`,      // load profile chromium
-            '--disable-gpu',
-            '--no-sandbox',
-            '--lang=en-US',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-        ]
-        let proxy1
-        if (slaveInfo.network == "proxy") {
-            //'--proxy-server=103.90.230.170:9043'
-            proxy1 = dataShopee.proxy
-            let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
-            param.push(proxy_for_slave)
-            param.push('--ignore-certificate-errors')
-        }
-
-        const browser = await puppeteer.launch({
-            //executablePath: chromiumDir,
-            headless: headless_mode,
-            devtools: false,
-            args: param
-        });
-
-        const page = (await browser.pages())[0];
         if (!acc.user_agent) {
-            userAgent = randomUseragent.getRandom(function (ua) {
+            user_agent = randomUseragent.getRandom(function (ua) {
 
                 return (ua.osName === 'Windows' && ua.osVersion === "10");
             });
         } else {
-            userAgent = acc.user_agent
+            user_agent = acc.user_agent
         }
 
-        await page.setUserAgent(userAgent)
-        console.log(userAgent)
-        // Random kích cỡ màn hình
-        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-        height = Math.floor(Math.random() * (800 - 600)) + 600;;
-
-        await page.setViewport({
-            width: 1280,
-            height: 800
-        });
-        if (slaveInfo.network == "proxy") {
-            let proxy_pass = proxy1.proxy_password.split("\r")[0]
-            console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
-            await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
-        }
-        try {
-            if (acc.cookie.length) {
-                let cookie111 = JSON.parse(acc.cookie)
-                //console.log(cookie111)
-                cookie111.forEach(async (item) => {
-                    await page.setCookie(item);
-                })
-            }
-        } catch (e) {
-            console.log(" ---- Lỗi set coookie ----")
+        let profileChrome = profileDir + subAccount[0]
+      
+        let option1 = {
+            user_agent: user_agent,
+            proxy: dataShopee.proxy,
+            profile_dir: profileChrome,
+            cookie: acc.cookie,
+            network: acc.network,
+            headless_mode: headless_mode
         }
 
-        await page.setRequestInterception(true);
-
-        if (disable_css == 1 || disable_image == 1) {
-            await page.setRequestInterception(true);
-
-            // --- Chặn load css --- /
-            if (disable_image == 1) {
-                page.on('request', (req) => {
-                    if (req.resourceType() === 'image') {
-                        req.abort();
-                    } else {
-                        req.continue();
-                    }
-
-                    // if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-                    //     req.abort();
-                    // } else {
-                    //     req.continue();
-                    // }
-
-                });
-            }
-        }
+        let browser = await gen_browser(option1)
+        let page = await gen_page(browser,option1)
 
         if ((index == 0) && (mode !== "DEV")) {
             // đổi ip
@@ -1550,14 +1581,11 @@ runAllTime = async () => {
                 if (clickSanPham == 1 && slaveInfo.type == "seo_top") {
                     console.log("----- Click theo sản phẩm -----")
 
-                    // Server trả về dữ liệu sắp xếp theo số lượng lượt tìm kiếm từ nhỏ đến lớn
-                    // server check tài khoản còn tiền để sử dụng không
-
-                    // Chọn 1 từ khoá có số lượng tìm kiếm thấp nhất
-                    // for await (let pro of keywords) {
-                    // keywords.forEach(async (pro) => {
                     if (!max_turn) {
                         max_turn = keywords.length
+                    }
+                    if (mode == "DEV" ) {
+                        max_turn = 1
                     }
 
                     // Chạy lần lượt max_turn lượt tìm kiếm, tương tác từ khoá
@@ -1658,7 +1686,7 @@ runAllTime = async () => {
 
                         cookies22 = await page.cookies()
                         productForUser.cookie = cookies22
-                        productForUser.user_agent = userAgent
+                        productForUser.user_agent = user_agent
                         cookie1 = ""
 
                         cookies22.forEach((row, index) => {
@@ -1996,13 +2024,9 @@ runAllTime = async () => {
             console.log(error)
 
         }
-        let pages2 = await browser.pages();
-        for (const page3 of pages2) {
-            await page3.close();
-        }
+       
         await browser.close();
 
-        sleep(5000)
     })
 
 };
@@ -2014,24 +2038,31 @@ runAllTime = async () => {
 //(async () => {
 if (mode === "DEV") {
     (async () => {
-        await runAllTime()
-        await sleep(5000)
+
         if (os_slave == "LINUX") {
-            await shell.exec('rm -rf ' + profileDir);
+            shell.exec('rm -rf ' + profileDir);
         } else {
-            await shell.exec('Rmdir /S /q ' + profileDir);
+            shell.exec('Rmdir /S /q ' + profileDir);
         }
+        await sleep(5000)
 
-
+        await runAllTime()
+      
     })();
 } else {
 
     (async () => {
-        await runAllTime()
-        await sleep(5000)
+
         if (os_slave == "LINUX") {
-            await shell.exec('rm -rf ' + profileDir);
-        } else { await shell.exec('Rmdir /S /q ' + profileDir); }
+            shell.exec('rm -rf ' + profileDir);
+        } else {
+            shell.exec('Rmdir /S /q ' + profileDir);
+        }
+        await sleep(5000)
+
+        await runAllTime()
+       
+      
     })();
 }
 
