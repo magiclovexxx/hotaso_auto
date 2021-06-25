@@ -280,7 +280,7 @@ proxy3g = async () => {
 
 
 test_update_all = async () => {
-    let proxy 
+    let proxy
     productForUser = {
         "id": "10659", "uid": "441", "username": "damhoi470", "options": '{\\"add_cart\\":1,\\"order\\":1,\\"view_shop\\":1,\\"view_review\\":1,\\"heart_product\\":1,\\"follow_shop\\":1}', "product_link": "https://shopee.vn/G%E1%BA%B7m-N%C6%B0%E1%BB%9Bu-Cho-B%C3%A9-H%C3%ACnh-H%C6%B0%C6%A1u-Kh%E1%BB%89-Chu%E1%BB%91i-H%C3%A0ng-H%C3%A0n-Qu%E1%BB%91c-H%C3%A0ng-Ch%C3%ADnh-H%C3%A3ng-Check-QR-Gi%E1%BA%A3m-%C4%90au-Ng%E1%BB%A9a-L%E1%BB%A3i-Khi-M%E1%BB%8Dc-R%C4%83ng-i.38183220.9149824698", "product_name": "Gặm Nướu Cho Bé Hình Hươu, Khỉ, Chuối, Hàng Hàn Quốc, Hàng Chính Hãng, Check QR, Giảm Đau, Ngứa Lợi Khi Mọc Răng", "product_id": "9149824698", "product_image": "bfa79d26e30235f6b1617a0f316be7c9", "product_sku": "9149824698", "shop_id": "38183220", "keyword": "gặm nướu ange", "check_index": "3", "total_product_search": "164", "total_product_order": "0", "total_product_view_product": "155", "total_product_add_cart": "124", "total_product_view_review": "135", "total_product_view_shop": "158", "total_product_heart_product": "122", "total_product_follow_shop": "112", "product_point": "3525", "password": "Mrnqoxeftjr", "shopee_point": { "heart_product": "15", "follow_shop": "30", "heart_shop": "5", "add_cart": "30", "view_shop": "15", "order": "50", "view_review": "15", "view_product": "15", "search": "15" }, "slave": "2029", "ip": "27.72.105.18", "cookie": [{ "name": "_gali", "value": "modal", "domain": ".shopee.vn", "path": "/", "expires": 1623521393, "size": 10, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_ga", "value": "GA1.2.861813194.1622890106", "domain": ".shopee.vn", "path": "/", "expires": 1686593359, "size": 29, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_hjid", "value": "94a9ebdf-00a7-43f1-8e4c-6ac054940d20", "domain": ".shopee.vn", "path": "/", "expires": 1654426107, "size": 41, "httpOnly": false, "secure": false, "session": false, "sameSite": "Lax", "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_T_ID", "value": '\\"+qzfvKEO1GQkdyDurjxGWjlyZO7cRBXNv05urobypPkxZERU4Caz1LMvDAyYXhPXLg+JReeD2ItsDrWmcHhc7i4LHek6KoDcRFxv8UJcUsA=\\"', "domain": "shopee.vn", "path": "/", "expires": 2254241356.185936, "size": 118, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_R_T_ID", "value": '\\"+qzfvKEO1GQkdyDurjxGWjlyZO7cRBXNv05urobypPkxZERU4Caz1LMvDAyYXhPXLg+JReeD2ItsDrWmcHhc7i4LHek6KoDcRFxv8UJcUsA=\\"', "domain": ".shopee.vn", "path": "/", "expires": 2254241356.185661, "size": 120, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "welcomePkgShown", "value": "true", "domain": "shopee.vn", "path": "/", "expires": -1, "size": 19, "httpOnly": false, "secure": false, "session": true, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_R_T_IV", "value": '\\"lvFf1BsBVYuQETm0B2juZg==\\"', "domain": ".shopee.vn", "path": "/", "expires": 2254241356.185868, "size": 36, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_SI", "value": "mall.aaQzGt3iXZuwgpoTSgn4VcggCjL1xlcE", "domain": ".shopee.vn", "path": "/", "expires": 1623607756.536037, "size": 43, "httpOnly": true, "secure": true, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_F", "value": "RjcPzvwrjANgRqen5OAjzOQwjYIovsTR", "domain": ".shopee.vn", "path": "/", "expires": 2253610104.078, "size": 37, "httpOnly": false, "secure": true, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_gid", "value": "GA1.2.1658033375.1623521315", "domain": ".shopee.vn", "path": "/", "expires": 1623607759, "size": 31, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "REC_T_ID", "value": "8d04bd44-c5eb-11eb-a8c4-b49691a1005a", "domain": "shopee.vn", "path": "/", "expires": 2253610103.8947, "size": 44, "httpOnly": true, "secure": true, "session": false, "sameSite": "None", "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "G_ENABLED_IDPS", "value": "google", "domain": ".shopee.vn", "path": "/", "expires": 253402257600, "size": 20, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "cto_bundle", "value": "ve8b5V9MQ1NiSEViWGtxdzJVUjV4V2pDcGpNb0pYZ1BHbWFJJTJCMW5pRWM3NUtkOE02NDRtblJaMU8wM3hybHM5MkxHSk4lMkI3VkdRRDJ1elVVRFB4JTJGUmxrdk4ydjdXNGNnNk9MWnhvSkxKcXJVdzYwOTNYWkxyb3N1QVRWNm5oSkF0MUVONkpoZmw5U0NqdFBMUFdqeGpwYmU2bUElM0QlM0Q", "domain": ".shopee.vn", "path": "/", "expires": 1657278067, "size": 233, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_U", "value": "449038969", "domain": ".shopee.vn", "path": "/", "expires": 2254241360.869035, "size": 14, "httpOnly": false, "secure": true, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_CLIENTID", "value": "UmpjUHp2d3JqQU5notthsttcaouljhig", "domain": ".shopee.vn", "path": "/", "expires": 2253610152.5015, "size": 44, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "AMP_TOKEN", "value": "%24NOT_FOUND", "domain": ".shopee.vn", "path": "/", "expires": 1623524914, "size": 21, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_gcl_au", "value": "1.1.996322038.1622890102", "domain": ".shopee.vn", "path": "/", "expires": 1630666101, "size": 31, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_IA", "value": "-1", "domain": "shopee.vn", "path": "/", "expires": 2254241338.587285, "size": 8, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_ga_M32T05RVZT", "value": "GS1.1.1623521313.8.1.1623521359.14", "domain": ".shopee.vn", "path": "/", "expires": 1686593359, "size": 48, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "csrftoken", "value": "hdMSfMKpqbO5DPEooxOZQpVD8wNDYkJb", "domain": "shopee.vn", "path": "/", "expires": -1, "size": 41, "httpOnly": false, "secure": false, "session": true, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_EC", "value": "T9gPLvHiRFJX1a2jq8GqxQzJs8dWEr8fwKGDUnZ/PCwzBV7nZygnr4f29SoFJeAcy9eUC/WO7Rkro/MNZp6yyjWRbJLa0MFb8TEK3+YJpsglkqEx+m/dCOez7AgmewYMNP4uULhf6FXUy+XbxKnAvLEjvmELZcHFeUtF1YAV9ds=", "domain": ".shopee.vn", "path": "/", "expires": 2254241360.868834, "size": 178, "httpOnly": true, "secure": true, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_fbp", "value": "fb.1.1622890103617.407024356", "domain": ".shopee.vn", "path": "/", "expires": 1631297382, "size": 32, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "_hjAbsoluteSessionInProgress", "value": "0", "domain": ".shopee.vn", "path": "/", "expires": 1623523160, "size": 29, "httpOnly": false, "secure": false, "session": false, "sameSite": "Lax", "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "REC_T_ID", "value": "8d2065ee-c5eb-11eb-8d14-2cea7f904aca", "domain": ".shopee.vn", "path": "/", "expires": 2253610104.2893, "size": 44, "httpOnly": true, "secure": true, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_T_IV", "value": '\\"lvFf1BsBVYuQETm0B2juZg==\\"', "domain": "shopee.vn", "path": "/", "expires": 2254241356.185802, "size": 34, "httpOnly": false, "secure": false, "session": false, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }, { "name": "SPC_PC_HYBRID_ID", "value": "81", "domain": "shopee.vn", "path": "/", "expires": -1, "size": 18, "httpOnly": false, "secure": false, "session": true, "sameParty": false, "sourceScheme": "Secure", "sourcePort": 443 }], "user_agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240", "action": "follow_shop", "liked": true, "shopAvatar": "8b462bb4b358601d14845ac8593e491f", "shopName": "KIDS-SHOP Tổng kho hàng MẸ &BÉ", "shopUserName": "tit201611"
     }
@@ -296,12 +296,12 @@ test_update_all = async () => {
         })
         .then(function (response) {
             //console.log(response.data);
-         proxy = response.data
+            proxy = response.data
         })
         .catch(function (error) {
             console.log(error);
         });
-        return proxy
+    return proxy
 }
 
 pptr = async () => {
@@ -312,25 +312,63 @@ pptr = async () => {
     let proxy_for_slave = "--proxy-server=" + proxy1
     param.push(proxy_for_slave)
     param.push('--ignore-certificate-errors')
-    data = ["1","2","3"]
-    data.forEach(async()=>{
-    console.log(param)
-    const browser = await puppeteer.launch({
-        //executablePath: chromiumDir,
-        headless: false,
-        devtools: false,
-        args: param
-    });
+    data = ["1", "2", "3"]
+    data.forEach(async () => {
+        console.log(param)
+        const browser = await puppeteer.launch({
+            //executablePath: chromiumDir,
+            headless: false,
+            devtools: false,
+            args: param
+        });
 
-    const page = await browser.newPage();
-    await page.authenticate({ username: "admin", password: "123456@" });
-    await page.goto('https://shopee.vn');
-    //await page.screenshot({ path: 'example.png' });
-    
-    await page.waitForTimeout(999999)
-    await browser.close();
-})
+        const page = await browser.newPage();
+        await page.authenticate({ username: "admin", password: "123456@" });
+        await page.goto('https://shopee.vn');
+        //await page.screenshot({ path: 'example.png' });
 
+        await page.waitForTimeout(999999)
+        await browser.close();
+    })
+
+
+}
+
+
+thaTimSanPham = async (cookies, ref, shopId, productId) => {
+    let result
+    var xtoken = csrftoken()
+    //cookie1 = 'SPC_F=ftkXrd3LRV3FoRfZ5kcoHwSY5d78Xm6L; REC_T_ID=81ad8fec-79c1-11ea-81e4-20283e97f834; SPC_SI=mall.1xkmF9uXdEws4WyH7FPyXoHeIY0TbjJt; SPC_PC_HYBRID_ID=66; _gcl_au=1.1.1464149860.1624597291; _med=affiliates; csrftoken=jLBs3EDU2Lh54KCi8IjFoizbJBAnutT6; SPC_SSN=o; SPC_WSS=o; _fbp=fb.1.1624597292289.991604540; SL_wptGlobTipTmp=1; SL_GWPT_Show_Hide_tmp=1; welcomePkgShown=true; UYOMAPJWEMDGJ=; SPC_IVS=; _hjid=4763d07d-dc65-4599-8c64-77cb6add498d; _hjFirstSeen=1; AMP_TOKEN=%24NOT_FOUND; _gid=GA1.2.1633265567.1624597296; _dc_gtm_UA-61914164-6=1; _hjAbsoluteSessionInProgress=1; G_ENABLED_IDPS=google; SC_DFP=vhcQV1Kja5h6PutoG1wpm1cIkzqdfXRZ; SPC_U=59835481; SPC_CLIENTID=ZnRrWHJkM0xSVjNGlnxugxgagofdvdin; SPC_SC_UD=59835481; SPC_STK="aBhqJOuxdqRxrOtEg3OcFnFw8HVWMvbU3tSIZMc0hSUlEk5ACoimwPYdnZpOiOtFT4ArO64NBGtx7jP56EWXzp1Mth/v99GxgYxQ2deUuHbQ1C1MaXL19P9v1wL83BSQpvP5kNXDrRjKVBk6X4hMIuqqM9huOUQrI9LwKh0v49Y="; SPC_SC_TK=c7bf72b5582e63b682aab455718cd8eb; _ga=GA1.2.387551122.1586368264; SPC_EC=yb/Jm+hS3Gp+U5fALu+JiJuCm17uzZ43jUub19grMvPJupOkhYn0RMhH4GUFi7dpIYjpwB6Jv1AhHVOCc7kjOK4maI4eSawFb6MbjcQKDYBqTl2uYZLiVm3Ffzz21a0qKPSXpk0nsMvCmxZfDjV95g==; SPC_IA=1; cto_bundle=BeLR519xUk0wWEZpSzRNMjZBa3JqSGRzWnIlMkJLdHpIZUM1a251akVDRDFiMWNyazdQSllrUmwzRVRpd3glMkZPUGpyYU5FZXFvSWhIcnRmU3YzWW92azVrdk5hcGNReUJTNjBjTTNZbzVMSmp1c1FrZFlyRzJraVNQREo4SFglMkZLd1A1Mkh3JTJCTWswN0lNanhINTczbExoTElpd0l5ZyUzRCUzRA; _ga_M32T05RVZT=GS1.1.1624597294.1.1.1624597344.10; SPC_R_T_ID="1Uev1oQRBrfYKk4ZoEBd3SSWgCB874O+K6jOjSOY/rnBoBTL5zozBuRXQmtHICtFolyh9dFS/GLdvVayh+yQ3cfq1ukXZccgUV7jR28/1no="; SPC_T_IV="PoVo2NceWhk9z+OxGtb/Kw=="; SPC_R_T_IV="PoVo2NceWhk9z+OxGtb/Kw=="; SPC_T_ID="1Uev1oQRBrfYKk4ZoEBd3SSWgCB874O+K6jOjSOY/rnBoBTL5zozBuRXQmtHICtFolyh9dFS/GLdvVayh+yQ3cfq1ukXZccgUV7jR28/1no="'
+    //
+    cookie1 = 'SPC_R_T_ID="nBaiaUu8eMDg3Xroo9sJ9DvzMFd25IUUFzQlGTntDjcLQIUhYmX2MoR6MvQuIbcLgwGNnw4cYglXD5tHp9Ew4AAIEasgqPQD1CzoX9UPgQ4=";_ga=GA1.2.1806768855.1622718984;G_ENABLED_IDPS=google;REC_T_ID=1fce48a6-c45d-11eb-8968-1409dcf02bb6;SPC_T_ID="nBaiaUu8eMDg3Xroo9sJ9DvzMFd25IUUFzQlGTntDjcLQIUhYmX2MoR6MvQuIbcLgwGNnw4cYglXD5tHp9Ew4AAIEasgqPQD1CzoX9UPgQ4=";_hjid=3256fdd1-69f1-411c-99ec-5c0af7c03808;SPC_R_T_IV="BSy5lh440U/fplWy0tYF7g==";welcomePkgShown=true;SPC_EC=woynHPf3wXJtrTIuKjVn0NRd4uNK78FoDXqo+2jtFRG+tPdk6D6NrZHGewTsIEuI2pC43PwwDGsUc3LLyzzAt6BaVrXEJSkd8L/Y7X4/lZleTOh5yFKcQkdPkAJ41MjMtPB5d4VZHgn45425PTy4V4wUu3JLSPh50MjwmDXznOw=;SPC_IA=-1;_ga_M32T05RVZT=GS1.1.1624610993.18.1.1624614348.60;csrftoken=eEwHjmsrBomAGBUQqGPHGQObOEcYYUOT;_fbp=fb.1.1622718982660.141653271;_gid=GA1.2.939383362.1624598461;SPC_F=UjkNe9l9bo041B6lcvJmaEDMQXHr8dwF;SPC_CLIENTID=VWprTmU5bDlibzA0qtzssldjjixdxcvj;SPC_U=402722075;_gcl_au=1.1.1303912263.1622718981;AMP_TOKEN=%24NOT_FOUND;REC_T_ID=1fcd7290-c45d-11eb-990b-1409dcb3ab07;_hjAbsoluteSessionInProgress=0;SPC_SI=mall.tdwzKTmnmBlcR36cYZFJYx95r9U6zowG;SPC_T_IV="BSy5lh440U/fplWy0tYF7g==";SPC_PC_HYBRID_ID=49;SPC_SSN=o;SPC_WSS=o;'
+    productId = 7161594419
+    shopId = 102761415
+    ref = 'https://shopee.vn/V%C3%AD-n%E1%BB%AF-%C4%91%E1%BA%B9p-gi%C3%A1-r%E1%BA%BB-c%E1%BA%A7m-tay-d%C3%A1ng-d%C3%A0i-MADLEY-nhi%E1%BB%81u-ng%C4%83n-cao-c%E1%BA%A5p-%C4%91%E1%BA%B9p-gi%C3%A1-r%E1%BA%BB-VD359-i.19608398.6544978139'
+    //var data = JSON.stringify({ "shopid": shopId });
+    url = "https://shopee.vn/api/v4/pages/like_items"
+    data= {"shop_item_ids":[{"shop_id":shopId,"item_id":productId}]}
+
+    var config = {
+        method: 'post',
+        url: url,
+        timeout: 5000,
+        headers: {
+           // 'x-csrftoken': xtoken,
+        //    'referer': ref,
+            'cookie': cookie1
+        },
+        data: data
+    };
+
+    await axios(config)
+        .then(function (response) {
+            console.log(response.data);
+            result = response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    return result
 
 }
 
@@ -339,10 +377,11 @@ pptr = async () => {
     day = new Date
     day = Date.parse(day)
     console.log(day)
+    await thaTimSanPham()
     //await test_update_all()
-    proxy = await proxy3g()
-    console.log(proxy)
-    await pptr()
+    // proxy = await proxy3g()
+    // console.log(proxy)
+    // await pptr()
     //await test_post()
     //await disconnect()
     //await getKeyword()

@@ -120,7 +120,7 @@ followShop = async (cookies, ref, shopId) => {
         data: data
     };
 
-    axios(config)
+    await axios(config)
         .then(function (response) {
             console.log(response.data);
             result = response.data
@@ -131,6 +131,7 @@ followShop = async (cookies, ref, shopId) => {
     return result
 
 }
+
 function csrftoken() {
     karakter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     PanjangKarakter = karakter.length;
@@ -147,8 +148,8 @@ function csrftoken() {
 thaTimSanPham = async (cookies, ref, shopId, productId) => {
     let result
     var xtoken = csrftoken()
-    cookie1 = ""
-    csrftoken()
+    let cookie1 = ""
+
     cookies.forEach(row => {
         if (row.name == "csrftoken") {
             cookie1 = cookie1 + row.name + "=" + xtoken + ";"
@@ -157,9 +158,15 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
         }
 
     })
+    // console.log (cookie1) 
+    // console.log ( "--" + shopId) 
+    // console.log ("--" + productId) 
+    // console.log ("--" + ref) 
 
     //var data = JSON.stringify({ "shopid": shopId });
-    url = "https://shopee.vn/api/v0/buyer/like/shop/" + shopId + "/item/" + productId
+    let url = "https://shopee.vn/api/v4/pages/like_items"
+    let data= {"shop_item_ids":[{"shop_id":parseInt(shopId),"item_id":parseInt(productId)}]}
+    //data = JSON.stringify(data);
     var config = {
         method: 'post',
         url: url,
@@ -169,10 +176,10 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
             'referer': ref,
             'cookie': cookie1
         },
-        //data: data
+        data: data
     };
 
-    axios(config)
+    await axios(config)
         .then(function (response) {
             console.log(response.data);
             result = response.data

@@ -27,7 +27,7 @@ phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 // Danh sách profile fb trong file .env
 maxTab = process.env.MAXTAB_SHOPEE  // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
 max_turn = process.env.MAX_TURN  // Số lượng keyword trên slave
-headless_mode = process.env.HEADLESS_MODE     // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
+headless_mode = process.env.HEADLESS_MODE     // che do chay hien thi giao dien
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
@@ -78,8 +78,8 @@ getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh s
 LinkdanhSachSanPhamChuaTuongTac = apiUrl + "/api_user/danhSachSanPhamChuaTuongTac"     // Lay thong tin cau hinh slave
 
 if (mode === "DEV") {
-    timemax = 5000;
-    timemin = 3000;
+    timemax = 3000;
+    timemin = 2000;
 } else {
     timemax = 4000;
     timemin = 3000;
@@ -102,7 +102,7 @@ loginShopee = async (page, accounts) => {
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitForTimeout(timeout)
 
-        let ref = await page.url()
+      
         try {
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
@@ -482,7 +482,7 @@ chooseVariation = async (page, limit) => {
 
 action_view_review = async (page) => {
     try {
-        timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
+        timeout = Math.floor(Math.random() * (4000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
         allRview = await page.$$('.product-rating-overview__filter')
         //console.log(allRview.length)
@@ -811,7 +811,7 @@ action_view_product = async (page) => {
         await page.waitForSelector('.icon-arrow-right-bold')
 
         for (let i = 0; i <= viewRandomImages; i++) {
-            timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
             if (nextRightButton.length >= 2) {
@@ -828,7 +828,7 @@ action_view_product = async (page) => {
 
     // kéo xuống đọc sản phẩm
     for (let i = 0; i <= 6; i++) {
-        timeout = Math.floor(Math.random() * (10000 - 5000)) + 5000;
+        timeout = Math.floor(Math.random() * (6000 - 4000)) + 4000;
         await page.waitForTimeout(timeout)
         await page.keyboard.press('PageDown');
     }
@@ -1884,13 +1884,16 @@ runAllTime = async () => {
                                     if (productForUser.liked == false) {
                                         console.log("---- Thả tim sản phẩm ----")
                                         check_action = await action_heart_product(page, productForUser)
-                                        console.log(check_action)
-
+                                        
                                         action1 = {
                                             time: new Date(),
                                             action: "heart_product"
                                         }
-                                        actions.push(action1)
+                                        if(check_action.error == null){
+                                            actions.push(action1)
+                                            productForUser.action = "heart_product"
+                                            await updateActions(productForUser)
+                                        }                                       
                                     }
                                 }
 
@@ -2012,6 +2015,7 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
         await runAllTime()
+        await sleep(5000)
         if (os_slave == "LINUX") {
             await shell.exec('rm -rf ' + profileDir);
         } else {
@@ -2024,6 +2028,7 @@ if (mode === "DEV") {
 
     (async () => {
         await runAllTime()
+        await sleep(5000)
         if (os_slave == "LINUX") {
             await shell.exec('rm -rf ' + profileDir);
         } else { await shell.exec('Rmdir /S /q ' + profileDir); }
