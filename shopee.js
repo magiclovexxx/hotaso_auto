@@ -1246,6 +1246,7 @@ gen_browser = async (option) =>{
     let profile_dir = option.profile_dir
     let proxy1 = option.proxy
     let headless_mode = option.headless_mode
+    let network = option.network
 
     console.log("Profile chrome link: " + profile_dir)
 
@@ -1264,7 +1265,7 @@ gen_browser = async (option) =>{
             '--no-first-run',
         ]
        
-        if (slaveInfo.network == "proxy") {
+        if (network == "proxy") {
             //'--proxy-server=103.90.230.170:9043'
             proxy1 = dataShopee.proxy
             let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
