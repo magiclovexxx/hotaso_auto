@@ -597,27 +597,6 @@ checkAtions = async (action, product) => {
 
 }
 
-check_die_slave = async (slave) => {
-    let result
-    console.log("-------- Check die slave -----------")
-    await shell.exec('pm2 restart all');
-    //await axios.get(check_die_slave_url, {
-    //     data: slave,
-    //     timeout: 50000
-    // })
-    //     .then(function (response) {
-    //         console.log(response.data);
-    //         result = response.data
-    //     })
-    //     .catch(function (error) {
-    //         console.log(error);
-    //     })
-    //     .then(function () {
-    //         // always executed
-    //     });
-    return result
-}
-
 updateHistory = async (product) => {
     dataupdate = product
 

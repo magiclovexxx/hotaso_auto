@@ -2,6 +2,27 @@ const axios = require('axios').default;
 const puppeteer = require('puppeteer');
 const randomUseragent = require('random-useragent');
 
+const check_slave_die = async(slave)=>{
+    let url = "https://hotaso.tranquoctoan.com/api_user/check_slave?slave=" + slave
+    let check_slave
+    await axios.get(url, {
+        timeout: 50000
+    })
+        .then(function (response) {
+           
+            check_slave = response.data
+            return check_slave
+        })
+        .catch(function (error) {
+            console.log(error);
+            return 0
+        })
+        .then(function () {
+            // always executed
+        });
+    return check_slave
+}
+
 const thaTimCacSanPhamCuaShop = async (page, product_heart) => {
     // Lấy tổng số trang sản phẩm của shop
     let getProductPageTotal
@@ -200,5 +221,6 @@ module.exports = {
 
     thaTimCacSanPhamCuaShop,
     getproductByProductId,
+    check_slave_die
 
 }
