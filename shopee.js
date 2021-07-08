@@ -1267,13 +1267,12 @@ gen_page = async (browser, option) => {
     const page = (await browser.pages())[0];
         
         let user_agent1 = option.user_agent
-        let proxy1 = option.proxy1
+        let proxy1 = option.proxy
         let cookie1 = option.cookie
         let network = option.network
 
         await page.setUserAgent(user_agent1)
-        console.log(user_agent1)
-
+       
         // Random kích cỡ màn hình
         width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
         height = Math.floor(Math.random() * (800 - 600)) + 600;;
@@ -1469,6 +1468,7 @@ runAllTime = async () => {
         let subAccount = []
         let acc = data_for_tab.sub_account
         let keywords = data_for_tab.product_for_sub_account
+        
         let user_agent
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
@@ -1485,16 +1485,16 @@ runAllTime = async () => {
         }
 
         let profileChrome = profileDir + subAccount[0]
-      
+       
         let option1 = {
             user_agent: user_agent,
             proxy: dataShopee.proxy,
             profile_dir: profileChrome,
             cookie: acc.cookie,
-            network: acc.network,
+            network: slaveInfo.network,
             headless_mode: headless_mode
         }
-
+        console.log(option1)
         let browser = await gen_browser(option1)
         let page = await gen_page(browser,option1)
 
