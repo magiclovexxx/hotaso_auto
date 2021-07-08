@@ -1494,7 +1494,7 @@ runAllTime = async () => {
             network: slaveInfo.network,
             headless_mode: headless_mode
         }
-        console.log(option1)
+       
         let browser = await gen_browser(option1)
         let page = await gen_page(browser,option1)
 
