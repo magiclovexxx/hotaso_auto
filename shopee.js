@@ -50,9 +50,11 @@ if (mode === "DEV") {
     updateActionsUrl = "https://hotaso.tranquoctoan.com"
 
 } else {
-    apiUrl = "http://hotaso.vn"
+    //apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
-    updateActionsUrl = "https://hotaso.vn"
+    //updateActionsUrl = "https://hotaso.vn"
+    apiUrl = "http://hotaso.tranquoctoan.com"
+    updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
 }
 
@@ -341,16 +343,16 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         getProduct.forEach((item, index) => {
             if ((index < 45) && (index > 4)) {
                 idShops.forEach((shop, index2) => {
-                    productIds = item.includes(shop.fullname)
+                    productIds = item.includes(shop.shop_id)
                     if (productIds == true) {
                         if (!saveProduct.includes(productIds[1])) {
-                            productIds2 = item.split(shop.fullname + ".")
+                            productIds2 = item.split(shop.shop_id + ".")
                             productId = productIds2[1]
                             productIndex = index;
                             thuHangSanPham = {
                                 sanpham: getProduct[productIndex],
                                 id: productId,
-                                shopId: shop.fullname,
+                                shopId: shop.shop_id,
                                 trang: (shop.pages - limit),
                                 vitri: productIndex,
                             }
