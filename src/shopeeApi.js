@@ -3,8 +3,16 @@ const puppeteer = require('puppeteer');
 const randomUseragent = require('random-useragent');
 
 
-const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
+const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
     // lay cookie
+    cookie1 = ""
+    cookies.forEach((row, index) => {
+        cookie1 = cookie1 + row.name + "=" + row.value
+        if (index != (cookies.length - 1)) {
+            cookie1 = cookie1 + "; "
+        }
+
+    })
 
     let keyword = product.keyword.toLowerCase()
     let productId = product.product_id
@@ -38,7 +46,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, maxPage) => {
 
         headersearch = {
             referer: ref,
-            //'if-none-match-': ' 55b03-362c8065febe2677f1d3f36f302b86c8'
+            'cookie': cookie1
 
         }
         let datatest

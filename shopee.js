@@ -1246,7 +1246,7 @@ gen_browser = async (option) =>{
        
         if (network == "proxy") {
             //'--proxy-server=103.90.230.170:9043'
-            proxy1 = dataShopee.proxy
+           
             let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
             param.push(proxy_for_slave)
             param.push('--ignore-certificate-errors')
@@ -1656,7 +1656,8 @@ runAllTime = async () => {
                         productForUser.ip = newIp;
                         console.log("Ip mới: " + newIp)
                         console.log("Shop id: " + productForUser.shop_id)
-                        console.log("Product data id: " + productForUser.id)
+                        console.log("Shop option: ")
+                        console.log(options)
                         console.log("product link: " + productForUser.product_link)
                         console.log("product name: " + productForUser.product_name)
                         console.log("product id: " + productForUser.product_id)
@@ -1706,7 +1707,7 @@ runAllTime = async () => {
                             vitri: 0
                         }
                         if (productForUser.check_index < 5) {
-                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, maxPage)
+                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser,cookies22, maxPage)
                         }
 
                         console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id)
