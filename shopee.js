@@ -50,7 +50,7 @@ if (mode === "DEV") {
     updateActionsUrl = "https://hotaso.tranquoctoan.com"
 
 } else {
-    apiUrl = "http://hotaso.vn"
+    apiUrl = "http://db.hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
     updateActionsUrl = "https://hotaso.vn"
     
