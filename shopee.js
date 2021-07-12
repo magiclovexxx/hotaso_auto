@@ -13,6 +13,8 @@ const randomUseragent = require('random-useragent');
 const publicIp = require('public-ip');
 const { isBuffer } = require('util');
 var shell = require('shelljs');
+const { preparePageForTests } = require('./src/bypass');
+const bypassTest = require('./src/bypassTest');
 
 slavenumber = process.env.SLAVE
 clickAds = process.env.CLICKADS
@@ -1267,7 +1269,8 @@ gen_browser = async (option) =>{
 gen_page = async (browser, option) => {
 
     const page = (await browser.pages())[0];
-        
+    await preparePageForTests(page);
+
         let user_agent1 = option.user_agent
         let proxy1 = option.proxy
         let cookie1 = option.cookie
@@ -1522,7 +1525,7 @@ runAllTime = async () => {
                 console.error(err);
 
             }
-
+            bypassTest.runBypassTest(page);
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
 

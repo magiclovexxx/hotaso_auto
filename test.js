@@ -212,13 +212,16 @@ disconnect = async () => {
 
 }
 
+const { preparePageForTests } = require('./src/bypass');
+const bypassTest = require('./src/bypassTest');
 
-checkheader = async () => {
+checkauto = async () => {
     const browser = await puppeteer.launch({
         headless: false
     });
 
     const page = await browser.newPage();
+    await preparePageForTests(page);
     // page.on('request', req => {
     //     console.log(req.headers());
     // });
@@ -230,16 +233,10 @@ checkheader = async () => {
         width: width,
         height: height
     });
-    await page.on('response', async (resp) => {
-        var url = resp.url()
-        if (url == "https://shopee.vn/api/v2/item/get?itemid=6420096356&shopid=42137125") {
-            console.log("value: " + url);
-            console.log(await resp.json())
-        }
-
-    });
-    await page.goto('https://shopee.vn/Bo-m%E1%BA%A1ch-ch%E1%BB%A7-huananzhi-X79-Luxury-X79-4D-8D-X99-gaming-TF-X99-T8-X99-T8D-X99-F8D-socket-2011-i.42137125.6420096356')
-    await page.waitForTimeout(10000)
+   
+    await page.goto('https://shopee.vn/')
+    bypassTest.runBypassTest(page);
+    await page.waitForTimeout(10000000)
 
 }
 
@@ -376,8 +373,8 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
     //shell.exec('Taskkill /F /IM Chrome.exe');
     day = new Date
     day = Date.parse(day)
-    console.log(day)
-    await thaTimSanPham()
+   
+    await checkauto()
     //await test_update_all()
     // proxy = await proxy3g()
     // console.log(proxy)
