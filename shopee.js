@@ -50,9 +50,9 @@ if (mode === "DEV") {
     updateActionsUrl = "https://hotaso.tranquoctoan.com"
 
 } else {
-    apiUrl = "http://db.hotaso.vn"
+    apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
-    updateActionsUrl = "https://hotaso.vn"
+    updateActionsUrl = "https://db.hotaso.vn"
     
     //updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
