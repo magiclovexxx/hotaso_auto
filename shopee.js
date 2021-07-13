@@ -3,7 +3,11 @@ var fs = require('fs');
 const shopeeApi = require('./src/shopeeApi.js')
 const actionsShopee = require('./src/actions.js')
 const axios = require('axios').default;
-const puppeteer = require('puppeteer');
+
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
+
 var cron = require('node-cron');
 var randomMac = require('random-mac');
 
@@ -33,7 +37,7 @@ headless_mode = process.env.HEADLESS_MODE     // che do chay hien thi giao dien
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
-disable_image = 1
+disable_image = 0
 
 if (headless_mode == "0") {
     headless_mode = true
@@ -1305,8 +1309,6 @@ gen_page = async (browser, option) => {
             console.log(" ---- Lỗi set coookie ----")
         }
 
-        await page.setRequestInterception(true);
-
         if (disable_css == 1 || disable_image == 1) {
             await page.setRequestInterception(true);
 
@@ -1515,17 +1517,15 @@ runAllTime = async () => {
             try {
 
                 let ref = await page.url()
-                await page.goto('https://shopee.vn', {
-                    waitUntil: "networkidle0",
-                    timeout: 30000,
-                    referer: ref
-                })
+                await page.goto('https://shopee.vn')
+                bypassTest.runBypassTest(page);
             } catch (err) {
                 //HERE
                 console.error(err);
 
             }
-            bypassTest.runBypassTest(page);
+            
+           
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
 
