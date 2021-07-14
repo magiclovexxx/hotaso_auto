@@ -25,8 +25,8 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
     for (let i = 1; i <= maxPage; i++) {
 
         viTriSanPham = {
-            trang: 0,
-            vitri: 0
+            trang: false,
+            vitri: false
         }
         maxproduct = 50 * (i - 1)
         search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=" + keyword + "&limit=50&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
@@ -90,6 +90,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
             viTriSanPham.vitri = "err"
             viTriSanPham.trang = "err"
             console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
+            console.log(error)
             
         }
 
