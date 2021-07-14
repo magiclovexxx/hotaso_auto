@@ -1404,7 +1404,9 @@ runAllTime = async () => {
         console.log("connected");
 
         let linkgetdataShopeeDir = ""
-
+        if(keyword_check){
+            keyword_check = encodeURI(keyword_check)
+        }
         linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check
         console.log(linkgetdataShopeeDir)
 
