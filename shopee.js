@@ -25,6 +25,11 @@ clickAds = process.env.CLICKADS
 typeClick = process.env.TYPECLICK
 clickSanPham = process.env.CLICK_SAN_PHAM
 lienQuan = process.env.LIEN_QUAN
+
+account_check = process.env.ACCOUNT_CHECK
+product_check = process.env.PRODUCT_CHECK
+keyword_check = process.env.KEYWORD_CHECK
+
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
 let extension = process.env.EXTENSION
@@ -59,7 +64,7 @@ if (mode === "DEV") {
     apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
     updateActionsUrl = "https://db.hotaso.vn"
-    
+
     //updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
 }
@@ -110,7 +115,7 @@ loginShopee = async (page, accounts) => {
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitForTimeout(timeout)
 
-      
+
         try {
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
@@ -836,7 +841,21 @@ action_heart_product = async (page, product) => {
 action_add_cart = async (page) => {
     console.log("Thêm vào giỏ hàng")
     await page.keyboard.press('Home');
+    // Check số lượng trong giỏ hàng hiện tại
 
+    let checkcart = typeof 123
+    checkcart = await page.evaluate(() => {
+
+        // Số sản phẩm trong giỏ hàng       
+        let title
+        let titles = document.querySelector('.shopee-cart-number-badge')
+        if (titles) {
+            title = titles.innerText;
+        }
+
+        return title
+    })
+    console.log(" Số sản phẩm trong giỏ hàng: " + checkcart)
     console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
     // click chọn màu
     let checkVariation = await chooseVariation(page, 5)
@@ -849,6 +868,25 @@ action_add_cart = async (page) => {
         if (addToCard.length) {
             try {
                 await addToCard[0].click()
+
+                await page.waitForTimeout(4000)
+
+                let checkcart2 = typeof 123
+                checkcart2 = await page.evaluate(() => {
+
+                    // Số sản phẩm trong giỏ hàng       
+                    let title
+                    let titles = document.querySelector('.shopee-cart-number-badge')
+                    if (titles) {
+                        title = titles.innerText;
+                    }
+
+                    return title
+                })
+
+                if(checkcart2 > checkcart){
+                    return true
+                }
             } catch (error) {
                 console.log(error)
                 return false
@@ -872,7 +910,7 @@ action_add_cart = async (page) => {
 removeCart = async (page) => {
     try {
         // check đầy giỏ hàng
-        console.log("---- Xoá sản phẩm khỏi giỏ hàng ----")
+     
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout)
         await page.keyboard.press('Home');
@@ -889,6 +927,7 @@ removeCart = async (page) => {
             return title
         })
 
+        console.log("---- Xoá sản phẩm khỏi giỏ hàng ---- : " + checkcart)
         let carts = Math.floor(Math.random() * (50 - 35)) + 35;
 
         if (checkcart > 10) {
@@ -901,22 +940,26 @@ removeCart = async (page) => {
             })
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
-            await page.waitForSelector('.cart-item__action')
-            actionDeletes = await page.$$('.cart-item__action')
+            let button_del = await page.evaluate(() => {
 
-            for (let i = actionDeletes.length; i > 3; i--) {
-                timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-                await page.waitForTimeout(timeout)
-                await actionDeletes[i - 1].click();
-                timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
-                await page.waitForTimeout(timeout)
-                checkcart2 = await page.$$('.btn.btn-solid-primary.btn--m.btn--inline.shopee-alert-popup__btn')
-                if (checkcart2.length) {
-                    await checkcart2.click()
-                } else {
-                    break
-                }
-                timeout = Math.floor(Math.random() * (1500 - 1000)) + 1000;
+                // Số sản phẩm trong giỏ hàng       
+                let button_del_list = []
+                let titles = document.querySelectorAll('button')
+                
+                titles.forEach((item, index)=>{
+                    if(item.textContent == "Xoá"){
+                        button_del_list.push(index)
+                    }
+                })
+    
+                return button_del_list
+            })
+            console.log("Danh sách vị trí các nút xoá sản phẩm")
+            console.log(button_del)
+            let buttons =  await page.$$("button")
+            for(let i = 1; i< (button_del.length-3); i++){
+                await buttons[button_del[i]].click()
+                timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
                 await page.waitForTimeout(timeout)
             }
         }
@@ -1229,7 +1272,7 @@ function sleep(ms) {
 }
 
 
-gen_browser = async (option) =>{
+gen_browser = async (option) => {
     let profile_dir = option.profile_dir
     let proxy1 = option.proxy
     let headless_mode = option.headless_mode
@@ -1237,37 +1280,37 @@ gen_browser = async (option) =>{
 
     console.log("Profile chrome link: " + profile_dir)
 
-        let param = [
-            `--user-data-dir=${profile_dir}`,      // load profile chromium
-            '--disable-gpu',
-            '--no-sandbox',
-            '--lang=en-US',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-        ]
-       
-        if (network == "proxy") {
-            //'--proxy-server=103.90.230.170:9043'
-           
-            let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
-            param.push(proxy_for_slave)
-            param.push('--ignore-certificate-errors')
-        }
+    let param = [
+        `--user-data-dir=${profile_dir}`,      // load profile chromium
+        '--disable-gpu',
+        '--no-sandbox',
+        '--lang=en-US',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+    ]
 
-        const browser = await puppeteer.launch({
-            //executablePath: chromiumDir,
-            headless: headless_mode,
-            devtools: false,
-            args: param
-        });
-        
-        return browser
+    if (network == "proxy") {
+        //'--proxy-server=103.90.230.170:9043'
+
+        let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
+        param.push(proxy_for_slave)
+        param.push('--ignore-certificate-errors')
+    }
+
+    const browser = await puppeteer.launch({
+        //executablePath: chromiumDir,
+        headless: headless_mode,
+        devtools: false,
+        args: param
+    });
+
+    return browser
 }
 
 gen_page = async (browser, option) => {
@@ -1275,56 +1318,56 @@ gen_page = async (browser, option) => {
     const page = (await browser.pages())[0];
     await preparePageForTests(page);
 
-        let user_agent1 = option.user_agent
-        let proxy1 = option.proxy
-        let cookie1 = option.cookie
-        let network = option.network
+    let user_agent1 = option.user_agent
+    let proxy1 = option.proxy
+    let cookie1 = option.cookie
+    let network = option.network
 
-        await page.setUserAgent(user_agent1)
-       
-        // Random kích cỡ màn hình
-        width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
-        height = Math.floor(Math.random() * (800 - 600)) + 600;;
+    await page.setUserAgent(user_agent1)
 
-        await page.setViewport({
-            width: 1280,
-            height: 800
-        });
+    // Random kích cỡ màn hình
+    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+    height = Math.floor(Math.random() * (800 - 600)) + 600;;
 
-        if (network == "proxy") {
-            let proxy_pass = proxy1.proxy_password.split("\r")[0]
-            console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
-            await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
+    await page.setViewport({
+        width: 1280,
+        height: 800
+    });
+
+    if (network == "proxy") {
+        let proxy_pass = proxy1.proxy_password.split("\r")[0]
+        console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
+        await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
+    }
+
+    try {
+        if (cookie1.length) {
+            let cookie111 = JSON.parse(cookie1)
+            //console.log(cookie111)
+            cookie111.forEach(async (item) => {
+                await page.setCookie(item);
+            })
         }
+    } catch (e) {
+        console.log(" ---- Lỗi set coookie ----")
+    }
 
-        try {
-            if (cookie1.length) {
-                let cookie111 = JSON.parse(cookie1)
-                //console.log(cookie111)
-                cookie111.forEach(async (item) => {
-                    await page.setCookie(item);
-                })
-            }
-        } catch (e) {
-            console.log(" ---- Lỗi set coookie ----")
+    if (disable_css == 1 || disable_image == 1) {
+        await page.setRequestInterception(true);
+
+        // --- Chặn load css --- /
+        if (disable_image == 1) {
+            page.on('request', (req) => {
+                if (req.resourceType() === 'image') {
+                    req.abort();
+                } else {
+                    req.continue();
+                }
+
+            });
         }
-
-        if (disable_css == 1 || disable_image == 1) {
-            await page.setRequestInterception(true);
-
-            // --- Chặn load css --- /
-            if (disable_image == 1) {
-                page.on('request', (req) => {
-                    if (req.resourceType() === 'image') {
-                        req.abort();
-                    } else {
-                        req.continue();
-                    }
-
-                });
-            }
-        }
-        return page
+    }
+    return page
 }
 
 runAllTime = async () => {
@@ -1362,7 +1405,7 @@ runAllTime = async () => {
 
         let linkgetdataShopeeDir = ""
 
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&click_ads=" + clickAds + "&type_click=" + typeClick + "&lien_quan=" + lienQuan + "&san_pham=" + clickSanPham
+        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check
         console.log(linkgetdataShopeeDir)
 
         // Lấy dữ liệu từ từ khoá từ sv
@@ -1420,7 +1463,7 @@ runAllTime = async () => {
             } else {
                 shell.exec('git stash; git pull origin master; npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');
             }
-        
+
             return false
         }
     }
@@ -1475,7 +1518,7 @@ runAllTime = async () => {
         let subAccount = []
         let acc = data_for_tab.sub_account
         let keywords = data_for_tab.product_for_sub_account
-        
+
         let user_agent
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
@@ -1492,7 +1535,7 @@ runAllTime = async () => {
         }
 
         let profileChrome = profileDir + subAccount[0]
-       
+
         let option1 = {
             user_agent: user_agent,
             proxy: dataShopee.proxy,
@@ -1501,9 +1544,9 @@ runAllTime = async () => {
             network: slaveInfo.network,
             headless_mode: headless_mode
         }
-       
+
         let browser = await gen_browser(option1)
-        let page = await gen_page(browser,option1)
+        let page = await gen_page(browser, option1)
 
         if ((index == 0) && (mode !== "DEV")) {
             // đổi ip
@@ -1524,8 +1567,8 @@ runAllTime = async () => {
                 console.error(err);
 
             }
-            
-           
+
+
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
 
@@ -1569,7 +1612,7 @@ runAllTime = async () => {
                     if (!max_turn) {
                         max_turn = keywords.length
                     }
-                    if (mode == "DEV" ) {
+                    if (mode == "DEV") {
                         max_turn = 1
                     }
 
@@ -1712,7 +1755,7 @@ runAllTime = async () => {
                             vitri: 0
                         }
                         if (productForUser.check_index < 5) {
-                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser,cookies22, maxPage)
+                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
                         }
 
                         console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id)
@@ -1898,16 +1941,16 @@ runAllTime = async () => {
                                     if (productForUser.liked == false) {
                                         console.log("---- Thả tim sản phẩm ----")
                                         check_action = await action_heart_product(page, productForUser)
-                                        
+
                                         action1 = {
                                             time: new Date(),
                                             action: "heart_product"
                                         }
-                                        if(check_action.error == null){
+                                        if (check_action.error == null) {
                                             actions.push(action1)
                                             productForUser.action = "heart_product"
                                             await updateActions(productForUser)
-                                        }                                       
+                                        }
                                     }
                                 }
 
@@ -1924,16 +1967,19 @@ runAllTime = async () => {
                                 }
 
                                 if (options.add_cart) {
-                                    await action_add_cart(page)
-                                    console.log("---- Bỏ giỏ ---- " + productForUser.product_id)
+                                    let check_add_cart = await action_add_cart(page)
+                                    console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " : " + check_add_cart)
 
-                                    action1 = {
-                                        time: new Date(),
-                                        action: "add_cart"
+                                    if(check_add_cart){
+                                        action1 = {
+                                            time: new Date(),
+                                            action: "add_cart"
+                                        }
+                                        actions.push(action1)
+                                        productForUser.action = "add_cart"
+                                        await updateActions(productForUser)
                                     }
-                                    actions.push(action1)
-                                    productForUser.action = "add_cart"
-                                    await updateActions(productForUser)
+                                    
                                 }
 
                                 if (options.view_shop) {
@@ -2010,7 +2056,7 @@ runAllTime = async () => {
             console.log(error)
 
         }
-       
+
         await browser.close();
 
     })
@@ -2033,7 +2079,7 @@ if (mode === "DEV") {
         await sleep(5000)
 
         await runAllTime()
-      
+
     })();
 } else {
 
@@ -2047,8 +2093,8 @@ if (mode === "DEV") {
         await sleep(5000)
 
         await runAllTime()
-       
-      
+
+
     })();
 }
 
