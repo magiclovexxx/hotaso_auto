@@ -143,7 +143,7 @@ loginShopee = async (page, accounts) => {
                 await loginbutton[0].click()
             }
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitForTimeout(15000)
+            await page.waitForTimeout(5000)
             let checkcode = await page.$$('[autocomplete="one-time-code"]')
 
             if (checkcode.length) {
@@ -169,6 +169,10 @@ loginShopee = async (page, accounts) => {
                 if (checkblock3 == "Tài khoản đã bị cấm") {
                     console.log("account bị khoá")
                     return 2
+                }
+                if (checkblock3 == "Tên tài khoản của bạn hoặc Mật khẩu không đúng, vui lòng thử lại") {
+                    console.log("Sai thông tin đăng nhập")
+                    return 3
                 }
             }
         } catch (e) {
@@ -471,7 +475,7 @@ chooseVariation = async (page, limit) => {
 
         if (variation_enable.length > 0) {
 
-            for (i = 0; i < (variation_enable.length - 1); i++) {                               
+            for (i = 0; i < (variation_enable.length - 1); i++) {
 
                 try {
                     await varitations[variation_enable[i]].click()
@@ -1546,13 +1550,23 @@ runAllTime = async () => {
             let checklogin = await loginShopee(page, subAccount)
             console.log("index = " + index + " --- check login account: " + subAccount[0] + " --- " + checklogin)
 
-            if (checklogin == 2) {
-                console.log("------ Cập nhật tk bị khoá -----------")
+            if (checklogin == 2 || checklogin == 3) {
+                console.log("------ Cập nhật tk lỗi -----------")
                 accountInfo = {
                     user: subAccount[0],
                     pass: subAccount[1],
-                    status: 0,
-                    message: "Account bị khoá"
+
+
+                }
+
+                if (checklogin == 2) {
+                    accountInfo.message = "Account bị khoá"
+                    accountInfo.status = 2
+                }
+
+                if (checklogin == 3) {
+                    accountInfo.message = "Sai thông tin đăng nhập"
+                    accountInfo.status = 3
                 }
 
                 await axios.get(linkShopeeAccountUpdate, {
@@ -1573,6 +1587,7 @@ runAllTime = async () => {
                     .then(function () {
                         // always executed
                     });
+                return false
             }
             if (checklogin) {
 
@@ -1632,7 +1647,7 @@ runAllTime = async () => {
                             cover: false,
                             name: false
                         }
-                        
+
                         let check_add_cart
                         page.removeAllListeners('response');
 
@@ -1690,7 +1705,7 @@ runAllTime = async () => {
 
                             }
 
-                            let checkSerachShop = url.split("api/v4/search/search_items?by=relevancy&limit=6&match_id=")
+                            let checkSerachShop = url.split("api/v4/search/search_items?")
                             if (checkSerachShop.length > 1) {
                                 console.log(" -- Tìm vị trí sản phẩm chưa thả tim  --")
                                 productInfo1 = await resp.json()
@@ -1699,10 +1714,10 @@ runAllTime = async () => {
                                 productInfo2.forEach((item, index) => {
                                     if (item.shopid == productForUser.shop_id && (item.item_basic.liked == false)) {
                                         let pr = {
-                                            product_id : item.itemid,
-                                            product_link:"",
-                                            product_name:item.item_basic.name,
-                                            product_image:item.item_basic.image,                                           
+                                            product_id: item.itemid,
+                                            product_link: "",
+                                            product_name: item.item_basic.name,
+                                            product_image: item.item_basic.image,
                                         }
                                         danh_sach_san_pham_chua_tha_tim.push(pr)
                                     }
@@ -1783,7 +1798,7 @@ runAllTime = async () => {
                         if (productForUser.check_index < 6) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
 
-                            pageUrl = getViTriSanPham.trang -1
+                            pageUrl = getViTriSanPham.trang - 1
                             console.log(" --- Đến trang trang có vị trí sản phẩm ---- ")
                             urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                             urlSearch = encodeURI(urlSearch)
@@ -1803,12 +1818,12 @@ runAllTime = async () => {
                             }
                             await page.waitForTimeout(5000)
                             console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
-                           // console.log(getViTriSanPham)
+                            // console.log(getViTriSanPham)
 
                             if (viTriSanPhamTrang1 != false) {
 
                                 productForUser.trang = getViTriSanPham.trang
-                                productForUser.vitri = viTriSanPhamTrang1                               
+                                productForUser.vitri = viTriSanPhamTrang1
 
                                 console.log("Update seo sản phẩm")
                                 productForUser.cookie = ""
@@ -1995,19 +2010,23 @@ runAllTime = async () => {
                                     productForUser.action = "view_shop"
                                     await updateActions(productForUser)
 
-                                  
-                                    if(danh_sach_san_pham_chua_tha_tim.length>5){
-                                        
+
+                                    if (danh_sach_san_pham_chua_tha_tim.length > 5) {
+
                                         console.log("--- Thả tim các sản phẩm của shop ---")
-                                        console.log(danh_sach_san_pham_chua_tha_tim)
+                                        // console.log(danh_sach_san_pham_chua_tha_tim)
                                         random_heart = Math.floor(Math.random() * (5 - 3)) + 3;
-                                        
-                                        for(let i=0; i<= random_heart; i++){
+
+                                        for (let i = 0; i <= random_heart; i++) {
                                             let product_heart = productForUser
-                                            
+                                            product_heart.product_link = ""
+                                            product_heart.product_name = danh_sach_san_pham_chua_tha_tim[i].product_name
+                                            product_heart.product_id = danh_sach_san_pham_chua_tha_tim[i].product_id
+                                            product_heart.product_image = danh_sach_san_pham_chua_tha_tim[i].product_image
+
                                             console.log("Thả tim sản phẩm: " + product_heart.product_id)
                                             check_action = await action_heart_product(page, product_heart)
-    
+
                                             action1 = {
                                                 time: new Date(),
                                                 action: "heart_product"
@@ -2015,7 +2034,7 @@ runAllTime = async () => {
                                             if (check_action.error == null) {
                                                 actions.push(action1)
                                                 product_heart.action = "heart_product"
-                                                console.log(product_heart)
+                                                //console.log(product_heart)
                                                 await updateActions(product_heart)
                                             }
                                         }
