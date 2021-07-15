@@ -15,6 +15,7 @@ const exec = require('child_process').exec;
 const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
 const publicIp = require('public-ip');
+const https = require('https');
 const { isBuffer } = require('util');
 var shell = require('shelljs');
 const { preparePageForTests } = require('./src/bypass');
@@ -636,6 +637,7 @@ updateActions = async (product9) => {
 
     update = 0
     //datatest = 
+    const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
     await axios.post(updateActionsDir, {
         data: product9,
@@ -645,7 +647,8 @@ updateActions = async (product9) => {
             headers: {
                 Connection: 'keep-alive',
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
-            }
+            },
+            httpsAgent: httpsAgent
         })
         .then(function (response) {
             console.log("Update action: " + product9.action + " = " + response.data);

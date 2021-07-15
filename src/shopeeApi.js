@@ -61,9 +61,9 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
         })
             .then(function (response) {
                 data = response.data
-                cookie3 = response.headers['set-cookie']
-                console.log(cookie3)
-                console.log(cookie1)
+               // cookie3 = response.headers['set-cookie']
+               // console.log(cookie3)
+               // console.log(cookie1)
             })
             .catch(function (error) {
                 console.log(error);
