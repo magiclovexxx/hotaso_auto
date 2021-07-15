@@ -1623,6 +1623,7 @@ runAllTime = async () => {
                         // }
                         let viTriSanPhamTrang1 = false;
                         let url_trang_tim_kiem_san_pham = "";
+                        let danh_sach_san_pham_chua_tha_tim = [];
                         let getViTriSanPham = {
                             trang: false,
                             vitri: false
@@ -1683,10 +1684,32 @@ runAllTime = async () => {
                                         url_trang_tim_kiem_san_pham = url
                                         //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
                                         console.log(" -- Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1)
+                                        console.log(url)
                                     }
                                 })
 
                             }
+
+                            let checkSerachShop = url.split("api/v4/search/search_items?by=relevancy&limit=6&match_id=")
+                            if (checkSerachShop.length > 1) {
+                                console.log(" -- Tìm vị trí sản phẩm chưa thả tim  --")
+                                productInfo1 = await resp.json()
+                                productInfo2 = productInfo1.items
+
+                                productInfo2.forEach((item, index) => {
+                                    if (item.shopid == productForUser.shop_id && (item.item_basic.liked == false)) {
+                                        let pr = {
+                                            product_id : item.itemid,
+                                            product_link:"",
+                                            product_name:item.item_basic.name,
+                                            product_image:item.item_basic.image,                                           
+                                        }
+                                        danh_sach_san_pham_chua_tha_tim.push(pr)
+                                    }
+                                })
+                            }
+
+
                             check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
                             if (check_link_san_pham.length > 1) {
                                 console.log(" --- Lấy thông tin sản phẩm ---");
@@ -1760,8 +1783,8 @@ runAllTime = async () => {
                         if (productForUser.check_index < 6) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
 
-                            pageUrl = getViTriSanPham.trang - 1
-                            console.log(" --- Đến trang trước trang có vị trí sản phẩm 1 trang ---- ")
+                            pageUrl = getViTriSanPham.trang -1
+                            console.log(" --- Đến trang trang có vị trí sản phẩm ---- ")
                             urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                             urlSearch = encodeURI(urlSearch)
                             productForUser.urlSearch = urlSearch
@@ -1779,14 +1802,13 @@ runAllTime = async () => {
                                 console.error(err);
                             }
                             await page.waitForTimeout(5000)
-                            console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id)
-                            console.log(getViTriSanPham)
+                            console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
+                           // console.log(getViTriSanPham)
 
                             if (viTriSanPhamTrang1 != false) {
 
-                                productForUser.trang = parseInt(pageUrl)
-                                productForUser.vitri = viTriSanPhamTrang1
-                                console.log("vi_tri_trang_san_pham: " + productForUser.trang)
+                                productForUser.trang = getViTriSanPham.trang
+                                productForUser.vitri = viTriSanPhamTrang1                               
 
                                 console.log("Update seo sản phẩm")
                                 productForUser.cookie = ""
@@ -1922,6 +1944,7 @@ runAllTime = async () => {
                                         if (check_action.error == null) {
                                             actions.push(action1)
                                             productForUser.action = "heart_product"
+                                            console.log(productForUser)
                                             await updateActions(productForUser)
                                         }
                                     }
@@ -1971,6 +1994,32 @@ runAllTime = async () => {
                                     actions.push(action1)
                                     productForUser.action = "view_shop"
                                     await updateActions(productForUser)
+
+                                  
+                                    if(danh_sach_san_pham_chua_tha_tim.length>5){
+                                        
+                                        console.log("--- Thả tim các sản phẩm của shop ---")
+                                        console.log(danh_sach_san_pham_chua_tha_tim)
+                                        random_heart = Math.floor(Math.random() * (5 - 3)) + 3;
+                                        
+                                        for(let i=0; i<= random_heart; i++){
+                                            let product_heart = productForUser
+                                            
+                                            console.log("Thả tim sản phẩm: " + product_heart.product_id)
+                                            check_action = await action_heart_product(page, product_heart)
+    
+                                            action1 = {
+                                                time: new Date(),
+                                                action: "heart_product"
+                                            }
+                                            if (check_action.error == null) {
+                                                actions.push(action1)
+                                                product_heart.action = "heart_product"
+                                                console.log(product_heart)
+                                                await updateActions(product_heart)
+                                            }
+                                        }
+                                    }
                                 }
 
                                 if (options.follow_shop) {

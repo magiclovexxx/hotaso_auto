@@ -22,7 +22,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
     }
     console.log("Id sản phẩm: " + productId)
     let productIndex = 0
-    for (let i = 1; i <= maxPage; i++) {
+    for (let i = 0; i <= maxPage; i++) {
 
         viTriSanPham = {
             trang: false,
