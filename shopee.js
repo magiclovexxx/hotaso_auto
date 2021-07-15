@@ -63,7 +63,7 @@ if (mode === "DEV") {
 } else {
     apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
-    updateActionsUrl = "https://db.hotaso.vn"
+    updateActionsUrl = "https://h1.sacuco.com"
 
     //updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
@@ -810,7 +810,8 @@ action_add_cart = async (page) => {
     console.log("Thêm vào giỏ hàng")
     await page.keyboard.press('Home');
     // Check số lượng trong giỏ hàng hiện tại
-
+    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+    await page.waitForTimeout(timeout)
     let checkcart = typeof 123
     checkcart = await page.evaluate(() => {
 

@@ -45,6 +45,9 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
         ref = encodeURI(ref)
 
         headersearch = {
+            'x-api-source': 'pc',
+            'x-shopee-language': 'vi',
+            'User-Agent':product.user_agent,
             referer: ref,
             'cookie': cookie1
 
@@ -58,6 +61,9 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
         })
             .then(function (response) {
                 data = response.data
+                cookie3 = response.headers['set-cookie']
+                console.log(cookie3)
+                console.log(cookie1)
             })
             .catch(function (error) {
                 console.log(error);
