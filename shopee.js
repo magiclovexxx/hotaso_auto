@@ -22,11 +22,6 @@ const { preparePageForTests } = require('./src/bypass');
 const bypassTest = require('./src/bypassTest');
 
 slavenumber = process.env.SLAVE
-clickAds = process.env.CLICKADS
-typeClick = process.env.TYPECLICK
-clickSanPham = process.env.CLICK_SAN_PHAM
-lienQuan = process.env.LIEN_QUAN
-
 account_check = process.env.ACCOUNT_CHECK
 product_check = process.env.PRODUCT_CHECK
 keyword_check = process.env.KEYWORD_CHECK
@@ -51,7 +46,7 @@ if (headless_mode == "0") {
     headless_mode = false
 }
 
-console.log("headless_mode: " + headless_mode)
+console.log("headless_mode: " + headless_mode + " --- OS SLAVE:" + os_slave)
 
 // Danh sách profile facebook trong mỗi slave
 mode = process.env.MODE
@@ -426,7 +421,7 @@ get_variation_enable = async (page) => {
         let titles = document.querySelectorAll('.product-variation');
         let list_variation = []
         titles.forEach((item, index) => {
-            let x = item.textContent
+            let x = item.click()
             list_variation.push(x)
         })
         return list_variation
@@ -456,37 +451,44 @@ get_variation_enable = async (page) => {
 }
 
 // chọn thuộc tính sản phẩm
-chooseVariation = async (page, limit) => {
+chooseVariation = async (page, product) => {
     let variation_enable
     try {
         console.log("---- Chọn ngẫu nhiên phân loại sản phẩm ----")
-        let checkSelected = []
-        limit -= 1
-
-        let varitations = await page.$$('.product-variation')
-        if (!varitations.length) {
-            return true
+               
+        try {
+                   
+            await page.waitForSelector('.product-variation')
+           
+        } catch (error) {
+            console.log("Khong tim thay variation" + product.product_link)
+            console.log(error.message)
         }
+        
+        let varitations = await page.$$('.product-variation')
+       
         variation_enable = await get_variation_enable(page)
         console.log("variation enable")
         console.log(variation_enable)
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout)
 
-        if (variation_enable.length > 0) {
+        // if (variation_enable.length > 0) {
 
-            for (i = 0; i < (variation_enable.length - 1); i++) {
+        //     for (i = 0; i < (variation_enable.length - 1); i++) {
 
-                try {
-                    await varitations[variation_enable[i]].click()
-                    timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                    await page.waitForTimeout(timeout)
-                } catch (error) {
-                    console.log(error)
-                }
+        //         try {
+                   
+        //             await varitations[variation_enable[i]].click()
+        //             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //             await page.waitForTimeout(timeout)
+        //         } catch (error) {
+        //             console.log("Click variable: " + i + " -- " + product.product_link)
+        //             console.log(error.message)
+        //         }
 
-            }
-        }
+        //     }
+        // }
         return 1
 
     } catch (error) {
@@ -804,7 +806,7 @@ action_view_product = async (page) => {
 }
 
 action_heart_product = async (page, product) => {
-    console.log("Thả tim sản phẩm: ")
+   
     let cookies1 = await page.cookies()
     let refer = await page.url()
     let result = await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
@@ -813,7 +815,7 @@ action_heart_product = async (page, product) => {
 
 }
 
-action_add_cart = async (page) => {
+action_add_cart = async (page, product) => {
     console.log("Thêm vào giỏ hàng")
     await page.keyboard.press('Home');
     // Check số lượng trong giỏ hàng hiện tại
@@ -831,10 +833,11 @@ action_add_cart = async (page) => {
 
         return title
     })
+
     console.log(" Số sản phẩm trong giỏ hàng: " + checkcart)
-    console.log("Chọn màu sản phẩm và thêm vào giỏ hàng")
+   
     // click chọn màu
-    let checkVariation = await chooseVariation(page, 5)
+    let checkVariation = await chooseVariation(page,product, 5)
 
     // click thêm vào giỏ hàng
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
@@ -1456,7 +1459,7 @@ runAllTime = async () => {
 
     }
 
-    if (slaveInfo.network == "proxy" && os_slave != "LINUX") {
+    if (os_slave != "LINUX") {
         if (mode != "DEV") {
             //await change_info_pc()
             console.log("----- Change info -----")
@@ -1591,7 +1594,7 @@ runAllTime = async () => {
             }
             if (checklogin) {
 
-                if (clickSanPham == 1 && slaveInfo.type == "seo_top") {
+                if (slaveInfo.type == "seo_top") {
                     console.log("----- Click theo sản phẩm -----")
 
                     if (!max_turn) {
@@ -1958,8 +1961,7 @@ runAllTime = async () => {
                                         }
                                         if (check_action.error == null) {
                                             actions.push(action1)
-                                            productForUser.action = "heart_product"
-                                            console.log(productForUser)
+                                            productForUser.action = "heart_product"                                           
                                             await updateActions(productForUser)
                                         }
                                     }
@@ -1978,7 +1980,7 @@ runAllTime = async () => {
                                 }
 
                                 if (options.add_cart) {
-                                    await action_add_cart(page)
+                                    await action_add_cart(page,productForUser)
                                     console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " -- " + productForUser.keyword + " : " + check_add_cart)
 
                                     if (check_add_cart) {
@@ -2020,6 +2022,8 @@ runAllTime = async () => {
                                         for (let i = 0; i <= random_heart; i++) {
                                             let product_heart = productForUser
                                             product_heart.product_link = ""
+                                            product_heart.keyword = ""
+                                            product_heart.id = null
                                             product_heart.product_name = danh_sach_san_pham_chua_tha_tim[i].product_name
                                             product_heart.product_id = danh_sach_san_pham_chua_tha_tim[i].product_id
                                             product_heart.product_image = danh_sach_san_pham_chua_tha_tim[i].product_image
