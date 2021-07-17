@@ -55,12 +55,13 @@ if (mode === "DEV") {
     apiUrl = "http://hotaso.tranquoctoan.com"
     apiServer = "http://history.hotaso.vn:3000"
     updateActionsUrl = "https://hotaso.tranquoctoan.com"
+    update_point = "http://hotaso.tranquoctoan.com"
 
 } else {
     apiUrl = "http://hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
     updateActionsUrl = "https://h1.sacuco.com"
-
+    update_point = "http://h1.sacuco.com"
     //updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
 }
@@ -71,7 +72,7 @@ data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update th�
 shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
 
 update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
-update_point_url = updateActionsUrl + "/api_user/update_point"     // Update actions
+update_point_url = update_point + "/api_user/update_point"     // Update actions
 
 //save_history = updateActionsUrl + "/api_user/save_history"     // Update actions
 
@@ -607,7 +608,7 @@ updateActions = async (product9) => {
     update = 0
     //datatest = 
     const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
     await axios.post(update_actions_url, {
         data: product9,
         timeout: 50000
