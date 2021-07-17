@@ -10,7 +10,7 @@ puppeteer.use(StealthPlugin())
 
 var cron = require('node-cron');
 var randomMac = require('random-mac');
-
+const proxy_check = require('proxy-check');
 const exec = require('child_process').exec;
 const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
@@ -38,7 +38,7 @@ headless_mode = process.env.HEADLESS_MODE     // che do chay hien thi giao dien
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
-disable_image = 0
+disable_image = 1
 
 if (headless_mode == "0") {
     headless_mode = true
@@ -65,26 +65,22 @@ if (mode === "DEV") {
     maxTab = 5
 }
 
-linkShopeeUpdate = apiUrl + "/api_user/shopeeupdate"     // Link shopee update thứ hạng sản phẩm
-linkShopeeAccountUpdate = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
-linkShopeeUpdateAds = apiUrl + "/api_user/shopeeUpdateAds" // Link update shopee ads index
-dataShopeeDir = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
-shopeeUpdateSeoSanPhamDir = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
-updateHistory = apiUrl + "/check_die_slave_url"     // Check die slave
-updateActionsDir = updateActionsUrl + "/api_user/updateActions"     // Update actions
-update_action_all = updateActionsUrl + "/api_user/update_action_all"     // Update actions
+
+shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
+data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
+
+update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
+update_point_url = updateActionsUrl + "/api_user/update_point"     // Update actions
+
 //save_history = updateActionsUrl + "/api_user/save_history"     // Update actions
 
-updateHistory = apiServer + "/update-history"     // Update history
-updateHistoryAll = apiServer + "/update-history-all"     // Update history
-saveHistory = apiServer + "/save-history"     // Update history
+update_history_url = apiServer + "/update-history"     // Update history
+save_history_url = apiServer + "/save-history"     // Update history
 
-//checkActionsDir = apiUrl + "/api_user/checkActions"     // check actions
-checkActionsDir = apiServer + "/check-action"     // check actions
-getShopActionsDir = apiUrl + "/api_user/getShopActions"     // check actions
 getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
 getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
-LinkdanhSachSanPhamChuaTuongTac = apiUrl + "/api_user/danhSachSanPhamChuaTuongTac"     // Lay thong tin cau hinh slave
+
 
 if (mode === "DEV") {
     timemax = 3000;
@@ -454,16 +450,7 @@ get_variation_enable = async (page) => {
 chooseVariation = async (page, product) => {
     let variation_enable
     try {
-        console.log("---- Chọn ngẫu nhiên phân loại sản phẩm ----")
-               
-        try {
-                   
-            await page.waitForSelector('.product-variation')
-           
-        } catch (error) {
-            console.log("Khong tim thay variation" + product.product_link)
-            console.log(error.message)
-        }
+        console.log("---- Chọn ngẫu nhiên phân loại sản phẩm ----")                     
         
         let varitations = await page.$$('.product-variation')
        
@@ -590,30 +577,6 @@ action_view_review = async (page) => {
 
 }
 
-checkAtions = async (action, product) => {
-    datacheck = product
-    datacheck.action = action
-
-    await axios.get(checkActionsDir, {
-        params: {
-            data: datacheck
-        },
-        timeout: 50000
-    })
-        .then(function (response) {
-            console.log(response.data);
-            console.log("check action: " + action + ":" + response.data)
-            return checkAtion
-        })
-        .catch(function (error) {
-            console.log(error);
-            return 0
-        })
-        .then(function () {
-            // always executed
-        });
-
-}
 
 updateHistory = async (product) => {
     dataupdate = product
@@ -621,7 +584,7 @@ updateHistory = async (product) => {
     update = 0
     //datatest = 
 
-    await axios.get(saveHistory, {
+    await axios.get(save_history_url, {
         data: dataupdate,
         timeout: 50000
     },
@@ -645,7 +608,7 @@ updateActions = async (product9) => {
     //datatest = 
     const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
-    await axios.post(updateActionsDir, {
+    await axios.post(update_actions_url, {
         data: product9,
         timeout: 50000
     },
@@ -663,9 +626,25 @@ updateActions = async (product9) => {
             console.log(error);
         });
 
-    await axios.get(saveHistory, {
+    await axios.get(save_history_url, {
         data: product9,
         timeout: 50000
+    },
+        {
+            headers: {
+                Connection: 'keep-alive',
+            }
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    await axios.get(update_point_url, {
+        data: product9,
+        timeout: 30000
     },
         {
             headers: {
@@ -843,40 +822,47 @@ action_add_cart = async (page, product) => {
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
     await page.waitForTimeout(timeout)
     addToCard = await page.$$('.btn-tinted')
+    
+    await page.evaluate(() => {
 
-    if (addToCard.length) {
-        try {
-            await addToCard[0].click()
+        //  tất cả variation
+        document.querySelector('button.btn-tinted').click()
+    }) 
+    timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
+    await page.waitForTimeout(timeout)
+    // if (addToCard.length) {
+    //     try {
+                  
 
-            await page.waitForTimeout(5000)
+    //         await page.waitForTimeout(5000)
 
-            let checkcart2 = typeof 123
-            checkcart2 = await page.evaluate(() => {
+    //         let checkcart2 = typeof 123
+    //         checkcart2 = await page.evaluate(() => {
 
-                // Số sản phẩm trong giỏ hàng       
-                let title
-                let titles = document.querySelector('.shopee-cart-number-badge')
-                if (titles) {
-                    title = titles.innerText;
-                }
+    //             // Số sản phẩm trong giỏ hàng       
+    //             let title
+    //             let titles = document.querySelector('.shopee-cart-number-badge')
+    //             if (titles) {
+    //                 title = titles.innerText;
+    //             }
 
-                return title
-            })
+    //             return title
+    //         })
 
-            if (checkcart2 > checkcart) {
-                return true
-            } else {
-                console.log("Có lỗi khi bỏ giỏ: ")
-                return false
-            }
-        } catch (error) {
-            console.log(error)
-            return false
-        }
+    //         if (checkcart2 > checkcart) {
+    //             return true
+    //         } else {
+    //             console.log("Có lỗi khi bỏ giỏ: ")
+    //             return false
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //         return false
+    //     }
 
-    } else {
-        return false
-    }
+    // } else {
+    //     return false
+    // }
 
 }
 
@@ -1378,15 +1364,15 @@ runAllTime = async () => {
 
         console.log("connected");
 
-        let linkgetdataShopeeDir = ""
+        let get_data_shopee_url = ""
         if (keyword_check) {
             keyword_check = encodeURI(keyword_check)
         }
-        linkgetdataShopeeDir = dataShopeeDir + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check
-        console.log(linkgetdataShopeeDir)
+        get_data_shopee_url = data_shopee_url + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check
+        console.log(get_data_shopee_url)
 
         // Lấy dữ liệu từ từ khoá từ sv
-        await axios.get(linkgetdataShopeeDir)
+        await axios.get(get_data_shopee_url)
             .then(function (response) {
 
                 dataShopee = response.data
@@ -1412,6 +1398,7 @@ runAllTime = async () => {
     //data = GenDirToGetData(maxTab, accounts)
 
     data = dataShopee.data
+    proxy = dataShopee.proxy
 
     // get version hien tai trong file version.txt
     var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
@@ -1444,7 +1431,7 @@ runAllTime = async () => {
             return false
         }
     }
-
+    
     await sleep(5000)
 
     if (slaveInfo.network == "dcom") {
@@ -1458,6 +1445,30 @@ runAllTime = async () => {
         }
 
     }
+    let check_proxy = 0
+    if (slaveInfo.network == "proxy") {
+       
+        let proxy_pass = proxy.proxy_password.split("\r")[0]
+        const proxy_1 = {
+            host: proxy.proxy_ip,
+            port: proxy.proxy_port,
+            proxyAuth: proxy.proxy_username+":"+proxy_pass
+          };
+          // or
+          // const proxy = 'y0adXjeO:pAzAHCr4@54.82.74.24:5557';
+         
+          await proxy_check(proxy_1).then(r => {
+           // console.log(r); // true
+            check_proxy = 1
+          }).catch(e => {
+            console.error(e); // ECONNRESET
+          });
+          console.log("Check proxy: " + check_proxy)
+          if(check_proxy == 0){
+            return false
+          }
+
+    }
 
     if (os_slave != "LINUX") {
         if (mode != "DEV") {
@@ -1468,6 +1479,7 @@ runAllTime = async () => {
     }
 
     for (let a = 1; a < 100; a++) {
+
         console.log("check connection " + a);
 
         await require('dns').resolve('www.google.com', function (err) {
@@ -1515,7 +1527,7 @@ runAllTime = async () => {
 
         let option1 = {
             user_agent: user_agent,
-            proxy: dataShopee.proxy,
+            proxy: proxy,
             profile_dir: profileChrome,
             cookie: acc.cookie,
             network: slaveInfo.network,
@@ -1572,7 +1584,7 @@ runAllTime = async () => {
                     accountInfo.status = 3
                 }
 
-                await axios.get(linkShopeeAccountUpdate, {
+                await axios.get(shopee_account_update_url, {
                     params: {
                         data: {
                             dataToServer: accountInfo,
@@ -1653,7 +1665,7 @@ runAllTime = async () => {
 
                         let check_add_cart
                         page.removeAllListeners('response');
-
+                        await page.setRequestInterception(true);
                         await page.on('response', async (resp) => {
                             let url = resp.url()
                             let productInfo1, productInfo2
@@ -1710,10 +1722,11 @@ runAllTime = async () => {
 
                             let checkSerachShop = url.split("api/v4/search/search_items?")
                             if (checkSerachShop.length > 1) {
+                                try {
                                 console.log(" -- Tìm vị trí sản phẩm chưa thả tim  --")
                                 productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.items
-
+                               //danh_sach_san_pham_chua_tha_tim = []
                                 productInfo2.forEach((item, index) => {
                                     if (item.shopid == productForUser.shop_id && (item.item_basic.liked == false)) {
                                         let pr = {
@@ -1725,6 +1738,10 @@ runAllTime = async () => {
                                         danh_sach_san_pham_chua_tha_tim.push(pr)
                                     }
                                 })
+                            } catch (error) {
+                               
+                                console.log("---- Không có sản phẩm chưa thả tim ----")
+                            }
                             }
 
 
@@ -1748,11 +1765,11 @@ runAllTime = async () => {
 
                         productForUser.slave = slavenumber
                         let newIp = await publicIp.v4()
-                        productForUser.ip = newIp;
-                        console.log("Ip mới: " + newIp)
+                        productForUser.ip = proxy.proxy_ip;
+                        console.log("Ip mới: " + proxy.proxy_ip)
                         console.log("Shop id: " + productForUser.shop_id)
                         console.log("Shop option: ")
-                        console.log(options)
+                       
                         console.log("product link: " + productForUser.product_link)
                         console.log("product name: " + productForUser.product_name)
                         console.log("product id: " + productForUser.product_id)
@@ -1800,9 +1817,13 @@ runAllTime = async () => {
 
                         if (productForUser.check_index < 6) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
-
-                            pageUrl = getViTriSanPham.trang - 1
-                            console.log(" --- Đến trang trang có vị trí sản phẩm ---- ")
+                            if(getViTriSanPham.trang > 1){
+                                pageUrl = getViTriSanPham.trang - 1
+                            }else{
+                                pageUrl = getViTriSanPham.trang
+                            }
+                            
+                            console.log(" --- Đến trang có vị trí sản phẩm ---- ")
                             urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                             urlSearch = encodeURI(urlSearch)
                             productForUser.urlSearch = urlSearch
@@ -1830,7 +1851,7 @@ runAllTime = async () => {
 
                                 console.log("Update seo sản phẩm")
                                 productForUser.cookie = ""
-                                await axios.get(shopeeUpdateSeoSanPhamDir, {
+                                await axios.get(shopee_update_seo_san_pham_url, {
                                     params: {
                                         data: {
                                             dataToServer: productForUser,
@@ -1890,7 +1911,7 @@ runAllTime = async () => {
                             productForUser.trang = 0
                             productForUser.vitri = 0
                             productForUser.cookie = ""
-                            await axios.get(shopeeUpdateSeoSanPhamDir, {
+                            await axios.get(shopee_update_seo_san_pham_url, {
                                 params: {
                                     data: {
                                         dataToServer: productForUser,
@@ -2052,7 +2073,8 @@ runAllTime = async () => {
                                     console.log("check follow shop: " + check1)
                                     if (check1 == false) {
                                         check_action = await shopeeApi.followShop(cookies22, refer, shopId)
-                                        console.log(check_action)
+                                       
+                                        console.log("Follow shop: " + check_action.error)
                                         // if (check_action.data.follow_successful) {
                                         let action1 = {
                                             time: new Date(),

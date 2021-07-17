@@ -137,7 +137,7 @@ followShop = async (cookies, ref, shopId) => {
 
     await axios(config)
         .then(function (response) {
-            console.log(response.data);
+           
             result = response.data
         })
         .catch(function (error) {
