@@ -643,21 +643,21 @@ updateActions = async (product9) => {
             console.log(error);
         });
 
-    await axios.get(update_point_url, {
-        data: product9,
-        timeout: 30000
-    },
-        {
-            headers: {
-                Connection: 'keep-alive',
-            }
+        await axios.get(update_point_url, {
+            params: {
+                data: {
+                    dataToServer: product9,
+                }
+            },
+            timeout: 5000
         })
-        .then(function (response) {
-            console.log(response.data);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+            .then(function (response) {
+                console.log(response.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+
+            })
 
 
 }
@@ -1474,8 +1474,8 @@ runAllTime = async () => {
     if (os_slave != "LINUX") {
         if (mode != "DEV") {
             //await change_info_pc()
-            console.log("----- Change info -----")
-            await shell.exec('changeinfo.bat');
+           // console.log("----- Change info -----")
+           // await shell.exec('changeinfo.bat');
         }
     }
 
