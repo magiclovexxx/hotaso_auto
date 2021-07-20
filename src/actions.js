@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 const randomUseragent = require('random-useragent');
 
 const check_slave_die = async(slave)=>{
-    let url = "https://hotaso.tranquoctoan.com/api_user/check_slave?slave=" + slave
+    let url = "http://hotaso.tranquoctoan.com/api_user/check_slave?slave=" + slave
     let check_slave
     await axios.get(url, {
         timeout: 50000
