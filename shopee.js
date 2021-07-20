@@ -38,6 +38,7 @@ headless_mode = process.env.HEADLESS_MODE     // che do chay hien thi giao dien
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 disable_image = 1
 
 if (headless_mode == "0") {
@@ -2035,36 +2036,36 @@ runAllTime = async () => {
                                     await updateActions(productForUser)
 
 
-                                    if (danh_sach_san_pham_chua_tha_tim.length > 5) {
+                                    // if (danh_sach_san_pham_chua_tha_tim.length > 5) {
 
-                                        console.log("--- Thả tim các sản phẩm của shop ---")
-                                        // console.log(danh_sach_san_pham_chua_tha_tim)
-                                        random_heart = Math.floor(Math.random() * (5 - 3)) + 3;
+                                    //     console.log("--- Thả tim các sản phẩm của shop ---")
+                                    //     // console.log(danh_sach_san_pham_chua_tha_tim)
+                                    //     random_heart = Math.floor(Math.random() * (5 - 3)) + 3;
 
-                                        for (let i = 0; i <= random_heart; i++) {
-                                            let product_heart = productForUser
-                                            product_heart.product_link = ""
-                                            product_heart.keyword = ""
-                                            product_heart.id = null
-                                            product_heart.product_name = danh_sach_san_pham_chua_tha_tim[i].product_name
-                                            product_heart.product_id = danh_sach_san_pham_chua_tha_tim[i].product_id
-                                            product_heart.product_image = danh_sach_san_pham_chua_tha_tim[i].product_image
+                                    //     for (let i = 0; i <= random_heart; i++) {
+                                    //         let product_heart = productForUser
+                                    //         product_heart.product_link = ""
+                                    //         product_heart.keyword = ""
+                                    //         product_heart.id = null
+                                    //         product_heart.product_name = danh_sach_san_pham_chua_tha_tim[i].product_name
+                                    //         product_heart.product_id = danh_sach_san_pham_chua_tha_tim[i].product_id
+                                    //         product_heart.product_image = danh_sach_san_pham_chua_tha_tim[i].product_image
 
-                                            console.log("Thả tim sản phẩm: " + product_heart.product_id)
-                                            check_action = await action_heart_product(page, product_heart)
+                                    //         console.log("Thả tim sản phẩm: " + product_heart.product_id)
+                                    //         check_action = await action_heart_product(page, product_heart)
 
-                                            action1 = {
-                                                time: new Date(),
-                                                action: "heart_product"
-                                            }
-                                            if (check_action.error == null) {
-                                                actions.push(action1)
-                                                product_heart.action = "heart_product"
-                                                //console.log(product_heart)
-                                                await updateActions(product_heart)
-                                            }
-                                        }
-                                    }
+                                    //         action1 = {
+                                    //             time: new Date(),
+                                    //             action: "heart_product"
+                                    //         }
+                                    //         if (check_action.error == null) {
+                                    //             actions.push(action1)
+                                    //             product_heart.action = "heart_product"
+                                    //             //console.log(product_heart)
+                                    //             await updateActions(product_heart)
+                                    //         }
+                                    //     }
+                                    // }
                                 }
 
                                 if (options.follow_shop) {
