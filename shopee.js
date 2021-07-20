@@ -58,7 +58,7 @@ if (mode === "DEV") {
     update_point = "http://hotaso.tranquoctoan.com"
 
 } else {
-    apiUrl = "https://h2.sacuco.com"
+    apiUrl = "http://h2.sacuco.com"
     apiServer = "http://history.hotaso.vn:4000"
     updateActionsUrl = "https://h1.sacuco.com"
     update_point = "http://h1.sacuco.com"
