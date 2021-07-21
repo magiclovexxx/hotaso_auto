@@ -1,1 +1,2 @@
-node /home/hotaso_auto/restart.js
+cd /home/hotaso_auto
+node restart.js
