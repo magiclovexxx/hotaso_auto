@@ -5,8 +5,8 @@ require('dotenv').config();
 slavenumber = process.env.SLAVE
 
 restartAll = async () => {
-
- console.log("------- Restart all -------")
+try {
+    console.log("------- Restart all -------")
 
  let check = await actionsShopee.check_slave_die(slavenumber)
  console.log(check)
@@ -30,6 +30,10 @@ restartAll = async () => {
            }
        });
     }
+} catch (error) {
+    
+}
+ 
    
 }
 

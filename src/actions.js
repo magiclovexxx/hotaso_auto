@@ -4,7 +4,7 @@ const randomUseragent = require('random-useragent');
 
 const check_slave_die = async(slave)=>{
     let url = "http://hotaso.tranquoctoan.com/api_user/check_slave?slave=" + slave
-    let check_slave
+    let check_slave = 1
     await axios.get(url, {
         timeout: 50000
     })
@@ -15,7 +15,7 @@ const check_slave_die = async(slave)=>{
         })
         .catch(function (error) {
             console.log(error);
-            return 0
+            return check_slave
         })
         .then(function () {
             // always executed
