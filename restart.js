@@ -23,7 +23,7 @@ restartAll = async () => {
 
         if (check == 2) {
             //exec("shutdown -r", (error) => {
-            exec("shutrown -r", (error) => {
+            exec("shutdown -r", (error) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
                     return;
