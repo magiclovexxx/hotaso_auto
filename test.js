@@ -378,7 +378,7 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
     //await test_update_all()
     // proxy = await proxy3g()
     // console.log(proxy)
-    // await pptr()
+     await pptr()
     //await test_post()
     //await disconnect()
     //await getKeyword()

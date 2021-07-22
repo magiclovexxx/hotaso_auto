@@ -1244,7 +1244,7 @@ gen_browser = async (option) => {
     console.log("Profile chrome link: " + profile_dir)
 
     let param = [
-        `--user-data-dir=${profile_dir}`,      // load profile chromium
+       // `--user-data-dir=${profile_dir}`,      // load profile chromium
         '--disable-gpu',
         '--no-sandbox',
         '--lang=en-US',
@@ -1270,6 +1270,7 @@ gen_browser = async (option) => {
         //executablePath: chromiumDir,
         headless: headless_mode,
         devtools: false,
+        userDataDir: `${profile_dir}`,
         args: param
     });
 
@@ -1279,6 +1280,7 @@ gen_browser = async (option) => {
 gen_page = async (browser, option) => {
 
     const page = (await browser.pages())[0];
+    //const page = await browser.newPage()
     await preparePageForTests(page);
 
     let user_agent1 = option.user_agent
@@ -1316,10 +1318,11 @@ gen_page = async (browser, option) => {
     }
 
     if (disable_css == 1 || disable_image == 1) {
-        await page.setRequestInterception(true);
+        
 
         // --- Chặn load css --- /
         if (disable_image == 1) {
+        //    await page.setRequestInterception(true);
             page.on('request', (req) => {
                 if (req.resourceType() === 'image') {
                     req.abort();
@@ -1394,6 +1397,10 @@ runAllTime = async () => {
 
     shopee_point = dataShopee.shopee_point
     slaveInfo = dataShopee.slave_info
+    if(slaveInfo.status == 0){
+        console.log(" SLAVE " + slaveInfo.slave_id + ": OFF")
+        return;
+    }
     //console.log(dataShopee)
     orderStatus = 1
     console.log("----------- START SHOPEE ---------------")
@@ -1549,7 +1556,7 @@ runAllTime = async () => {
         try {
             await page.waitForTimeout(5000)
             try {
-
+                
                 let ref = await page.url()
                 await page.goto('https://shopee.vn')
                 bypassTest.runBypassTest(page);
@@ -1667,7 +1674,7 @@ runAllTime = async () => {
 
                         let check_add_cart
                         page.removeAllListeners('response');
-                        await page.setRequestInterception(true);
+                        //await page.setRequestInterception(true);
                         await page.on('response', async (resp) => {
                             let url = resp.url()
                             let productInfo1, productInfo2
