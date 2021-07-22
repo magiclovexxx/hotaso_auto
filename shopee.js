@@ -39,7 +39,7 @@ disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
-disable_image = 1
+disable_image = 0
 
 if (headless_mode == "0") {
     headless_mode = true
