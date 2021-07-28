@@ -1449,7 +1449,8 @@ runAllTime = async () => {
             // console.log(r); // true
             check_proxy = 1
         }).catch(e => {
-            console.error(e); // ECONNRESET
+           // console.error(e); // ECONNRESET
+            console.log(proxy_1.host + " --- DIE ")
         });
         console.log("Check proxy: " + check_proxy)
         if (check_proxy == 0) {
@@ -1617,6 +1618,7 @@ runAllTime = async () => {
                         } catch (err) {
                             //HERE
                             console.error(err);
+                            //continue
                         }
 
                         let productForUser                     // Mảng chứa thông tin sản phẩm, từ khoá cần tương tác
@@ -1701,7 +1703,7 @@ runAllTime = async () => {
                                         viTriSanPhamTrang1 = index + 1
                                         url_trang_tim_kiem_san_pham = url
                                         //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
-                                        console.log(" -- Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1)
+                                        console.log(" -- Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1 + " Keyword : " + productForUser.keyword)
                                         console.log(url)
                                     }
                                 })
@@ -1914,7 +1916,7 @@ runAllTime = async () => {
                                     console.log(error);
 
                                 })
-                            continue
+                            //continue
 
                             try {
                                 await page.goto(productForUser.product_link, {
@@ -1940,7 +1942,7 @@ runAllTime = async () => {
                                 console.log(error.message);
                             }
 
-                            continue
+                            //continue
                         }
 
                         console.log(" Check product ton tai: " + check_product_exit)
