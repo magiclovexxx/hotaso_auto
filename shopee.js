@@ -51,10 +51,6 @@ console.log("headless_mode: " + headless_mode + " --- OS SLAVE:" + os_slave)
 
 // Danh sách profile facebook trong mỗi slave
 mode = process.env.MODE
-host_name = ""
-server_info = false
-
-
 
 if (mode === "DEV") {
     apiUrl = "http://hotaso.tranquoctoan.com"
@@ -63,29 +59,29 @@ if (mode === "DEV") {
     update_point = "http://hotaso.tranquoctoan.com"
 
 } else {
-    apiUrl = "http://h1.sacuco.com"
-    apiServer =  "http://history.hotaso.vn:4000"
-    updateActionsUrl ="" // "https://h1.sacuco.com"
-    update_point = "" //"http://h1.sacuco.com"
+    apiUrl = "http://h2.sacuco.com"
+    apiServer = "http://history.hotaso.vn:4000"
+    updateActionsUrl = "https://h1.sacuco.com"
+    update_point = "http://h1.sacuco.com"
     //updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
 }
 
 
-shopee_account_update_url = "" //apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
-data_shopee_url ="" // apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
-shopee_update_seo_san_pham_url = "" //apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
+shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
+data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
 
-update_actions_url = "" //updateActionsUrl + "/api_user/updateActions"     // Update actions
-update_point_url = "" //update_point + "/api_user/update_point"     // Update actions
+update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
+update_point_url = update_point + "/api_user/update_point"     // Update actions
 
 //save_history = updateActionsUrl + "/api_user/save_history"     // Update actions
 
-update_history_url = "" //apiServer + "/update-history"     // Update history
-save_history_url = "" //apiServer + "/save-history"     // Update history
+update_history_url = apiServer + "/update-history"     // Update history
+save_history_url = apiServer + "/save-history"     // Update history
 
-getSlaveAccountDir = ""// apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
-getSlaveInfo = "" // apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
+getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
+getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
 
 
 if (mode === "DEV") {
@@ -97,56 +93,6 @@ if (mode === "DEV") {
 }
 logs = 1
 
-init_slave = async () => {
-    await axios.get("http://h1.sacuco.com/api_user/get_server")
-        .then(function (response) {
-           // console.log(response.data);
-            server_info = response.data
-        })
-        .catch(function (error) {
-            console.log(error);
-            return false
-        });
-    
-        if(server_info){
-            host_name = server_info.domain
-    
-        }else{
-            return false
-        }
-    
-        console.log("HOST: " + host_name)
-
-        if (mode === "DEV") {
-            apiUrl = "http://hotaso.tranquoctoan.com"
-            apiServer = "http://history.hotaso.vn:3000"
-            updateActionsUrl = "https://hotaso.tranquoctoan.com"
-            update_point = "http://hotaso.tranquoctoan.com"
-        
-        } else {
-            apiUrl = "http://"+host_name
-            apiServer = "http://history.hotaso.vn:4000"
-            updateActionsUrl = "https://"+host_name
-            update_point = "http://"+host_name
-            //updateActionsUrl = "https://hotaso.tranquoctoan.com"
-            maxTab = 5
-        }
-        
-        
-        shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
-        data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
-        shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
-        
-        update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
-        update_point_url = update_point + "/api_user/update_point"     // Update actions
-        
-        update_history_url = apiServer + "/update-history"     // Update history
-        save_history_url = apiServer + "/save-history"     // Update history
-        
-        getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
-        getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
-
-}
 loginShopee = async (page, accounts) => {
 
     //await page.goto("https://shopee.vn")
@@ -466,40 +412,44 @@ getproduct = async (page, saveProduct, limit, idShops) => {
 }
 
 get_variation_enable = async (page) => {
+    try {
+        let variation1 = await page.evaluate(() => {
 
-    let variation1 = await page.evaluate(() => {
-
-        //  tất cả variation
-        let titles = document.querySelectorAll('.product-variation');
-        let list_variation = []
-        titles.forEach((item, index) => {
-            let x = item.click()
-            list_variation.push(x)
-        })
-        return list_variation
-    })
-
-    // variation disable
-    let variation_disable = await page.evaluate(() => {
-        let titles_disable = document.querySelectorAll('.product-variation--disabled');
-        let list_variation_disable = []
-        titles_disable.forEach((item) => {
-            let x = item.textContent
-            list_variation_disable.push(x)
+            //  tất cả variation
+            let titles = document.querySelectorAll('.product-variation');
+            let list_variation = []
+            titles.forEach((item, index) => {
+                let x = item.click()
+                list_variation.push(x)
+            })
+            return list_variation
         })
 
-        return list_variation_disable
-    })
+        // variation disable
+        let variation_disable = await page.evaluate(() => {
+            let titles_disable = document.querySelectorAll('.product-variation--disabled');
+            let list_variation_disable = []
+            titles_disable.forEach((item) => {
+                let x = item.textContent
+                list_variation_disable.push(x)
+            })
 
-    list_variation_enable = []
-    variation1.forEach((item2, index) => {
-        if (!variation_disable.includes(item2)) {
-            list_variation_enable.push(index)
-        }
+            return list_variation_disable
+        })
 
-    })
+        list_variation_enable = []
+        variation1.forEach((item2, index) => {
+            if (!variation_disable.includes(item2)) {
+                list_variation_enable.push(index)
+            }
 
-    return list_variation_enable
+        })
+
+        return list_variation_enable
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 // chọn thuộc tính sản phẩm
@@ -851,74 +801,49 @@ action_heart_product = async (page, product) => {
 }
 
 action_add_cart = async (page, product) => {
-    console.log("Thêm vào giỏ hàng")
-    await page.keyboard.press('Home');
-    // Check số lượng trong giỏ hàng hiện tại
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitForTimeout(timeout)
-    let checkcart = typeof 123
-    checkcart = await page.evaluate(() => {
+    try {
+        console.log("Thêm vào giỏ hàng")
+        await page.keyboard.press('Home');
+        // Check số lượng trong giỏ hàng hiện tại
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitForTimeout(timeout)
+        let checkcart = typeof 123
+        checkcart = await page.evaluate(() => {
 
-        // Số sản phẩm trong giỏ hàng       
-        let title
-        let titles = document.querySelector('.shopee-cart-number-badge')
-        if (titles) {
-            title = titles.innerText;
-        }
+            // Số sản phẩm trong giỏ hàng       
+            let title
+            let titles = document.querySelector('.shopee-cart-number-badge')
+            if (titles) {
+                title = titles.innerText;
+            }
 
-        return title
-    })
+            return title
+        })
 
-    console.log(" Số sản phẩm trong giỏ hàng: " + checkcart)
+        console.log(" Số sản phẩm trong giỏ hàng: " + checkcart)
 
-    // click chọn màu
-    let checkVariation = await chooseVariation(page, product, 5)
+        // click chọn màu
+        let checkVariation = await chooseVariation(page, product, 5)
 
-    // click thêm vào giỏ hàng
-    timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
-    await page.waitForTimeout(timeout)
-    addToCard = await page.$$('.btn-tinted')
+        // click thêm vào giỏ hàng
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitForTimeout(timeout)
+        addToCard = await page.$$('.btn-tinted')
 
-    await page.evaluate(() => {
+        await page.evaluate(() => {
+            check = document.querySelector('button.btn-tinted')
+            if (check) {
+                document.querySelector('button.btn-tinted').click()
+            }
+        })
 
-        //  tất cả variation
-        document.querySelector('button.btn-tinted').click()
-    })
-    timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
-    await page.waitForTimeout(timeout)
-    // if (addToCard.length) {
-    //     try {
+        timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
+        await page.waitForTimeout(timeout)
 
+    } catch (error) {
+        console.log(error)
+    }
 
-    //         await page.waitForTimeout(5000)
-
-    //         let checkcart2 = typeof 123
-    //         checkcart2 = await page.evaluate(() => {
-
-    //             // Số sản phẩm trong giỏ hàng       
-    //             let title
-    //             let titles = document.querySelector('.shopee-cart-number-badge')
-    //             if (titles) {
-    //                 title = titles.innerText;
-    //             }
-
-    //             return title
-    //         })
-
-    //         if (checkcart2 > checkcart) {
-    //             return true
-    //         } else {
-    //             console.log("Có lỗi khi bỏ giỏ: ")
-    //             return false
-    //         }
-    //     } catch (error) {
-    //         console.log(error)
-    //         return false
-    //     }
-
-    // } else {
-    //     return false
-    // }
 
 }
 
@@ -1373,9 +1298,10 @@ gen_page = async (browser, option) => {
 
     if (disable_css == 1 || disable_image == 1) {
 
-        // --- Chặn load anh --- /
+
+        // --- Chặn load css --- /
         if (disable_image == 1) {
-                await page.setRequestInterception(true);
+            //    await page.setRequestInterception(true);
             page.on('request', (req) => {
                 if (req.resourceType() === 'image') {
                     req.abort();
@@ -1390,10 +1316,6 @@ gen_page = async (browser, option) => {
 }
 
 runAllTime = async () => {
-    check_server = await init_slave()
-    if(check_server == false){
-        return false
-    }
     slaveInfo = []
     getDataShopee = []
     dataShopee = []
@@ -1733,104 +1655,99 @@ runAllTime = async () => {
                         page.removeAllListeners('response');
                         //await page.setRequestInterception(true);
                         await page.on('response', async (resp) => {
-                            try {
-                                let url = resp.url()
-                                let productInfo1, productInfo2
+                            let url = resp.url()
+                            let productInfo1, productInfo2
 
-                                let checkUrlproduct = url.split("search/search_items?by=relevancy&keyword=")
+                            let checkUrlproduct = url.split("search/search_items?by=relevancy&keyword=")
 
-                                let check_add_to_cart = url.split("api/v4/cart/add_to")
+                            let check_add_to_cart = url.split("api/v4/cart/add_to")
 
-                                let checkUrlShop = url.split("api/v4/shop/get_shop_detail?username=")
+                            let checkUrlShop = url.split("api/v4/shop/get_shop_detail?username=")
 
-                                if (checkUrlShop.length > 1) {
-                                    console.log("-- Sự kiện lấy thông tin shop --")
-                                    productInfo1 = await resp.json()
-                                    productInfo2 = productInfo1.data
-                                    if (productForUser.shop_id == productInfo2.shopid) {
-                                        console.log("Thông tin shop cover: " + productInfo2.cover);
-                                        shopInfo3.avatar = productInfo2.account.portrait
-                                        shopInfo3.username = productInfo2.account.username
-                                        shopInfo3.name = productInfo2.name
-                                        shopInfo3.shop_id = productInfo2.shopid
-                                        shopInfo3.followed = productInfo2.followed
-                                        console.log("----- Shop info ------")
-                                        console.log(shopInfo3)
+                            if (checkUrlShop.length > 1) {
+                                console.log("-- Sự kiện lấy thông tin shop --")
+                                productInfo1 = await resp.json()
+                                productInfo2 = productInfo1.data
+                                if (productForUser.shop_id == productInfo2.shopid) {
+                                    console.log("Thông tin shop cover: " + productInfo2.cover);
+                                    shopInfo3.avatar = productInfo2.account.portrait
+                                    shopInfo3.username = productInfo2.account.username
+                                    shopInfo3.name = productInfo2.name
+                                    shopInfo3.shop_id = productInfo2.shopid
+                                    shopInfo3.followed = productInfo2.followed
+                                    console.log("----- Shop info ------")
+                                    console.log(shopInfo3)
+                                }
+                            }
+
+                            if (check_add_to_cart.length > 1) {
+                                console.log("---- Sự kiện bỏ giỏ  ----")
+                                let check = await resp.json()
+                                if (check.error == 0) {
+                                    check_add_cart = true
+                                } else {
+                                    check_add_cart = false
+                                }
+                            }
+
+                            if (checkUrlproduct.length > 1) {
+                                console.log(" -- Tìm vị trí sản phẩm trên trang  --")
+                                productInfo1 = await resp.json()
+                                productInfo2 = productInfo1.items
+
+                                productInfo2.forEach((item, index) => {
+                                    if (item.itemid == productForUser.product_id && (item.ads_keyword == null)) {
+
+                                        viTriSanPhamTrang1 = index + 1
+                                        url_trang_tim_kiem_san_pham = url
+                                        //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
+                                        console.log(" -- Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1)
+                                        console.log(url)
                                     }
-                                }
-
-                                if (check_add_to_cart.length > 1) {
-                                    console.log("---- Sự kiện bỏ giỏ  ----")
-                                    let check = await resp.json()
-                                    if (check.error == 0) {
-                                        check_add_cart = true
-                                    } else {
-                                        check_add_cart = false
-                                    }
-                                }
-
-                                if (checkUrlproduct.length > 1) {
-                                    console.log(" -- Tìm vị trí sản phẩm trên trang  --")
-                                    productInfo1 = await resp.json()
-                                    productInfo2 = productInfo1.items
-
-                                    productInfo2.forEach((item, index) => {
-                                        if (item.itemid == productForUser.product_id && (item.ads_keyword == null)) {
-
-                                            viTriSanPhamTrang1 = index + 1
-                                            url_trang_tim_kiem_san_pham = url
-                                            //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
-                                            console.log(" -- Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1)
-                                            console.log(url)
-                                        }
-                                    })
-
-                                }
-
-                                // let checkSerachShop = url.split("api/v4/search/search_items?")
-                                // if (checkSerachShop.length > 1) {
-                                //     try {
-                                //         console.log(" -- Tìm vị trí sản phẩm chưa thả tim  --")
-                                //         productInfo1 = await resp.json()
-                                //         productInfo2 = productInfo1.items
-                                //         //danh_sach_san_pham_chua_tha_tim = []
-                                //         productInfo2.forEach((item, index) => {
-                                //             if (item.shopid == productForUser.shop_id && (item.item_basic.liked == false)) {
-                                //                 let pr = {
-                                //                     product_id: item.itemid,
-                                //                     product_link: "",
-                                //                     product_name: item.item_basic.name,
-                                //                     product_image: item.item_basic.image,
-                                //                 }
-                                //                 danh_sach_san_pham_chua_tha_tim.push(pr)
-                                //             }
-                                //         })
-                                //     } catch (error) {
-
-                                //         console.log("---- Không có sản phẩm chưa thả tim ----")
-                                //     }
-                                // }
-
-
-                                check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
-                                if (check_link_san_pham.length > 1) {
-                                    console.log(" --- Lấy thông tin sản phẩm ---");
-                                    try {
-                                        let productInfo1 = await resp.json()
-                                        productInfo2 = productInfo1.item
-                                        console.log("Ảnh sản phẩm: " + productInfo2.image)
-                                        productForUser.product_image = ""
-                                        productForUser.product_image = productInfo2.image
-                                        productForUser.liked = productInfo2.liked
-                                    } catch (error) {
-                                        check_product_exit = "Không tồn tại"
-                                        console.log("---- Sản phẩm không tồn tại ----")
-                                    }
-                                }
-                            } catch (error) {
+                                })
 
                             }
 
+                            let checkSerachShop = url.split("api/v4/search/search_items?")
+                            if (checkSerachShop.length > 1) {
+                                try {
+                                    console.log(" -- Tìm vị trí sản phẩm chưa thả tim  --")
+                                    productInfo1 = await resp.json()
+                                    productInfo2 = productInfo1.items
+                                    //danh_sach_san_pham_chua_tha_tim = []
+                                    productInfo2.forEach((item, index) => {
+                                        if (item.shopid == productForUser.shop_id && (item.item_basic.liked == false)) {
+                                            let pr = {
+                                                product_id: item.itemid,
+                                                product_link: "",
+                                                product_name: item.item_basic.name,
+                                                product_image: item.item_basic.image,
+                                            }
+                                            danh_sach_san_pham_chua_tha_tim.push(pr)
+                                        }
+                                    })
+                                } catch (error) {
+
+                                    console.log("---- Không có sản phẩm chưa thả tim ----")
+                                }
+                            }
+
+
+                            check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
+                            if (check_link_san_pham.length > 1) {
+                                console.log(" --- Lấy thông tin sản phẩm ---");
+                                try {
+                                    let productInfo1 = await resp.json()
+                                    productInfo2 = productInfo1.item
+                                    console.log("Ảnh sản phẩm: " + productInfo2.image)
+                                    productForUser.product_image = ""
+                                    productForUser.product_image = productInfo2.image
+                                    productForUser.liked = productInfo2.liked
+                                } catch (error) {
+                                    check_product_exit = "Không tồn tại"
+                                    console.log("---- Sản phẩm không tồn tại ----")
+                                }
+                            }
 
                         });
 
@@ -1978,7 +1895,7 @@ runAllTime = async () => {
 
 
                         // nếu ko tìm thấy vị trí sp
-                        if (getViTriSanPham.trang == false || productForUser.check_index < 6) {
+                        if (getViTriSanPham.trang == false) {
                             productForUser.trang = 0
                             productForUser.vitri = 0
                             productForUser.cookie = ""
@@ -1997,6 +1914,7 @@ runAllTime = async () => {
                                     console.log(error);
 
                                 })
+                            continue
 
                             try {
                                 await page.goto(productForUser.product_link, {
@@ -2011,7 +1929,7 @@ runAllTime = async () => {
                         }
 
                         // nếu lỗi khi tìm vị trí sp 
-                        if (getViTriSanPham.trang == "err" || productForUser.check_index > 5) {
+                        if (getViTriSanPham.trang == "err") {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
@@ -2022,6 +1940,7 @@ runAllTime = async () => {
                                 console.log(error.message);
                             }
 
+                            continue
                         }
 
                         console.log(" Check product ton tai: " + check_product_exit)
@@ -2145,7 +2064,7 @@ runAllTime = async () => {
                                     if (check1 == false) {
                                         check_action = await shopeeApi.followShop(cookies22, refer, shopId)
 
-                                        console.log("Follow shop error: " + check_action.error)
+                                        console.log("Follow shop: " + check_action.error)
                                         // if (check_action.data.follow_successful) {
                                         let action1 = {
                                             time: new Date(),
