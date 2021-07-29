@@ -67,7 +67,6 @@ if (mode === "DEV") {
     maxTab = 5
 }
 
-
 shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
 data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
 shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
@@ -1316,6 +1315,8 @@ gen_page = async (browser, option) => {
 }
 
 runAllTime = async () => {
+
+
     slaveInfo = []
     getDataShopee = []
     dataShopee = []
@@ -1345,6 +1346,33 @@ runAllTime = async () => {
 
 
     if (checkNetwork == 1) {
+
+
+        await axios.get("http://h8.sacuco.com/api_user/get_server")
+            .then(function (response) {
+                host_name = response.data
+                // cookie3 = response.headers['set-cookie']
+                
+                // console.log(cookie1)
+            })
+            .catch(function (error) {
+                console.log(error);
+
+            })
+
+        update_point  = apiUrl = "http://" + host_name.domain
+        updateActionsUrl  = "https://" + host_name.domain
+        console.log("HOST NAME : " + apiUrl)
+        shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
+        data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
+        shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
+
+        update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
+        update_point_url = update_point + "/api_user/update_point"     // Update actions
+
+        getSlaveAccountDir = apiUrl + "/api_user/getSlaveAccount"     // Lay tai khoan shopee cho slave
+        getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
+
 
         console.log("connected");
 
@@ -1449,7 +1477,7 @@ runAllTime = async () => {
             // console.log(r); // true
             check_proxy = 1
         }).catch(e => {
-           // console.error(e); // ECONNRESET
+            // console.error(e); // ECONNRESET
             console.log(proxy_1.host + " --- DIE ")
         });
         console.log("Check proxy: " + check_proxy)
