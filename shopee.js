@@ -1363,6 +1363,15 @@ runAllTime = async () => {
         update_point  = apiUrl = "http://" + host_name.domain
         updateActionsUrl  = "https://" + host_name.domain
         console.log("HOST NAME : " + apiUrl)
+
+        if (mode === "DEV") {
+            apiUrl = "http://hotaso.tranquoctoan.com"
+            apiServer = "http://history.hotaso.vn:3000"
+            updateActionsUrl = "https://hotaso.tranquoctoan.com"
+            update_point = "http://hotaso.tranquoctoan.com"
+        
+        } 
+        
         shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
         data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
         shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
@@ -1834,15 +1843,41 @@ runAllTime = async () => {
                         console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
 
                         if (productForUser.check_index < 6) {
-                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
-                            if (getViTriSanPham.trang > 1) {
-                                pageUrl = getViTriSanPham.trang - 1
-                            } else {
-                                pageUrl = getViTriSanPham.trang
+                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)                            
+
+                            if(getViTriSanPham.trang != false){
+                                productForUser.trang = getViTriSanPham.trang
+                                productForUser.vitri = getViTriSanPham.vitri
+
+                                console.log("Update seo sản phẩm")
+                                productForUser.cookie = ""
+                                await axios.get(shopee_update_seo_san_pham_url, {
+                                    params: {
+                                        data: {
+                                            dataToServer: productForUser,
+                                        }
+                                    },
+                                    timeout: 5000
+                                })
+                                    .then(function (response) {
+                                        console.log(response.data)
+                                    })
+                                    .catch(function (error) {
+                                        console.log(error);
+
+                                    })
                             }
 
+                            if (getViTriSanPham.trang > 1) {
+                                pageUrl = getViTriSanPham.trang - 1
+                                urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
+                            } else {
+                              
+                                urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword
+                            }                            
+
                             console.log(" --- Đến trang có vị trí sản phẩm ---- ")
-                            urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
+                           
                             urlSearch = encodeURI(urlSearch)
                             productForUser.urlSearch = urlSearch
                             try {
@@ -1862,28 +1897,7 @@ runAllTime = async () => {
                             console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                             // console.log(getViTriSanPham)
 
-                            if (viTriSanPhamTrang1 != false) {
-
-                                productForUser.trang = getViTriSanPham.trang
-                                productForUser.vitri = viTriSanPhamTrang1
-
-                                console.log("Update seo sản phẩm")
-                                productForUser.cookie = ""
-                                await axios.get(shopee_update_seo_san_pham_url, {
-                                    params: {
-                                        data: {
-                                            dataToServer: productForUser,
-                                        }
-                                    },
-                                    timeout: 5000
-                                })
-                                    .then(function (response) {
-                                        console.log(response.data)
-                                    })
-                                    .catch(function (error) {
-                                        console.log(error);
-
-                                    })
+                            if (viTriSanPhamTrang1 != false) {                               
 
                                 today = new Date().toLocaleString();
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
@@ -1959,7 +1973,7 @@ runAllTime = async () => {
                         }
 
                         // nếu lỗi khi tìm vị trí sp 
-                        if (getViTriSanPham.trang == "err") {
+                        if (getViTriSanPham.trang == "err" || viTriSanPhamTrang1 == false) {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
