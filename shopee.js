@@ -47,6 +47,7 @@ if (headless_mode == "0") {
     headless_mode = false
 }
 
+check_die = 0
 console.log("headless_mode: " + headless_mode + " --- OS SLAVE:" + os_slave)
 
 // Danh sách profile facebook trong mỗi slave
@@ -608,7 +609,8 @@ updateHistory = async (product) => {
 }
 
 updateActions = async (product9) => {
-
+    console.log("Check die: " + check_die)
+    check_die = 1;
     update = 0
     //datatest = 
     const httpsAgent = new https.Agent({ rejectUnauthorized: false });
@@ -1314,8 +1316,29 @@ gen_page = async (browser, option) => {
     return page
 }
 
-runAllTime = async () => {
+check_die_slave =  () => {
+    console.log("check slave die: " )
+    
+}
 
+
+runAllTime = async () => {
+    setInterval(function (){
+        console.log("INTERVAL check slave die: " + check_die)
+        if(check_die == 1){
+            check_die = 0
+        }else{
+            exec("pm2 restart all", (error) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+            });
+        }
+        
+        console.log("INTERVAL check slave die: " + check_die)
+    }, 300000);
+    
 
     slaveInfo = []
     getDataShopee = []
@@ -2164,9 +2187,16 @@ runAllTime = async () => {
 
     })
 
+    exec("pm2 restart all", (error) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+    });
+
 };
 
-//setInterval(check_die_slave, 600000, slavenumber);
+
 
 //Cron 1 phút 1 lần 
 
