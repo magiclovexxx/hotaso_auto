@@ -2220,6 +2220,8 @@ runAllTime = async () => {
 
     })
 
+    
+
 };
 
 
@@ -2238,6 +2240,13 @@ if (mode === "DEV") {
         await sleep(5000)
 
         await runAllTime()
+
+        await exec("pm2 restart all", (error) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+        });
 
     })();
 } else {
