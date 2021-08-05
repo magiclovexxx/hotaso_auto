@@ -1323,21 +1323,21 @@ check_die_slave =  () => {
 
 
 runAllTime = async () => {
-    setInterval(function (){
-        console.log("INTERVAL check slave die: " + check_die)
-        if(check_die == 1){
-            check_die = 0
-        }else{
-            exec("pm2 restart all", (error) => {
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                    return;
-                }
-            });
-        }
+    // setInterval(function (){
+    //     console.log("INTERVAL check slave die: " + check_die)
+    //     if(check_die == 1){
+    //         check_die = 0
+    //     }else{
+    //         exec("pm2 restart all", (error) => {
+    //             if (error) {
+    //                 console.log(`error: ${error.message}`);
+    //                 return;
+    //             }
+    //         });
+    //     }
         
-        console.log("INTERVAL check slave die: " + check_die)
-    }, 300000);
+    //     console.log("INTERVAL check slave die: " + check_die)
+    // }, 300000);
     
 
     slaveInfo = []
