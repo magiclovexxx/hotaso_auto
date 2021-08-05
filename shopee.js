@@ -1370,8 +1370,7 @@ runAllTime = async () => {
 
     if (checkNetwork == 1) {
 
-
-        await axios.get("http://h8.sacuco.com/api_user/get_server")
+        await axios.get("http://api.hotaso.vn/api_user/get_server")
             .then(function (response) {
                 host_name = response.data
                 // cookie3 = response.headers['set-cookie']
