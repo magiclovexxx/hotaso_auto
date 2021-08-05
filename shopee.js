@@ -2220,13 +2220,6 @@ runAllTime = async () => {
 
     })
 
-    exec("pm2 restart all", (error) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-    });
-
 };
 
 
