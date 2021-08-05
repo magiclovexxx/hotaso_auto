@@ -54,16 +54,16 @@ console.log("headless_mode: " + headless_mode + " --- OS SLAVE:" + os_slave)
 mode = process.env.MODE
 
 if (mode === "DEV") {
-    apiUrl = "http://hotaso.tranquoctoan.com"
+    apiUrl = "http://beta.hotaso.vn"
     apiServer = "http://history.hotaso.vn:3000"
-    updateActionsUrl = "https://hotaso.tranquoctoan.com"
-    update_point = "http://hotaso.tranquoctoan.com"
+    updateActionsUrl = "https://beta.hotaso.vn"
+    update_point = "http://beta.hotaso.vn"
 
 } else {
-    apiUrl = "http://h2.sacuco.com"
+    apiUrl = "http://api.hotaso.vn"
     apiServer = "http://history.hotaso.vn:4000"
-    updateActionsUrl = "https://h1.sacuco.com"
-    update_point = "http://h1.sacuco.com"
+    updateActionsUrl = "https://api.hotaso.vn"
+    update_point = "http://api.hotaso.vn"
     //updateActionsUrl = "https://hotaso.tranquoctoan.com"
     maxTab = 5
 }
@@ -1387,10 +1387,10 @@ runAllTime = async () => {
         console.log("HOST NAME : " + apiUrl)
 
         if (mode === "DEV") {
-            apiUrl = "http://hotaso.tranquoctoan.com"
+            apiUrl = "http://beta.hotaso.vn"
             apiServer = "http://history.hotaso.vn:3000"
-            updateActionsUrl = "https://hotaso.tranquoctoan.com"
-            update_point = "http://hotaso.tranquoctoan.com"
+            updateActionsUrl = "https://beta.hotaso.vn"
+            update_point = "http://beta.hotaso.vn"
         
         } 
         
