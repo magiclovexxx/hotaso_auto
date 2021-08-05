@@ -1316,9 +1316,9 @@ gen_page = async (browser, option) => {
     return page
 }
 
-check_die_slave =  () => {
-    console.log("check slave die: " )
-    
+check_die_slave = () => {
+    console.log("check slave die: ")
+
 }
 
 
@@ -1335,10 +1335,10 @@ runAllTime = async () => {
     //             }
     //         });
     //     }
-        
+
     //     console.log("INTERVAL check slave die: " + check_die)
     // }, 300000);
-    
+
 
     slaveInfo = []
     getDataShopee = []
@@ -1374,7 +1374,7 @@ runAllTime = async () => {
             .then(function (response) {
                 host_name = response.data
                 // cookie3 = response.headers['set-cookie']
-                
+
                 // console.log(cookie1)
             })
             .catch(function (error) {
@@ -1382,8 +1382,42 @@ runAllTime = async () => {
 
             })
 
-        update_point  = apiUrl = "http://" + host_name.domain
-        updateActionsUrl  = "https://" + host_name.domain
+        if (host_name.version) {
+            // get version hien tai trong file version.txt
+            var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
+            if (checkVersion) {
+                checkVersion = checkVersion.toString();
+            } else {
+                checkVersion = ""
+            }
+            console.log("Version hiện tai: " + checkVersion);
+            newVersion = host_name.version;
+            console.log("Version server: " + host_name.version);
+            // if (0) {
+            if (newVersion !== checkVersion && host_name.version !== undefined) {
+                console.log("Cập nhật code");
+                // Update version mới vào file version.txt
+                //fs.writeFileSync('version.txt', newVersion)
+                if (mode !== "DEV") {
+                    if (os_slave != "LINUX") {
+                        const myShellScript = exec('update.sh /');
+                        myShellScript.stdout.on('data', (data) => {
+                            // do whatever you want here with data
+                        });
+                        myShellScript.stderr.on('data', (data) => {
+                            console.error(data);
+                        });
+                    } else {
+                        shell.exec('git stash; git pull origin master; npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');
+                    }
+
+                    return false
+                }
+            }
+        }
+
+        update_point = apiUrl = "http://" + host_name.domain
+        updateActionsUrl = "https://" + host_name.domain
         console.log("HOST NAME : " + apiUrl)
 
         if (mode === "DEV") {
@@ -1391,9 +1425,9 @@ runAllTime = async () => {
             apiServer = "http://history.hotaso.vn:3000"
             updateActionsUrl = "https://beta.hotaso.vn"
             update_point = "http://beta.hotaso.vn"
-        
-        } 
-        
+
+        }
+
         shopee_account_update_url = apiUrl + "/api_user/shopeeAccountUpdate" // Link update account shopee status
         data_shopee_url = apiUrl + "/api_user/dataShopee"     // Link shopee update thứ hạng sản phẩm
         shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"     // Link shopee update seo sản phẩm
@@ -1865,9 +1899,9 @@ runAllTime = async () => {
                         console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
 
                         if (productForUser.check_index < 6) {
-                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)                            
+                            getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
 
-                            if(getViTriSanPham.trang != false){
+                            if (getViTriSanPham.trang != false) {
                                 productForUser.trang = getViTriSanPham.trang
                                 productForUser.vitri = getViTriSanPham.vitri
 
@@ -1894,12 +1928,12 @@ runAllTime = async () => {
                                 pageUrl = getViTriSanPham.trang - 1
                                 urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                             } else {
-                              
+
                                 urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword
-                            }                            
+                            }
 
                             console.log(" --- Đến trang có vị trí sản phẩm ---- ")
-                           
+
                             urlSearch = encodeURI(urlSearch)
                             productForUser.urlSearch = urlSearch
                             try {
@@ -1919,7 +1953,7 @@ runAllTime = async () => {
                             console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                             // console.log(getViTriSanPham)
 
-                            if (viTriSanPhamTrang1 != false) {                               
+                            if (viTriSanPhamTrang1 != false) {
 
                                 today = new Date().toLocaleString();
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
