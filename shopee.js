@@ -633,6 +633,17 @@ updateActions = async (product9) => {
             console.log(error);
         });
 
+
+    await axios.get("https://beta.sacuco.com/api_user/shopee_campaigns/", {
+        data: product9,
+        timeout: 50000
+    }).then(function (response) {
+        console.log("SACUCO - -- Gửi dữ liệu lên sacuco OK");
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+
     await axios.get(save_history_url, {
         data: product9,
         timeout: 50000
@@ -2220,7 +2231,7 @@ runAllTime = async () => {
 
     })
 
-    
+
 
 };
 
