@@ -1499,31 +1499,7 @@ runAllTime = async () => {
     } else {
         checkVersion = ""
     }
-    console.log("Version hiện tai: " + checkVersion);
-    newVersion = dataShopee.version;
-    console.log("Version server: " + dataShopee.version);
-    // if (0) {
-    if (newVersion !== checkVersion && dataShopee.version !== undefined) {
-        console.log("Cập nhật code");
-        // Update version mới vào file version.txt
-        //fs.writeFileSync('version.txt', newVersion)
-        if (mode !== "DEV") {
-            if (os_slave != "LINUX") {
-                const myShellScript = exec('update.sh /');
-                myShellScript.stdout.on('data', (data) => {
-                    // do whatever you want here with data
-                });
-                myShellScript.stderr.on('data', (data) => {
-                    console.error(data);
-                });
-            } else {
-                shell.exec('git stash; git pull origin master; npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');
-            }
-
-            return false
-        }
-    }
-
+    
     await sleep(5000)
 
     if (slaveInfo.network == "dcom") {
