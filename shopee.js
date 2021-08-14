@@ -660,6 +660,7 @@ updateActions = async (product9) => {
             console.log(error);
         });
 
+    product9.cookie="";
     await axios.get(update_point_url, {
         params: {
             data: {
@@ -1623,7 +1624,6 @@ runAllTime = async () => {
             } catch (err) {
                 //HERE
                 console.error(err);
-
             }
 
 
@@ -1639,8 +1639,6 @@ runAllTime = async () => {
                 accountInfo = {
                     user: subAccount[0],
                     pass: subAccount[1],
-
-
                 }
 
                 if (checklogin == 2) {

@@ -1510,14 +1510,14 @@ proxy_test = async () => {
           // const proxy = 'y0adXjeO:pAzAHCr4@54.82.74.24:5557';
          
           await proxy_check(proxy_1).then(async (r) => {
-            url_proxy = "http://hotaso.tranquoctoan.com/api_user/check_proxy?proxy=" + proxy_1.host+":OK"
+            url_proxy = "http://api.hotaso.vn/api_user/check_proxy?proxy=" + proxy_1.host+":OK"
             check = await axios.get(url_proxy)
            // console.log(check.data)
           }).catch(async (e) => {
           //  console.log(index + " -- " + proxy_1.host) 
             //console.log(proxy_1.host) 
 
-            url_proxy = "http://hotaso.tranquoctoan.com/api_user/check_proxy?proxy=" + proxy_1.host
+            url_proxy = "http://api.hotaso.vn/api_user/check_proxy?proxy=" + proxy_1.host
             check = await axios.get(url_proxy)
             console.log(check.data)
           });
