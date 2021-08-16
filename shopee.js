@@ -644,21 +644,21 @@ updateActions = async (product9) => {
     //     console.log(error);
     // });
 
-    await axios.get(save_history_url, {
-        data: product9,
-        timeout: 50000
-    },
-        {
-            headers: {
-                Connection: 'keep-alive',
-            }
-        })
-        .then(function (response) {
-            console.log(response.data);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+    // await axios.get(save_history_url, {
+    //     data: product9,
+    //     timeout: 50000
+    // },
+    //     {
+    //         headers: {
+    //             Connection: 'keep-alive',
+    //         }
+    //     })
+    //     .then(function (response) {
+    //         console.log(response.data);
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
 
     product9.cookie="";
     await axios.get(update_point_url, {
