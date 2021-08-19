@@ -1818,11 +1818,14 @@ runAllTime = async () => {
                                 console.log(" --- Lấy thông tin sản phẩm ---");
                                 try {
                                     let productInfo1 = await resp.json()
-                                    productInfo2 = productInfo1.item
+                                    productInfo2 = productInfo1.data
                                     console.log("Ảnh sản phẩm: " + productInfo2.image)
                                     productForUser.product_image = ""
                                     productForUser.product_image = productInfo2.image
                                     productForUser.liked = productInfo2.liked
+                                    console.log(" IMAGE ->" + productForUser.product_image )
+                                    console.log(" LIKED ->" + productForUser.liked )
+
                                 } catch (error) {
                                     check_product_exit = "Không tồn tại"
                                     console.log("---- Sản phẩm không tồn tại ----")
@@ -2046,6 +2049,7 @@ runAllTime = async () => {
                                 productForUser.action = "view_product"
                                 await updateActions(productForUser)
 
+                                console.log("---- Thả tim sản phẩm ---- : " + productForUser.liked)
                                 if (options.heart_product) {
                                     if (productForUser.liked == false) {
                                         console.log("---- Thả tim sản phẩm ----")
@@ -2055,6 +2059,8 @@ runAllTime = async () => {
                                             time: new Date(),
                                             action: "heart_product"
                                         }
+                                        console.log(" --- check thả tim ---")
+                                        console.log(check_action);
                                         if (check_action.error == null) {
                                             actions.push(action1)
                                             productForUser.action = "heart_product"
