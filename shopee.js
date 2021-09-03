@@ -584,13 +584,13 @@ action_view_review = async (page) => {
 }
 
 
-updateProxy = async (product) => {
-    dataupdate = product
+updateProxy = async (proxy) => {
 
-    url_proxy = "http://api.hotaso.vn/api_user/update_proxy?proxy=" + proxy
+    console.log(" --- Update proxy ---")
+    url_proxy = apiUrl + "/api_user/update_proxy?proxy=" + proxy
 
     await axios.get(url_proxy, {
-        data: dataupdate,
+       
         timeout: 50000
     },
         {
@@ -1551,11 +1551,11 @@ runAllTime = async () => {
 
         await proxy_check(proxy_1).then(r => {
             // console.log(r); // true
-            check_proxy = 1
-        }).catch(e => {
+            check_proxy = "LIVE"
+        }).catch(async e => {
             // console.error(e); // ECONNRESET
             console.log(proxy_1.host + " --- DIE ")
-            updateProxy(proxy.proxy_ip)
+            await updateProxy(proxy.proxy_ip)
         });
         console.log("Check proxy: " + check_proxy)
         if (check_proxy == 0) {
@@ -1644,10 +1644,12 @@ runAllTime = async () => {
 
                 let ref = await page.url()
                 await page.goto('https://shopee.vn')
+                await updateProxy(proxy.proxy_ip+":OK")
                 bypassTest.runBypassTest(page);
             } catch (err) {
                 //HERE
                 console.error(err);
+                await updateProxy(proxy.proxy_ip)
             }
 
 
@@ -1717,10 +1719,10 @@ runAllTime = async () => {
                                 timeout: 30000,
                                 referer: ref
                             })
-                            updateProxy(proxy.proxy_ip+":OK")
+                            await updateProxy(proxy.proxy_ip+":OK")
                         } catch (err) {
                             //HERE
-                            updateProxy(proxy.proxy_ip)
+                            await updateProxy(proxy.proxy_ip)
                             console.error(err);
                             //continue
                         }
