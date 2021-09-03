@@ -584,6 +584,29 @@ action_view_review = async (page) => {
 }
 
 
+updateProxy = async (product) => {
+    dataupdate = product
+
+    url_proxy = "http://api.hotaso.vn/api_user/update_proxy?proxy=" + proxy
+
+    await axios.get(url_proxy, {
+        data: dataupdate,
+        timeout: 50000
+    },
+        {
+            headers: {
+                Connection: 'keep-alive',
+            }
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+}
+
 updateHistory = async (product) => {
     dataupdate = product
 
@@ -1532,6 +1555,7 @@ runAllTime = async () => {
         }).catch(e => {
             // console.error(e); // ECONNRESET
             console.log(proxy_1.host + " --- DIE ")
+            updateProxy(proxy.proxy_ip)
         });
         console.log("Check proxy: " + check_proxy)
         if (check_proxy == 0) {
@@ -1693,8 +1717,10 @@ runAllTime = async () => {
                                 timeout: 30000,
                                 referer: ref
                             })
+                            updateProxy(proxy.proxy_ip+":OK")
                         } catch (err) {
                             //HERE
+                            updateProxy(proxy.proxy_ip)
                             console.error(err);
                             //continue
                         }
