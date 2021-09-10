@@ -590,7 +590,7 @@ updateProxy = async (proxy) => {
     url_proxy = apiUrl + "/api_user/update_proxy?proxy=" + proxy
 
     await axios.get(url_proxy, {
-       
+
         timeout: 50000
     },
         {
@@ -605,6 +605,30 @@ updateProxy = async (proxy) => {
             console.log(error);
         });
 
+}
+
+check_point_hour = async (uid) => {
+    result = 0
+    console.log(" --- check point hour ---")
+    check_point_hour_url = apiUrl + "/api_user/check_point_hour?uid=" + uid
+    console.log(" --- check point hour --- : " + check_point_hour_url)
+    await axios.get(check_point_hour_url, {
+
+        timeout: 50000
+    },
+        {
+            headers: {
+                Connection: 'keep-alive',
+            }
+        })
+        .then(function (response) {
+            console.log("Có đủ điểm số để thao tác không: " + response.data);
+            result = response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    return result
 }
 
 updateHistory = async (product) => {
@@ -683,7 +707,7 @@ updateActions = async (product9) => {
     //         console.log(error);
     //     });
 
-    product9.cookie="";
+    product9.cookie = "";
     await axios.get(update_point_url, {
         params: {
             data: {
@@ -1523,7 +1547,7 @@ runAllTime = async () => {
     } else {
         checkVersion = ""
     }
-    
+
     await sleep(5000)
 
     if (slaveInfo.network == "dcom") {
@@ -1644,7 +1668,7 @@ runAllTime = async () => {
 
                 let ref = await page.url()
                 await page.goto('https://shopee.vn')
-                await updateProxy(proxy.proxy_ip+":OK")
+                await updateProxy(proxy.proxy_ip + ":OK")
                 bypassTest.runBypassTest(page);
             } catch (err) {
                 //HERE
@@ -1719,7 +1743,7 @@ runAllTime = async () => {
                                 timeout: 30000,
                                 referer: ref
                             })
-                            await updateProxy(proxy.proxy_ip+":OK")
+                            await updateProxy(proxy.proxy_ip + ":OK")
                         } catch (err) {
                             //HERE
                             await updateProxy(proxy.proxy_ip)
@@ -1851,8 +1875,8 @@ runAllTime = async () => {
                                     productForUser.product_image = ""
                                     productForUser.product_image = productInfo2.image
                                     productForUser.liked = productInfo2.liked
-                                    console.log(" IMAGE ->" + productForUser.product_image )
-                                    console.log(" LIKED ->" + productForUser.liked )
+                                    console.log(" IMAGE ->" + productForUser.product_image)
+                                    console.log(" LIKED ->" + productForUser.liked)
 
                                 } catch (error) {
                                     check_product_exit = "Không tồn tại"
@@ -1874,7 +1898,12 @@ runAllTime = async () => {
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
-                        await searchKeyWord(page, productForUser.keyword)
+                        check_point = await check_point_hour(productForUser.uid)
+                        if (check_point) {
+                            await searchKeyWord(page, productForUser.keyword)
+                        } else {
+                            break
+                        }
 
                         cookies22 = await page.cookies()
                         productForUser.cookie = cookies22
@@ -2067,7 +2096,13 @@ runAllTime = async () => {
                                 await page.waitForTimeout(timeout)
 
                                 console.log("---- Xem ảnh sản phẩm ----")
-                                await action_view_product(page)
+                                check_point = await check_point_hour(productForUser.uid)
+                                if (check_point) {
+                                    await action_view_product(page)
+                                } else {
+                                    break
+                                }
+
 
                                 action1 = {
                                     time: new Date(),
@@ -2081,7 +2116,13 @@ runAllTime = async () => {
                                 if (options.heart_product) {
                                     if (productForUser.liked == false) {
                                         console.log("---- Thả tim sản phẩm ----")
-                                        check_action = await action_heart_product(page, productForUser)
+
+                                        check_point = await check_point_hour(productForUser.uid)
+                                        if (check_point) {
+                                            check_action = await action_heart_product(page, productForUser)
+                                        } else {
+                                            break
+                                        }
 
                                         action1 = {
                                             time: new Date(),
@@ -2099,7 +2140,14 @@ runAllTime = async () => {
 
                                 if (options.view_review) {
                                     console.log("---- Xem review ----")
-                                    await action_view_review(page)
+
+                                    check_point = await check_point_hour(productForUser.uid)
+                                    if (check_point) {
+                                        await action_view_review(page)
+                                    } else {
+                                        break
+                                    }
+
                                     action1 = {
                                         time: new Date(),
                                         action: "view_review"
@@ -2110,7 +2158,13 @@ runAllTime = async () => {
                                 }
 
                                 if (options.add_cart) {
-                                    await action_add_cart(page, productForUser)
+                                    check_point = await check_point_hour(productForUser.uid)
+                                    if (check_point) {
+                                        await action_add_cart(page, productForUser)
+                                    } else {
+                                        break
+                                    }
+
                                     console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " -- " + productForUser.keyword + " : " + check_add_cart)
 
                                     if (check_add_cart) {
@@ -2129,7 +2183,13 @@ runAllTime = async () => {
 
                                 if (options.view_shop) {
                                     let productLink = await page.url()
-                                    await action_view_shop(page, productLink, productForUser)
+
+                                    check_point = await check_point_hour(productForUser.uid)
+                                    if (check_point) {
+                                        await action_view_shop(page, productLink, productForUser)
+                                    } else {
+                                        break
+                                    }
                                     productForUser.shopAvatar = shopInfo3.avatar
                                     productForUser.shopName = shopInfo3.name
                                     productForUser.shopUserName = shopInfo3.username
@@ -2181,7 +2241,12 @@ runAllTime = async () => {
                                     check1 = shopInfo3.followed
                                     console.log("check follow shop: " + check1)
                                     if (check1 == false) {
-                                        check_action = await shopeeApi.followShop(cookies22, refer, shopId)
+                                        check_point = await check_point_hour(productForUser.uid)
+                                        if (check_point) {
+                                            check_action = await shopeeApi.followShop(cookies22, refer, shopId)
+                                        } else {
+                                            break
+                                        }
 
                                         console.log("Follow shop: " + check_action.error)
                                         // if (check_action.data.follow_successful) {
