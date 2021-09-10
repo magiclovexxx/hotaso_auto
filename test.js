@@ -933,6 +933,10 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
 }
 
 (async () => {
+    for(let i=0;i<100; i++){
+        random_add_cart = Math.floor(Math.random() * 4);
+        console.log(random_add_cart)
+    }
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
     //shell.exec('Taskkill /F /IM Chrome.exe');
     day = new Date
@@ -944,7 +948,7 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
     // console.log(proxy)
      //await pptr()
      //await update_actions()
-     await thaTimSanPham()
+     //await thaTimSanPham()
     //await test_post()
     //await disconnect()
     //await getKeyword()
