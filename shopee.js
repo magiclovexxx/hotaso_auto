@@ -758,7 +758,7 @@ action_view_shop = async (page, url, product) => {
         }
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
-        
+
         randomDown = Math.floor(Math.random() * (5 - 2)) + 2;
         for (i = 0; i < randomDown; i++) {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -2239,16 +2239,16 @@ runAllTime = async () => {
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
                                             random_like = Math.floor(Math.random() * 4);
-                                            if (random_like == 2 || mode == "DEV") {
-                                                await action_heart_product(page, productForUser)
-                                                console.log(" --- check thả tim ---")
-                                                console.log(check_like);
-                                                if (check_like.error == null) {
 
-                                                    productForUser.action = "heart_product"
-                                                    await updateActions(productForUser)
-                                                }
+                                            await action_heart_product(page, productForUser)
+                                            console.log(" --- check thả tim ---")
+                                            console.log(check_like);
+                                            if (check_like.error == null) {
+
+                                                productForUser.action = "heart_product"
+                                                await updateActions(productForUser)
                                             }
+
 
                                         } else {
                                             break
@@ -2262,18 +2262,18 @@ runAllTime = async () => {
                                     check_point = await check_point_hour(productForUser.uid)
                                     if (check_point) {
                                         random_add_cart = Math.floor(Math.random() * 4);
-                                        if (random_add_cart == 2 || mode == "DEV") {
-                                            await action_add_cart(page, productForUser)
-                                            console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " -- " + productForUser.keyword + " : " + check_add_cart)
 
-                                            if (check_add_cart) {
+                                        await action_add_cart(page, productForUser)
+                                        console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " -- " + productForUser.keyword + " : " + check_add_cart)
 
-                                                productForUser.action = "add_cart"
-                                                await updateActions(productForUser)
-                                            } else {
-                                                console.log(productForUser.product_link)
-                                            }
+                                        if (check_add_cart) {
+
+                                            productForUser.action = "add_cart"
+                                            await updateActions(productForUser)
+                                        } else {
+                                            console.log(productForUser.product_link)
                                         }
+
 
                                     } else {
                                         break
@@ -2346,17 +2346,17 @@ runAllTime = async () => {
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
                                             random_follow = Math.floor(Math.random() * 4);
-                                            if (random_follow == 2 || mode == "DEV") {
-                                                //check_action = await shopeeApi.followShop(cookies22, refer, shopId)
-                                                await action_follow_shop(page)
-                                                console.log("Follow shop: " + check_follow.error)
-                                                if (check_follow.error == 0) {
 
-                                                    productForUser.action = "follow_shop"
-                                                    await updateActions(productForUser)
-                                                }
-                                                await page.waitForTimeout(1000);
+                                            //check_action = await shopeeApi.followShop(cookies22, refer, shopId)
+                                            await action_follow_shop(page)
+                                            console.log("Follow shop: " + check_follow.error)
+                                            if (check_follow.error == 0) {
+
+                                                productForUser.action = "follow_shop"
+                                                await updateActions(productForUser)
                                             }
+                                            await page.waitForTimeout(1000);
+
 
                                         } else {
                                             break
