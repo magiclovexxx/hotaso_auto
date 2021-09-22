@@ -585,10 +585,10 @@ action_view_review = async (page) => {
 }
 
 
-updateProxy = async (proxy) => {
+updateProxy = async (proxy,check_time) => {
 
     console.log(" --- Update proxy ---")
-    url_proxy = apiUrl + "/api_user/update_proxy?proxy=" + proxy
+    url_proxy = apiUrl + "/api_user/update_proxy?proxy=" + proxy + "&check_time="+check_time
 
     await axios.get(url_proxy, {
 
@@ -1806,15 +1806,20 @@ runAllTime = async () => {
 
                         try {
                             let ref = await page.url()
+                            start_check_time = Date.now()
                             await page.goto('https://shopee.vn', {
                                 waitUntil: "networkidle0",
                                 timeout: 30000,
                                 referer: ref
                             })
-                            await updateProxy(proxy.proxy_ip + ":OK")
+                            stop_check_time = Date.now()
+                            check_time = stop_check_time - start_check_time
+                            await updateProxy(proxy.proxy_ip + ":OK",check_time)
                         } catch (err) {
                             //HERE
-                            await updateProxy(proxy.proxy_ip)
+                            stop_check_time = Date.now()
+                            check_time = stop_check_time - start_check_time
+                            await updateProxy(proxy.proxy_ip,check_time)
                             console.error(err);
                             //continue
                         }
