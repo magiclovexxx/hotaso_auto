@@ -20,6 +20,7 @@ const { isBuffer } = require('util');
 var shell = require('shelljs');
 const { preparePageForTests } = require('./src/bypass');
 const bypassTest = require('./src/bypassTest');
+var ip_address = require("ip");
 
 slavenumber = process.env.SLAVE
 account_check = process.env.ACCOUNT_CHECK
@@ -1993,6 +1994,9 @@ runAllTime = async () => {
                         productForUser.slave = slavenumber
                         let newIp = await publicIp.v4()
                         productForUser.ip = proxy.proxy_ip;
+                        productForUser.local_ip = ip_address.address()
+                        console.log ( "Local IP: " + productForUser.local_ip );
+                        
                         console.log("Ip mới: " + proxy.proxy_ip)
                         console.log("Shop id: " + productForUser.shop_id)
                         console.log("Shop option: ")
