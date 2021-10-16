@@ -2201,6 +2201,10 @@ runAllTime = async () => {
                         if (check_product_exit === "Có tồn tại") {
                             try {
                                 let check_action
+                                let check_confirm = await page.$(".shopee-alert-popup__btn")
+                                if(check_confirm){
+                                    await check_confirm.click()
+                                }
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
 
