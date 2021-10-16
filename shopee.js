@@ -2280,7 +2280,7 @@ runAllTime = async () => {
                                         console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " -- " + productForUser.keyword + " : " + check_add_cart)
 
                                         if (check_add_cart) {
-
+                                            console.log("---- Bỏ giỏ thành công ---- ")
                                             productForUser.action = "add_cart"
                                             await updateActions(productForUser)
                                         } else {
