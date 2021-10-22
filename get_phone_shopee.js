@@ -10,9 +10,26 @@ mode = process.env.MODE
 
 // lấy id các danh mục sản phẩm
 get_categories = async () => {
+
+  let param = [
+    // `--user-data-dir=${profile_dir}`,      // load profile chromium
+    '--disable-gpu',
+    '--no-sandbox',
+    '--lang=en-US',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--disable-dev-shm-usage',
+    '--disable-accelerated-2d-canvas',
+    '--no-first-run',
+]
+
   const browser = await puppeteer.launch({
     //executablePath: chromiumDir,
     headless: true,
+    args: param
 
   });
 
@@ -25,7 +42,7 @@ get_categories = async () => {
     await page.waitForTimeout(timeout)
     await page.keyboard.press('PageDown');
   }
-
+  console.log("--- Start get category ---")
   let categories_id = await page.evaluate(() => {
     cate = []
     links = document.querySelectorAll('footer a')
@@ -69,7 +86,7 @@ get_categories = async () => {
   }
   data.cookie = cookies1
   data.categories = categories_id
-
+  console.log("Tổng số category: " + categories_id.length)
   await browser.close();
 
   return data
