@@ -189,8 +189,10 @@ get_product = async (cookies, loc, category) => {
         try {
           if (data.items.length) {
             let item2 = data.items
-            item2.forEach(async (s) => {
+            for (let a = 0; a < item2.length; a++) {
 
+            //item2.forEach(async (s) => {
+              s = item2[a];
               let pro = {
                 product_id: 0,
                 shop_id: 0,
@@ -198,7 +200,8 @@ get_product = async (cookies, loc, category) => {
                 category_name: ""
               }
 
-              if (!shopids.includes(s.shopid)) {
+              if (shopids.includes(s.shopid) == false) {
+                //console.log(shopids)
                 pro.product_id = s.itemid
                 pro.shop_id = s.shopid
                 pro.category_id = category_id
@@ -211,7 +214,8 @@ get_product = async (cookies, loc, category) => {
 
                 product1 = []
               }
-            })
+            }
+            //})
           }
         } catch (error) {
 
