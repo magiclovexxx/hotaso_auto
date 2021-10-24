@@ -10,7 +10,7 @@ mode = process.env.MODE
 
 // lấy id các danh mục sản phẩm
 get_categories = async () => {
-
+  console.log("Lấy cookie, category")
   let param = [
     // `--user-data-dir=${profile_dir}`,      // load profile chromium
     '--disable-gpu',
@@ -89,12 +89,10 @@ get_categories = async () => {
     data.categories = categories_id
     console.log("Tổng số category: " + categories_id.length)
     await browser.close();
+    return data
   } catch (error) {
 
   }
-
-
-  return data
 
 }
 
