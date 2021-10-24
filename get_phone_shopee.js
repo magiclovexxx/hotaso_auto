@@ -33,61 +33,66 @@ get_categories = async () => {
 
   });
   let categories_id = []
-  const page = await browser.newPage();
-  await page.goto('https://shopee.vn/');
-  await page.waitForTimeout(3000)
-  await page.mouse.click(10, 30)
-  // for (i = 0; i < 10; i++) {
-  //   timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-  //   await page.waitForTimeout(timeout)
-  //   await page.keyboard.press('PageDown');
-  // }
-  // console.log("--- Start get category ---")
-  // let categories_id = await page.evaluate(() => {
-  //   cate = []
-  //   links = document.querySelectorAll('footer a')
-  //   links.forEach(e => {
+  try {
+    const page = await browser.newPage();
+    await page.goto('https://shopee.vn/');
+    await page.waitForTimeout(3000)
+    await page.mouse.click(10, 30)
+    // for (i = 0; i < 10; i++) {
+    //   timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+    //   await page.waitForTimeout(timeout)
+    //   await page.keyboard.press('PageDown');
+    // }
+    // console.log("--- Start get category ---")
+    // let categories_id = await page.evaluate(() => {
+    //   cate = []
+    //   links = document.querySelectorAll('footer a')
+    //   links.forEach(e => {
 
-  //     x = e.href.split(".")
-  //     if (x.length == 4) {
-  //       links.forEach(f => {
-  //         xx = f.href.split(".")
-  //         if (xx.length == 3) {
-  //           xxx = f.href.includes(x[2])
-  //           if (xxx) {
-  //             parent_name = f.textContent
-  //           }
+    //     x = e.href.split(".")
+    //     if (x.length == 4) {
+    //       links.forEach(f => {
+    //         xx = f.href.split(".")
+    //         if (xx.length == 3) {
+    //           xxx = f.href.includes(x[2])
+    //           if (xxx) {
+    //             parent_name = f.textContent
+    //           }
 
-  //         }
-  //       })
+    //         }
+    //       })
 
-  //       category = {
-  //         category_id: 0,
-  //         parent_id: 0,
-  //         category_name: ""
-  //       }
+    //       category = {
+    //         category_id: 0,
+    //         parent_id: 0,
+    //         category_name: ""
+    //       }
 
-  //       category.category_id = x[3]
-  //       category.parent_id = x[2]
-  //       category.category_name = e.textContent + " - " + parent_name
-  //       cate.push(category)
-  //       console.log(category)
-  //     }
-  //   })
-  //   //console.log(cate)
+    //       category.category_id = x[3]
+    //       category.parent_id = x[2]
+    //       category.category_name = e.textContent + " - " + parent_name
+    //       cate.push(category)
+    //       console.log(category)
+    //     }
+    //   })
+    //   //console.log(cate)
 
-  //   return cate
-  // })
+    //   return cate
+    // })
 
-  let cookies1 = await page.cookies()
-  let data = {
-    cookie: "",
-    categories: []
+    let cookies1 = await page.cookies()
+    let data = {
+      cookie: "",
+      categories: []
+    }
+    data.cookie = cookies1
+    data.categories = categories_id
+    console.log("Tổng số category: " + categories_id.length)
+    await browser.close();
+  } catch (error) {
+
   }
-  data.cookie = cookies1
-  data.categories = categories_id
-  console.log("Tổng số category: " + categories_id.length)
-  await browser.close();
+
 
   return data
 
@@ -191,7 +196,7 @@ get_product = async (cookies, loc, category) => {
             let item2 = data.items
             for (let a = 0; a < item2.length; a++) {
 
-            //item2.forEach(async (s) => {
+              //item2.forEach(async (s) => {
               s = item2[a];
               let pro = {
                 product_id: 0,
