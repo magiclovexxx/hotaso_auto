@@ -2031,10 +2031,7 @@ runAllTime = async () => {
                         })
 
                         console.log(" --- tìm kiếm ----")
-
-                        productForUser.action = "search"
-                        await updateActions(productForUser)
-                        productForUser.cookie = ""
+                        
 
                         await page.waitForTimeout(5000)
 
@@ -2216,7 +2213,10 @@ runAllTime = async () => {
                                     break
                                 }
 
-
+                                productForUser.action = "search"
+                                await updateActions(productForUser)
+                                productForUser.cookie = ""
+                                
                                 action1 = {
                                     time: new Date(),
                                     action: "view_product"
