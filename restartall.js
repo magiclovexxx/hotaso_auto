@@ -31,6 +31,6 @@ restartAll = async () => {
     }
 }
 
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/30 * * * *', async () => {
     await restartAll()
   })
