@@ -585,10 +585,10 @@ action_view_review = async (page) => {
 }
 
 
-updateProxy = async (proxy,check_time) => {
+updateProxy = async (proxy, check_time) => {
 
     console.log(" --- Update proxy ---")
-    url_proxy = apiUrl + "/api_user/update_proxy?proxy=" + proxy + "&check_time="+check_time
+    url_proxy = apiUrl + "/api_user/update_proxy?proxy=" + proxy + "&check_time=" + check_time
 
     await axios.get(url_proxy, {
 
@@ -1814,12 +1814,12 @@ runAllTime = async () => {
                             })
                             stop_check_time = Date.now()
                             check_time = stop_check_time - start_check_time
-                            await updateProxy(proxy.proxy_ip + ":OK",check_time)
+                            await updateProxy(proxy.proxy_ip + ":OK", check_time)
                         } catch (err) {
                             //HERE
                             stop_check_time = Date.now()
                             check_time = stop_check_time - start_check_time
-                            await updateProxy(proxy.proxy_ip,check_time)
+                            await updateProxy(proxy.proxy_ip, check_time)
                             console.error(err);
                             //continue
                         }
@@ -2000,8 +2000,8 @@ runAllTime = async () => {
                         let newIp = await publicIp.v4()
                         productForUser.ip = proxy.proxy_ip;
                         productForUser.local_ip = ip_address.address()
-                        console.log ( "Local IP: " + productForUser.local_ip );
-                        
+                        console.log("Local IP: " + productForUser.local_ip);
+
                         console.log("Ip mới: " + proxy.proxy_ip)
                         console.log("Shop id: " + productForUser.shop_id)
                         console.log("Shop option: ")
@@ -2031,7 +2031,7 @@ runAllTime = async () => {
                         })
 
                         console.log(" --- tìm kiếm ----")
-                        
+
 
                         await page.waitForTimeout(5000)
 
@@ -2199,7 +2199,7 @@ runAllTime = async () => {
                             try {
                                 let check_action
                                 let check_confirm = await page.$(".shopee-alert-popup__btn")
-                                if(check_confirm){
+                                if (check_confirm) {
                                     await check_confirm.click()
                                 }
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -2213,10 +2213,12 @@ runAllTime = async () => {
                                     break
                                 }
 
+                                cookies22 = await page.cookies()
+                                productForUser.cookie = cookies22
                                 productForUser.action = "search"
                                 await updateActions(productForUser)
                                 productForUser.cookie = ""
-                                
+
                                 action1 = {
                                     time: new Date(),
                                     action: "view_product"
