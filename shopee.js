@@ -2468,7 +2468,7 @@ if (mode === "DEV") {
 
         await runAllTime()
         if (os_slave == "LINUX") {
-          
+            console.log(" ----- KhởI đÔng lại ---- ")
             shell.exec('pm2 restart all');            
         }
 
