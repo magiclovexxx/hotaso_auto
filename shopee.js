@@ -2459,9 +2459,7 @@ if (mode === "DEV") {
     (async () => {
 
         if (os_slave == "LINUX") {
-            shell.exec('rm -rf ' + profileDir);
-            shell.exec('pm2 restart all');
-            
+            shell.exec('rm -rf ' + profileDir);                       
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
