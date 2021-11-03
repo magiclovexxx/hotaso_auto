@@ -89,8 +89,8 @@ if (mode === "DEV") {
     timemax = 3000;
     timemin = 2000;
 } else {
-    timemax = 4000;
-    timemin = 3000;
+    timemax = 3000;
+    timemin = 2000;
 }
 logs = 1
 
@@ -312,12 +312,14 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout);
         await page.keyboard.press('PageDown');
-        await page.waitForTimeout(3000);
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitForTimeout(timeout);
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout);
         await page.keyboard.press('PageDown');
-        await page.waitForTimeout(3000);
+        timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
+        await page.waitForTimeout(timeout);
         await page.keyboard.press('PageDown');
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout);
@@ -2455,13 +2457,17 @@ if (mode === "DEV") {
 
         if (os_slave == "LINUX") {
             shell.exec('rm -rf ' + profileDir);
+            shell.exec('pm2 restart all');
+            
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
-        await sleep(5000)
 
         await runAllTime()
-
+        if (os_slave == "LINUX") {
+          
+            shell.exec('pm2 restart all');            
+        }
 
     })();
 }

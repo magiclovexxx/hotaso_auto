@@ -22,8 +22,8 @@ restartAll = async () => {
         }
 
         if (check == 2) {
-            //exec("shutdown -r", (error) => {
-            exec("pm2 restart all", (error) => {
+            exec("shutdown -r", (error) => {
+            //exec("pm2 restart all", (error) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
                     return;
