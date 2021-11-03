@@ -1504,16 +1504,26 @@ runAllTime = async () => {
 
     if (checkNetwork == 1) {
 
-        await axios.get("http://api.hotaso.vn/api_user/get_server")
+        await axios.get("https://api.hotaso.vn/api_user/get_server")
             .then(function (response) {
                 host_name = response.data
                 // cookie3 = response.headers['set-cookie']
 
                 // console.log(cookie1)
             })
-            .catch(function (error) {
+            .catch(async function (error) {
                 console.log(error);
+                await axios.get("http://api.hotaso.vn/api_user/get_server")
+                    .then(function (response) {
+                        host_name = response.data
+                        // cookie3 = response.headers['set-cookie']
 
+                        // console.log(cookie1)
+                    })
+                    .catch(async function (error) {
+                        console.log(error);
+
+                    })
             })
 
         if (host_name.version) {
@@ -1550,15 +1560,15 @@ runAllTime = async () => {
             }
         }
 
-        update_point = apiUrl = "http://" + host_name.domain
-        updateActionsUrl = "https://" + host_name.domain
+        update_point = apiUrl = host_name.domain
+        updateActionsUrl = host_name.domain
         console.log("HOST NAME : " + apiUrl)
 
         if (mode === "DEV") {
-            apiUrl = "http://beta.hotaso.vn"
-            apiServer = "http://history.hotaso.vn:3000"
+            apiUrl = "https://beta.hotaso.vn"
+            apiServer = "https://history.hotaso.vn:3000"
             updateActionsUrl = "https://beta.hotaso.vn"
-            update_point = "http://beta.hotaso.vn"
+            update_point = "https://beta.hotaso.vn"
 
         }
 
