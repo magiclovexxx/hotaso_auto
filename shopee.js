@@ -1354,6 +1354,7 @@ gen_browser = async (option) => {
     let proxy1 = option.proxy
     let headless_mode = option.headless_mode
     let network = option.network
+    let user_lang = option.user_lang
 
     console.log("Profile chrome link: " + profile_dir)
 
@@ -1370,6 +1371,8 @@ gen_browser = async (option) => {
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
+        '--lang='+user_lang,
+        '--disable-reading-from-canvas'
     ]
 
     if (network == "proxy") {
@@ -1407,10 +1410,11 @@ gen_page = async (browser, option) => {
     // Random kích cỡ màn hình
     width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
     height = Math.floor(Math.random() * (800 - 600)) + 600;;
-
+    console.log("Kích thước màn hình: " + width  + " x " + height)
+    
     await page.setViewport({
-        width: 1280,
-        height: 800
+        width: width,
+        height: height
     });
 
     if (network == "proxy") {
@@ -1706,7 +1710,7 @@ runAllTime = async () => {
             console.log("---- Không có từ khoá tab: ----")
             return
         }
-        let user_agent
+        let user_agent, user_lang
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
         subAccount[0] = acc.username
@@ -1721,6 +1725,18 @@ runAllTime = async () => {
             user_agent = acc.user_agent
         }
 
+        if (!acc.lang) {
+            langs = ["ar","bg","bn","ca","cs","da","de","el","en-GB","en-US","es","et","fi","fil","fr","gu","he","hi","hr","hu","id","it","ja","kn","ko","lt","lv","ml","mr","ms","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","ta"
+            ,"te","th","tr","uk","vi","zh-CN","zh-TW"]
+
+            let rand = Math.floor(Math.random() * langs.length);
+            user_lang = langs[rand]
+            console.log("Ngôn ngữ trình duyệt: " + user_lang)
+            
+        } else {
+            user_lang = acc.user_lang
+        }
+
         let profileChrome = profileDir + subAccount[0]
 
         let option1 = {
@@ -1729,7 +1745,8 @@ runAllTime = async () => {
             profile_dir: profileChrome,
             cookie: acc.cookie,
             network: slaveInfo.network,
-            headless_mode: headless_mode
+            headless_mode: headless_mode,
+            user_lang : user_lang
         }
 
         let browser = await gen_browser(option1)
@@ -2033,6 +2050,7 @@ runAllTime = async () => {
                         cookies22 = await page.cookies()
                         productForUser.cookie = cookies22
                         productForUser.user_agent = user_agent
+                        productForUser.user_lang = user_lang
                         cookie1 = ""
 
                         cookies22.forEach((row, index) => {
