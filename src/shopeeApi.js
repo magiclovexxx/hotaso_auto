@@ -160,6 +160,8 @@ function csrftoken() {
     return acakString;
 }
 
+
+
 thaTimSanPham = async (cookies, ref, shopId, productId) => {
     let result
     var xtoken = csrftoken()
@@ -190,6 +192,105 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
             'x-csrftoken': xtoken,
             'referer': ref,
             'cookie': cookie1
+        },
+        data: data
+    };
+
+    await axios(config)
+        .then(function (response) {
+            console.log(response.data);
+            result = response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    return result
+
+}
+
+likeFeed = async (cookies, feed_link) => {
+    let result
+    var xtoken = csrftoken()
+    let cookie1 = ""
+
+    cookies.forEach(row => {
+        if (row.name == "csrftoken") {
+            cookie1 = cookie1 + row.name + "=" + xtoken + ";"
+        } else {
+            cookie1 = cookie1 + row.name + "=" + row.value + ";"
+        }
+
+    })
+    
+    feed_array = feed_link.split("/")
+    feed_id = feed_array[feed_array.length-1]
+
+    //var data = JSON.stringify({ "shopid": shopId });
+    let url = "https://feeds.shopee.vn/api/proxy/like"
+    let data= {"feed_id":feed_id}
+    //data = JSON.stringify(data);
+    var config = {
+        method: 'post',
+        url: url,
+        timeout: 5000,
+        headers: {
+            'x-csrftoken': xtoken,           
+            'language': "vi",
+            'user-agent': "language=vi app_type=1",
+            'cookie': cookie1,
+            'accept' : 'application/json, text/plain, */*',
+            'content-type': 'application/json',
+        },
+        data: data
+    };
+
+    await axios(config)
+        .then(function (response) {
+            console.log(response.data);
+            result = response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    return result
+
+}
+
+commentFeed = async (cookies, feed_link, feed_content) => {
+    let result
+    var xtoken = csrftoken()
+    let cookie1 = ""
+
+    cookies.forEach(row => {
+        if (row.name == "csrftoken") {
+            cookie1 = cookie1 + row.name + "=" + xtoken + ";"
+        } else {
+            cookie1 = cookie1 + row.name + "=" + row.value + ";"
+        }
+
+    })
+    
+    feed_array = feed_link.split("/")
+    feed_id = feed_array[feed_array.length-1]
+
+    message = Math.floor(Math.random() * (feed_content.length-1));
+    message = feed_content[message]
+    
+    let url = "https://feeds.shopee.vn/api/proxy/comment"
+    let data= {"feed_id":feed_id,"comment":message,"mentions":[],"hashtags":[]}
+    
+    var config = {
+        method: 'post',
+        url: url,
+        timeout: 5000,
+        headers: {
+            'x-csrftoken': xtoken,
+            'host'       : "feeds.shopee.vn",
+            'language': "vi",
+            'user-agent': "language=vi app_type=1",
+            'cookie': cookie1,
+            'accept' : 'application/json, text/plain, */*',
+            'content-type': 'application/json',
         },
         data: data
     };

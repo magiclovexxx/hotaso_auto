@@ -1710,6 +1710,9 @@ runAllTime = async () => {
             console.log("---- Không có từ khoá tab: ----")
             return
         }
+        if(data_for_tab.feed){
+            data_feed = data_for_tab.feed
+        }
         let user_agent, user_lang
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
@@ -2222,6 +2225,34 @@ runAllTime = async () => {
                             }
 
                             //continue
+                        }
+
+                        if(data_feed){
+                            let cookie_2 = await page.cookie()
+                            let result
+                            let check
+                            if(data_feed.feed_like > data_feed.count_like){
+                                check = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)    
+                                if(check.msg == "Success"){
+                                    result = result + 1
+                                }
+                            }
+                            
+                            if(data_feed.feed_comment > data_feed.count_comment){
+                                check = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
+                                if(check.msg == "Success"){
+                                    result = result + 2
+                                }
+                            }
+                            
+                            if(result){
+                                productForUser.action = "feed"
+                                productForUser.result = result
+                                productForUser.feed_id  = data_feed.id
+    
+                                await updateActions(productForUser)
+                            }                           
+
                         }
 
                         console.log(" Check product ton tai: " + check_product_exit)
