@@ -933,6 +933,51 @@ action_add_cart = async (page, product) => {
     }
 }
 
+action_report_shop = async (page, report_shop) => {
+    try {
+        console.log("---- Report shop ----")
+        let url = "https://shopee.vn/shop/"+report_shop.shop_id + "/report/?__classic__=1"
+        await page.goto(url);
+
+        // Chọn lí do report
+        timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
+        await page.waitForTimeout(timeout)    
+
+        let li_do = await page.evaluate((xx) => {
+
+            // Class có link bài đăng trên profile       
+            let i = false
+            document.querySelectorAll('.reason-text').forEach((e,index) =>{
+                if(e.textContent == xx){
+                    i = index
+                    console.log(index)
+                }
+             })
+
+            return i
+        }, report_shop.report_type)
+        
+        let check_li_do = await page.$$('.reason-text')
+
+        if (check_li_do) {
+            await check_li_do[li_do].click()
+        }
+
+        timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
+        await page.waitForTimeout(timeout)
+        
+        // Nhập lý do report
+        await page.type('#optional-text-input', fullname, { delay: 100 })    
+        timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
+        await page.waitForTimeout(timeout)
+
+        // Chọn ảnh report
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 action_heart_product = async (page) => {
     try {
         console.log("--- thả tim sản phẩm ---")
@@ -2231,27 +2276,27 @@ runAllTime = async () => {
 
                         if(data_feed){
                             let cookie_2 = await page.cookies()
-                            let result
-                            let check
+                            result_feed = 0
+                            check_feed = 0
                             if(data_feed.feed_like > data_feed.count_like){
-                                check = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)    
-                                if(check.msg == "Success"){
-                                    result = result + 1
+                                check_feed = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)    
+                                if(check_feed.msg == "Success"){
+                                    result_feed = result_feed + 1
                                 }
                             }
                             
                             if(data_feed.feed_comment > data_feed.count_comment){
-                                check = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
-                                if(check.msg == "Success"){
-                                    result = result + 2
+                                check_feed = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
+                                if(check_feed.msg == "Success"){
+                                    result_feed = result_feed + 2
                                 }
                             }
                             
-                            if(result){
+                            if(result_feed){
                                 productForUser.action = "feed"
-                                productForUser.result = result
+                                productForUser.result = result_feed
                                 productForUser.feed_id  = data_feed.id
-    
+                                console.log("Cập nhật action:  feed")
                                 await updateActions(productForUser)
                             }                           
 
