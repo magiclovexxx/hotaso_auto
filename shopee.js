@@ -1712,6 +1712,8 @@ runAllTime = async () => {
         }
         if(data_for_tab.feed){
             data_feed = data_for_tab.feed
+        }else{
+            data_feed = false
         }
         let user_agent, user_lang
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
@@ -2228,7 +2230,7 @@ runAllTime = async () => {
                         }
 
                         if(data_feed){
-                            let cookie_2 = await page.cookie()
+                            let cookie_2 = await page.cookies()
                             let result
                             let check
                             if(data_feed.feed_like > data_feed.count_like){

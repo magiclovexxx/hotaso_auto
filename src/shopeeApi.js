@@ -246,8 +246,8 @@ likeFeed = async (cookies, feed_link) => {
 
     await axios(config)
         .then(function (response) {
-            console.log(response.data);
             result = response.data
+            console.log("Like feed: " + feed_link + " --- " + result.msg);
         })
         .catch(function (error) {
             console.log(error);
@@ -257,6 +257,7 @@ likeFeed = async (cookies, feed_link) => {
 }
 
 commentFeed = async (cookies, feed_link, feed_content) => {
+
     let result
     var xtoken = csrftoken()
     let cookie1 = ""
@@ -297,8 +298,10 @@ commentFeed = async (cookies, feed_link, feed_content) => {
 
     await axios(config)
         .then(function (response) {
-            console.log(response.data);
+           
             result = response.data
+            console.log("Comment feed: " + feed_link + " --- " + result.msg);
+
         })
         .catch(function (error) {
             console.log(error);
@@ -323,6 +326,8 @@ module.exports = {
     timViTriTrangSanPhamTheoTuKhoa,
     thaTimSanPham,
     layDanhSachSanPhamCuaShop,
+    likeFeed,
+    commentFeed,
     followShop
 
 }
