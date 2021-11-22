@@ -2090,6 +2090,43 @@ runAllTime = async () => {
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
+                        if(data_feed){
+                            console.log("--- Thao tac shopee feed ---")
+                            let cookie_2 = await page.cookies()
+                            result_feed = 0
+                            check_feed = 0
+                            console.log(data_feed)
+                            console.log("Feed like: " + data_feed.feed_like)
+                            console.log("count like: " + data_feed.count_like)
+
+                            if(Number(data_feed.feed_like) > Number(data_feed.count_like)){
+                                console.log("--- Like feed ---")
+                                check_feed = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)    
+                                if(check_feed.msg == "Success"){
+                                    result_feed = result_feed + 1
+                                }
+                            }
+                            
+                            if(Number(data_feed.feed_comment) > Number(data_feed.count_comment)){
+                                console.log("--- Comment feed ---")
+                                check_feed = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
+                                if(check_feed.msg == "Success"){
+                                    result_feed = result_feed + 2
+                                }
+                            }
+                            console.log("--- Result feed ---" + result_feed)
+                            
+                            if(result_feed){
+                                console.log("Cập nhật action:  feed")
+                                productForUser.action = "feed"
+                                productForUser.result = result_feed
+                                productForUser.feed_id  = data_feed.id
+                               
+                                await updateActions(productForUser)
+                            }                           
+
+                        }
+
                         check_point = await check_point_hour(productForUser.uid)
                         if (check_point) {
                             await searchKeyWord(page, productForUser.keyword)
@@ -2272,35 +2309,7 @@ runAllTime = async () => {
                             }
 
                             //continue
-                        }
-
-                        if(data_feed){
-                            let cookie_2 = await page.cookies()
-                            result_feed = 0
-                            check_feed = 0
-                            if(data_feed.feed_like > data_feed.count_like){
-                                check_feed = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)    
-                                if(check_feed.msg == "Success"){
-                                    result_feed = result_feed + 1
-                                }
-                            }
-                            
-                            if(data_feed.feed_comment > data_feed.count_comment){
-                                check_feed = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
-                                if(check_feed.msg == "Success"){
-                                    result_feed = result_feed + 2
-                                }
-                            }
-                            
-                            if(result_feed){
-                                productForUser.action = "feed"
-                                productForUser.result = result_feed
-                                productForUser.feed_id  = data_feed.id
-                                console.log("Cập nhật action:  feed")
-                                await updateActions(productForUser)
-                            }                           
-
-                        }
+                        }                        
 
                         console.log(" Check product ton tai: " + check_product_exit)
                         if (check_product_exit === "Có tồn tại") {
