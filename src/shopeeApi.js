@@ -273,12 +273,12 @@ commentFeed = async (cookies, feed_link, feed_content) => {
     
     feed_array = feed_link.split("/")
     feed_id = feed_array[feed_array.length-1]
-
-    message = Math.floor(Math.random() * (feed_content.length-1));
-    message = feed_content[message]
+    message = feed_content.split("\n")
+    random_ms = Math.floor(Math.random() * (message.length-1));
+    message1 = message[random_ms]
     
     let url = "https://feeds.shopee.vn/api/proxy/comment"
-    let data= {"feed_id":feed_id,"comment":message,"mentions":[],"hashtags":[]}
+    let data= {"feed_id":feed_id,"comment":message1,"mentions":[],"hashtags":[]}
     
     var config = {
         method: 'post',

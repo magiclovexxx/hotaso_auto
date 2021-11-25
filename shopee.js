@@ -936,27 +936,27 @@ action_add_cart = async (page, product) => {
 action_report_shop = async (page, report_shop) => {
     try {
         console.log("---- Report shop ----")
-        let url = "https://shopee.vn/shop/"+report_shop.shop_id + "/report/?__classic__=1"
+        let url = "https://shopee.vn/shop/" + report_shop.shop_id + "/report/?__classic__=1"
         await page.goto(url);
 
         // Chọn lí do report
         timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
-        await page.waitForTimeout(timeout)    
+        await page.waitForTimeout(timeout)
 
         let li_do = await page.evaluate((xx) => {
 
             // Class có link bài đăng trên profile       
             let i = false
-            document.querySelectorAll('.reason-text').forEach((e,index) =>{
-                if(e.textContent == xx){
+            document.querySelectorAll('.reason-text').forEach((e, index) => {
+                if (e.textContent == xx) {
                     i = index
                     console.log(index)
                 }
-             })
+            })
 
             return i
         }, report_shop.report_type)
-        
+
         let check_li_do = await page.$$('.reason-text')
 
         if (check_li_do) {
@@ -965,16 +965,60 @@ action_report_shop = async (page, report_shop) => {
 
         timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
         await page.waitForTimeout(timeout)
-        
+
         // Nhập lý do report
-        await page.type('#optional-text-input', fullname, { delay: 100 })    
+        let report_content = report_shop.report_content.split("\n")
+
+        random_content = Math.floor(Math.random() * (report_content.length - 1));
+        let content = report_content[random_content]
+
+        await page.type('#optional-text-input', content, { delay: 100 })
+        console.log("----Nhập nội dung report ----: " + content)
         timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
         await page.waitForTimeout(timeout)
 
-        // Chọn ảnh report
+        // Chọn ảnh
+
+        const fileExitst = fs.existsSync(`./a.jpg`)
+        await page.waitForSelector('input[type="file"]')
+        await page.waitForTimeout(2000)
+
+        let add_file = await page.$$('input[type=file]');
+        if (add_file.length) {
+
+            //await page.evaluate(() => document.querySelectorAll("input[type=file]")[0].click());
+        }
+
+        // await page.evaluate(() => {
+        //     document.querySelectorAll("input[type=file]")[0].click()
+        // })
+
+        await page.waitForTimeout(3000)
+        let fileToUpload = 'E:\\code\\hotaso_auto\\a.jpg';       
+
+        let photoField = await page.$$('input[type="file"]');
+        if(photoField.length){
+            console.log(" --- Click upload file ---: " + photoField.length)
+            await photoField[0].uploadFile('E:\\code\\hotaso_auto\\a.jpg');
+        }
+      
+        const [fileChooser] = await Promise.all([
+            page.waitForFileChooser(),
+            page.click('input[type="file"]'),
+          ]);
+        await fileChooser.accept(['E:\\code\\hotaso_auto\\a.jpg']);
+
+        if (fileExitst) {
+            //console.log("---- Chọn ảnh report ----")
+            //await input.uploadFile(`./a.jpg`)
+        }
+
+        await page.waitForTimeout(9999999)
+        return 1
 
     } catch (error) {
         console.log(error)
+        await page.waitForTimeout(9999999)
     }
 }
 
@@ -1416,7 +1460,7 @@ gen_browser = async (option) => {
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
-        '--lang='+user_lang,
+        '--lang=' + user_lang,
         '--disable-reading-from-canvas'
     ]
 
@@ -1455,8 +1499,8 @@ gen_page = async (browser, option) => {
     // Random kích cỡ màn hình
     width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
     height = Math.floor(Math.random() * (800 - 600)) + 600;;
-    console.log("Kích thước màn hình: " + width  + " x " + height)
-    
+    console.log("Kích thước màn hình: " + width + " x " + height)
+
     await page.setViewport({
         width: width,
         height: height
@@ -1755,11 +1799,18 @@ runAllTime = async () => {
             console.log("---- Không có từ khoá tab: ----")
             return
         }
-        if(data_for_tab.feed){
+        if (data_for_tab.feed) {
             data_feed = data_for_tab.feed
-        }else{
+        } else {
             data_feed = false
         }
+
+        if (data_for_tab.report_shop) {
+            data_report_shop = data_for_tab.report_shop
+        } else {
+            data_report_shop = false
+        }
+
         let user_agent, user_lang
         console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
@@ -1776,13 +1827,13 @@ runAllTime = async () => {
         }
 
         if (!acc.lang) {
-            langs = ["ar","bg","bn","ca","cs","da","de","el","en-GB","en-US","es","et","fi","fil","fr","gu","he","hi","hr","hu","id","it","ja","kn","ko","lt","lv","ml","mr","ms","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","ta"
-            ,"te","th","tr","uk","vi","zh-CN","zh-TW"]
+            langs = ["ar", "bg", "bn", "ca", "cs", "da", "de", "el", "en-GB", "en-US", "es", "et", "fi", "fil", "fr", "gu", "he", "hi", "hr", "hu", "id", "it", "ja", "kn", "ko", "lt", "lv", "ml", "mr", "ms", "nb", "nl", "pl", "pt-BR", "pt-PT", "ro", "ru", "sk", "sl", "sr", "sv", "ta"
+                , "te", "th", "tr", "uk", "vi", "zh-CN", "zh-TW"]
 
             let rand = Math.floor(Math.random() * langs.length);
             user_lang = langs[rand]
             console.log("Ngôn ngữ trình duyệt: " + user_lang)
-            
+
         } else {
             user_lang = acc.user_lang
         }
@@ -1796,7 +1847,7 @@ runAllTime = async () => {
             cookie: acc.cookie,
             network: slaveInfo.network,
             headless_mode: headless_mode,
-            user_lang : user_lang
+            user_lang: user_lang
         }
 
         let browser = await gen_browser(option1)
@@ -2083,14 +2134,41 @@ runAllTime = async () => {
 
                         console.log("Ip mới: " + proxy.proxy_ip)
                         console.log("Shop id: " + productForUser.shop_id)
-                        console.log("Shop option: ")
+                        //console.log("Shop option: ")
 
                         console.log("product link: " + productForUser.product_link)
                         console.log("product name: " + productForUser.product_name)
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
-                        if(data_feed){
+                        if (data_report_shop == 1) {
+                            console.log("--- Thao tac Report shop ---")
+
+                            result_report = 0
+                            check_report = 0
+
+                            if (Number(data_report_shop.report_number) > Number(data_report_shop.report_count)) {
+                                console.log("--- Report shop ---")
+                                check_report = await action_report_shop(page, data_report_shop)
+                                if (check_report == 1) {
+                                    result_report = result_report + 1
+                                }
+                            }
+
+                            console.log("--- Result report ---" + result_report)
+
+                            if (result_report) {
+                                console.log("Cập nhật action:  report_shop")
+                                productForUser.action = "report_shop"
+                                productForUser.result = result_report
+                                productForUser.report_id = data_report_shop.id
+
+                                await updateActions(productForUser)
+                            }
+
+                        }
+
+                        if (data_feed) {
                             console.log("--- Thao tac shopee feed ---")
                             let cookie_2 = await page.cookies()
                             result_feed = 0
@@ -2099,32 +2177,31 @@ runAllTime = async () => {
                             console.log("Feed like: " + data_feed.feed_like)
                             console.log("count like: " + data_feed.count_like)
 
-                            if(Number(data_feed.feed_like) > Number(data_feed.count_like)){
+                            if (Number(data_feed.feed_like) > Number(data_feed.count_like)) {
                                 console.log("--- Like feed ---")
-                                check_feed = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)    
-                                if(check_feed.msg == "Success"){
+                                check_feed = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)
+                                if (check_feed.msg == "Success") {
                                     result_feed = result_feed + 1
                                 }
                             }
-                            
-                            if(Number(data_feed.feed_comment) > Number(data_feed.count_comment)){
+
+                            if (Number(data_feed.feed_comment) > Number(data_feed.count_comment)) {
                                 console.log("--- Comment feed ---")
                                 check_feed = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
-                                if(check_feed.msg == "Success"){
+                                if (check_feed.msg == "Success") {
                                     result_feed = result_feed + 2
                                 }
                             }
                             console.log("--- Result feed ---" + result_feed)
-                            
-                            if(result_feed){
+
+                            if (result_feed) {
                                 console.log("Cập nhật action:  feed")
                                 productForUser.action = "feed"
                                 productForUser.result = result_feed
-                                productForUser.feed_id  = data_feed.id
-                               
-                                await updateActions(productForUser)
-                            }                           
+                                productForUser.feed_id = data_feed.id
 
+                                await updateActions(productForUser)
+                            }
                         }
 
                         check_point = await check_point_hour(productForUser.uid)
@@ -2309,7 +2386,7 @@ runAllTime = async () => {
                             }
 
                             //continue
-                        }                        
+                        }
 
                         console.log(" Check product ton tai: " + check_product_exit)
                         if (check_product_exit === "Có tồn tại") {
@@ -2536,7 +2613,7 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(" ----- KhởI đÔng lại ---- ")
-            shell.exec('pm2 restart all');            
+            shell.exec('pm2 restart all');
         }
     })
 
@@ -2559,7 +2636,7 @@ if (mode === "DEV") {
         }
         await sleep(2000)
 
-        await runAllTime()    
+        await runAllTime()
 
     })();
 } else {
@@ -2567,13 +2644,13 @@ if (mode === "DEV") {
     (async () => {
 
         if (os_slave == "LINUX") {
-            shell.exec('rm -rf ' + profileDir);                       
+            shell.exec('rm -rf ' + profileDir);
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
 
         await runAllTime()
-        
+
 
     })();
 }
