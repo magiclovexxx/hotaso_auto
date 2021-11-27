@@ -3,6 +3,8 @@ var fs = require('fs');
 const shopeeApi = require('./src/shopeeApi.js')
 const actionsShopee = require('./src/actions.js')
 const axios = require('axios').default;
+const HttpsProxyAgent = require("https-proxy-agent")
+
 
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -994,18 +996,18 @@ action_report_shop = async (page, report_shop) => {
         // })
 
         await page.waitForTimeout(3000)
-        let fileToUpload = 'E:\\code\\hotaso_auto\\a.jpg';       
+        let fileToUpload = 'E:\\code\\hotaso_auto\\a.jpg';
 
         let photoField = await page.$$('input[type="file"]');
-        if(photoField.length){
+        if (photoField.length) {
             console.log(" --- Click upload file ---: " + photoField.length)
             await photoField[0].uploadFile('E:\\code\\hotaso_auto\\a.jpg');
         }
-      
+
         const [fileChooser] = await Promise.all([
             page.waitForFileChooser(),
             page.click('input[type="file"]'),
-          ]);
+        ]);
         await fileChooser.accept(['E:\\code\\hotaso_auto\\a.jpg']);
 
         if (fileExitst) {
@@ -1934,6 +1936,61 @@ runAllTime = async () => {
                     // Chạy lần lượt max_turn lượt tìm kiếm, tương tác từ khoá
                     for (let o = 0; o < max_turn; o++) {
 
+                        if (data_feed) {
+                            for (let x = 0; x < data_feed.length; x++) {
+                                let data_feed_1 = data_feed[x]
+                                check_point = await check_point_hour(data_feed[x].uid)
+
+                                if (check_point) {
+                                    try {
+                                        console.log("--- Thao tac shopee feed ---")
+                                    let cookie_2 = await page.cookies()
+                                    result_feed = 0
+                                    check_feed = 0
+                                   
+                                    console.log("Feed like: " + data_feed_1.feed_like)
+                                    console.log("count like: " + data_feed_1.count_like)
+
+                                    if (Number(data_feed_1.feed_like) > Number(data_feed_1.count_like)) {
+                                        console.log("--- Like feed ---")
+                                        check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
+                                        if (check_feed) {
+                                            if (check_feed.msg == "Success") {
+                                                result_feed = result_feed + 1
+                                            }
+                                        }else{
+                                            console.log("--- Có lỗi khi Like feed ---")
+                                        }
+                                    }
+
+                                    if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
+                                        console.log("--- Comment feed ---")
+                                        check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
+                                        if (check_feed) {
+                                            if (check_feed.msg == "Success") {
+                                                result_feed = result_feed + 2
+                                            }
+                                        }else{
+                                            console.log("--- Có lỗi khi comment feed ---")
+                                        }
+                                    }
+                                    console.log("--- Result feed ---" + result_feed)
+
+                                    if (result_feed) {
+                                        console.log("Cập nhật action:  feed")
+                                        productForUser.action = "feed"
+                                        productForUser.result = result_feed
+                                        productForUser.feed_id = data_feed_1.id
+
+                                        await updateActions(productForUser)
+                                    }
+                                    } catch (error) {
+                                        
+                                    }                                    
+                                }
+                            }
+                        }
+
                         try {
                             let ref = await page.url()
                             start_check_time = Date.now()
@@ -1945,6 +2002,7 @@ runAllTime = async () => {
                             stop_check_time = Date.now()
                             check_time = stop_check_time - start_check_time
                             await updateProxy(proxy.proxy_ip + ":OK", check_time)
+
                         } catch (err) {
                             //HERE
                             stop_check_time = Date.now()
@@ -2168,43 +2226,9 @@ runAllTime = async () => {
 
                         }
 
-                        if (data_feed) {
-                            console.log("--- Thao tac shopee feed ---")
-                            let cookie_2 = await page.cookies()
-                            result_feed = 0
-                            check_feed = 0
-                            console.log(data_feed)
-                            console.log("Feed like: " + data_feed.feed_like)
-                            console.log("count like: " + data_feed.count_like)
-
-                            if (Number(data_feed.feed_like) > Number(data_feed.count_like)) {
-                                console.log("--- Like feed ---")
-                                check_feed = await shopeeApi.likeFeed(cookie_2, data_feed.feed_link)
-                                if (check_feed.msg == "Success") {
-                                    result_feed = result_feed + 1
-                                }
-                            }
-
-                            if (Number(data_feed.feed_comment) > Number(data_feed.count_comment)) {
-                                console.log("--- Comment feed ---")
-                                check_feed = await shopeeApi.commentFeed(cookie_2, data_feed.feed_link, data_feed.feed_content)
-                                if (check_feed.msg == "Success") {
-                                    result_feed = result_feed + 2
-                                }
-                            }
-                            console.log("--- Result feed ---" + result_feed)
-
-                            if (result_feed) {
-                                console.log("Cập nhật action:  feed")
-                                productForUser.action = "feed"
-                                productForUser.result = result_feed
-                                productForUser.feed_id = data_feed.id
-
-                                await updateActions(productForUser)
-                            }
-                        }
 
                         check_point = await check_point_hour(productForUser.uid)
+
                         if (check_point) {
                             await searchKeyWord(page, productForUser.keyword)
                         } else {

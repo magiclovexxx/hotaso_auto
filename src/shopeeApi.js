@@ -1,9 +1,10 @@
 const axios = require('axios').default;
 const puppeteer = require('puppeteer');
 const randomUseragent = require('random-useragent');
+const HttpsProxyAgent = require('https-proxy-agent');
 
 
-const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
+const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
     // lay cookie
     cookie1 = ""
     cookies.forEach((row, index) => {
@@ -47,7 +48,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
         headersearch = {
             'x-api-source': 'pc',
             'x-shopee-language': 'vi',
-            'User-Agent':product.user_agent,
+            'User-Agent': product.user_agent,
             referer: ref,
             'cookie': cookie1
 
@@ -61,9 +62,9 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
         })
             .then(function (response) {
                 data = response.data
-               // cookie3 = response.headers['set-cookie']
-               // console.log(cookie3)
-               // console.log(cookie1)
+                // cookie3 = response.headers['set-cookie']
+                // console.log(cookie3)
+                // console.log(cookie1)
             })
             .catch(function (error) {
                 console.log(error);
@@ -97,7 +98,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product,cookies, maxPage) => {
             viTriSanPham.trang = "err"
             console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
             console.log(error)
-            
+
         }
 
         if (viTriSanPham.trang > 0 || viTriSanPham.vitri == "err") {
@@ -137,7 +138,7 @@ followShop = async (cookies, ref, shopId) => {
 
     await axios(config)
         .then(function (response) {
-           
+
             result = response.data
         })
         .catch(function (error) {
@@ -182,7 +183,7 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
 
     //var data = JSON.stringify({ "shopid": shopId });
     let url = "https://shopee.vn/api/v4/pages/like_items"
-    let data= {"shop_item_ids":[{"shop_id":parseInt(shopId),"item_id":parseInt(productId)}]}
+    let data = { "shop_item_ids": [{ "shop_id": parseInt(shopId), "item_id": parseInt(productId) }] }
     //data = JSON.stringify(data);
     var config = {
         method: 'post',
@@ -208,7 +209,7 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
 
 }
 
-likeFeed = async (cookies, feed_link) => {
+likeFeed = async (cookies, feed_link, proxy) => {
     let result
     var xtoken = csrftoken()
     let cookie1 = ""
@@ -221,26 +222,41 @@ likeFeed = async (cookies, feed_link) => {
         }
 
     })
-    
+
     feed_array = feed_link.split("/")
-    feed_id = feed_array[feed_array.length-1]
+    feed_id = feed_array[feed_array.length - 1]
 
     //var data = JSON.stringify({ "shopid": shopId });
+    let proxy_pass = proxy.proxy_password.split("\r")[0]
+    var httpsAgent = new HttpsProxyAgent({host: proxy.proxy_ip, port: proxy.proxy_port, auth:  proxy.proxy_username + ":" + proxy_pass})
+    // proxy_1 = {
+    //     protocol: 'https',
+    //     host: proxy.proxy_ip,
+    //     port: proxy.proxy_port,
+    //     auth: {
+    //         username: proxy.proxy_username,
+    //         password: proxy_pass
+    //     }
+    // }
+    
+
     let url = "https://feeds.shopee.vn/api/proxy/like"
-    let data= {"feed_id":feed_id}
+    let data = { "feed_id": feed_id }
     //data = JSON.stringify(data);
     var config = {
         method: 'post',
         url: url,
         timeout: 5000,
         headers: {
-            'x-csrftoken': xtoken,           
+            'x-csrftoken': xtoken,
             'language': "vi",
             'user-agent': "language=vi app_type=1",
             'cookie': cookie1,
-            'accept' : 'application/json, text/plain, */*',
+            'accept': 'application/json, text/plain, */*',
             'content-type': 'application/json',
         },
+        httpsAgent: httpsAgent,
+        //proxy: false,
         data: data
     };
 
@@ -256,12 +272,28 @@ likeFeed = async (cookies, feed_link) => {
 
 }
 
-commentFeed = async (cookies, feed_link, feed_content) => {
+commentFeed = async (cookies, shopee_feed, proxy) => {
 
+    let mentions = []
+    let hashtags = []
+
+    if (shopee_feed.mentions) {
+        mentions = shopee_feed.mentions
+    }
+
+    if (shopee_feed.hashtags)
+        hashtags = shopee_feed.hashtags
+
+    let feed_content = shopee_feed.feed_content
+    let feed_link = shopee_feed.feed_link
     let result
     var xtoken = csrftoken()
     let cookie1 = ""
 
+    let proxy_pass = proxy.proxy_password.split("\r")[0]
+
+    var httpsAgent = new HttpsProxyAgent({host: proxy.proxy_ip, port: proxy.proxy_port, auth:  proxy.proxy_username + ":" + proxy_pass})
+    
     cookies.forEach(row => {
         if (row.name == "csrftoken") {
             cookie1 = cookie1 + row.name + "=" + xtoken + ";"
@@ -270,38 +302,45 @@ commentFeed = async (cookies, feed_link, feed_content) => {
         }
 
     })
+
+    let icons = ['🙏', '💖', '😊', '😘', '😇', '👍', '🌺']
     
-    feed_array = feed_link.split("/")
-    feed_id = feed_array[feed_array.length-1]
-    message = feed_content.split("\n")
-    random_ms = Math.floor(Math.random() * (message.length-1));
-    message1 = message[random_ms]
-    
+    let random_icon = Math.floor(Math.random() * (icons.length - 1));
+
+    let feed_array = feed_link.split("/")
+    let feed_id = feed_array[feed_array.length - 1]
+    let message = feed_content.split("\n")
+    let random_ms = Math.floor(Math.random() * (message.length - 1));
+    let message1 = message[random_ms] + " " + icons[random_icon]
+    //let message1 = message[random_ms] + " " + icons[random_icon]
+    // console.log("Messenger: " + message1)
+    // process.exit()
+
     let url = "https://feeds.shopee.vn/api/proxy/comment"
-    let data= {"feed_id":feed_id,"comment":message1,"mentions":[],"hashtags":[]}
-    
+    let data = { "feed_id": feed_id, "comment": message1, "mentions": mentions, "hashtags": hashtags }
+
     var config = {
         method: 'post',
         url: url,
         timeout: 5000,
         headers: {
             'x-csrftoken': xtoken,
-            'host'       : "feeds.shopee.vn",
+            'host': "feeds.shopee.vn",
             'language': "vi",
             'user-agent': "language=vi app_type=1",
             'cookie': cookie1,
-            'accept' : 'application/json, text/plain, */*',
+            'accept': 'application/json, text/plain, */*',
             'content-type': 'application/json',
         },
+        httpsAgent: httpsAgent,
+        //proxy: false,
         data: data
     };
 
     await axios(config)
         .then(function (response) {
-           
             result = response.data
             console.log("Comment feed: " + feed_link + " --- " + result.msg);
-
         })
         .catch(function (error) {
             console.log(error);

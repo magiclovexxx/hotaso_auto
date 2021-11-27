@@ -4,9 +4,10 @@
   "description": "",
   "main": "addfb.js",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.19.2",    
     "dotenv": "^8.2.0",
     "https": "^1.0.0",
+    "https-proxy-agent": "^5.0.0",
     "node-cron": "^2.0.3",
     "pm2": "^4.5.5",
     "proxy-check": "^1.0.8",

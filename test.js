@@ -1084,14 +1084,22 @@ commentFeed = async (cookies, feed_link, feed_content) => {
 
     })
 
-    feed_array = feed_link.split("/")
-    feed_id = feed_array[feed_array.length - 1]
+    let icons = ['🙏', '💖', '😊', '😘', '😇', '👍', '🌺']
+    let random_icon = Math.floor(Math.random() * (icons.length - 1));
 
-    message = Math.floor(Math.random() * (feed_content.length - 1));
-    message = feed_content[message]
-
+    let feed_array = feed_link.split("/")
+    let feed_id = feed_array[feed_array.length - 1]
+    let message = feed_content
+    let random_ms = Math.floor(Math.random() * (message.length - 1));
+    console.log(message[random_ms])
+    console.log(icons[random_icon])
+    
+    let message1 = message[random_ms] + " " + icons[random_icon]
+    
+    console.log(message1)
+    process.exit()
     let url = "https://feeds.shopee.vn/api/proxy/comment"
-    let data = { "feed_id": feed_id, "comment": message, "mentions": [], "hashtags": [] }
+    let data = { "feed_id": feed_id, "comment": message1, "mentions": [], "hashtags": [] }
 
     var config = {
         method: 'post',
