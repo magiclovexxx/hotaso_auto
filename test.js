@@ -315,7 +315,7 @@ update_actions = async () => {
         "changed": "2021-07-15 12:33:19",
         "update_time": "2021-08-14 07:08:24",
         "created": "2021-06-14 21:19:59",
-        "uid": "1",
+        "uid": "9",
         "shop_name": "LiDishop",
         "username": "thientran_eh",
         "shop_id": "32598950",
@@ -364,7 +364,7 @@ update_actions = async () => {
             "view_product": "15",
             "search": "15"
         },
-        "slave": "DEV",
+        "slave": "6578",
         "ip": "103.90.231.112",
         "cookie": [{
             "name": "_gali",
@@ -711,11 +711,69 @@ update_actions = async () => {
             "sourcePort": 443
         }],
         "user_agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240",
-        "action": "view_product"
+        "action": "feed",
+        "result":3,
+        "feed_id":11,
+        "local_ip": "192.168.1.14"
     }
 
-    axios.post('https://beta.hotaso.vn/api_user/updateActions', {
-        data: dataupdate
+    data_feed = {
+        id: '11',
+        uid: '9',
+        shop_id: null,
+        feed_link: 'https://feeds.shopee.vn/universal-link/share/AIoYtHLpBQCGOCsBAAAAAA==',
+        feed_name: 'BL164',
+        feed_like: '20000',
+        feed_time: '10',
+        feed_comment: '5000',
+        feed_content: '   Sản phẩm tuyệt vời, giao hàng nhanh :))))\r\n' +
+          'Ví đẹp,cầm chắc tay,màu đẹp nhiều ngăng đựng được nhiều thứ,shipper giao hàng nhanh,thân thiện đáng tiền nên mua thử.Sẽ ủng hộ(ảnh vid mang tính chất nhận xu)\r\n' +
+          'Giao hàng ổn, đủ hàng, giá rẻ, gói cũng rất cẩn thận, đã mua nhiều lần. Sau sẽ ủng hộ tiếp\r\n' +
+          'Sp ổn, chỗ đựng thẻ hơi nhỏ k đựng vừa. Dnjdkfmf ndjdnbdjdnd jdkdndbhd\r\n' +
+          'Sản phẩm chất lượng oke, giao hàng nhanh, nói chung là okeeee\r\n' +
+          'Túi siêu chất lượng xinh lắm ạ đóng gói cẩn thận nên mua nha....\r\n' +
+          'Ví đẹp, chất lượng ok so với giá nhưng bị mất form nhìn ọp ẹp lắm\r\n' +
+          'Giá rẻ.màu xih.dungg \r\n' +
+          'ok.sẽ ủng hộ shop anannsjsmsnkskmsns\r\n' +
+          'Ví y hình. Chất mềm, cầm thích tay luôn. Sẽ ủng hộ shop tiếp nhé\r\n' +
+          'Giá hợp lý, đc n ng tin dùng lên mua thử, đã nhận đủ hàng\r\n' +
+          'Giá hợp lý, đc n ng tin dùng lên mua thử, đã nhận đủ hàng\r\n' +
+          'Ví nhỏ hơn mình tưởng ko đựng vừa đt với giá tiền này thì hơi thất vọng xíu... da mềm\r\n' +
+          'Shop đóng gói cẩn thận  tuy nhiên có 1 bóp bị dơ và mình ko lau đi đc. Bù lại các bóp khác thì đẹp và dễ thương. Hy vọng lần sau đặt ko bị v nữa\r\n' +
+          '\r\n' +
+          '\r\n' +
+          '\r\n',
+        count_like: '487',
+        count_comment: '490',
+        status: '1',
+        update_time: '2021-11-28 03:27:41',
+        created: '2021-11-25 15:48:59',
+        feed_id: '11',
+        username: 'maigiangpntf',
+        password: 'Jctimgabxpa',
+        shopee_point: {
+          heart_product: '15',
+          follow_shop: '30',
+          heart_shop: '15',
+          add_cart: '30',
+          view_shop: '15',
+          order: '50',
+          view_review: '15',
+          view_product: '15',
+          search: '15',
+          feed_like: 20,
+          feed_comment: 20
+        },
+        slave: '6578',
+        action: 'like_feed',
+        cookie: ''
+      }
+    axios.get('https://beta.hotaso.vn/api_user/update_point', {
+        params: {
+            data: {
+                dataToServer: data_feed,
+            }
+        },
     })
         .then(function (response) {
             console.log(response.data);
@@ -1093,7 +1151,7 @@ commentFeed = async (cookies, feed_link, feed_content) => {
     let random_ms = Math.floor(Math.random() * (message.length - 1));
     console.log(message[random_ms])
     console.log(icons[random_icon])
-    
+
     let message1 = message[random_ms] + " " + icons[random_icon]
     
     console.log(message1)
@@ -1137,13 +1195,13 @@ commentFeed = async (cookies, feed_link, feed_content) => {
     day = Date.parse(day)
 
     //await likeFeed("", "https://feeds.shopee.vn/share/AQzaE-zeBQCGOCsBAAAAAA==")
-    await commentFeed("", "https://feeds.shopee.vn/share/AQzaE-zeBQCGOCsBAAAAAA==")
+    //await commentFeed("", "https://feeds.shopee.vn/share/AQzaE-zeBQCGOCsBAAAAAA==")
     //await checkauto()
     //await test_update_all()
     // proxy = await proxy3g()
     // console.log(proxy)
     //await pptr()
-    //await update_actions()
+    await update_actions()
     //await thaTimSanPham()
     //await test_post()
     //await disconnect()

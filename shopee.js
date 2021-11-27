@@ -1938,55 +1938,55 @@ runAllTime = async () => {
 
                         if (data_feed) {
                             for (let x = 0; x < data_feed.length; x++) {
-                                let data_feed_1 = data_feed[x]
+                                data_feed_1 = data_feed[x]
                                 check_point = await check_point_hour(data_feed[x].uid)
+                                let productForUser1 = data_feed_1
+                                productForUser1.feed_id = data_feed_1.id
+                                productForUser1.username = subAccount[0]
+                                productForUser1.password = subAccount[1]
+                                productForUser1.shopee_point = shopee_point
+                                productForUser1.slave = slavenumber
 
                                 if (check_point) {
                                     try {
                                         console.log("--- Thao tac shopee feed ---")
-                                    let cookie_2 = await page.cookies()
-                                    result_feed = 0
-                                    check_feed = 0
-                                   
-                                    console.log("Feed like: " + data_feed_1.feed_like)
-                                    console.log("count like: " + data_feed_1.count_like)
+                                        let cookie_2 = await page.cookies()
+                                        result_feed = 0
+                                        check_feed = 0
 
-                                    if (Number(data_feed_1.feed_like) > Number(data_feed_1.count_like)) {
-                                        console.log("--- Like feed ---")
-                                        check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
-                                        if (check_feed) {
-                                            if (check_feed.msg == "Success") {
-                                                result_feed = result_feed + 1
+                                        console.log("Feed like: " + data_feed_1.feed_like)
+                                        console.log("count like: " + data_feed_1.count_like)
+
+                                        if (Number(data_feed_1.feed_like) > Number(data_feed_1.count_like)) {
+                                            console.log("--- Like feed ---")
+                                            check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
+                                            if (check_feed) {
+                                                if (check_feed.msg == "Success") {
+                                                    console.log("Cập nhật action:  like_feed")                                                   
+                                                    productForUser1.action = "like_feed"
+                                                    await updateActions(productForUser1)
+                                                }
+                                            } else {
+                                                console.log("--- Có lỗi khi Like feed ---")
                                             }
-                                        }else{
-                                            console.log("--- Có lỗi khi Like feed ---")
                                         }
-                                    }
 
-                                    if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
-                                        console.log("--- Comment feed ---")
-                                        check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
-                                        if (check_feed) {
-                                            if (check_feed.msg == "Success") {
-                                                result_feed = result_feed + 2
+                                        if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
+                                            console.log("--- Comment feed ---")
+                                            check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
+                                            if (check_feed) {
+                                                if (check_feed.msg == "Success") {
+                                                    console.log("Cập nhật action:  comment_feed")
+                                                    productForUser1.action = "comment_feed"
+                                                    await updateActions(productForUser1)
+                                                }
+                                            } else {
+                                                console.log("--- Có lỗi khi comment feed ---")
                                             }
-                                        }else{
-                                            console.log("--- Có lỗi khi comment feed ---")
                                         }
-                                    }
-                                    console.log("--- Result feed ---" + result_feed)
-
-                                    if (result_feed) {
-                                        console.log("Cập nhật action:  feed")
-                                        productForUser.action = "feed"
-                                        productForUser.result = result_feed
-                                        productForUser.feed_id = data_feed_1.id
-
-                                        await updateActions(productForUser)
-                                    }
                                     } catch (error) {
-                                        
-                                    }                                    
+                                        console.log(error)
+                                    }
                                 }
                             }
                         }
