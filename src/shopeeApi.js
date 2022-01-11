@@ -2,6 +2,7 @@ const axios = require('axios').default;
 const puppeteer = require('puppeteer');
 const randomUseragent = require('random-useragent');
 const HttpsProxyAgent = require('https-proxy-agent');
+const md5 = require('md5');
 
 
 const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
