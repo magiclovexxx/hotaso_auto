@@ -761,8 +761,10 @@ action_view_shop = async (page, url, product) => {
         } else {
             viewShopClick[0].click()
         }
+
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
+        await page.waitForSelector('.shopee-avatar__img')
 
         randomDown = Math.floor(Math.random() * (5 - 2)) + 2;
         for (i = 0; i < randomDown; i++) {
@@ -798,7 +800,6 @@ action_view_shop = async (page, url, product) => {
         console.log(error)
         return false
     }
-
 }
 
 likeProductOfShop = async (page, url) => {
@@ -1039,7 +1040,7 @@ action_heart_product = async (page) => {
         //         document.querySelector('.justify-center>.flex.items-center>svg>path').click()
         //     }
         // })
-        check = await page.$('.justify-center>.flex.items-center>svg>path')
+        check = await page.$('.justify-center>.flex.items-center>button>svg>path')
         if (check) {
             await check.click()
         }
@@ -1919,7 +1920,9 @@ runAllTime = async () => {
                     .then(function () {
                         // always executed
                     });
-                return false
+                    await browser.close();
+                    console.log(" ----- KhởI đÔng lại ---- ")
+                    shell.exec('pm2 restart all');
             }
             if (checklogin) {
 
@@ -2067,7 +2070,7 @@ runAllTime = async () => {
 
                             let check_add_to_cart = url.split("api/v4/cart/add_to")
 
-                            let checkUrlShop = url.split("api/v4/shop/get_shop_detail?username=")
+                            let checkUrlShop = url.split("shop/get_shop_detail")
 
                             if (checkUrlShop.length > 1) {
                                 console.log("-- Sự kiện lấy thông tin shop --")
@@ -2250,7 +2253,6 @@ runAllTime = async () => {
 
                         console.log(" --- tìm kiếm ----")
 
-
                         await page.waitForTimeout(5000)
 
                         let getProductPageTotal
@@ -2362,7 +2364,6 @@ runAllTime = async () => {
                             }
                         }
 
-
                         // nếu ko tìm thấy vị trí sp
                         if (getViTriSanPham.trang == false) {
                             productForUser.trang = 0
@@ -2381,7 +2382,6 @@ runAllTime = async () => {
                                 })
                                 .catch(function (error) {
                                     console.log(error);
-
                                 })
                             //continue
 
@@ -2390,11 +2390,9 @@ runAllTime = async () => {
                                     waitUntil: "networkidle0",
                                     timeout: 30000
                                 });
-
                             } catch (error) {
                                 console.log(error.message);
                             }
-
                         }
 
                         // nếu lỗi khi tìm vị trí sp 
@@ -2473,21 +2471,16 @@ runAllTime = async () => {
                                         if (check_point) {
                                             random_like = Math.floor(Math.random() * 4);
 
-                                            await action_heart_product(page, productForUser)
-                                            console.log(" --- check thả tim ---")
+                                            check_like = await action_heart_product_api(page, productForUser)
+                                            console.log(" --- check thả tim api ---")
                                             console.log(check_like);
-                                            if (check_like.error == null) {
-
+                                            if (check_like.error == 0) {
                                                 productForUser.action = "heart_product"
                                                 await updateActions(productForUser)
                                             }
-
-
                                         } else {
                                             break
                                         }
-
-
                                     }
                                 }
 
@@ -2506,14 +2499,9 @@ runAllTime = async () => {
                                         } else {
                                             console.log(productForUser.product_link)
                                         }
-
-
                                     } else {
                                         break
                                     }
-
-
-
                                 }
 
                                 if (options.view_shop) {
@@ -2574,23 +2562,19 @@ runAllTime = async () => {
                                     refer = await page.url()
                                     shopId = parseInt(productForUser.shop_id)
                                     check1 = shopInfo3.followed
-                                    console.log("check follow shop: " + shopInfo3.followed)
+                                    console.log("check follow shop: " + check1)
                                     if (check1 == false) {
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
                                             random_follow = Math.floor(Math.random() * 4);
-
-                                            //check_action = await shopeeApi.followShop(cookies22, refer, shopId)
-                                            await action_follow_shop(page)
-                                            console.log("Follow shop: " + check_follow.error)
+                                            check_follow = await shopeeApi.followShop(cookies22, refer, shopId)
+                                            //await action_follow_shop(page)
+                                            
                                             if (check_follow.error == 0) {
-
                                                 productForUser.action = "follow_shop"
                                                 await updateActions(productForUser)
                                             }
                                             await page.waitForTimeout(1000);
-
-
                                         } else {
                                             break
                                         }

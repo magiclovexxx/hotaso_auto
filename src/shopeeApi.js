@@ -45,11 +45,26 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
 
         ref = encodeURI(ref)
 
+        let str_request = `55b03${md5(search_api)}55b03`;
+        let if_none_match = `55b03-${md5(str_request)}`;
+
         headersearch = {
             'x-api-source': 'pc',
             'x-shopee-language': 'vi',
+            'sec-ch-ua': '"Chromium";v="94", "Google Chrome";v="94", ";Not A Brand";v="99"',
+            'sec-ch-ua-mobile': '?0',
+            'x-api-source': 'pc',
+            'x-shopee-language': 'vi',
+            'x-requested-with': 'XMLHttpRequest',
             'User-Agent': product.user_agent,
-            referer: ref,
+            'if-none-match-': if_none_match,
+            'sec-ch-ua-platform': '"Windows"',
+            'accept': '*/*',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            'referer': 'https://shopee.vn/search?keyword=' + encodeURI(keyword),
+            'accept-language': 'en-US,en;q=0.9,vi;q=0.8',
             'cookie': cookie1
 
         }
@@ -138,7 +153,8 @@ followShop = async (cookies, ref, shopId) => {
 
     await axios(config)
         .then(function (response) {
-
+            console.log("--- follow shop API ---");
+            console.log(response.data);
             result = response.data
         })
         .catch(function (error) {
@@ -199,6 +215,7 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
 
     await axios(config)
         .then(function (response) {
+            console.log("--- Thả tim sản phẩm API ---");
             console.log(response.data);
             result = response.data
         })
