@@ -1648,7 +1648,7 @@ runAllTime = async () => {
                             console.error(data);
                         });
                     } else {
-                        shell.exec('git stash; git pull origin master;');
+                        //shell.exec('git stash; git pull origin master;');
                         shell.exec('git pull https://magiclovexxx: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@github.com/magiclovexxx/hotaso_auto.git master;');                        
                         shell.exec('npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');                    
                     }
