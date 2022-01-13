@@ -74,6 +74,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
         var data
 
         await axios.get(search_api, {
+            timeout: 5000,
             headers: headersearch
         })
             .then(function (response) {
@@ -144,6 +145,7 @@ followShop = async (cookies, ref, shopId) => {
     var config = {
         method: 'post',
         url: 'https://shopee.vn/api/v4/shop/follow',
+        timeout: 5000,
         headers: {
             'content-type': 'application/json',
             'referer': ref,

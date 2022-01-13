@@ -1600,7 +1600,9 @@ runAllTime = async () => {
 
     if (checkNetwork == 1) {
 
-        await axios.get("https://api.hotaso.vn/api_user/get_server")
+        await axios.get("https://api.hotaso.vn/api_user/get_server",{
+            timeout: 5000,
+        })
             .then(function (response) {
                 host_name = response.data
                 // cookie3 = response.headers['set-cookie']
@@ -1609,7 +1611,9 @@ runAllTime = async () => {
             })
             .catch(async function (error) {
                 console.log(error);
-                await axios.get("http://api.hotaso.vn/api_user/get_server")
+                await axios.get("http://api.hotaso.vn/api_user/get_server", {
+                    timeout: 5000,
+                })
                     .then(function (response) {
                         host_name = response.data
                         // cookie3 = response.headers['set-cookie']
@@ -1690,7 +1694,9 @@ runAllTime = async () => {
         console.log(get_data_shopee_url)
 
         // Lấy dữ liệu từ từ khoá từ sv
-        await axios.get(get_data_shopee_url)
+        await axios.get(get_data_shopee_url, {
+            timeout: 50000,
+        })
             .then(function (response) {
 
                 dataShopee = response.data
