@@ -113,7 +113,7 @@ loginShopee = async (page, accounts) => {
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
                 waitUntil: "networkidle0",
-                timeout: 60000,
+                //timeout: 60000,
                 referer: ref
             })
 
@@ -592,7 +592,7 @@ updateProxy = async (proxy, check_time) => {
 
     await axios.get(url_proxy, {
 
-        timeout: 500000
+        //timeout: 500000
     },
         {
             headers: {
@@ -615,7 +615,7 @@ check_point_hour = async (uid) => {
 
     await axios.get(check_point_hour_url, {
 
-        timeout: 500000
+        //timeout: 500000
     },
         {
             headers: {
@@ -643,7 +643,7 @@ updateHistory = async (product) => {
 
     await axios.get(save_history_url, {
         data: dataupdate,
-        timeout: 500000
+        //timeout: 500000
     },
         {
             headers: {
@@ -668,7 +668,7 @@ updateActions = async (product9) => {
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
     await axios.post(update_actions_url, {
         data: product9,
-        timeout: 500000
+        //timeout: 500000
     },
         {
             headers: {
@@ -687,7 +687,7 @@ updateActions = async (product9) => {
 
     // await axios.get("https://beta.sacuco.com/api_user/shopee_campaigns/", {
     //     data: product9,
-    //     timeout: 500000
+    //     //timeout: 500000
     // }).then(function (response) {
     //     console.log("SACUCO - -- Gửi dữ liệu lên sacuco OK");
     // })
@@ -697,7 +697,7 @@ updateActions = async (product9) => {
 
     // await axios.get(save_history_url, {
     //     data: product9,
-    //     timeout: 500000
+    //     //timeout: 500000
     // },
     //     {
     //         headers: {
@@ -718,7 +718,7 @@ updateActions = async (product9) => {
                 dataToServer: product9,
             }
         },
-        timeout: 500000
+        //timeout: 500000
     })
         .then(function (response) {
             console.log(response.data)
@@ -739,7 +739,7 @@ action_view_shop = async (page, url, product) => {
     let ref = await page.url()
     await page.goto(url, {
         waitUntil: "networkidle0",
-        timeout: 60000,
+        //timeout: 60000,
         referer: ref
     })
 
@@ -820,7 +820,7 @@ likeProductOfShop = async (page, url) => {
     let ref = await page.url()
     await page.goto(url, {
         waitUntil: "networkidle0",
-        timeout: 60000,
+        //timeout: 60000,
         referer: ref
     })
 
@@ -1098,7 +1098,7 @@ removeCart = async (page) => {
             let ref = await page.url()
             await page.goto('https://shopee.vn/cart/', {
                 waitUntil: "networkidle0",
-                timeout: 60000,
+                //timeout: 60000,
                 referer: ref
             })
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1597,7 +1597,7 @@ runAllTime = async () => {
     if (checkNetwork == 1) {
 
         await axios.get("https://api.hotaso.vn/api_user/get_server",{
-            timeout: 50000,
+            //timeout: 50000,
         })
             .then(function (response) {
                 host_name = response.data
@@ -1608,7 +1608,7 @@ runAllTime = async () => {
             .catch(async function (error) {
                 console.log(error);
                 await axios.get("http://api.hotaso.vn/api_user/get_server", {
-                    timeout: 50000,
+                    //timeout: 50000,
                 })
                     .then(function (response) {
                         host_name = response.data
@@ -1691,7 +1691,7 @@ runAllTime = async () => {
 
         // Lấy dữ liệu từ từ khoá từ sv
         await axios.get(get_data_shopee_url, {
-            timeout: 500000,
+            //timeout: 500000,
         })
             .then(function (response) {
 
@@ -1911,7 +1911,7 @@ runAllTime = async () => {
                             dataToServer: accountInfo,
                         }
                     },
-                    timeout: 500000
+                    //timeout: 500000
                 })
                     .then(function (response) {
                         console.log(response.data);
@@ -2002,7 +2002,7 @@ runAllTime = async () => {
                             start_check_time = Date.now()
                             await page.goto('https://shopee.vn', {
                                 waitUntil: "networkidle0",
-                                timeout: 60000,
+                                //timeout: 60000,
                                 referer: ref
                             })
                             stop_check_time = Date.now()
@@ -2287,7 +2287,7 @@ runAllTime = async () => {
                                             dataToServer: productForUser,
                                         }
                                     },
-                                    timeout: 50000
+                                    //timeout: 50000
                                 })
                                     .then(function (response) {
                                         console.log(response.data)
@@ -2315,7 +2315,7 @@ runAllTime = async () => {
                                 let ref = await page.url()
                                 await page.goto(urlSearch, {
                                     waitUntil: "networkidle0",
-                                    timeout: 60000,
+                                    //timeout: 60000,
                                     referer: ref
                                 })
 
@@ -2356,7 +2356,7 @@ runAllTime = async () => {
                                     try {
                                         await page.goto(productForUser.product_link, {
                                             waitUntil: "networkidle0",
-                                            timeout: 60000
+                                            //timeout: 60000
                                         });
 
                                     } catch (err) {
@@ -2378,7 +2378,7 @@ runAllTime = async () => {
                                         dataToServer: productForUser,
                                     }
                                 },
-                                timeout: 50000
+                                //timeout: 50000
                             })
                                 .then(function (response) {
                                     console.log(response.data)
@@ -2391,7 +2391,7 @@ runAllTime = async () => {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
-                                    timeout: 60000
+                                    //timeout: 60000
                                 });
                             } catch (error) {
                                 console.log(error.message);
@@ -2403,7 +2403,7 @@ runAllTime = async () => {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
-                                    timeout: 60000
+                                    //timeout: 60000
                                 });
 
                             } catch (error) {
