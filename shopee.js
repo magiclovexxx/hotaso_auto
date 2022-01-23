@@ -1612,7 +1612,7 @@ runAllTime = async () => {
             .catch(async function (error) {
                 console.log(error);
                 await axios.get("http://api.hotaso.vn/api_user/get_server", {
-                    timeout: 5000,
+                    timeout: 60000,
                 })
                     .then(function (response) {
                         host_name = response.data
@@ -1695,7 +1695,7 @@ runAllTime = async () => {
 
         // Lấy dữ liệu từ từ khoá từ sv
         await axios.get(get_data_shopee_url, {
-            timeout: 5000,
+            timeout: 60000,
         })
             .then(function (response) {
 
