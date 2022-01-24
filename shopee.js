@@ -672,7 +672,7 @@ updateActions = async (product9) => {
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
     await axios.post(update_actions_url, {
         data: product9,
-        timeout: 5000
+        timeout: 50000
     },
         {
             headers: {
@@ -722,7 +722,7 @@ updateActions = async (product9) => {
                 dataToServer: product9,
             }
         },
-        timeout: 5000
+        timeout: 50000
     })
         .then(function (response) {
             console.log(response.data)
@@ -1972,7 +1972,8 @@ runAllTime = async () => {
                                             check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
                                             if (check_feed) {
                                                 if (check_feed.msg == "Success") {
-                                                    console.log("Cập nhật action:  like_feed")                                                   
+                                                    console.log("Cập nhật action:  like_feed")  
+                                                    console.log(productForUser1)                                                 
                                                     productForUser1.action = "like_feed"
                                                     await updateActions(productForUser1)
                                                 }
