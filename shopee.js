@@ -117,7 +117,7 @@ loginShopee = async (page, accounts) => {
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
                 waitUntil: "networkidle0",
-                timeout: 30000,
+                timeout: 50000,
                 referer: ref
             })
 
@@ -743,7 +743,7 @@ action_view_shop = async (page, url, product) => {
     let ref = await page.url()
     await page.goto(url, {
         waitUntil: "networkidle0",
-        timeout: 30000,
+        timeout: 50000,
         referer: ref
     })
 
@@ -773,25 +773,25 @@ action_view_shop = async (page, url, product) => {
             await page.keyboard.press('PageDown');
         }
 
-        getProductPageTotal = await page.evaluate(() => {
-            // Class có link bài đăng trên profile          
-            let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;
-            return titles
-        })
+        // getProductPageTotal = await page.evaluate(() => {
+        //     // Class có link bài đăng trên profile          
+        //     let titles = document.querySelectorAll('.shopee-mini-page-controller__total')[0].textContent;
+        //     return titles
+        // })
 
-        random_page = Math.floor(Math.random() * getProductPageTotal);
-        for (let i = 0; i <= random_page; i++) {
+        // random_page = Math.floor(Math.random() * getProductPageTotal);
+        // for (let i = 0; i <= random_page; i++) {
             randomDown = Math.floor(Math.random() * (5 - 2)) + 2;
             for (i = 0; i < randomDown; i++) {
                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                 await page.waitForTimeout(timeout)
                 await page.keyboard.press('PageDown');
             }
-            next_page = await page.$('.shopee-button-outline.shopee-mini-page-controller__next-btn')
-            if (next_page) {
-                await next_page.click()
-            }
-        }
+            // next_page = await page.$('.shopee-button-outline.shopee-mini-page-controller__next-btn')
+            // if (next_page) {
+            //     await next_page.click()
+            // }
+       // }
 
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
@@ -824,7 +824,7 @@ likeProductOfShop = async (page, url) => {
     let ref = await page.url()
     await page.goto(url, {
         waitUntil: "networkidle0",
-        timeout: 30000,
+        timeout: 50000,
         referer: ref
     })
 
@@ -940,7 +940,11 @@ action_report_shop = async (page, report_shop) => {
     try {
         console.log("---- Report shop ----")
         let url = "https://shopee.vn/shop/" + report_shop.shop_id + "/report/?__classic__=1"
-        await page.goto(url);
+        await page.goto(url, {
+            waitUntil: "networkidle0",
+            timeout: 50000,
+            referer: ref
+        });
 
         // Chọn lí do report
         timeout = Math.floor(Math.random() * (2000 - 500)) + 500;
@@ -1102,7 +1106,7 @@ removeCart = async (page) => {
             let ref = await page.url()
             await page.goto('https://shopee.vn/cart/', {
                 waitUntil: "networkidle0",
-                timeout: 30000,
+                timeout: 50000,
                 referer: ref
             })
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1600,69 +1604,39 @@ runAllTime = async () => {
 
     if (checkNetwork == 1) {
 
-        await axios.get("https://api.hotaso.vn/api_user/get_server",{
-            timeout: 5000,
-        })
-            .then(function (response) {
-                host_name = response.data
-                // cookie3 = response.headers['set-cookie']
+        // await axios.get("https://api.hotaso.vn/api_user/get_server",{
+        //     timeout: 6000,
+        // })
+        //     .then(function (response) {
+        //         host_name = response.data
+        //         // cookie3 = response.headers['set-cookie']
 
-                // console.log(cookie1)
-            })
-            .catch(async function (error) {
-                console.log(error);
-                await axios.get("http://api.hotaso.vn/api_user/get_server", {
-                    timeout: 60000,
-                })
-                    .then(function (response) {
-                        host_name = response.data
-                        // cookie3 = response.headers['set-cookie']
+        //         // console.log(cookie1)
+        //     })
+        //     .catch(async function (error) {
+        //         console.log(error);
+        //         await axios.get("http://api.hotaso.vn/api_user/get_server", {
+        //             timeout: 60000,
+        //         })
+        //             .then(function (response) {
+        //                 host_name = response.data
+        //                 // cookie3 = response.headers['set-cookie']
 
-                        // console.log(cookie1)
-                    })
-                    .catch(async function (error) {
-                        console.log(error);
+        //                 // console.log(cookie1)
+        //             })
+        //             .catch(async function (error) {
+        //                 console.log(error);
 
-                    })
-            })
+        //             })
+        //     })
 
-        if (host_name.version) {
-            // get version hien tai trong file version.txt
-            var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
-            if (checkVersion) {
-                checkVersion = checkVersion.toString();
-            } else {
-                checkVersion = ""
-            }
-            console.log("Version hiện tai: " + checkVersion);
-            newVersion = host_name.version;
-            console.log("Version server: " + host_name.version);
-            // if (0) {
-            if (newVersion !== checkVersion && host_name.version !== undefined) {
-                console.log("Cập nhật code");
-                // Update version mới vào file version.txt
-                //fs.writeFileSync('version.txt', newVersion)
-                if (mode !== "DEV") {
-                    if (os_slave != "LINUX") {
-                        const myShellScript = exec('update.sh /');
-                        myShellScript.stdout.on('data', (data) => {
-                            // do whatever you want here with data
-                        });
-                        myShellScript.stderr.on('data', (data) => {
-                            console.error(data);
-                        });
-                    } else {
-                        shell.exec('git stash;');
-                        shell.exec('git pull https://magiclovexxx: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@github.com/magiclovexxx/hotaso_auto.git master;');                        
-                        shell.exec('npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');                    
-                    }
-                    return false
-                }
-            }
-        }
+        
 
-        update_point = apiUrl = host_name.domain
-        updateActionsUrl = host_name.domain
+        // update_point = apiUrl = host_name.domain
+        // updateActionsUrl = host_name.domain
+
+         update_point = apiUrl = "https://api.hotaso.vn"
+        updateActionsUrl = "https://api.hotaso.vn"
         console.log("HOST NAME : " + apiUrl)
 
         if (mode === "DEV") {
@@ -1712,6 +1686,41 @@ runAllTime = async () => {
 
     } else {
         return false
+    }
+
+    if (dataShopee.version) {
+        // get version hien tai trong file version.txt
+        var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
+        if (checkVersion) {
+            checkVersion = checkVersion.toString();
+        } else {
+            checkVersion = ""
+        }
+        console.log("Version hiện tai: " + checkVersion);
+        newVersion = dataShopee.version;
+        console.log("Version server: " + dataShopee.version);
+        // if (0) {
+        if (newVersion !== checkVersion && dataShopee.version !== undefined) {
+            console.log("Cập nhật code");
+            // Update version mới vào file version.txt
+            //fs.writeFileSync('version.txt', newVersion)
+            if (mode !== "DEV") {
+                if (os_slave != "LINUX") {
+                    const myShellScript = exec('update.sh /');
+                    myShellScript.stdout.on('data', (data) => {
+                        // do whatever you want here with data
+                    });
+                    myShellScript.stderr.on('data', (data) => {
+                        console.error(data);
+                    });
+                } else {
+                    shell.exec('git stash;');
+                    shell.exec('git pull https://magiclovexxx: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@github.com/magiclovexxx/hotaso_auto.git master;');                        
+                    shell.exec('npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');                    
+                }
+                return false
+            }
+        }
     }
 
     shopee_point = dataShopee.shopee_point
@@ -1875,7 +1884,11 @@ runAllTime = async () => {
             try {
 
                 let ref = await page.url()
-                await page.goto('https://shopee.vn')
+                await page.goto('https://shopee.vn', {
+                    waitUntil: "networkidle0",
+                    timeout: 50000,
+                    referer: ref
+                })
                 await updateProxy(proxy.proxy_ip + ":OK")
                 bypassTest.runBypassTest(page);
             } catch (err) {
@@ -2007,7 +2020,7 @@ runAllTime = async () => {
                             start_check_time = Date.now()
                             await page.goto('https://shopee.vn', {
                                 waitUntil: "networkidle0",
-                                timeout: 30000,
+                                timeout: 50000,
                                 referer: ref
                             })
                             stop_check_time = Date.now()
@@ -2320,7 +2333,7 @@ runAllTime = async () => {
                                 let ref = await page.url()
                                 await page.goto(urlSearch, {
                                     waitUntil: "networkidle0",
-                                    timeout: 30000,
+                                    timeout: 50000,
                                     referer: ref
                                 })
 
@@ -2361,7 +2374,7 @@ runAllTime = async () => {
                                     try {
                                         await page.goto(productForUser.product_link, {
                                             waitUntil: "networkidle0",
-                                            timeout: 30000
+                                            timeout: 50000
                                         });
 
                                     } catch (err) {
@@ -2396,7 +2409,7 @@ runAllTime = async () => {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
-                                    timeout: 30000
+                                    timeout: 50000
                                 });
                             } catch (error) {
                                 console.log(error.message);
@@ -2408,7 +2421,7 @@ runAllTime = async () => {
                             try {
                                 await page.goto(productForUser.product_link, {
                                     waitUntil: "networkidle0",
-                                    timeout: 30000
+                                    timeout: 50000
                                 });
 
                             } catch (error) {
