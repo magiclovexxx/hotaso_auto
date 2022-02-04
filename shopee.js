@@ -2654,7 +2654,7 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(" ----- KhởI đÔng lại ---- ")
-            shell.exec('pm2 restart all');
+            shell.exec('pm2 flush; pm2 restart all');
         }
     })
 
