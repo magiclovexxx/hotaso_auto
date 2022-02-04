@@ -781,17 +781,17 @@ action_view_shop = async (page, url, product) => {
 
         // random_page = Math.floor(Math.random() * getProductPageTotal);
         // for (let i = 0; i <= random_page; i++) {
-            randomDown = Math.floor(Math.random() * (5 - 2)) + 2;
-            for (i = 0; i < randomDown; i++) {
-                timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-                await page.waitForTimeout(timeout)
-                await page.keyboard.press('PageDown');
-            }
-            // next_page = await page.$('.shopee-button-outline.shopee-mini-page-controller__next-btn')
-            // if (next_page) {
-            //     await next_page.click()
-            // }
-       // }
+        randomDown = Math.floor(Math.random() * (5 - 2)) + 2;
+        for (i = 0; i < randomDown; i++) {
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            await page.waitForTimeout(timeout)
+            await page.keyboard.press('PageDown');
+        }
+        // next_page = await page.$('.shopee-button-outline.shopee-mini-page-controller__next-btn')
+        // if (next_page) {
+        //     await next_page.click()
+        // }
+        // }
 
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
@@ -1536,7 +1536,7 @@ gen_page = async (browser, option) => {
 
         // --- Chặn load css --- /
         if (disable_image == 1) {
-            //    await page.setRequestInterception(true);
+            //await page.setRequestInterception(true);
             page.on('request', (req) => {
                 if (req.resourceType() === 'image') {
                     req.abort();
@@ -1630,12 +1630,12 @@ runAllTime = async () => {
         //             })
         //     })
 
-        
+
 
         // update_point = apiUrl = host_name.domain
         // updateActionsUrl = host_name.domain
 
-         update_point = apiUrl = "https://api.hotaso.vn"
+        update_point = apiUrl = "https://api.hotaso.vn"
         updateActionsUrl = "https://api.hotaso.vn"
         console.log("HOST NAME : " + apiUrl)
 
@@ -1715,13 +1715,19 @@ runAllTime = async () => {
                     });
                 } else {
                     shell.exec('git stash;');
-                    shell.exec('git pull https://magiclovexxx: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@github.com/magiclovexxx/hotaso_auto.git master;');                        
-                    shell.exec('npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');                    
+                    shell.exec('git pull https://magiclovexxx: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@github.com/magiclovexxx/hotaso_auto.git master;');
+                    shell.exec('npm install; pm2 start shopee.js; pm2 start restartall.js; pm2 startup; pm2 save; pm2 restart all');
                 }
                 return false
             }
         }
     }
+    if (dataShopee == 1111) {
+        await sleep(60000)
+        return
+    }
+
+    data = dataShopee.data
 
     shopee_point = dataShopee.shopee_point
     slaveInfo = dataShopee.slave_info
@@ -1734,7 +1740,6 @@ runAllTime = async () => {
     console.log("----------- START SHOPEE ---------------")
     //data = GenDirToGetData(maxTab, accounts)
 
-    data = dataShopee.data
     proxy = dataShopee.proxy
 
     await sleep(5000)
@@ -1816,8 +1821,10 @@ runAllTime = async () => {
         let keywords = data_for_tab.product_for_sub_account
         if (keywords.length == 0) {
             console.log("---- Không có từ khoá tab: ----")
+            await sleep(60000)
             return
         }
+        
         if (data_for_tab.feed) {
             data_feed = data_for_tab.feed
         } else {
@@ -1869,9 +1876,11 @@ runAllTime = async () => {
             user_lang: user_lang
         }
 
+        //disable_image = 1;
+
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
-
+        c
         if ((index == 0) && (mode !== "DEV")) {
             // đổi ip
             //console.log("Đổi ip mạng")
@@ -1881,6 +1890,7 @@ runAllTime = async () => {
         }
         try {
             await page.waitForTimeout(5000)
+
             try {
 
                 let ref = await page.url()
@@ -1897,6 +1907,8 @@ runAllTime = async () => {
                 await updateProxy(proxy.proxy_ip)
             }
 
+            //disable_image = 0;
+            //await page.setRequestInterception(false);
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
@@ -1940,9 +1952,9 @@ runAllTime = async () => {
                     .then(function () {
                         // always executed
                     });
-                    await browser.close();
-                    console.log(" ----- KhởI đÔng lại ---- ")
-                    shell.exec('pm2 restart all');
+                await browser.close();
+                console.log(" ----- KhởI đÔng lại ---- ")
+                shell.exec('pm2 restart all');
             }
             if (checklogin) {
 
@@ -1985,8 +1997,8 @@ runAllTime = async () => {
                                             check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
                                             if (check_feed) {
                                                 if (check_feed.msg == "Success") {
-                                                    console.log("Cập nhật action:  like_feed")  
-                                                    console.log(productForUser1)                                                 
+                                                    console.log("Cập nhật action:  like_feed")
+                                                    console.log(productForUser1)
                                                     productForUser1.action = "like_feed"
                                                     await updateActions(productForUser1)
                                                 }
@@ -2590,7 +2602,7 @@ runAllTime = async () => {
                                             random_follow = Math.floor(Math.random() * 4);
                                             check_follow = await shopeeApi.followShop(cookies22, refer, shopId)
                                             //await action_follow_shop(page)
-                                            
+
                                             if (check_follow.error == 0) {
                                                 productForUser.action = "follow_shop"
                                                 await updateActions(productForUser)

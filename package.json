@@ -5,20 +5,20 @@
   "main": "addfb.js",
   "dependencies": {
     "axios": "^0.19.2",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "https": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
     "md5": "^2.3.0",
     "node-cron": "^2.0.3",
-    "pm2": "^4.5.5",
+    "pm2": "^4.5.6",
     "proxy-check": "^1.0.8",
-    "public-ip": "^4.0.3",
+    "public-ip": "^4.0.4",
     "puppeteer": "^9.1.1",
-    "puppeteer-extra": "^3.1.18",
-    "puppeteer-extra-plugin-stealth": "^2.7.8",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
     "random-mac": "0.0.5",
     "random-useragent": "^0.5.0",
-    "shelljs": "^0.8.4"
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {},
   "scripts": {
