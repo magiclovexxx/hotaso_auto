@@ -1824,7 +1824,7 @@ runAllTime = async () => {
             await sleep(60000)
             return
         }
-        
+
         if (data_for_tab.feed) {
             data_feed = data_for_tab.feed
         } else {
@@ -1880,7 +1880,7 @@ runAllTime = async () => {
 
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
-        c
+        
         if ((index == 0) && (mode !== "DEV")) {
             // đổi ip
             //console.log("Đổi ip mạng")
