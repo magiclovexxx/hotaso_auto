@@ -722,7 +722,7 @@ updateActions = async (product9) => {
                 dataToServer: product9,
             }
         },
-        timeout: 50000
+        timeout: 120000
     })
         .then(function (response) {
             console.log(response.data)
@@ -731,8 +731,6 @@ updateActions = async (product9) => {
             console.log(error);
 
         })
-
-
 }
 
 action_view_shop = async (page, url, product) => {
@@ -1880,7 +1878,7 @@ runAllTime = async () => {
 
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
-        
+
         if ((index == 0) && (mode !== "DEV")) {
             // đổi ip
             //console.log("Đổi ip mạng")
@@ -2648,7 +2646,6 @@ runAllTime = async () => {
 
         } catch (error) {
             console.log(error)
-
         }
 
         await browser.close();
