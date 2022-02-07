@@ -4,7 +4,7 @@ const shopeeApi = require('./src/shopeeApi.js')
 const actionsShopee = require('./src/actions.js')
 const axios = require('axios').default;
 const HttpsProxyAgent = require("https-proxy-agent")
-
+const moment = require('moment')
 
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -41,7 +41,7 @@ headless_mode = process.env.HEADLESS_MODE     // che do chay hien thi giao dien
 disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+//process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 disable_image = 0
 
 if (headless_mode == "0") {
@@ -662,59 +662,29 @@ updateHistory = async (product) => {
         });
 
 }
-
-updateActions = async (product9) => {
-    console.log("Check die: " + check_die)
-    check_die = 1;
-    update = 0
-    //datatest = 
-    const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+updateAction = async (product9) => {
+    // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+    // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
     await axios.post(update_actions_url, {
         data: product9,
         timeout: 50000
     },
-        {
-            headers: {
-                Connection: 'keep-alive',
-                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
-            },
-            httpsAgent: httpsAgent
+        {           
+           // httpsAgent: httpsAgent
         })
-        .then(function (response) {
-            console.log("Update action: " + product9.action + " = " + response.data);
+        .then(function (response) {           
+            console.log(moment().format("h:mm:ss") +"Update action: " + product9.action + " = " + response.data);
         })
-        .catch(function (error) {
+        .catch(async function (error) {
             console.log(error);
+            console.log(moment().format("h:mm:ss") +" - Update action lỗi");
+            await updateAction(product9)
         });
+}
 
 
-    // await axios.get("https://beta.sacuco.com/api_user/shopee_campaigns/", {
-    //     data: product9,
-    //     timeout: 5000
-    // }).then(function (response) {
-    //     console.log("SACUCO - -- Gửi dữ liệu lên sacuco OK");
-    // })
-    // .catch(function (error) {
-    //     console.log(error);
-    // });
-
-    // await axios.get(save_history_url, {
-    //     data: product9,
-    //     timeout: 5000
-    // },
-    //     {
-    //         headers: {
-    //             Connection: 'keep-alive',
-    //         }
-    //     })
-    //     .then(function (response) {
-    //         console.log(response.data);
-    //     })
-    //     .catch(function (error) {
-    //         console.log(error);
-    //     });
-
+updatePoint = async (product9) => {
+  
     product9.cookie = "";
     await axios.get(update_point_url, {
         params: {
@@ -722,15 +692,26 @@ updateActions = async (product9) => {
                 dataToServer: product9,
             }
         },
-        timeout: 120000
+        timeout: 60000
     })
         .then(function (response) {
-            console.log(response.data)
+            console.log(moment().format("h:mm:ss") + response.data)
         })
-        .catch(function (error) {
+        .catch(async function (error) {
             console.log(error);
-
+            console.log(moment().format("h:mm:ss") +" - Update point lỗi");
+            await updatePoint(product9)
         })
+}
+
+updateActions = async (product9) => {
+    console.log("Check die: " + check_die)
+    check_die = 1;
+    update = 0
+    
+    await updatePoint(product9)
+    await updateAction(product9)
+
 }
 
 action_view_shop = async (page, url, product) => {
@@ -1402,16 +1383,7 @@ genRandomMac = async () => {
 
     macAndress = randomMac()
     netName = os.networkInterfaces()
-    // netName = Object.keys(netName).forEach(key => {
-    //    // console.log(netName)
-    //     console.log(netName[key])
-    //     //ipAddress = netName[key][1].address
-    //     if (ipAddress.split("192.168").length > 1) {
-    //         currentNet = key
 
-    //     }
-
-    // })
     currentNet = "Cellular"
     commandLineChange = {
         network: currentNet,
@@ -1576,28 +1548,27 @@ runAllTime = async () => {
     getDataShopee = []
     dataShopee = []
     // lấy dữ liệu từ master
-    checkNetwork = 0
+    checkNetwork = 1
 
-    checkNetwork = 0
-    for (let a = 1; a < 100; a++) {
-        console.log("check connection " + a);
+    // for (let a = 1; a < 100; a++) {
+    //     console.log("check connection " + a);
 
-        await require('dns').resolve('www.google.com', function (err) {
-            if (err) {
-                console.log("No connection " + a);
-                checkNetwork = 0
-            } else {
-                console.log("Connected");
-                checkNetwork = 1
-            }
-        });
+    //     await require('dns').resolve('www.google.com', function (err) {
+    //         if (err) {
+    //             console.log("No connection " + a);
+    //             checkNetwork = 0
+    //         } else {
+    //             console.log("Connected");
+    //             checkNetwork = 1
+    //         }
+    //     });
 
-        if (checkNetwork == 1) {
-            break
-        } else {
-            await sleep(2000)
-        }
-    }
+    //     if (checkNetwork == 1) {
+    //         break
+    //     } else {
+    //         await sleep(2000)
+    //     }
+    // }
 
 
     if (checkNetwork == 1) {
@@ -1629,7 +1600,6 @@ runAllTime = async () => {
         //     })
 
 
-
         // update_point = apiUrl = host_name.domain
         // updateActionsUrl = host_name.domain
 
@@ -1656,16 +1626,16 @@ runAllTime = async () => {
         getSlaveInfo = apiUrl + "/api_user/getSlaveInfo"     // Lay thong tin cau hinh slave
 
 
-        console.log("connected");
-
         let get_data_shopee_url = ""
         if (keyword_check) {
             keyword_check = encodeURI(keyword_check)
         }
+
         get_data_shopee_url = data_shopee_url + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check
         console.log(get_data_shopee_url)
 
         // Lấy dữ liệu từ từ khoá từ sv
+        console.log("Time: " + moment().format("h:mm:ss") + " - Lấy dữ liệu ban đầu từ server")
         await axios.get(get_data_shopee_url, {
             timeout: 60000,
         })
@@ -1687,6 +1657,7 @@ runAllTime = async () => {
     }
 
     if (dataShopee.version) {
+        
         // get version hien tai trong file version.txt
         var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
         if (checkVersion) {
@@ -1699,7 +1670,7 @@ runAllTime = async () => {
         console.log("Version server: " + dataShopee.version);
         // if (0) {
         if (newVersion !== checkVersion && dataShopee.version !== undefined) {
-            console.log("Cập nhật code");
+            console.log(moment().format("h:mm:ss") + " - Cập nhật code")
             // Update version mới vào file version.txt
             //fs.writeFileSync('version.txt', newVersion)
             if (mode !== "DEV") {
@@ -1721,6 +1692,7 @@ runAllTime = async () => {
         }
     }
     if (dataShopee == 1111) {
+        console.log(moment().format("h:mm:ss") + " - Không có dữ liệu khách hàng")
         await sleep(60000)
         return
     }
@@ -1735,12 +1707,12 @@ runAllTime = async () => {
     }
     //console.log(dataShopee)
     orderStatus = 1
-    console.log("----------- START SHOPEE ---------------")
+    console.log(moment().format("h:mm:ss") + " - START SHOPEE")
     //data = GenDirToGetData(maxTab, accounts)
 
     proxy = dataShopee.proxy
 
-    await sleep(5000)
+    //await sleep(5000)
 
     if (slaveInfo.network == "dcom") {
         console.log("--- Đổi IP DCOM ---")
@@ -1753,72 +1725,53 @@ runAllTime = async () => {
         }
 
     }
-    let check_proxy = 0
-    if (slaveInfo.network == "proxy") {
 
-        let proxy_pass = proxy.proxy_password.split("\r")[0]
-        const proxy_1 = {
-            host: proxy.proxy_ip,
-            port: proxy.proxy_port,
-            proxyAuth: proxy.proxy_username + ":" + proxy_pass
-        };
-        // or
-        // const proxy = 'y0adXjeO:pAzAHCr4@54.82.74.24:5557';
+    //let check_proxy = 0
+    // if (slaveInfo.network == "proxy") {
 
-        await proxy_check(proxy_1).then(r => {
-            // console.log(r); // true
-            check_proxy = "LIVE"
-        }).catch(async e => {
-            // console.error(e); // ECONNRESET
-            console.log(proxy_1.host + " --- DIE ")
-            await updateProxy(proxy.proxy_ip)
-        });
-        console.log("Check proxy: " + check_proxy)
-        if (check_proxy == 0) {
-            return false
-        }
+    //     let proxy_pass = proxy.proxy_password.split("\r")[0]
+    //     const proxy_1 = {
+    //         host: proxy.proxy_ip,
+    //         port: proxy.proxy_port,
+    //         proxyAuth: proxy.proxy_username + ":" + proxy_pass
+    //     };
+    //     // or
+    //     // const proxy = 'y0adXjeO:pAzAHCr4@54.82.74.24:5557';
 
-    }
+    //     await proxy_check(proxy_1).then(r => {
+    //         // console.log(r); // true
+    //         check_proxy = "LIVE"
+    //     }).catch(async e => {
+    //         // console.error(e); // ECONNRESET
+    //         console.log(proxy_1.host + " --- DIE ")
+    //         await updateProxy(proxy.proxy_ip)
+    //     });
+    //     console.log("Check proxy: " + check_proxy)
+    //     if (check_proxy == 0) {
+    //         return false
+    //     }
 
-    if (os_slave != "LINUX") {
-        if (mode != "DEV") {
-            //await change_info_pc()
-            // console.log("----- Change info -----")
-            // await shell.exec('changeinfo.bat');
-        }
-    }
+    // }
 
-    for (let a = 1; a < 100; a++) {
-
-        console.log("check connection " + a);
-
-        await require('dns').resolve('www.google.com', function (err) {
-            if (err) {
-                console.log("No connection " + a);
-                checkNetwork = 0
-            } else {
-                console.log("Connected");
-                checkNetwork = 1
-            }
-        });
-
-        if (checkNetwork == 1) {
-            break
-        } else {
-            await sleep(2000)
-        }
-    }
+    // if (os_slave != "LINUX") {
+    //     if (mode != "DEV") {
+    //         await change_info_pc()
+    //         console.log("----- Change info -----")
+    //         await shell.exec('changeinfo.bat');
+    //     }
+    // }
+    
 
     data.forEach(async (data_for_tab, index) => {   // Foreach object Chạy song song các tab chromium
 
-        await sleep(15000 * index)
+        //await sleep(15000 * index)
         // Nếu có dữ liệu schedule trả về
         //key = key.split("\t")
         let subAccount = []
         let acc = data_for_tab.sub_account
         let keywords = data_for_tab.product_for_sub_account
         if (keywords.length == 0) {
-            console.log("---- Không có từ khoá tab: ----")
+            console.log(moment().format("h:mm:ss") + " - Không có dữ liệu từ khoá")
             await sleep(60000)
             return
         }
@@ -1836,7 +1789,7 @@ runAllTime = async () => {
         }
 
         let user_agent, user_lang
-        console.log("Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
+        console.log(moment().format("h:mm:ss") + " - Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
         subAccount[0] = acc.username
         subAccount[1] = acc.password.split("\r")[0]
@@ -1878,19 +1831,12 @@ runAllTime = async () => {
 
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
-
-        if ((index == 0) && (mode !== "DEV")) {
-            // đổi ip
-            //console.log("Đổi ip mạng")
-            if (dcomVersion == "V2") {
-                // await changeIpDcomV2()
-            }
-        }
+       
         try {
             await page.waitForTimeout(5000)
 
             try {
-
+                console.log(moment().format("h:mm:ss") + " - Load shopee.vn")
                 let ref = await page.url()
                 await page.goto('https://shopee.vn', {
                     waitUntil: "networkidle0",
@@ -1913,10 +1859,10 @@ runAllTime = async () => {
 
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
-            console.log("index = " + index + " --- check login account: " + subAccount[0] + " --- " + checklogin)
+            console.log(moment().format("h:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
 
             if (checklogin == 2 || checklogin == 3) {
-                console.log("------ Cập nhật tk lỗi -----------")
+                console.log(moment().format("h:mm:ss") + " - Cập nhật tài khoản lỗi")
                 accountInfo = {
                     user: subAccount[0],
                     pass: subAccount[1],
@@ -1957,7 +1903,7 @@ runAllTime = async () => {
             if (checklogin) {
 
                 if (slaveInfo.type == "seo_top") {
-                    console.log("----- Click theo sản phẩm -----")
+                    console.log(moment().format("h:mm:ss") + " --- Click theo sản phẩm ---")
 
                     if (!max_turn) {
                         max_turn = keywords.length
@@ -1982,7 +1928,7 @@ runAllTime = async () => {
 
                                 if (check_point) {
                                     try {
-                                        console.log("--- Thao tac shopee feed ---")
+                                        console.log(moment().format("h:mm:ss") + " - Thao tác shopee feed")
                                         let cookie_2 = await page.cookies()
                                         result_feed = 0
                                         check_feed = 0
@@ -1991,31 +1937,31 @@ runAllTime = async () => {
                                         console.log("count like: " + data_feed_1.count_like)
 
                                         if (Number(data_feed_1.feed_like) > Number(data_feed_1.count_like)) {
-                                            console.log("--- Like feed ---")
+                                            console.log(moment().format("h:mm:ss") + " - Like Feed")
                                             check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
                                             if (check_feed) {
                                                 if (check_feed.msg == "Success") {
-                                                    console.log("Cập nhật action:  like_feed")
+                                                    console.log(moment().format("h:mm:ss") + " - cập nhật action like feed")
                                                     console.log(productForUser1)
                                                     productForUser1.action = "like_feed"
                                                     await updateActions(productForUser1)
                                                 }
                                             } else {
-                                                console.log("--- Có lỗi khi Like feed ---")
+                                                console.log(moment().format("h:mm:ss") + " - Có lỗi khi live feed")
                                             }
                                         }
 
                                         if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
-                                            console.log("--- Comment feed ---")
+                                            console.log(moment().format("h:mm:ss") + " - Comment feed")
                                             check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
                                             if (check_feed) {
                                                 if (check_feed.msg == "Success") {
-                                                    console.log("Cập nhật action:  comment_feed")
+                                                    console.log(moment().format("h:mm:ss") + " - Cập nhật action comment feed")
                                                     productForUser1.action = "comment_feed"
                                                     await updateActions(productForUser1)
                                                 }
                                             } else {
-                                                console.log("--- Có lỗi khi comment feed ---")
+                                                console.log(moment().format("h:mm:ss") + " - Lỗi khi comment feed ")
                                             }
                                         }
                                     } catch (error) {
@@ -2107,30 +2053,31 @@ runAllTime = async () => {
                                 console.log("-- Sự kiện lấy thông tin shop --")
                                 productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.data
-                                if (productForUser.shop_id == productInfo2.shopid) {
-                                    console.log("Thông tin shop cover: " + productInfo2.cover);
+                                if (productForUser.shop_id == productInfo2.shopid) {                                   
                                     shopInfo3.avatar = productInfo2.account.portrait
                                     shopInfo3.username = productInfo2.account.username
                                     shopInfo3.name = productInfo2.name
                                     shopInfo3.shop_id = productInfo2.shopid
                                     shopInfo3.followed = productInfo2.followed
-                                    console.log("----- Shop info ------")
+                                    console.log(moment().format("h:mm:ss") + " - Thông tin Shop ")
                                     console.log(shopInfo3)
                                 }
                             }
 
                             if (check_add_to_cart.length > 1) {
-                                console.log("---- Sự kiện bỏ giỏ  ----")
+                               
                                 let check = await resp.json()
                                 if (check.error == 0) {
                                     check_add_cart = true
                                 } else {
                                     check_add_cart = false
                                 }
+
+                                console.log(moment().format("h:mm:ss") + " - Kiểm tra bỏ giỏ: " + check_add_cart)
                             }
 
                             if (checkUrlproduct.length > 1) {
-                                console.log(" -- Tìm vị trí sản phẩm trên trang  --")
+                                console.log(moment().format("h:mm:ss") + " - Tìm vị trí sản phẩm trên trang")
                                 productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.items
 
@@ -2140,11 +2087,10 @@ runAllTime = async () => {
                                         viTriSanPhamTrang1 = index + 1
                                         url_trang_tim_kiem_san_pham = url
                                         //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
-                                        console.log(" -- Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1 + " Keyword : " + productForUser.keyword)
-                                        console.log(url)
+                                        console.log(moment().format("h:mm:ss") + " - Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1 + " Keyword : " + productForUser.keyword)
+                                      
                                     }
                                 })
-
                             }
 
                             let checkSerachShop = url.split("api/v4/search/search_items?")
@@ -2174,20 +2120,18 @@ runAllTime = async () => {
 
                             check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
                             if (check_link_san_pham.length > 1) {
-                                console.log(" --- Lấy thông tin sản phẩm ---");
+                               
                                 try {
                                     let productInfo1 = await resp.json()
-                                    productInfo2 = productInfo1.data
-                                    console.log("Ảnh sản phẩm: " + productInfo2.image)
+                                    productInfo2 = productInfo1.data                                   
                                     productForUser.product_image = ""
                                     productForUser.product_image = productInfo2.image
                                     productForUser.liked = productInfo2.liked
-                                    console.log(" IMAGE ->" + productForUser.product_image)
-                                    console.log(" LIKED ->" + productForUser.liked)
+                                   
 
                                 } catch (error) {
                                     check_product_exit = "Không tồn tại"
-                                    console.log("---- Sản phẩm không tồn tại ----")
+                                    console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
                                 }
                             }
 
@@ -2223,31 +2167,26 @@ runAllTime = async () => {
                         productForUser.ip = proxy.proxy_ip;
                         productForUser.local_ip = ip_address.address()
                         console.log("Local IP: " + productForUser.local_ip);
-
                         console.log("Ip mới: " + proxy.proxy_ip)
-                        console.log("Shop id: " + productForUser.shop_id)
-                        //console.log("Shop option: ")
-
+                        console.log("Shop id: " + productForUser.shop_id)                       
                         console.log("product link: " + productForUser.product_link)
                         console.log("product name: " + productForUser.product_name)
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
-                        if (data_report_shop == 1) {
-                            console.log("--- Thao tac Report shop ---")
-
+                        if (data_report_shop == 1) {                            
                             result_report = 0
                             check_report = 0
 
                             if (Number(data_report_shop.report_number) > Number(data_report_shop.report_count)) {
-                                console.log("--- Report shop ---")
+                                console.log(moment().format("h:mm:ss") + " - REPORT SHOP")
                                 check_report = await action_report_shop(page, data_report_shop)
                                 if (check_report == 1) {
                                     result_report = result_report + 1
                                 }
                             }
 
-                            console.log("--- Result report ---" + result_report)
+                            console.log(moment().format("h:mm:ss") + " - Kết quả report")
 
                             if (result_report) {
                                 console.log("Cập nhật action:  report_shop")
@@ -2282,7 +2221,7 @@ runAllTime = async () => {
                             }
                         })
 
-                        console.log(" --- tìm kiếm ----")
+                        console.log(moment().format("h:mm:ss") + " - TÌM KIẾM SẢN PHẨM")
 
                         await page.waitForTimeout(5000)
 
@@ -2298,7 +2237,7 @@ runAllTime = async () => {
                         }
 
                         maxPage = parseInt(getProductPageTotal)
-                        console.log("Tổng số trang kết quả tìm kiếm: " + maxPage)
+                        console.log(moment().format("h:mm:ss") + " - Tổng số trang kết quả tìm kiếm: " + maxPage)                    
 
                         if (productForUser.check_index < 6) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
@@ -2307,7 +2246,7 @@ runAllTime = async () => {
                                 productForUser.trang = getViTriSanPham.trang
                                 productForUser.vitri = getViTriSanPham.vitri
 
-                                console.log("Update seo sản phẩm")
+                                console.log(moment().format("h:mm:ss") + " - Update kết quả vị trí sản phẩm") 
                                 productForUser.cookie = ""
                                 await axios.get(shopee_update_seo_san_pham_url, {
                                     params: {
@@ -2318,11 +2257,10 @@ runAllTime = async () => {
                                     timeout: 5000
                                 })
                                     .then(function (response) {
-                                        console.log(response.data)
+                                        console.log(moment().format("h:mm:ss") + " - " + response.data)
                                     })
                                     .catch(function (error) {
-                                        console.log(error);
-
+                                        console.log(moment().format("h:mm:ss") + " - Cập nhật SEO Sản phẩm thất bại")
                                     })
                             }
 
@@ -2333,13 +2271,11 @@ runAllTime = async () => {
 
                                 urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword
                             }
-
-                            console.log(" --- Đến trang có vị trí sản phẩm ---- ")
+                            console.log(moment().format("h:mm:ss") + " -  Đến trang có vị trí sản phẩm")
 
                             urlSearch = encodeURI(urlSearch)
                             productForUser.urlSearch = urlSearch
                             try {
-
                                 let ref = await page.url()
                                 await page.goto(urlSearch, {
                                     waitUntil: "networkidle0",
@@ -2348,11 +2284,10 @@ runAllTime = async () => {
                                 })
 
                             } catch (err) {
-                                //HERE
-                                console.error(err);
+                               console.error(err);
                             }
                             await page.waitForTimeout(5000)
-                            console.log("Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
+                            console.log(moment().format("h:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                             // console.log(getViTriSanPham)
 
                             if (viTriSanPhamTrang1 != false) {
@@ -2441,7 +2376,6 @@ runAllTime = async () => {
                             //continue
                         }
 
-                        console.log(" Check product ton tai: " + check_product_exit)
                         if (check_product_exit === "Có tồn tại") {
                             try {
                                 let check_action
@@ -2452,7 +2386,7 @@ runAllTime = async () => {
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
 
-                                console.log("---- Xem ảnh sản phẩm ----")
+                                console.log(moment().format("h:mm:ss") + " -  Xem ảnh sản phẩm")
                                 check_point = await check_point_hour(productForUser.uid)
                                 if (check_point) {
                                     await action_view_product(page)
@@ -2475,7 +2409,7 @@ runAllTime = async () => {
                                 await updateActions(productForUser)
 
                                 if (options.view_review) {
-                                    console.log("---- Xem review ----")
+                                    console.log(moment().format("h:mm:ss") + " -  Xem review")
 
                                     check_point = await check_point_hour(productForUser.uid)
                                     if (check_point) {
@@ -2493,17 +2427,16 @@ runAllTime = async () => {
                                     await updateActions(productForUser)
                                 }
 
-                                console.log("---- Check thả tim sản phẩm ---- : " + productForUser.liked)
+                                console.log(moment().format("h:mm:ss") + " -  Check thả tim sản phẩm: " + productForUser.liked)
+                               
                                 if (options.heart_product) {
                                     if (productForUser.liked == false) {
-                                        console.log("---- Thả tim sản phẩm ----")
-
+                                        
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
                                             random_like = Math.floor(Math.random() * 4);
-
                                             check_like = await action_heart_product_api(page, productForUser)
-                                            console.log(" --- check thả tim api ---")
+                                            console.log(moment().format("h:mm:ss") + " -  thả tim sản phẩm: ")
                                             console.log(check_like);
                                             if (check_like.error == 0) {
                                                 productForUser.action = "heart_product"
@@ -2521,10 +2454,9 @@ runAllTime = async () => {
                                         random_add_cart = Math.floor(Math.random() * 4);
 
                                         await action_add_cart(page, productForUser)
-                                        console.log("---- Bỏ giỏ ---- " + productForUser.product_id + " -- " + productForUser.keyword + " : " + check_add_cart)
+                                        console.log(moment().format("h:mm:ss") + "- Bỏ giỏ - " + productForUser.product_id + " - " + productForUser.keyword + " : " + check_add_cart)
 
-                                        if (check_add_cart) {
-                                            console.log("---- Bỏ giỏ thành công ---- ")
+                                        if (check_add_cart) {                                            
                                             productForUser.action = "add_cart"
                                             await updateActions(productForUser)
                                         } else {
@@ -2536,6 +2468,7 @@ runAllTime = async () => {
                                 }
 
                                 if (options.view_shop) {
+                                    console.log(moment().format("h:mm:ss") + " -  Xem shop ")
                                     let productLink = await page.url()
 
                                     check_point = await check_point_hour(productForUser.uid)
@@ -2555,7 +2488,6 @@ runAllTime = async () => {
                                     actions.push(action1)
                                     productForUser.action = "view_shop"
                                     await updateActions(productForUser)
-
 
                                     // if (danh_sach_san_pham_chua_tha_tim.length > 5) {
 
@@ -2593,7 +2525,8 @@ runAllTime = async () => {
                                     refer = await page.url()
                                     shopId = parseInt(productForUser.shop_id)
                                     check1 = shopInfo3.followed
-                                    console.log("check follow shop: " + check1)
+                                    console.log(moment().format("h:mm:ss") + " -  check follow shop: " + check1)
+                                   
                                     if (check1 == false) {
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
@@ -2611,15 +2544,9 @@ runAllTime = async () => {
                                         }
                                     }
                                 }
-
                             } catch (error) {
                                 console.log(error)
-                            }
-                            //console.log(" update all")
-                            productForUser.actions = actions
-
-                            // await updateHistory(productForUser)
-
+                            }                        
                         }
 
                         //productLink = await page.url()
@@ -2641,22 +2568,17 @@ runAllTime = async () => {
                     await page.waitForTimeout(1000);
                 }
             }
-
-            console.log("----------- Kết thúc tương tác ---------------" + index)
-
+            console.log(moment().format("h:mm:ss") + " -  ----------- Kết thúc tương tác Tab: " + index)           
         } catch (error) {
             console.log(error)
         }
 
         await browser.close();
         if (os_slave == "LINUX") {
-            console.log(" ----- KhởI đÔng lại ---- ")
+            console.log(moment().format("h:mm:ss") + " PM2 restart ")
             shell.exec('pm2 flush; pm2 restart all');
         }
     })
-
-
-
 };
 
 

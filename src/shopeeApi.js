@@ -123,8 +123,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
         }
 
     }
-    console.log(" ------ Vị trí sản phẩm check được ------")
-    console.log(viTriSanPham)
+    console.log(" ------ Vị trí sản phẩm: vị trí: " +  viTriSanPham.vitri + " - Trang: " +  viTriSanPham.trang)    
     return viTriSanPham
 
 }
@@ -156,12 +155,12 @@ followShop = async (cookies, ref, shopId) => {
 
     await axios(config)
         .then(function (response) {
-            console.log("--- follow shop API ---");
-            console.log(response.data);
+            console.log("--- follow shop API Thành công ---");
+            //console.log(response.data);
             result = response.data
         })
         .catch(function (error) {
-            console.log(error);
+            console.log("--- Lỗi API follow ---");
         });
     return result
 
@@ -174,13 +173,9 @@ function csrftoken() {
     for (let i = 0; i < 32; i++) {
         PanjangKarakter = PanjangKarakter - 1
         acakString += karakter[Math.floor(Math.random() * (PanjangKarakter))];
-
-
     }
     return acakString;
 }
-
-
 
 thaTimSanPham = async (cookies, ref, shopId, productId) => {
     let result
@@ -218,12 +213,12 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
 
     await axios(config)
         .then(function (response) {
-            console.log("--- Thả tim sản phẩm API ---");
-            console.log(response.data);
+            console.log("--- Thả tim sản phẩm API Thành công ---");
+            //console.log(response.data);
             result = response.data
         })
         .catch(function (error) {
-            console.log(error);
+            console.log("--- Lỗi Thả tim sản phẩm API ---");
         });
     return result
 
