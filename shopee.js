@@ -631,12 +631,13 @@ check_point_hour = async (uid) => {
             result = response.data
         })
         .catch(function (error) {
-            console.log(error);
+            console.log(moment().format("h:mm:ss") + " - Lỗi check điểm số")
+            result = 1
         });
     if (mode == "DEV") {
         result = 1
     }
-    console.log("Có đủ điểm số để thao tác không: " + result);
+    console.log(moment().format("h:mm:ss") +" - Có đủ điểm số để thao tác không: " + result);
     return result
 }
 
@@ -1692,7 +1693,7 @@ runAllTime = async () => {
         }
     }
     if (dataShopee == 1111) {
-        console.log(moment().format("h:mm:ss") + " - Không có dữ liệu khách hàng")
+        console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu khách hàng")
         await sleep(60000)
         return
     }
@@ -1700,11 +1701,14 @@ runAllTime = async () => {
     data = dataShopee.data
 
     shopee_point = dataShopee.shopee_point
-    slaveInfo = dataShopee.slave_info
-    if (slaveInfo.status == 0) {
-        console.log(" SLAVE " + slaveInfo.slave_id + ": OFF")
-        return;
+    if(dataShopee.slave_info){
+        slaveInfo = dataShopee.slave_info
+        if (slaveInfo.status == 0) {
+            console.log(" SLAVE " + slaveInfo.slave_id + ": OFF")
+            return;
+        }
     }
+    
     //console.log(dataShopee)
     orderStatus = 1
     console.log(moment().format("h:mm:ss") + " - START SHOPEE")
@@ -2385,7 +2389,10 @@ runAllTime = async () => {
                                 }
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
-
+                                cookies22 = await page.cookies()
+                                productForUser.cookie = cookies22
+                                productForUser.action = "search"
+                                await updateActions(productForUser)
                                 console.log(moment().format("h:mm:ss") + " -  Xem ảnh sản phẩm")
                                 check_point = await check_point_hour(productForUser.uid)
                                 if (check_point) {
@@ -2393,11 +2400,7 @@ runAllTime = async () => {
                                 } else {
                                     break
                                 }
-
-                                cookies22 = await page.cookies()
-                                productForUser.cookie = cookies22
-                                productForUser.action = "search"
-                                await updateActions(productForUser)
+                               
                                 productForUser.cookie = ""
 
                                 action1 = {
@@ -2436,8 +2439,8 @@ runAllTime = async () => {
                                         if (check_point) {
                                             random_like = Math.floor(Math.random() * 4);
                                             check_like = await action_heart_product_api(page, productForUser)
-                                            console.log(moment().format("h:mm:ss") + " -  thả tim sản phẩm: ")
-                                            console.log(check_like);
+                                            console.log(moment().format("h:mm:ss") + " -  thả tim sản phẩm: " + check_like.error)
+                                            
                                             if (check_like.error == 0) {
                                                 productForUser.action = "heart_product"
                                                 await updateActions(productForUser)
