@@ -1501,22 +1501,7 @@ gen_page = async (browser, option) => {
         console.log(" ---- Lỗi set coookie ----")
     }
 
-    if (disable_css == 1 || disable_image == 1) {
-
-
-        // --- Chặn load css --- /
-        if (disable_image == 1) {
-            //await page.setRequestInterception(true);
-            page.on('request', (req) => {
-                if (req.resourceType() === 'image') {
-                    req.abort();
-                } else {
-                    req.continue();
-                }
-
-            });
-        }
-    }
+    
     return page
 }
 
@@ -1837,7 +1822,22 @@ runAllTime = async () => {
         let page = await gen_page(browser, option1)
        
         try {
-            await page.waitForTimeout(5000)
+            disable_image = 1
+            if (disable_css == 1 || disable_image == 1) {
+                // --- Chặn load css --- /
+                if (disable_image == 1) {
+                    console.log("---- Disable image ----")
+                    await page.setRequestInterception(true);
+                    page.on('request', (req) => {
+                        if (req.resourceType() === 'image') {
+                            req.abort();
+                        } else {
+                            req.continue();
+                        }
+        
+                    });
+                }
+            }
 
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
