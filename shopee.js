@@ -1828,8 +1828,8 @@ runAllTime = async () => {
         try {
             
             console.log(moment().format("hh:mm:ss") + " -  Bật chặn")
-            disable_image = 1
-            await chan_anh(page)
+            // disable_image = 1
+            // await chan_anh(page)
 
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
@@ -1846,7 +1846,7 @@ runAllTime = async () => {
                 console.error(err);
                 //await updateProxy(proxy.proxy_ip)
             }
-
+            //disable_image = 0;
             
             //await page.setRequestInterception(false);
 
@@ -1855,8 +1855,8 @@ runAllTime = async () => {
 
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
-            disable_image = 0;
             
+
             console.log(moment().format("hh:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
             
             if (checklogin == 2 || checklogin == 3) {
