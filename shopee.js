@@ -97,14 +97,7 @@ if (mode === "DEV") {
 logs = 1
 
 loginShopee = async (page, accounts) => {
-
-    //await page.goto("https://shopee.vn")
-    // await page.waitForTimeout(3000)
-    // try {
-    //     await page.waitForSelector('.navbar__username')
-    // } catch (error) {
-    //     console.log(" Không tìm thấy class check login")
-    // }
+    
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
@@ -1127,13 +1120,7 @@ orderProduct = async (page, productInfo) => {
     productInfo.linkNow = linksp
 
     fs.appendFileSync('logs.txt', "\n" + "Order: " + "\n" + JSON.stringify(productInfo, null, 4))
-    // check đầy giỏ hàng
-    // await page.goto("https://shopee.vn/")    
-    // await page.waitForTimeout(29999)
-    // await page.goto("https://shopee.vn/V%C3%AD-n%E1%BB%AF-mini-cao-c%E1%BA%A5p-ng%E1%BA%AFn-cute-nh%E1%BB%8F-g%E1%BB%8Dn-b%E1%BB%8F-t%C3%BAi-th%E1%BB%9Di-trang-gi%C3%A1-r%E1%BA%BB-VD70-i.19608398.1406593363")
-    // await chooseVariation(page)
-    // timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
-    // await page.waitForTimeout(timeout)
+   
     buttonBye = await page.$$('.btn-solid-primary.btn--l')
     if (buttonBye.length) {
         console.log("Click nút mua ngay")
@@ -1868,6 +1855,8 @@ runAllTime = async () => {
 
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
+            disable_image = 0;
+            
             console.log(moment().format("hh:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
             
             if (checklogin == 2 || checklogin == 3) {
@@ -2195,7 +2184,6 @@ runAllTime = async () => {
                             }
 
                             console.log(moment().format("hh:mm:ss") + " - Kết quả report")
-
                             if (result_report) {
                                 console.log("Cập nhật action:  report_shop")
                                 productForUser.action = "report_shop"
@@ -2204,15 +2192,10 @@ runAllTime = async () => {
 
                                 await updateActions(productForUser)
                             }
-
                         }
 
                         check_point = await check_point_hour(productForUser.uid)
-
-                        disable_image = 0;
-
-                        if (check_point) {                           
-                            //await page.setRequestInterception(false);
+                        if (check_point) {                                                     
                             await searchKeyWord(page, productForUser.keyword)
                         } else {
                             break
