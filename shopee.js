@@ -637,7 +637,7 @@ check_point_hour = async (uid) => {
     if (mode == "DEV") {
         result = 1
     }
-    console.log(moment().format("hh:mm:ss") +" - Có đủ điểm số để thao tác không: " + result);
+    console.log(moment().format("hh:mm:ss") + " - Có đủ điểm số để thao tác không: " + result);
     return result
 }
 
@@ -670,21 +670,21 @@ updateAction = async (product9) => {
         data: product9,
         timeout: 50000
     },
-        {           
-           // httpsAgent: httpsAgent
+        {
+            // httpsAgent: httpsAgent
         })
-        .then(function (response) {           
-            console.log(moment().format("hh:mm:ss") +" - Update action: " + product9.action + " = " + response.data);
+        .then(function (response) {
+            console.log(moment().format("hh:mm:ss") + " - Update action: " + product9.action + " = " + response.data);
         })
         .catch(async function (error) {
             console.log(error);
-            console.log(moment().format("hh:mm:ss") +" - Update action lỗi");
+            console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
             await updateAction(product9)
         });
 }
 
 updatePoint = async (product9) => {
-  
+
     product9.cookie = "";
     await axios.get(update_point_url, {
         params: {
@@ -708,7 +708,7 @@ updateActions = async (product9) => {
     console.log("Check die: " + check_die)
     check_die = 1;
     update = 0
-    
+
     await updatePoint(product9)
     await updateAction(product9)
 
@@ -1501,7 +1501,7 @@ gen_page = async (browser, option) => {
         console.log(" ---- Lỗi set coookie ----")
     }
 
-    
+
     return page
 }
 
@@ -1509,6 +1509,23 @@ check_die_slave = () => {
     console.log("check slave die: ")
 
 }
+
+
+chan_anh = async (page) => {
+    await page.setRequestInterception(true);
+    
+    page.on('request', (req) => {
+
+        if (req.resourceType() === 'image' && disable_image) {
+            //console.log("---- Chặn load ảnh ----")
+            req.abort();
+        } else {
+            //console.log("---- Bỏ Chặn load ảnh ----")
+            req.continue();
+        }
+    });
+}
+
 
 
 runAllTime = async () => {
@@ -1640,7 +1657,7 @@ runAllTime = async () => {
     }
 
     if (dataShopee.version) {
-        
+
         // get version hien tai trong file version.txt
         var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
         if (checkVersion) {
@@ -1679,21 +1696,21 @@ runAllTime = async () => {
         await sleep(60000)
         return
     }
-    if(!dataShopee.data){
+    if (!dataShopee.data) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
         return
     }
     data = dataShopee.data
 
     shopee_point = dataShopee.shopee_point
-    if(dataShopee.slave_info){
+    if (dataShopee.slave_info) {
         slaveInfo = dataShopee.slave_info
         if (slaveInfo.status == 0) {
             console.log(" SLAVE " + slaveInfo.slave_id + ": OFF")
             return;
         }
     }
-    
+
     //console.log(dataShopee)
     orderStatus = 1
     console.log(moment().format("hh:mm:ss") + " - START SHOPEE")
@@ -1749,7 +1766,7 @@ runAllTime = async () => {
     //         await shell.exec('changeinfo.bat');
     //     }
     // }
-    
+
 
     data.forEach(async (data_for_tab, index) => {   // Foreach object Chạy song song các tab chromium
 
@@ -1820,24 +1837,12 @@ runAllTime = async () => {
 
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
-       
+
         try {
+            
+            console.log(moment().format("hh:mm:ss") + " -  Bật chặn")
             disable_image = 1
-            if (disable_css == 1 || disable_image == 1) {
-                // --- Chặn load css --- /
-                if (disable_image == 1) {
-                    console.log("---- Disable image ----")
-                    await page.setRequestInterception(true);
-                    page.on('request', (req) => {
-                        if (req.resourceType() === 'image') {
-                            req.abort();
-                        } else {
-                            req.continue();
-                        }
-        
-                    });
-                }
-            }
+            await chan_anh(page)
 
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
@@ -1847,15 +1852,15 @@ runAllTime = async () => {
                     timeout: 50000,
                     referer: ref
                 })
-                await updateProxy(proxy.proxy_ip + ":OK")
+                //await updateProxy(proxy.proxy_ip + ":OK")
                 bypassTest.runBypassTest(page);
             } catch (err) {
                 //HERE
                 console.error(err);
-                await updateProxy(proxy.proxy_ip)
+                //await updateProxy(proxy.proxy_ip)
             }
 
-            //disable_image = 0;
+            
             //await page.setRequestInterception(false);
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1864,7 +1869,7 @@ runAllTime = async () => {
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
             console.log(moment().format("hh:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
-
+            
             if (checklogin == 2 || checklogin == 3) {
                 console.log(moment().format("hh:mm:ss") + " - Cập nhật tài khoản lỗi")
                 accountInfo = {
@@ -1975,26 +1980,26 @@ runAllTime = async () => {
                             }
                         }
 
-                        try {
-                            let ref = await page.url()
-                            start_check_time = Date.now()
-                            await page.goto('https://shopee.vn', {
-                                waitUntil: "networkidle0",
-                                timeout: 50000,
-                                referer: ref
-                            })
-                            stop_check_time = Date.now()
-                            check_time = stop_check_time - start_check_time
-                            await updateProxy(proxy.proxy_ip + ":OK", check_time)
+                        // try {
+                        //     let ref = await page.url()
+                        //     start_check_time = Date.now()
+                        //     await page.goto('https://shopee.vn', {
+                        //         waitUntil: "networkidle0",
+                        //         timeout: 50000,
+                        //         referer: ref
+                        //     })
+                        //     stop_check_time = Date.now()
+                        //     check_time = stop_check_time - start_check_time
+                        //     await updateProxy(proxy.proxy_ip + ":OK", check_time)
 
-                        } catch (err) {
-                            //HERE
-                            stop_check_time = Date.now()
-                            check_time = stop_check_time - start_check_time
-                            await updateProxy(proxy.proxy_ip, check_time)
-                            console.error(err);
-                            //continue
-                        }
+                        // } catch (err) {
+                        //     //HERE
+                        //     stop_check_time = Date.now()
+                        //     check_time = stop_check_time - start_check_time
+                        //     await updateProxy(proxy.proxy_ip, check_time)
+                        //     console.error(err);
+                        //     //continue
+                        // }
 
                         let productForUser                     // Mảng chứa thông tin sản phẩm, từ khoá cần tương tác
                         let check_like = 0
@@ -2013,7 +2018,6 @@ runAllTime = async () => {
                             console.log(error)
                             console.log(productForUser)
                         }
-
 
                         productForUser.username = subAccount[0]
                         productForUser.password = subAccount[1]
@@ -2057,7 +2061,7 @@ runAllTime = async () => {
                                 console.log("-- Sự kiện lấy thông tin shop --")
                                 productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.data
-                                if (productForUser.shop_id == productInfo2.shopid) {                                   
+                                if (productForUser.shop_id == productInfo2.shopid) {
                                     shopInfo3.avatar = productInfo2.account.portrait
                                     shopInfo3.username = productInfo2.account.username
                                     shopInfo3.name = productInfo2.name
@@ -2069,7 +2073,7 @@ runAllTime = async () => {
                             }
 
                             if (check_add_to_cart.length > 1) {
-                               
+
                                 let check = await resp.json()
                                 if (check.error == 0) {
                                     check_add_cart = true
@@ -2092,7 +2096,7 @@ runAllTime = async () => {
                                         url_trang_tim_kiem_san_pham = url
                                         //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
                                         console.log(moment().format("hh:mm:ss") + " - Tìm thấy vị trí sản phẩm trên trang: " + viTriSanPhamTrang1 + " Keyword : " + productForUser.keyword)
-                                      
+
                                     }
                                 })
                             }
@@ -2124,14 +2128,14 @@ runAllTime = async () => {
 
                             check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
                             if (check_link_san_pham.length > 1) {
-                               
+
                                 try {
                                     let productInfo1 = await resp.json()
-                                    productInfo2 = productInfo1.data                                   
+                                    productInfo2 = productInfo1.data
                                     productForUser.product_image = ""
                                     productForUser.product_image = productInfo2.image
                                     productForUser.liked = productInfo2.liked
-                                   
+
 
                                 } catch (error) {
                                     check_product_exit = "Không tồn tại"
@@ -2172,13 +2176,13 @@ runAllTime = async () => {
                         productForUser.local_ip = ip_address.address()
                         console.log("Local IP: " + productForUser.local_ip);
                         console.log("Ip mới: " + proxy.proxy_ip)
-                        console.log("Shop id: " + productForUser.shop_id)                       
+                        console.log("Shop id: " + productForUser.shop_id)
                         console.log("product link: " + productForUser.product_link)
                         console.log("product name: " + productForUser.product_name)
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
-                        if (data_report_shop == 1) {                            
+                        if (data_report_shop == 1) {
                             result_report = 0
                             check_report = 0
 
@@ -2203,10 +2207,12 @@ runAllTime = async () => {
 
                         }
 
-
                         check_point = await check_point_hour(productForUser.uid)
 
-                        if (check_point) {
+                        disable_image = 0;
+
+                        if (check_point) {                           
+                            //await page.setRequestInterception(false);
                             await searchKeyWord(page, productForUser.keyword)
                         } else {
                             break
@@ -2241,7 +2247,7 @@ runAllTime = async () => {
                         }
 
                         maxPage = parseInt(getProductPageTotal)
-                        console.log(moment().format("hh:mm:ss") + " - Tổng số trang kết quả tìm kiếm: " + maxPage)                    
+                        console.log(moment().format("hh:mm:ss") + " - Tổng số trang kết quả tìm kiếm: " + maxPage)
 
                         if (productForUser.check_index < 6) {
                             getViTriSanPham = await shopeeApi.timViTriTrangSanPhamTheoTuKhoa(productForUser, cookies22, maxPage)
@@ -2250,7 +2256,7 @@ runAllTime = async () => {
                                 productForUser.trang = getViTriSanPham.trang
                                 productForUser.vitri = getViTriSanPham.vitri
 
-                                console.log(moment().format("hh:mm:ss") + " - Update kết quả vị trí sản phẩm") 
+                                console.log(moment().format("hh:mm:ss") + " - Update kết quả vị trí sản phẩm")
                                 productForUser.cookie = ""
                                 await axios.get(shopee_update_seo_san_pham_url, {
                                     params: {
@@ -2288,7 +2294,7 @@ runAllTime = async () => {
                                 })
 
                             } catch (err) {
-                               console.error(err);
+                                console.error(err);
                             }
                             await page.waitForTimeout(5000)
                             console.log(moment().format("hh:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
@@ -2380,6 +2386,9 @@ runAllTime = async () => {
                             //continue
                         }
 
+                        disable_image = 0
+                        
+                        console.log(moment().format("hh:mm:ss") + " -  Tắt chặn ảnh")
                         if (check_product_exit === "Có tồn tại") {
                             try {
                                 let check_action
@@ -2400,7 +2409,7 @@ runAllTime = async () => {
                                 } else {
                                     break
                                 }
-                               
+
                                 productForUser.cookie = ""
 
                                 action1 = {
@@ -2431,16 +2440,16 @@ runAllTime = async () => {
                                 }
 
                                 console.log(moment().format("hh:mm:ss") + " -  Check thả tim sản phẩm: " + productForUser.liked)
-                               
+
                                 if (options.heart_product) {
                                     if (productForUser.liked == false) {
-                                        
+
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
                                             random_like = Math.floor(Math.random() * 4);
                                             check_like = await action_heart_product_api(page, productForUser)
                                             console.log(moment().format("hh:mm:ss") + " -  thả tim sản phẩm: " + check_like.error)
-                                            
+
                                             if (check_like.error == 0) {
                                                 productForUser.action = "heart_product"
                                                 await updateActions(productForUser)
@@ -2459,7 +2468,7 @@ runAllTime = async () => {
                                         await action_add_cart(page, productForUser)
                                         console.log(moment().format("hh:mm:ss") + "- Bỏ giỏ - " + productForUser.product_id + " - " + productForUser.keyword + " : " + check_add_cart)
 
-                                        if (check_add_cart) {                                            
+                                        if (check_add_cart) {
                                             productForUser.action = "add_cart"
                                             await updateActions(productForUser)
                                         } else {
@@ -2529,7 +2538,7 @@ runAllTime = async () => {
                                     shopId = parseInt(productForUser.shop_id)
                                     check1 = shopInfo3.followed
                                     console.log(moment().format("hh:mm:ss") + " -  check follow shop: " + check1)
-                                   
+
                                     if (check1 == false) {
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
@@ -2549,7 +2558,7 @@ runAllTime = async () => {
                                 }
                             } catch (error) {
                                 console.log(error)
-                            }                        
+                            }
                         }
 
                         //productLink = await page.url()
@@ -2571,7 +2580,7 @@ runAllTime = async () => {
                     await page.waitForTimeout(1000);
                 }
             }
-            console.log(moment().format("hh:mm:ss") + " -  ----------- Kết thúc tương tác Tab: " + index)           
+            console.log(moment().format("hh:mm:ss") + " -  ----------- Kết thúc tương tác Tab: " + index)
         } catch (error) {
             console.log(error)
         }
