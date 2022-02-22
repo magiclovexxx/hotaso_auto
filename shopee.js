@@ -669,6 +669,7 @@ updateAction = async (product9, limit) => {
         })
         .then(function (response) {
             console.log(moment().format("hh:mm:ss") + " - Update action: " + product9.action + " = " + response.data);
+            return true
         })
         .catch(async function (error) {
             console.log(error);
@@ -676,6 +677,7 @@ updateAction = async (product9, limit) => {
            
             limit = limit -1
             if(limit>0){
+                sleep(2000)
                 await updateAction(product9, limit)
             }else{
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu");
@@ -697,12 +699,14 @@ updatePoint = async (product9, limit) => {
     })
         .then(function (response) {
             console.log(moment().format("hh:mm:ss") + " - " + response.data)
+            return true
         })
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update point lỗi");
             limit = limit -1
             if(limit>0){
+                sleep(2000)
                 await updatePoint(product9, limit)
             }else{
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu điểm số");
