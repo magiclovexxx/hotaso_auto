@@ -656,7 +656,8 @@ updateHistory = async (product) => {
         });
 
 }
-updateAction = async (product9) => {
+
+updateAction = async (product9, limit) => {
     // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
     // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
     await axios.post(update_actions_url, {
@@ -672,11 +673,18 @@ updateAction = async (product9) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
-            await updateAction(product9)
+           
+            limit = limit -1
+            if(limit>0){
+                await updateAction(product9, limit)
+            }else{
+                console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu");
+                return false
+            }
         });
 }
 
-updatePoint = async (product9) => {
+updatePoint = async (product9, limit) => {
 
     product9.cookie = "";
     await axios.get(update_point_url, {
@@ -693,17 +701,23 @@ updatePoint = async (product9) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update point lỗi");
-            await updatePoint(product9)
+            limit = limit -1
+            if(limit>0){
+                await updatePoint(product9, limit)
+            }else{
+                console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu điểm số");
+                return false
+            }
         })
 }
 
-updateActions = async (product9) => {
+updateActions = async (product9, limit) => {
     console.log("Check die: " + check_die)
     check_die = 1;
     update = 0
 
-    await updatePoint(product9)
-    await updateAction(product9)
+    await updatePoint(product9, limit)
+    await updateAction(product9, limit)
 
 }
 
@@ -1942,7 +1956,7 @@ runAllTime = async () => {
                                                     console.log(moment().format("hh:mm:ss") + " - cập nhật action like feed")
                                                     console.log(productForUser1)
                                                     productForUser1.action = "like_feed"
-                                                    await updateActions(productForUser1)
+                                                    await updateActions(productForUser1, 10)
                                                 }
                                             } else {
                                                 console.log(moment().format("hh:mm:ss") + " - Có lỗi khi live feed")
@@ -1956,7 +1970,7 @@ runAllTime = async () => {
                                                 if (check_feed.msg == "Success") {
                                                     console.log(moment().format("hh:mm:ss") + " - Cập nhật action comment feed")
                                                     productForUser1.action = "comment_feed"
-                                                    await updateActions(productForUser1)
+                                                    await updateActions(productForUser1,10)
                                                 }
                                             } else {
                                                 console.log(moment().format("hh:mm:ss") + " - Lỗi khi comment feed ")
@@ -2190,7 +2204,7 @@ runAllTime = async () => {
                                 productForUser.result = result_report
                                 productForUser.report_id = data_report_shop.id
 
-                                await updateActions(productForUser)
+                                await updateActions(productForUser,10)
                             }
                         }
 
@@ -2384,7 +2398,7 @@ runAllTime = async () => {
                                 cookies22 = await page.cookies()
                                 productForUser.cookie = cookies22
                                 productForUser.action = "search"
-                                await updateActions(productForUser)
+                                await updateActions(productForUser,10)
                                 console.log(moment().format("hh:mm:ss") + " -  Xem ảnh sản phẩm")
                                 check_point = await check_point_hour(productForUser.uid)
                                 if (check_point) {
@@ -2401,7 +2415,7 @@ runAllTime = async () => {
                                 }
                                 actions.push(action1)
                                 productForUser.action = "view_product"
-                                await updateActions(productForUser)
+                                await updateActions(productForUser,10)
 
                                 if (options.view_review) {
                                     console.log(moment().format("hh:mm:ss") + " -  Xem review")
@@ -2419,7 +2433,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "view_review"
-                                    await updateActions(productForUser)
+                                    await updateActions(productForUser,10)
                                 }
 
                                 console.log(moment().format("hh:mm:ss") + " -  Check thả tim sản phẩm: " + productForUser.liked)
@@ -2435,7 +2449,7 @@ runAllTime = async () => {
 
                                             if (check_like.error == 0) {
                                                 productForUser.action = "heart_product"
-                                                await updateActions(productForUser)
+                                                await updateActions(productForUser,10)
                                             }
                                         } else {
                                             break
@@ -2453,7 +2467,7 @@ runAllTime = async () => {
 
                                         if (check_add_cart) {
                                             productForUser.action = "add_cart"
-                                            await updateActions(productForUser)
+                                            await updateActions(productForUser,10)
                                         } else {
                                             console.log(productForUser.product_link)
                                         }
@@ -2482,7 +2496,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "view_shop"
-                                    await updateActions(productForUser)
+                                    await updateActions(productForUser,10)
 
                                     // if (danh_sach_san_pham_chua_tha_tim.length > 5) {
 
@@ -2531,7 +2545,7 @@ runAllTime = async () => {
 
                                             if (check_follow.error == 0) {
                                                 productForUser.action = "follow_shop"
-                                                await updateActions(productForUser)
+                                                await updateActions(productForUser,10)
                                             }
                                             await page.waitForTimeout(1000);
                                         } else {
