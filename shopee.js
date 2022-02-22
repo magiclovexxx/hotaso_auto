@@ -2604,6 +2604,7 @@ if (mode === "DEV") {
 
         if (os_slave == "LINUX") {
             shell.exec('pm2 flush');
+            shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
@@ -2618,6 +2619,8 @@ if (mode === "DEV") {
     (async () => {
 
         if (os_slave == "LINUX") {
+            shell.exec('pm2 flush');
+            shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
