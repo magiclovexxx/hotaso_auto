@@ -2589,7 +2589,7 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            shell.exec('pm2 flush; pm2 restart all');
+            shell.exec('pm2 restart all');
         }
     })
 };
@@ -2603,6 +2603,7 @@ if (mode === "DEV") {
     (async () => {
 
         if (os_slave == "LINUX") {
+            shell.exec('pm2 flush');
             shell.exec('rm -rf ' + profileDir);
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
