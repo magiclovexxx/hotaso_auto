@@ -38,11 +38,10 @@ phobien = process.env.PHO_BIEN         //Chế độ chạy phổ biến
 maxTab = process.env.MAXTAB_SHOPEE  // Số lượng tab chromium cùng mở tại 1 thời điểm trên slave
 max_turn = process.env.MAX_TURN  // Số lượng keyword trên slave
 headless_mode = process.env.HEADLESS_MODE     // che do chay hien thi giao dien
-disable_image = process.env.DISABLE_IMAGE     // k load ảnh
+//disable_image = process.env.DISABLE_IMAGE     // k load ảnh
 disable_css = process.env.DISABLE_CSS     // k load css
 os_slave = process.env.OS     // k load css
 //process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
-disable_image = 0
 
 if (headless_mode == "0") {
     headless_mode = true
@@ -97,7 +96,7 @@ if (mode === "DEV") {
 logs = 1
 
 loginShopee = async (page, accounts) => {
-    
+
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
@@ -660,6 +659,10 @@ updateHistory = async (product) => {
 updateAction = async (product9, limit) => {
     // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
     // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+    product9.feed_content = "";
+    product9.feed_hastag = "";
+    product9.feed_mention = "";
+
     await axios.post(update_actions_url, {
         data: product9,
         timeout: 50000
@@ -674,12 +677,12 @@ updateAction = async (product9, limit) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
-           
-            limit = limit -1
-            if(limit>0){
-                sleep(2000)
+
+            limit = limit - 1
+            if (limit > 0) {
+                await sleep(5000)
                 await updateAction(product9, limit)
-            }else{
+            } else {
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu");
                 return false
             }
@@ -689,6 +692,10 @@ updateAction = async (product9, limit) => {
 updatePoint = async (product9, limit) => {
 
     product9.cookie = "";
+    product9.feed_content = "";
+    product9.feed_hastag = "";
+    product9.feed_mention = "";
+    
     await axios.get(update_point_url, {
         params: {
             data: {
@@ -704,11 +711,11 @@ updatePoint = async (product9, limit) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update point lỗi");
-            limit = limit -1
-            if(limit>0){
-                sleep(2000)
+            limit = limit - 1
+            if (limit > 0) {
+                await sleep(5000)
                 await updatePoint(product9, limit)
-            }else{
+            } else {
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu điểm số");
                 return false
             }
@@ -1138,7 +1145,7 @@ orderProduct = async (page, productInfo) => {
     productInfo.linkNow = linksp
 
     fs.appendFileSync('logs.txt', "\n" + "Order: " + "\n" + JSON.stringify(productInfo, null, 4))
-   
+
     buttonBye = await page.$$('.btn-solid-primary.btn--l')
     if (buttonBye.length) {
         console.log("Click nút mua ngay")
@@ -1504,21 +1511,15 @@ gen_page = async (browser, option) => {
         }
     } catch (e) {
         console.log(" ---- Lỗi set coookie ----")
-    }
-
+    }    
 
     return page
 }
 
-check_die_slave = () => {
-    console.log("check slave die: ")
-
-}
-
-
 chan_anh = async (page) => {
     await page.setRequestInterception(true);
-    
+    console.log(" DISABLE image: " + disable_image)
+    disable_image = parseInt(disable_image)
     page.on('request', (req) => {
 
         if (req.resourceType() === 'image' && disable_image) {
@@ -1531,26 +1532,14 @@ chan_anh = async (page) => {
     });
 }
 
+check_die_slave = () => {
+    console.log("check slave die: ")
+
+}
 
 
 runAllTime = async () => {
-    // setInterval(function (){
-    //     console.log("INTERVAL check slave die: " + check_die)
-    //     if(check_die == 1){
-    //         check_die = 0
-    //     }else{
-    //         exec("pm2 restart all", (error) => {
-    //             if (error) {
-    //                 console.log(`error: ${error.message}`);
-    //                 return;
-    //             }
-    //         });
-    //     }
-
-    //     console.log("INTERVAL check slave die: " + check_die)
-    // }, 300000);
-
-
+  
     slaveInfo = []
     getDataShopee = []
     dataShopee = []
@@ -1715,8 +1704,8 @@ runAllTime = async () => {
             return;
         }
     }
-
-    //console.log(dataShopee)
+    disable_image = dataShopee.disable_image
+    
     orderStatus = 1
     console.log(moment().format("hh:mm:ss") + " - START SHOPEE")
     //data = GenDirToGetData(maxTab, accounts)
@@ -1838,16 +1827,13 @@ runAllTime = async () => {
             user_lang: user_lang
         }
 
-        //disable_image = 1;
-
+      
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
 
+        await chan_anh(page)
+
         try {
-            
-            console.log(moment().format("hh:mm:ss") + " -  Bật chặn")
-            // disable_image = 1
-            // await chan_anh(page)
 
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
@@ -1864,19 +1850,16 @@ runAllTime = async () => {
                 console.error(err);
                 //await updateProxy(proxy.proxy_ip)
             }
-            //disable_image = 0;
-            
-            //await page.setRequestInterception(false);
-
+           
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
 
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
-            
+
 
             console.log(moment().format("hh:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
-            
+
             if (checklogin == 2 || checklogin == 3) {
                 console.log(moment().format("hh:mm:ss") + " - Cập nhật tài khoản lỗi")
                 accountInfo = {
@@ -1928,6 +1911,7 @@ runAllTime = async () => {
                         max_turn = 1
                     }
 
+                    //console.log(data_feed)
                     // Chạy lần lượt max_turn lượt tìm kiếm, tương tác từ khoá
                     for (let o = 0; o < max_turn; o++) {
 
@@ -1974,7 +1958,7 @@ runAllTime = async () => {
                                                 if (check_feed.msg == "Success") {
                                                     console.log(moment().format("hh:mm:ss") + " - Cập nhật action comment feed")
                                                     productForUser1.action = "comment_feed"
-                                                    await updateActions(productForUser1,10)
+                                                    await updateActions(productForUser1, 10)
                                                 }
                                             } else {
                                                 console.log(moment().format("hh:mm:ss") + " - Lỗi khi comment feed ")
@@ -2208,12 +2192,12 @@ runAllTime = async () => {
                                 productForUser.result = result_report
                                 productForUser.report_id = data_report_shop.id
 
-                                await updateActions(productForUser,10)
+                                await updateActions(productForUser, 10)
                             }
                         }
 
                         check_point = await check_point_hour(productForUser.uid)
-                        if (check_point) {                                                     
+                        if (check_point) {
                             await searchKeyWord(page, productForUser.keyword)
                         } else {
                             break
@@ -2387,8 +2371,7 @@ runAllTime = async () => {
                             //continue
                         }
 
-                        disable_image = 0
-                        
+
                         console.log(moment().format("hh:mm:ss") + " -  Tắt chặn ảnh")
                         if (check_product_exit === "Có tồn tại") {
                             try {
@@ -2402,7 +2385,7 @@ runAllTime = async () => {
                                 cookies22 = await page.cookies()
                                 productForUser.cookie = cookies22
                                 productForUser.action = "search"
-                                await updateActions(productForUser,10)
+                                await updateActions(productForUser, 10)
                                 console.log(moment().format("hh:mm:ss") + " -  Xem ảnh sản phẩm")
                                 check_point = await check_point_hour(productForUser.uid)
                                 if (check_point) {
@@ -2419,7 +2402,7 @@ runAllTime = async () => {
                                 }
                                 actions.push(action1)
                                 productForUser.action = "view_product"
-                                await updateActions(productForUser,10)
+                                await updateActions(productForUser, 10)
 
                                 if (options.view_review) {
                                     console.log(moment().format("hh:mm:ss") + " -  Xem review")
@@ -2437,7 +2420,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "view_review"
-                                    await updateActions(productForUser,10)
+                                    await updateActions(productForUser, 10)
                                 }
 
                                 console.log(moment().format("hh:mm:ss") + " -  Check thả tim sản phẩm: " + productForUser.liked)
@@ -2453,7 +2436,7 @@ runAllTime = async () => {
 
                                             if (check_like.error == 0) {
                                                 productForUser.action = "heart_product"
-                                                await updateActions(productForUser,10)
+                                                await updateActions(productForUser, 10)
                                             }
                                         } else {
                                             break
@@ -2471,7 +2454,7 @@ runAllTime = async () => {
 
                                         if (check_add_cart) {
                                             productForUser.action = "add_cart"
-                                            await updateActions(productForUser,10)
+                                            await updateActions(productForUser, 10)
                                         } else {
                                             console.log(productForUser.product_link)
                                         }
@@ -2500,7 +2483,7 @@ runAllTime = async () => {
                                     }
                                     actions.push(action1)
                                     productForUser.action = "view_shop"
-                                    await updateActions(productForUser,10)
+                                    await updateActions(productForUser, 10)
 
                                     // if (danh_sach_san_pham_chua_tha_tim.length > 5) {
 
@@ -2549,7 +2532,7 @@ runAllTime = async () => {
 
                                             if (check_follow.error == 0) {
                                                 productForUser.action = "follow_shop"
-                                                await updateActions(productForUser,10)
+                                                await updateActions(productForUser, 10)
                                             }
                                             await page.waitForTimeout(1000);
                                         } else {
