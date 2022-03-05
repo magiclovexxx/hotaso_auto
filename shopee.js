@@ -1831,7 +1831,7 @@ runAllTime = async () => {
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
 
-        await chan_anh(page)
+        //await chan_anh(page)
 
         try {
 
@@ -1942,7 +1942,7 @@ runAllTime = async () => {
                                             if (check_feed) {
                                                 if (check_feed.msg == "Success") {
                                                     console.log(moment().format("hh:mm:ss") + " - cập nhật action like feed")
-                                                    console.log(productForUser1)
+                                                    //console.log(productForUser1)
                                                     productForUser1.action = "like_feed"
                                                     await updateActions(productForUser1, 10)
                                                 }
