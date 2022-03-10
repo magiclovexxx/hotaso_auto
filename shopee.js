@@ -76,7 +76,7 @@ shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"    
 
 update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
 update_point_url = update_point + "/api_user/update_point"     // Update actions
-update_error_logs = update_point + "/api_user/error_logs"     // Update actions
+update_error_logs = updateActionsUrl + "/api_user/error_logs"     // Update actions
 
 //save_history = updateActionsUrl + "/api_user/save_history"     // Update actions
 
@@ -731,10 +731,12 @@ updatePoint = async (product9, limit) => {
 }
 
 updateErrorLogs = async (error, slave) => {
-    console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
+    console.log(error)
+    console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.stack);
+    console.log(moment().format("hh:mm:ss") + " - link CậP nhật lỗi: " + update_error_logs);
     let message = error.message
     let log={
-        logs:error,
+        logs:error.stack,
         slave:slave,
         message: message
     }
@@ -751,7 +753,7 @@ updateErrorLogs = async (error, slave) => {
         })
         .catch(async function (error) {
             console.log(error);
-            console.log(moment().format("hh:mm:ss") + " - Update action lỗi");           
+            console.log(moment().format("hh:mm:ss") + " - Update error lỗi");           
         });
 }
 
