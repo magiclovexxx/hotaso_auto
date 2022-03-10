@@ -99,8 +99,41 @@ gen_cookie_mobile = async () => {
     console.log(cookie1)
 }
 
-(async () => {
 
-    await gen_cookie_mobile()
+updateErrorLogs = async (error, slave) => {
+    update_error_logs = "https://beta.hotaso.vn/api_user/error_logs"
+    console.log(" - CậP nhật lỗi: " + error.message);
+    let message = error.message
+    console.log(error)
+    let log={
+        logs:error,
+        slave:slave,
+        message: message
+    }
+    await axios.post(update_error_logs, {
+        data: log,
+        timeout: 50000
+    },
+        {
+            // httpsAgent: httpsAgent
+        })
+        .then(function (response) {
+            console.log(response.data);
+            return true
+        })
+        .catch(async function (error) {
+            console.log(error);
+            console.log(" - Update action lỗi");           
+        });
+}
+
+(async () => {
+    error={
+        message: "tên lỗi",
+        logs:"xxxxx",
+        log2: "aaaa"
+
+    }
+    await updateErrorLogs(error, 11111)
 
 })();
