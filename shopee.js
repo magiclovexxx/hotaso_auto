@@ -732,9 +732,11 @@ updatePoint = async (product9, limit) => {
 
 updateErrorLogs = async (error, slave) => {
     console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
+    let message = error.message
     let log={
-        message:error.toString(),
-        slave:slave
+        logs:error.toString(),
+        slave:slave,
+        message: message
     }
     await axios.post(update_error_logs, {
         data: log,
