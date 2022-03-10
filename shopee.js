@@ -1453,6 +1453,10 @@ gen_browser = async (option) => {
         '--disable-reading-from-canvas'
     ]
 
+    // if(mode==="DEV"){
+    //     network = ""
+    // }
+
     if (network == "proxy") {
         //'--proxy-server=103.90.230.170:9043'
 
@@ -1494,6 +1498,10 @@ gen_page = async (browser, option) => {
         width: width,
         height: height
     });
+
+    // if(mode==="DEV"){
+    //     network = ""
+    // }
 
     if (network == "proxy") {
         let proxy_pass = proxy1.proxy_password.split("\r")[0]
@@ -1792,6 +1800,7 @@ runAllTime = async () => {
         console.log(moment().format("hh:mm:ss") + " - Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
 
         subAccount[0] = acc.username
+        subAccount[2] = acc.id
         subAccount[1] = acc.password.split("\r")[0]
 
         if (!acc.user_agent) {
@@ -1923,6 +1932,7 @@ runAllTime = async () => {
                                 productForUser1.feed_id = data_feed_1.id
                                 productForUser1.username = subAccount[0]
                                 productForUser1.password = subAccount[1]
+                                productForUser1.clone_id = subAccount[2]
                                 productForUser1.shopee_point = shopee_point
                                 productForUser1.slave = slavenumber
 
@@ -2012,8 +2022,8 @@ runAllTime = async () => {
 
                         productForUser.username = subAccount[0]
                         productForUser.password = subAccount[1]
+                        productForUser.clone_id = subAccount[2]
                         productForUser.shopee_point = shopee_point
-
 
                         // if(mode == "DEV"){
                         //     productForUser.shop_id = "406672344"
@@ -2371,8 +2381,6 @@ runAllTime = async () => {
                             //continue
                         }
 
-
-                        console.log(moment().format("hh:mm:ss") + " -  Tắt chặn ảnh")
                         if (check_product_exit === "Có tồn tại") {
                             try {
                                 let check_action
@@ -2382,27 +2390,23 @@ runAllTime = async () => {
                                 }
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
+                                
                                 cookies22 = await page.cookies()
                                 productForUser.cookie = cookies22
-                                productForUser.action = "search"
+                                productForUser.action = "search"                                
                                 await updateActions(productForUser, 10)
+
+                                productForUser.cookie = ""
+                                productForUser.action = "view_product"                                
+                                await updateActions(productForUser, 10)
+
                                 console.log(moment().format("hh:mm:ss") + " -  Xem ảnh sản phẩm")
                                 check_point = await check_point_hour(productForUser.uid)
                                 if (check_point) {
                                     await action_view_product(page)
                                 } else {
                                     break
-                                }
-
-                                productForUser.cookie = ""
-
-                                action1 = {
-                                    time: new Date(),
-                                    action: "view_product"
-                                }
-                                actions.push(action1)
-                                productForUser.action = "view_product"
-                                await updateActions(productForUser, 10)
+                                }                                
 
                                 if (options.view_review) {
                                     console.log(moment().format("hh:mm:ss") + " -  Xem review")
