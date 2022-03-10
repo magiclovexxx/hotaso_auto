@@ -744,7 +744,7 @@ updateErrorLogs = async (error, slave) => {
             // httpsAgent: httpsAgent
         })
         .then(function (response) {
-            console.log(moment().format("hh:mm:ss") + " - Update action: " + product9.action + " = " + response.data);
+            console.log(response.data);
             return true
         })
         .catch(async function (error) {
@@ -754,7 +754,7 @@ updateErrorLogs = async (error, slave) => {
             limit = limit - 1
             if (limit > 0) {
                 await sleep(5000)
-                await updateAction(product9, limit)
+                await updateAction(log, limit)
             } else {
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu");
                 return false
