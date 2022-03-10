@@ -167,6 +167,7 @@ loginShopee = async (page, accounts) => {
         } catch (e) {
             console.log(e)
             console.log("Đăng nhập lỗi")
+            await updateErrorLogs(e, slavenumber)
             return false
         }
         try {
@@ -174,6 +175,7 @@ loginShopee = async (page, accounts) => {
         } catch (error) {
             console.log(error)
             console.log("Đăng nhập lỗi")
+            await updateErrorLogs(error, slavenumber)
             return false
         }
 
@@ -221,6 +223,7 @@ searchKeyWord = async (page, keyword) => {
         }
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
         return false
     }
     return true
@@ -296,6 +299,7 @@ populateClick = async (page, listcategories) => {
         }
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 
 }
@@ -404,6 +408,7 @@ getproduct = async (page, saveProduct, limit, idShops) => {
         }
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
         return false
     }
 
@@ -446,6 +451,7 @@ get_variation_enable = async (page) => {
         return list_variation_enable
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 
 }
@@ -484,7 +490,7 @@ chooseVariation = async (page, product) => {
 
     } catch (error) {
         console.log(error)
-
+        await updateErrorLogs(error, slavenumber)
     }
 
 }
@@ -577,6 +583,7 @@ action_view_review = async (page) => {
         }
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 
 }
@@ -828,6 +835,7 @@ action_view_shop = async (page, url, product) => {
         await page.keyboard.press('Home');
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
         return false
     }
 }
@@ -894,6 +902,7 @@ action_view_product = async (page) => {
             }
         }
     } catch (e) {
+        await updateErrorLogs(e, slavenumber)
         //console.log(e)
     }
     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
@@ -963,6 +972,7 @@ action_add_cart = async (page, product) => {
 
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 }
 
@@ -1055,6 +1065,7 @@ action_report_shop = async (page, report_shop) => {
 
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
         await page.waitForTimeout(9999999)
     }
 }
@@ -1083,6 +1094,7 @@ action_heart_product = async (page) => {
 
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 }
 
@@ -1105,6 +1117,7 @@ action_follow_shop = async (page) => {
 
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 }
 
@@ -1168,6 +1181,7 @@ removeCart = async (page) => {
         }
     } catch (error) {
         console.log(error)
+        await updateErrorLogs(error, slavenumber)
     }
 
 }
@@ -1891,6 +1905,7 @@ runAllTime = async () => {
             } catch (err) {
                 //HERE
                 console.error(err);
+                await updateErrorLogs(err, slavenumber)
                 //await updateProxy(proxy.proxy_ip)
             }
            
@@ -2010,6 +2025,7 @@ runAllTime = async () => {
                                         }
                                     } catch (error) {
                                         console.log(error)
+                                        await updateErrorLogs(error, slavenumber)
                                     }
                                 }
                             }
@@ -2051,7 +2067,7 @@ runAllTime = async () => {
                             options = JSON.parse(productForUser.options)
                         } catch (error) {
                             console.log(error)
-                            console.log(productForUser)
+                            await updateErrorLogs(error, slavenumber)
                         }
 
                         productForUser.username = subAccount[0]
@@ -2190,7 +2206,7 @@ runAllTime = async () => {
                                     check_like = productInfo1
 
                                 } catch (error) {
-
+                                    await updateErrorLogs(error, slavenumber)
                                     console.log("---- Like thât bại ----")
                                 }
                             }
@@ -2203,6 +2219,7 @@ runAllTime = async () => {
                                     check_follow = productInfo1
 
                                 } catch (error) {
+                                    await updateErrorLogs(error, slavenumber)
                                     console.log("---- follow thât bại ----")
                                 }
                             }
@@ -2326,8 +2343,9 @@ runAllTime = async () => {
                                     referer: ref
                                 })
 
-                            } catch (err) {
-                                console.error(err);
+                            } catch (error) {
+                                await updateErrorLogs(error, slavenumber)
+                                console.error(error);
                             }
                             await page.waitForTimeout(5000)
                             console.log(moment().format("hh:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
@@ -2359,6 +2377,7 @@ runAllTime = async () => {
                                 try {
                                     productsAll[productForUser.vitri - 1].click()
                                 } catch (error) {
+                                    await updateErrorLogs(error, slavenumber)
                                     try {
                                         await page.goto(productForUser.product_link, {
                                             waitUntil: "networkidle0",
@@ -2368,6 +2387,7 @@ runAllTime = async () => {
                                     } catch (err) {
                                         //HERE
                                         console.error(err);
+                                        await updateErrorLogs(err, slavenumber)
                                     }
                                 }
                             }
@@ -2401,6 +2421,7 @@ runAllTime = async () => {
                                 });
                             } catch (error) {
                                 console.log(error.message);
+                                await updateErrorLogs(error, slavenumber)
                             }
                         }
 
@@ -2414,6 +2435,7 @@ runAllTime = async () => {
 
                             } catch (error) {
                                 console.log(error.message);
+                                await updateErrorLogs(error, slavenumber)
                             }
 
                             //continue
@@ -2584,6 +2606,7 @@ runAllTime = async () => {
                                 }
                             } catch (error) {
                                 console.log(error)
+                                await updateErrorLogs(error, slavenumber)
                             }
                         }
 
@@ -2609,6 +2632,7 @@ runAllTime = async () => {
             console.log(moment().format("hh:mm:ss") + " -  ----------- Kết thúc tương tác Tab: " + index)
         } catch (error) {
             console.log(error)
+            await updateErrorLogs(error, slavenumber)
         }
 
         await browser.close();
