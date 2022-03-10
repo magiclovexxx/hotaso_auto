@@ -737,7 +737,7 @@ updateErrorLogs = async (error, slave) => {
         slave:slave
     }
     await axios.post(update_error_logs, {
-        data: product9,
+        data: log,
         timeout: 50000
     },
         {
