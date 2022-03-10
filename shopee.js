@@ -732,7 +732,7 @@ updatePoint = async (product9, limit) => {
 
 updateErrorLogs = async (error, slave) => {
     console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
-    log={
+    let log={
         message:error.toString(),
         slave:slave
     }
@@ -749,16 +749,7 @@ updateErrorLogs = async (error, slave) => {
         })
         .catch(async function (error) {
             console.log(error);
-            console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
-
-            limit = limit - 1
-            if (limit > 0) {
-                await sleep(5000)
-                await updateAction(log, limit)
-            } else {
-                console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu");
-                return false
-            }
+            console.log(moment().format("hh:mm:ss") + " - Update action lỗi");           
         });
 }
 
