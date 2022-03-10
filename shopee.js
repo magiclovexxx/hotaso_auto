@@ -731,9 +731,9 @@ updatePoint = async (product9, limit) => {
 }
 
 updateErrorLogs = async (error, slave) => {
-    console.log(error)
-    console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.stack);
-    console.log(moment().format("hh:mm:ss") + " - link CậP nhật lỗi: " + update_error_logs);
+    //console.log(error)
+    console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
+    //console.log(moment().format("hh:mm:ss") + " - link CậP nhật lỗi: " + update_error_logs);
     let message = error.message
     let log={
         logs:error.stack,
@@ -1901,7 +1901,7 @@ runAllTime = async () => {
                 //HERE
                 console.error(err);
                 await updateErrorLogs(err, slavenumber)
-                //await updateProxy(proxy.proxy_ip)
+                await updateProxy(proxy.proxy_ip)
             }
            
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -2653,8 +2653,7 @@ if (mode === "DEV") {
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
-        await sleep(2000)
-
+        
         await runAllTime()
 
     })();
