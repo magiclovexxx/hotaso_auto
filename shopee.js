@@ -76,6 +76,7 @@ shopee_update_seo_san_pham_url = apiUrl + "/api_user/shopeeUpdateSeoSanPham"    
 
 update_actions_url = updateActionsUrl + "/api_user/updateActions"     // Update actions
 update_point_url = update_point + "/api_user/update_point"     // Update actions
+update_error_logs = update_point + "/api_user/error_logs"     // Update actions
 
 //save_history = updateActionsUrl + "/api_user/save_history"     // Update actions
 
@@ -720,6 +721,38 @@ updatePoint = async (product9, limit) => {
                 return false
             }
         })
+}
+
+updateErrorLogs = async (error, slave) => {
+    console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
+    log={
+        message:error,
+        slave:slave
+    }
+    await axios.post(update_error_logs, {
+        data: product9,
+        timeout: 50000
+    },
+        {
+            // httpsAgent: httpsAgent
+        })
+        .then(function (response) {
+            console.log(moment().format("hh:mm:ss") + " - Update action: " + product9.action + " = " + response.data);
+            return true
+        })
+        .catch(async function (error) {
+            console.log(error);
+            console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
+
+            limit = limit - 1
+            if (limit > 0) {
+                await sleep(5000)
+                await updateAction(product9, limit)
+            } else {
+                console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu");
+                return false
+            }
+        });
 }
 
 updateActions = async (product9, limit) => {
@@ -1646,9 +1679,10 @@ runAllTime = async () => {
 
                 dataShopee = response.data
             })
-            .catch(function (error) {
+            .catch(async function (error) {
                 // handle error
-                console.log(error);
+                //console.log(error);
+                await updateErrorLogs(error, slavenumber)
                 return false
             })
             .then(function () {
@@ -2058,20 +2092,24 @@ runAllTime = async () => {
 
                             let checkUrlShop = url.split("shop/get_shop_detail")
 
-                            if (checkUrlShop.length > 1) {
-                                console.log("-- Sự kiện lấy thông tin shop --")
-                                productInfo1 = await resp.json()
-                                productInfo2 = productInfo1.data
-                                if (productForUser.shop_id == productInfo2.shopid) {
-                                    shopInfo3.avatar = productInfo2.account.portrait
-                                    shopInfo3.username = productInfo2.account.username
-                                    shopInfo3.name = productInfo2.name
-                                    shopInfo3.shop_id = productInfo2.shopid
-                                    shopInfo3.followed = productInfo2.followed
-                                    console.log(moment().format("hh:mm:ss") + " - Thông tin Shop ")
-                                    console.log(shopInfo3)
+                            try {
+                                if (checkUrlShop.length > 1) {
+                                    console.log("-- Sự kiện lấy thông tin shop --")
+                                    productInfo1 = await resp.json()
+                                    productInfo2 = productInfo1.data
+                                    if (productForUser.shop_id == productInfo2.shopid) {
+                                        shopInfo3.avatar = productInfo2.account.portrait
+                                        shopInfo3.username = productInfo2.account.username
+                                        shopInfo3.name = productInfo2.name
+                                        shopInfo3.shop_id = productInfo2.shopid
+                                        shopInfo3.followed = productInfo2.followed
+                                        console.log(moment().format("hh:mm:ss") + " - Thông tin Shop ")
+                                        console.log(shopInfo3)
+                                    }
                                 }
-                            }
+                            } catch (error) {
+                                await updateErrorLogs(error, slavenumber)
+                            }                            
 
                             if (check_add_to_cart.length > 1) {
 
