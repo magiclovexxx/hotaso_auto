@@ -892,7 +892,7 @@ action_view_product = async (page) => {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
-            if (nextRightButton.length >= 2) {
+            if (nextRightButton.length >1) {
                 await nextRightButton[1].click();
             }
         }
@@ -2370,7 +2370,7 @@ runAllTime = async () => {
 
                                 let productsAll = await page.$$('[data-sqe="link"]')
                                 try {
-                                    productsAll[productForUser.vitri - 1].click()
+                                    await productsAll[productForUser.vitri - 1].click()
                                 } catch (error) {
                                     await updateErrorLogs(error, slavenumber)
                                     try {
