@@ -734,7 +734,7 @@ updateErrorLogs = async (error, slave) => {
     console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
     let message = error.message
     let log={
-        logs:error.toString(),
+        logs:error,
         slave:slave,
         message: message
     }
