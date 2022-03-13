@@ -127,6 +127,51 @@ updateErrorLogs = async (error, slave) => {
         });
 }
 
+
+test_cookie = async () => {
+
+const puppeteer = require('puppeteer');
+let is_block_image = false;
+
+  const browser = await puppeteer.launch({ headless: false });
+  const page = (await browser.pages())[0];
+  cookies = [{"name":"cto_bundle","value":"2ZEk4l9DM1glMkJXZ1VZc2NvakVTM0Q4dFZTYWNHWUNOOXptOHVDQ1lmcXVWb3VobVJnUnVpYkZOWDliVTZCUjdIRWo5YlhzUXhpT2N1b3YxbWhQTWtRVFgwWlhOWVBqZjdGeUJGdFpERXVBYlphZWdhMUw4NUVOU1B2QWdJekN5Tm1xQ1JOc05yU2Zac2ZDSFg4cnlabCUyRkFxVmh3JTNEJTNE","domain":".shopee.vn","path":"\/","expires":1665324798,"size":230,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_T_ID","value":"\"NMnqrOhGbiuMUpzaTOYFj8aX89bXLPnVvJEtGGbSxstGyqU0IoNooxFUdt7aDDs2Z+jKNu8bqAC1O34Y7WGfmK1797IF8HY1YzjThOnLKbA=\"","domain":"shopee.vn","path":"\/","expires":2261880786.5531,"size":118,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_R_T_ID","value":"\"NMnqrOhGbiuMUpzaTOYFj8aX89bXLPnVvJEtGGbSxstGyqU0IoNooxFUdt7aDDs2Z+jKNu8bqAC1O34Y7WGfmK1797IF8HY1YzjThOnLKbA=\"","domain":".shopee.vn","path":"\/","expires":2261880786.5463,"size":120,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_R_T_IV","value":"\"1bIb62mxhkS6S3g6tuLu\/Q==\"","domain":".shopee.vn","path":"\/","expires":2261880786.5464,"size":36,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_SI","value":"bfftocsg6.ZG3sB1GGWwWkVcetIfqPv2OefsF2z1ln","domain":".shopee.vn","path":"\/","expires":1631247191.9105,"size":48,"httpOnly":true,"secure":true,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"REC_T_ID","value":"592ecf86-e8de-11eb-8569-9440c931dacc","domain":".shopee.vn","path":"\/","expires":2257452724.2235,"size":44,"httpOnly":true,"secure":true,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"_gcl_au","value":"1.1.1375020834.1626732723","domain":".shopee.vn","path":"\/","expires":1634508723,"size":32,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_CLIENTID","value":"aVZ1eHEyU05yUUlCmuowabgrwefdqosi","domain":".shopee.vn","path":"\/","expires":2257452746.0512,"size":44,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_U","value":"320401707","domain":".shopee.vn","path":"\/","expires":2261880793.2458,"size":14,"httpOnly":false,"secure":true,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"csrftoken","value":"udKclexNUvvvFH1NL66DpB4HDTKGYqPV","domain":"shopee.vn","path":"\/","expires":-1,"size":41,"httpOnly":false,"secure":false,"session":true,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_IA","value":"-1","domain":"shopee.vn","path":"\/","expires":2261691459.3986,"size":8,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"REC_T_ID","value":"592ee1aa-e8de-11eb-ab91-48df37dd92e4","domain":"shopee.vn","path":"\/","expires":2257452724.2203,"size":44,"httpOnly":true,"secure":true,"session":false,"sameSite":"None","sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"_hjid","value":"3b58ae55-6c1a-49ae-ba06-817880eb2bfd","domain":".shopee.vn","path":"\/","expires":1658268728,"size":41,"httpOnly":false,"secure":false,"session":false,"sameSite":"Lax","sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"G_ENABLED_IDPS","value":"google","domain":".shopee.vn","path":"\/","expires":253402257600,"size":20,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_EC","value":"UzhVVWg0Q0Jsbm5nNlVQbWmpWZBz5waz9si51nfA8fnm1uFQ13WHy1DvwX6U09JyMTbuauRXkajRsxdS6c7z2AF3Ipw8sBUvAj+ee0BL6BjIPng3b448dnLUg\/y4a0d4i9+4mt+fuesJyKV+6XQovyIZQZgW01g+KUJbNWyGZw0=","domain":".shopee.vn","path":"\/","expires":2261880793.2457,"size":178,"httpOnly":true,"secure":true,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"welcomePkgShown","value":"true","domain":"shopee.vn","path":"\/","expires":-1,"size":19,"httpOnly":false,"secure":false,"session":true,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_ST","value":"\".QUNhZk5MVmc1blIxM2FxbYiNS5aKGEMwr0apl1qSkTVmGpgsQyXbq0sViRngmFQPkbBb4Uejj3wPLLjWu7iaLR+\/TG8SH0+cJEZ68Lj9JvyHRiJFQjJxavOX6tFT08eQaqR96aq99rxt97ieIxI2WlDs86ICQnSAFyfn22v9cVnCpC23JVQoeKPsVfDAkssUUgAV6Le2VnefVDZ+crCP+w==\"","domain":".shopee.vn","path":"\/","expires":2261691459.3989,"size":225,"httpOnly":true,"secure":true,"session":false,"sameSite":"None","sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_T_IV","value":"\"1bIb62mxhkS6S3g6tuLu\/Q==\"","domain":"shopee.vn","path":"\/","expires":2261880786.5464,"size":34,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_PC_HYBRID_ID","value":"22","domain":"shopee.vn","path":"\/","expires":-1,"size":18,"httpOnly":false,"secure":false,"session":true,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"_fbp","value":"fb.1.1626732723713.1184355551","domain":".shopee.vn","path":"\/","expires":1638936817,"size":33,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"SPC_F","value":"iVuxq2SNrQIBHIY9eyhxiM7f0k5V1ODm","domain":".shopee.vn","path":"\/","expires":2257452724.2237,"size":37,"httpOnly":false,"secure":true,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"_ga_M32T05RVZT","value":"GS1.1.1630971398.11.1.1630971471.48","domain":".shopee.vn","path":"\/","expires":1694043471,"size":49,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443},
+  {"name":"_ga","value":"GA1.2.756601462.1626732728","domain":".shopee.vn","path":"\/","expires":1694043471,"size":29,"httpOnly":false,"secure":false,"session":false,"sameParty":false,"sourceScheme":"Secure","sourcePort":443}]
+  //cookies = JSON.parse(cookies)
+  cookies.forEach(async (item) => {
+    await page.setCookie(item);
+    console.log(item)
+  });
+  await page.goto('https://shopee.vn');
+  //await page.setRequestInterception(true);
+  //page.on('request', request_event);
+  //is_block_image = true;
+  //is_block_image = false;
+
+}
+
+
 (async () => {
     error={
         message: "tên lỗi",
@@ -134,6 +179,6 @@ updateErrorLogs = async (error, slave) => {
         log2: "aaaa"
 
     }
-    await updateErrorLogs(error, 11111)
+    await test_cookie()
 
 })();

@@ -107,6 +107,7 @@ loginShopee = async (page, accounts) => {
 
 
         try {
+            console.log(moment().format("hh:mm:ss") + " - Login acc pass")
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
                 waitUntil: "networkidle0",
@@ -670,7 +671,7 @@ updateAction = async (product9, limit) => {
     product9.feed_content = "";
     product9.feed_hastag = "";
     product9.feed_mention = "";
-
+    
     await axios.post(update_actions_url, {
         data: product9,
         timeout: 50000
@@ -685,7 +686,7 @@ updateAction = async (product9, limit) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
-
+            await updateErrorLogs(error,product9.slave)
             limit = limit - 1
             if (limit > 0) {
                 await sleep(5000)
@@ -719,12 +720,14 @@ updatePoint = async (product9, limit) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update point lỗi");
+            await updateErrorLogs(error,product9.slave)
             limit = limit - 1
             if (limit > 0) {
                 await sleep(5000)
                 await updatePoint(product9, limit)
             } else {
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu điểm số");
+                
                 return false
             }
         })
@@ -733,6 +736,7 @@ updatePoint = async (product9, limit) => {
 updateErrorLogs = async (error, slave) => {
     //console.log(error)
     console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
+    console.log(error.stack)
     //console.log(moment().format("hh:mm:ss") + " - link CậP nhật lỗi: " + update_error_logs);
     let message = error.message
     let log={
@@ -753,18 +757,14 @@ updateErrorLogs = async (error, slave) => {
         })
         .catch(async function (error) {
             console.log(error);
-            console.log(moment().format("hh:mm:ss") + " - Update error lỗi");           
+            console.log(moment().format("hh:mm:ss") + " - Update error lỗi");                  
         });
 }
 
 updateActions = async (product9, limit) => {
-    console.log("Check die: " + check_die)
-    check_die = 1;
-    update = 0
-
-    await updatePoint(product9, limit)
     await updateAction(product9, limit)
-
+    await updatePoint(product9, limit)
+   
 }
 
 action_view_shop = async (page, url, product) => {
@@ -1555,9 +1555,11 @@ gen_page = async (browser, option) => {
         if (cookie1.length) {
             let cookie111 = JSON.parse(cookie1)
             //console.log(cookie111)
-            cookie111.forEach(async (item) => {
-                await page.setCookie(item);
-            })
+            // cookie111.forEach(async (item) => {
+            //     await page.setCookie(item);
+            // })
+            await page.setCookie(...cookie111);
+            console.log(moment().format("hh:mm:ss") + " - Setcookie thành công")
         }
     } catch (e) {
         console.log(" ---- Lỗi set coookie ----")
@@ -1762,7 +1764,9 @@ runAllTime = async () => {
     //data = GenDirToGetData(maxTab, accounts)
 
     proxy = dataShopee.proxy
-
+    if(proxy==0){
+        console.log(moment().format("hh:mm:ss") + " - Không có proxy")
+    }
     //await sleep(5000)
 
     if (slaveInfo.network == "dcom") {
@@ -2447,13 +2451,14 @@ runAllTime = async () => {
                                 await page.waitForTimeout(timeout)
                                 
                                 cookies22 = await page.cookies()
-                                productForUser.cookie = cookies22
+                                productForUser.cookie = await page.cookies()
+                               
                                 productForUser.action = "search"                                
                                 await updateActions(productForUser, 10)
 
-                                productForUser.cookie = ""
-                                productForUser.action = "view_product"                                
-                                await updateActions(productForUser, 10)
+                                //productForUser.cookie = ""
+                                // productForUser.action = "view_product"                                
+                                // await updateActions(productForUser, 10)
 
                                 console.log(moment().format("hh:mm:ss") + " -  Xem ảnh sản phẩm")
                                 check_point = await check_point_hour(productForUser.uid)
