@@ -668,9 +668,6 @@ updateHistory = async (product) => {
 updateAction = async (product9, limit) => {
     // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
     // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
-    product9.feed_content = "";
-    product9.feed_hastag = "";
-    product9.feed_mention = "";
     
     await axios.post(update_actions_url, {
         data: product9,
@@ -686,7 +683,7 @@ updateAction = async (product9, limit) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update action lỗi");
-            await updateErrorLogs(error,product9.slave)
+            await updateErrorLogs(error, product9.slave)
             limit = limit - 1
             if (limit > 0) {
                 await sleep(5000)
@@ -701,9 +698,6 @@ updateAction = async (product9, limit) => {
 updatePoint = async (product9, limit) => {
 
     product9.cookie = "";
-    product9.feed_content = "";
-    product9.feed_hastag = "";
-    product9.feed_mention = "";
     
     await axios.get(update_point_url, {
         params: {
@@ -720,14 +714,14 @@ updatePoint = async (product9, limit) => {
         .catch(async function (error) {
             console.log(error);
             console.log(moment().format("hh:mm:ss") + " - Update point lỗi");
-            await updateErrorLogs(error,product9.slave)
+            await updateErrorLogs(error, product9.slave)
             limit = limit - 1
             if (limit > 0) {
                 await sleep(5000)
                 await updatePoint(product9, limit)
             } else {
                 console.log(moment().format("hh:mm:ss") + " - Lỗi mạng không thể cập nhật dữ liệu điểm số");
-                
+
                 return false
             }
         })
@@ -739,9 +733,9 @@ updateErrorLogs = async (error, slave) => {
     console.log(error.stack)
     //console.log(moment().format("hh:mm:ss") + " - link CậP nhật lỗi: " + update_error_logs);
     let message = error.message
-    let log={
-        logs:error.stack,
-        slave:slave,
+    let log = {
+        logs: error.stack,
+        slave: slave,
         message: message
     }
     await axios.post(update_error_logs, {
@@ -757,14 +751,14 @@ updateErrorLogs = async (error, slave) => {
         })
         .catch(async function (error) {
             console.log(error);
-            console.log(moment().format("hh:mm:ss") + " - Update error lỗi");                  
+            console.log(moment().format("hh:mm:ss") + " - Update error lỗi");
         });
 }
 
 updateActions = async (product9, limit) => {
     await updateAction(product9, limit)
     await updatePoint(product9, limit)
-   
+
 }
 
 action_view_shop = async (page, url, product) => {
@@ -892,7 +886,7 @@ action_view_product = async (page) => {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
-            if (nextRightButton.length >1) {
+            if (nextRightButton.length > 1) {
                 await nextRightButton[1].click();
             }
         }
@@ -1563,7 +1557,7 @@ gen_page = async (browser, option) => {
         }
     } catch (e) {
         console.log(" ---- Lỗi set coookie ----")
-    }    
+    }
 
     return page
 }
@@ -1591,7 +1585,7 @@ check_die_slave = () => {
 
 
 runAllTime = async () => {
-  
+
     slaveInfo = []
     getDataShopee = []
     dataShopee = []
@@ -1758,13 +1752,13 @@ runAllTime = async () => {
         }
     }
     disable_image = dataShopee.disable_image
-    
+
     orderStatus = 1
     console.log(moment().format("hh:mm:ss") + " - START SHOPEE")
     //data = GenDirToGetData(maxTab, accounts)
 
     proxy = dataShopee.proxy
-    if(proxy==0){
+    if (proxy == 0) {
         console.log(moment().format("hh:mm:ss") + " - Không có proxy")
     }
     //await sleep(5000)
@@ -1883,7 +1877,7 @@ runAllTime = async () => {
             user_lang: user_lang
         }
 
-      
+
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
 
@@ -1907,7 +1901,7 @@ runAllTime = async () => {
                 await updateErrorLogs(err, slavenumber)
                 await updateProxy(proxy.proxy_ip)
             }
-           
+
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
 
@@ -1978,6 +1972,7 @@ runAllTime = async () => {
                                 check_point = await check_point_hour(data_feed[x].uid)
                                 let productForUser1 = data_feed_1
                                 productForUser1.feed_id = data_feed_1.id
+
                                 productForUser1.username = subAccount[0]
                                 productForUser1.password = subAccount[1]
                                 productForUser1.clone_id = subAccount[2]
@@ -2002,6 +1997,7 @@ runAllTime = async () => {
                                                     console.log(moment().format("hh:mm:ss") + " - cập nhật action like feed")
                                                     //console.log(productForUser1)
                                                     productForUser1.action = "like_feed"
+
                                                     await updateActions(productForUser1, 10)
                                                 }
                                             } else {
@@ -2011,11 +2007,15 @@ runAllTime = async () => {
 
                                         if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
                                             console.log(moment().format("hh:mm:ss") + " - Comment feed")
+                                            
                                             check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
                                             if (check_feed) {
                                                 if (check_feed.msg == "Success") {
                                                     console.log(moment().format("hh:mm:ss") + " - Cập nhật action comment feed")
                                                     productForUser1.action = "comment_feed"
+
+                                                    productForUser1.feed_content = data_feed_1.feed_content
+
                                                     await updateActions(productForUser1, 10)
                                                 }
                                             } else {
@@ -2124,7 +2124,7 @@ runAllTime = async () => {
                                 }
                             } catch (error) {
                                 await updateErrorLogs(error, slavenumber)
-                            }                            
+                            }
 
                             if (check_add_to_cart.length > 1) {
 
@@ -2449,11 +2449,11 @@ runAllTime = async () => {
                                 }
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
-                                
+
                                 cookies22 = await page.cookies()
                                 productForUser.cookie = await page.cookies()
-                               
-                                productForUser.action = "search"                                
+
+                                productForUser.action = "search"
                                 await updateActions(productForUser, 10)
 
                                 //productForUser.cookie = ""
@@ -2466,7 +2466,7 @@ runAllTime = async () => {
                                     await action_view_product(page)
                                 } else {
                                     break
-                                }                                
+                                }
 
                                 if (options.view_review) {
                                     console.log(moment().format("hh:mm:ss") + " -  Xem review")
@@ -2658,7 +2658,7 @@ if (mode === "DEV") {
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
-        
+
         await runAllTime()
 
     })();
