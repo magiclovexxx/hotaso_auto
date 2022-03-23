@@ -105,7 +105,6 @@ loginShopee = async (page, accounts) => {
         let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
         await page.waitForTimeout(timeout)
 
-
         try {
             console.log(moment().format("hh:mm:ss") + " - Login acc pass")
             let ref = await page.url()
