@@ -2349,7 +2349,7 @@ runAllTime = async () => {
                             console.log(moment().format("hh:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                             // console.log(getViTriSanPham)
 
-                            if (viTriSanPhamTrang1 != false) {
+                            if ( getViTriSanPham.trang !== "err" && viTriSanPhamTrang1 != false ) {
 
                                 today = new Date().toLocaleString();
                                 timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
