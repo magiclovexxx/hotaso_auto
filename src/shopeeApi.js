@@ -347,8 +347,8 @@ commentFeed = async (cookies, shopee_feed, proxy) => {
             let xx = hashtags[c]
             xx = xx.split('#');
             xx = xx[1]
-            xx = xx.split("\r")
-            xx = xx[0]
+            //xx = xx.split("\r")
+            //xx = xx[0]
 
             let ht = {
                 "tag": xx
