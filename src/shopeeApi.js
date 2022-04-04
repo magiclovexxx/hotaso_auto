@@ -346,7 +346,12 @@ commentFeed = async (cookies, shopee_feed, proxy) => {
 
             let xx = hashtags[c]
             xx = xx.split('#');
-            xx = xx[1]
+            if(xx.length>1){
+                xx = xx[1]
+            }else{
+                xx = xx[0]
+            }
+            
             //xx = xx.split("\r")
             //xx = xx[0]
 
