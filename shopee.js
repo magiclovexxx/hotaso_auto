@@ -1671,7 +1671,7 @@ runAllTime = async () => {
             keyword_check = encodeURI(keyword_check)
         }
 
-        get_data_shopee_url = data_shopee_url + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check
+        get_data_shopee_url = data_shopee_url + "?slave=" + slavenumber + "&token=kjdaklA190238190Adaduih2ajksdhakAhqiouOEJAK092489ahfjkwqAc92alA&product_check=" + product_check + "&account_check=" + account_check + "&keyword_check=" + keyword_check + "&mode=" + mode
         console.log(get_data_shopee_url)
 
         // Lấy dữ liệu từ từ khoá từ sv
@@ -1826,8 +1826,10 @@ runAllTime = async () => {
 
         if (data_for_tab.feed) {
             data_feed = data_for_tab.feed
+            console.log(moment().format("hh:mm:ss") + " - Dữ liệu shopee feed: " + data_feed.length)
         } else {
             data_feed = false
+            console.log(moment().format("hh:mm:ss") + " - Không có Dữ liệu shopee feed")
         }
 
         if (data_for_tab.report_shop) {

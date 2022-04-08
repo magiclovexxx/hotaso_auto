@@ -1187,6 +1187,130 @@ commentFeed = async (cookies, feed_link, feed_content) => {
 
 }
 
+
+const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
+    // lay cookie
+    cookie1 = ""
+    cookies.forEach((row, index) => {
+        cookie1 = cookie1 + row.name + "=" + row.value
+        if (index != (cookies.length - 1)) {
+            cookie1 = cookie1 + "; "
+        }
+
+    })
+
+    let keyword = product.keyword.toLowerCase()
+    let productId = product.product_id
+    let viTriSanPham = {
+        trang: 0,
+        vitri: 0
+    }
+    console.log("Id sản phẩm: " + productId)
+    let productIndex = 0
+    for (let i = 0; i <= maxPage; i++) {
+
+        viTriSanPham = {
+            trang: false,
+            vitri: false
+        }
+        maxproduct = 50 * (i - 1)
+        search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=" + keyword + "&limit=50&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
+        search_api = encodeURI(search_api)
+        //console.log(shopeesearch)
+        if (i == 1) {
+            ref = "https://shopee.vn"
+        }
+        if (i == 2) {
+            ref = "https://shopee.vn/search?keyword=" + keyword
+
+        } else {
+            ref = "https://shopee.vn/search?keyword=" + keyword + "page=" + i
+        }
+
+        ref = encodeURI(ref)
+
+        let str_request = `55b03${md5(search_api)}55b03`;
+        let if_none_match = `55b03-${md5(str_request)}`;
+
+        headersearch = {
+            'x-api-source': 'pc',
+            'x-shopee-language': 'vi',
+            'sec-ch-ua': '"Chromium";v="94", "Google Chrome";v="94", ";Not A Brand";v="99"',
+            'sec-ch-ua-mobile': '?0',
+            'x-api-source': 'pc',
+            'x-shopee-language': 'vi',
+            'x-requested-with': 'XMLHttpRequest',
+            'User-Agent': product.user_agent,
+            'if-none-match-': if_none_match,
+            'sec-ch-ua-platform': '"Windows"',
+            'accept': '*/*',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            'referer': 'https://shopee.vn/search?keyword=' + encodeURI(keyword),
+            'accept-language': 'en-US,en;q=0.9,vi;q=0.8',
+            'cookie': cookie1
+
+        }
+        let datatest
+        //console.log(search_api)
+        var data
+
+        await axios.get(search_api, {
+            timeout: 5000,
+            headers: headersearch
+        })
+            .then(function (response) {
+                data = response.data
+                // cookie3 = response.headers['set-cookie']
+                // console.log(cookie3)
+                // console.log(cookie1)
+            })
+            .catch(function (error) {
+                console.log(error);
+                viTriSanPham.vitri = "err"
+                viTriSanPham.trang = "err"
+                console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
+                return viTriSanPham
+            })
+
+        checkProduct = 0
+        try {
+            if (data.items.length > 0) {
+                console.log("Trang: " + i + "  --  " + productId + "  -- Tong san pham tren trang: " + data.items.length)
+                let itemid3 = ""
+                itemid3 = data.items[0].item_basic.itemid
+
+                //console.log("----" + itemid3)
+
+                data.items.forEach((item, index) => {
+
+                    if (item.item_basic.itemid == productId && item.ads_keyword == null) {
+                        viTriSanPham = {
+                            trang: i,
+                            vitri: index + 1
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            viTriSanPham.vitri = "err"
+            viTriSanPham.trang = "err"
+            console.log(" ---------- Lỗi khi lấy check vị trí sản phẩm ----------");
+            console.log(error)
+
+        }
+
+        if (viTriSanPham.trang > 0 || viTriSanPham.vitri == "err") {
+            break;
+        }
+
+    }
+    console.log(" ------ Vị trí sản phẩm: vị trí: " + viTriSanPham.vitri + " - Trang: " + viTriSanPham.trang)
+    return viTriSanPham
+
+}
+
 (async () => {
 
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
