@@ -1733,11 +1733,12 @@ runAllTime = async () => {
     }
     if (dataShopee == 1111) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu khách hàng")
-        await sleep(60000)
+        await sleep(150000)
         return
     }
     if (!dataShopee.data) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
+        await sleep(150000)
         return
     }
     data = dataShopee.data
@@ -1820,7 +1821,7 @@ runAllTime = async () => {
         let keywords = data_for_tab.product_for_sub_account
         if (keywords.length == 0) {
             console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu từ khoá")
-            await sleep(60000)
+            await sleep(150000)
             return
         }
 
