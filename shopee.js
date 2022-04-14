@@ -1733,12 +1733,17 @@ runAllTime = async () => {
     }
     if (dataShopee == 1111) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu khách hàng")
-        await sleep(150000)
+        await sleep(300000)
+        return
+    }
+    if (dataShopee == 2222) {
+        console.log(moment().format("hh:mm:ss") + " - Không có tài khoản clone")
+        await sleep(300000)
         return
     }
     if (!dataShopee.data) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
-        await sleep(150000)
+        await sleep(300000)
         return
     }
     data = dataShopee.data
