@@ -388,11 +388,12 @@ commentFeed = async (cookies, shopee_feed, proxy) => {
         //proxy: false,
         data: data
     };
-
+    
     await axios(config)
         .then(function (response) {
             result = response.data
             console.log("Comment feed: " + feed_link + " --- " + result.msg);
+           
         })
         .catch(function (error) {
             console.log(error);

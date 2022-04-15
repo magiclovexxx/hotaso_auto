@@ -1311,6 +1311,82 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
 
 }
 
+updateAction = async (limit) => {
+    // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+    // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+    product9={
+        id: '281',
+        uid: '6585',
+        campaign_name: '14-04-2022',
+        campaign_desc: 'Mimoo-hl',
+        campaign_group_id: '',
+        campaign_count: null,
+        start_date: '2022-04-14 00:00:00',
+        end_date: '2022-04-16 00:00:00',
+        status: '1',
+        update_time: '2022-04-16 02:04:49',
+        created: '2022-04-14 13:08:59',
+        shop_id: null,
+        feed_link: 'https://feeds.shopee.vn/share/AIqvf_ekBgCZr8ABAAAAAA==',
+        feed_name: '14-04-2022',
+        feed_like: '10',
+        feed_time: '17280',
+        feed_comment: '50',
+        feed_content: 'Áo đẹp lắm ạ mn e mua lần 2 dùng okkk la luôn em 1m5 50kg mang size L đẹp lắm ạ nên mua nha',
+        content_cat: '332',
+        feed_hashtag: '',
+        hashtag_cat: '341',
+        feed_mention: [ 'bongbishop.thanhhuyen',
+        'phuongnbngoc93',
+        'haly_rosi0711',
+        'tienan.92' ],
+        mention_cat: '386',
+        count_like: '14',
+        count_comment: '41',
+        campaign_id: '197',
+        feed_start_date: '2022-04-14 11:35:00',
+        feed_end_date: '2022-04-16 11:35:00',
+        feed_color: '#ff0000',
+        feed_id: '281',
+        username: 'longluong_pgbo',
+        password: 'Mwuunprmona',
+        clone_id: '102781',
+        shopee_point: {
+          heart_product: '15',
+          follow_shop: '30',
+          heart_shop: '15',
+          add_cart: '30',
+          view_shop: '15',
+          order: '50',
+          view_review: '15',
+          view_product: '15',
+          search: '15',
+          feed_like: 5,
+          feed_comment: 5,
+          report_shop: 20
+        },
+        slave: '10002',
+        action: 'comment_feed'
+      }
+    await axios.post("https://beta.hotaso.vn/api_user/updateActions", {
+        data: product9,
+        timeout: 50000
+    },
+        {
+            // httpsAgent: httpsAgent
+        })
+        .then(function (response) {
+           
+            console.log(response.data)
+            return true
+        })
+        .catch(async function (error) {
+            console.log(error);
+           
+
+        });
+}
+
 (async () => {
 
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -1325,7 +1401,7 @@ const timViTriTrangSanPhamTheoTuKhoa = async (product, cookies, maxPage) => {
     // proxy = await proxy3g()
     // console.log(proxy)
     //await pptr()
-    await update_actions()
+    await updateAction(3)
     //await thaTimSanPham()
     //await test_post()
     //await disconnect()

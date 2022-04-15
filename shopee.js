@@ -677,6 +677,7 @@ updateAction = async (product9, limit) => {
         })
         .then(function (response) {
             console.log(moment().format("hh:mm:ss") + " - Update action: " + product9.action + " = " + response.data);
+            console.log(response.data)
             return true
         })
         .catch(async function (error) {
@@ -2022,7 +2023,9 @@ runAllTime = async () => {
                                                     productForUser1.action = "comment_feed"
 
                                                     productForUser1.feed_content = data_feed_1.feed_content
-
+                                                    productForUser1.feed_mention = data_feed_1.feed_mention
+                                                    productForUser1.feed_hashtag = data_feed_1.feed_hashtag
+                                                    console.log(data_feed_1.feed_mention)
                                                     await updateActions(productForUser1, 10)
                                                 }
                                             } else {
