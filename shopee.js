@@ -140,7 +140,7 @@ loginShopee = async (page, accounts) => {
                 return 2
             }
 
-            let checkblock = await page.$('[role="alert"]')
+            let checkblock = await page.$$('svg>path[clip-rule="evenodd"]')
 
             if (checkblock) {
                 console.log("account bị khoá")
