@@ -1540,7 +1540,14 @@ gen_page = async (browser, option) => {
     // }
 
     if (network == "proxy") {
-        let proxy_pass = proxy1.proxy_password.split("\r")[0]
+        
+        let proxy_pass
+        try {
+            proxy_pass = proxy1.proxy_password.split("\r")[0]
+        } catch (error) {
+            proxy_pass = proxy1.proxy_password
+        }
+        
         console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
         await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
     }
@@ -1850,7 +1857,11 @@ runAllTime = async () => {
 
         subAccount[0] = acc.username
         subAccount[2] = acc.id
-        subAccount[1] = acc.password.split("\r")[0]
+        try {
+            subAccount[1] = acc.password.split("\r")[0]
+        } catch (error) {
+            subAccount[1] = acc.password
+        }        
 
         if (!acc.user_agent) {
             user_agent = randomUseragent.getRandom(function (ua) {
