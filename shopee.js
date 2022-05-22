@@ -136,14 +136,14 @@ loginShopee = async (page, accounts) => {
             let checkcode = await page.$$('[autocomplete="one-time-code"]')
 
             if (checkcode.length) {
-                console.log("account bi khoá")
+                console.log("account bi khoá 1")
                 return 2
             }
 
             let checkblock = await page.$$('form>div>div>div>div>svg>path[clip-rule="evenodd"]')
 
-            if (checkblock) {
-                console.log("account bị khoá")
+            if (checkblock.length) {
+                console.log("account bị khoá 2")
                 return 2
             }
 
@@ -155,7 +155,7 @@ loginShopee = async (page, accounts) => {
                     return titles
                 })
 
-                if (checkblock3 == "Tài khoản đã bị cấm") {
+                if (checkblock3 == "Tài khoản đã bị cấm 3") {
                     console.log("account bị khoá")
                     return 2
                 }
