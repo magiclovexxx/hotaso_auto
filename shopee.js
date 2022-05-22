@@ -1749,6 +1749,11 @@ runAllTime = async () => {
         await sleep(300000)
         return
     }
+    if (dataShopee == 3333) {
+        console.log(moment().format("hh:mm:ss") + " - Không có proxy")
+        await sleep(300000)
+        return
+    }
     if (!dataShopee.data) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
         await sleep(300000)
