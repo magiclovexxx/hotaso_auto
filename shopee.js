@@ -28,6 +28,7 @@ slavenumber = process.env.SLAVE
 account_check = process.env.ACCOUNT_CHECK
 product_check = process.env.PRODUCT_CHECK
 keyword_check = process.env.KEYWORD_CHECK
+pending_check = process.env.PENDING
 
 chromiumDir = process.env.CHROMIUM_DIR                     // Đường dẫn thư mục chromium sẽ khởi chạy
 let profileDir = process.env.PROFILE_DIR
@@ -1049,13 +1050,13 @@ action_report_shop = async (page, report_shop) => {
             //await input.uploadFile(`./a.jpg`)
         }
 
-        await page.waitForTimeout(9999999)
+      
         return 1
 
     } catch (error) {
         console.log(error)
         await updateErrorLogs(error, slavenumber)
-        await page.waitForTimeout(9999999)
+      
     }
 }
 
@@ -1927,6 +1928,12 @@ runAllTime = async () => {
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            
+            if(pending_check == 1){
+                console.log("Pending check --- : " + pending_check)
+                await page.waitForTimeout(9999999)
+            }
+            
             await page.waitForTimeout(timeout)
 
             // login account shopee                    
@@ -1972,7 +1979,7 @@ runAllTime = async () => {
                     });
                 await browser.close();
                 console.log(" ----- KhởI đÔng lại ---- ")
-                shell.exec('pm2 restart all');
+                return
             }
             if (checklogin) {
 
