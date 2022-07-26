@@ -193,7 +193,7 @@ loginShopee = async (page, accounts) => {
 searchKeyWord = async (page, keyword) => {
     try {
 
-        await page.waitForSelector('.shopee-searchbar-input__input')
+    //    await page.waitForSelector('.shopee-searchbar-input__input')
 
         let checkSearchInput = await page.$$('.shopee-searchbar-input__input');
         if (checkSearchInput.length) {
@@ -2049,26 +2049,26 @@ runAllTime = async () => {
                             }
                         }
 
-                        // try {
-                        //     let ref = await page.url()
-                        //     start_check_time = Date.now()
-                        //     await page.goto('https://shopee.vn', {
-                        //         waitUntil: "networkidle0",
-                        //         timeout: 50000,
-                        //         referer: ref
-                        //     })
-                        //     stop_check_time = Date.now()
-                        //     check_time = stop_check_time - start_check_time
-                        //     await updateProxy(proxy.proxy_ip + ":OK", check_time)
+                        try {
+                            let ref = await page.url()
+                            start_check_time = Date.now()
+                            await page.goto('https://shopee.vn', {
+                                waitUntil: "networkidle0",
+                                timeout: 50000,
+                                referer: ref
+                            })
+                            stop_check_time = Date.now()
+                            check_time = stop_check_time - start_check_time
+                        //    await updateProxy(proxy.proxy_ip + ":OK", check_time)
 
-                        // } catch (err) {
-                        //     //HERE
-                        //     stop_check_time = Date.now()
-                        //     check_time = stop_check_time - start_check_time
-                        //     await updateProxy(proxy.proxy_ip, check_time)
-                        //     console.error(err);
-                        //     //continue
-                        // }
+                        } catch (err) {
+                            //HERE
+                            stop_check_time = Date.now()
+                            check_time = stop_check_time - start_check_time
+                        //    await updateProxy(proxy.proxy_ip, check_time)
+                            console.error(err);
+                            //continue
+                        }
 
                         let productForUser                     // Mảng chứa thông tin sản phẩm, từ khoá cần tương tác
                         let check_like = 0
@@ -2101,12 +2101,7 @@ runAllTime = async () => {
                         //     productForUser.product_link = "https://shopee.vn/Qu%E1%BA%A7n-L%C3%B3t-N%E1%BB%AF-Cotton-kh%C3%A1ng-khu%E1%BA%A9n-tho%C3%A1ng-m%C3%A1t-%C4%91%C3%ADnh-n%C6%A1-duy%C3%AAn-d%C3%A1ng-%C4%91i%E1%BB%87u-%C4%91%C3%A0-MITEVA-QL06-i.406672344.5983738410"
                         // }
                         let viTriSanPhamTrang1 = false;
-                        let url_trang_tim_kiem_san_pham = "";
-                        let danh_sach_san_pham_chua_tha_tim = [];
-                        let getViTriSanPham = {
-                            trang: false,
-                            vitri: false
-                        };
+                       
                         let shopInfo3 = {
                             cover: false,
                             name: false,
@@ -2257,28 +2252,28 @@ runAllTime = async () => {
                         console.log("product id: " + productForUser.product_id)
                         console.log("Từ khoá: " + productForUser.keyword)
 
-                        if (data_report_shop == 1) {
-                            result_report = 0
-                            check_report = 0
+                        // if (data_report_shop == 1) {
+                        //     result_report = 0
+                        //     check_report = 0
 
-                            if (Number(data_report_shop.report_number) > Number(data_report_shop.report_count)) {
-                                console.log(moment().format("hh:mm:ss") + " - REPORT SHOP")
-                                check_report = await action_report_shop(page, data_report_shop)
-                                if (check_report == 1) {
-                                    result_report = result_report + 1
-                                }
-                            }
+                        //     if (Number(data_report_shop.report_number) > Number(data_report_shop.report_count)) {
+                        //         console.log(moment().format("hh:mm:ss") + " - REPORT SHOP")
+                        //         check_report = await action_report_shop(page, data_report_shop)
+                        //         if (check_report == 1) {
+                        //             result_report = result_report + 1
+                        //         }
+                        //     }
 
-                            console.log(moment().format("hh:mm:ss") + " - Kết quả report")
-                            if (result_report) {
-                                console.log("Cập nhật action:  report_shop")
-                                productForUser.action = "report_shop"
-                                productForUser.result = result_report
-                                productForUser.report_id = data_report_shop.id
+                        //     console.log(moment().format("hh:mm:ss") + " - Kết quả report")
+                        //     if (result_report) {
+                        //         console.log("Cập nhật action:  report_shop")
+                        //         productForUser.action = "report_shop"
+                        //         productForUser.result = result_report
+                        //         productForUser.report_id = data_report_shop.id
 
-                                await updateActions(productForUser, 10)
-                            }
-                        }
+                        //         await updateActions(productForUser, 10)
+                        //     }
+                        // }
 
                         check_point = await check_point_hour(productForUser.uid)
                         if (check_point) {
@@ -2318,13 +2313,14 @@ runAllTime = async () => {
 
                         maxPage = parseInt(getProductPageTotal)
                         console.log(moment().format("hh:mm:ss") + " - Tổng số trang kết quả tìm kiếm: " + maxPage)
+                        trang_vi_tri_san_pham = false
 
                         if (productForUser.check_index < 6) {
 
                             let keyword_1 = productForUser.keyword.toLowerCase()                         
 
                             //------------------------------- Tìm vị trí sản phẩm ----------------------------------//
-                            trang_vi_tri_san_pham = false
+                            
                             for (let i = 0; i <= maxPage; i++) {
                                 let limit=60
                                 maxproduct = limit * (i - 1)
