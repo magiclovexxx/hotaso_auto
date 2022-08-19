@@ -99,6 +99,7 @@ logs = 1
 
 loginShopee = async (page, accounts) => {
 
+    
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
@@ -115,7 +116,7 @@ loginShopee = async (page, accounts) => {
                 referer: ref
             })
 
-            await page.waitForSelector('[name="loginKey"]')
+        //    await page.waitForSelector('[name="loginKey"]')
 
             await page.click('[name="loginKey"]')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -131,6 +132,12 @@ loginShopee = async (page, accounts) => {
             const loginbutton = await page.$$('div>button:nth-child(4)');
             if (loginbutton.length) {
                 await loginbutton[0].click()
+
+                // get_account_info = await (await page.waitForResponse((res) => {
+                //     return (res.status() == 200 && res.url().includes('/account/login_by_password') && res.request().method() == 'GET');
+                // }, { timeout: 180000 })).json();
+
+                
             }
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(5000)
@@ -165,6 +172,19 @@ loginShopee = async (page, accounts) => {
                     return 3
                 }
             }
+
+            let check_account_checkpoint = await page.$x("//div[contains(text(), 'Xác minh tài khoản')]");
+            if (check_account_checkpoint.length > 0) {
+                console.log("account bị checkpoint")
+                return 5
+            }
+
+          
+            if (pending_check == 1) {
+                console.log("Pending check --- : " + pending_check)
+                await page.waitForTimeout(9999999)
+            }
+
         } catch (e) {
             console.log(e)
             console.log("Đăng nhập lỗi")
@@ -1915,10 +1935,10 @@ runAllTime = async () => {
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
 
-            if (pending_check == 1) {
-                console.log("Pending check --- : " + pending_check)
-                await page.waitForTimeout(9999999)
-            }
+            // if (pending_check == 1) {
+            //     console.log("Pending check --- : " + pending_check)
+            //     await page.waitForTimeout(9999999)
+            // }
 
             await page.waitForTimeout(timeout)
 
@@ -1928,7 +1948,7 @@ runAllTime = async () => {
 
             console.log(moment().format("hh:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
 
-            if (checklogin == 2 || checklogin == 3) {
+            if (checklogin == 2 || checklogin == 3  || checklogin == 5) {
                 console.log(moment().format("hh:mm:ss") + " - Cập nhật tài khoản lỗi")
                 accountInfo = {
                     user: subAccount[0],
@@ -1943,6 +1963,11 @@ runAllTime = async () => {
                 if (checklogin == 3) {
                     accountInfo.message = "Sai thông tin đăng nhập"
                     accountInfo.status = 3
+                }
+
+                if (checklogin == 5) {
+                    accountInfo.message = "checkpoint"
+                    accountInfo.status = 5
                 }
 
                 await axios.get(shopee_account_update_url, {
@@ -2065,7 +2090,7 @@ runAllTime = async () => {
                             //HERE
                             stop_check_time = Date.now()
                             check_time = stop_check_time - start_check_time
-                        //    await updateProxy(proxy.proxy_ip, check_time)
+                        //hị    await updateProxy(proxy.proxy_ip, check_time)
                             console.error(err);
                             //continue
                         }
