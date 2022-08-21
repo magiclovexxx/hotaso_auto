@@ -176,14 +176,15 @@ loginShopee = async (page, accounts) => {
             let check_account_checkpoint = await page.$x("//div[contains(text(), 'Xác minh tài khoản')]");
             if (check_account_checkpoint.length > 0) {
                 console.log("account bị checkpoint")
+                if (pending_check == 1) {
+                    console.log("Pending check --- : " + pending_check)
+                    await page.waitForTimeout(9999999)
+                }
                 return 5
             }
 
           
-            if (pending_check == 1) {
-                console.log("Pending check --- : " + pending_check)
-                await page.waitForTimeout(9999999)
-            }
+           
 
         } catch (e) {
             console.log(e)
@@ -1493,7 +1494,9 @@ gen_browser = async (option) => {
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
         '--lang=' + user_lang,
-        '--disable-reading-from-canvas'
+        '--disable-reading-from-canvas', 
+        `--disable-extensions-except=${__dirname}/chrome-extensions/AudioContext-Fingerprint-Defender,${__dirname}/chrome-extensions/Canvas-Fingerprint-Defender,${__dirname}/chrome-extensions/Font-Fingerprint-Defender,${__dirname}/chrome-extensions/WebGL-Fingerprint-Defender,${__dirname}/chrome-extensions/WebRTC-Control`,
+                `--load-extension=${__dirname}/chrome-extensions/AudioContext-Fingerprint-Defender,${__dirname}/chrome-extensions/Canvas-Fingerprint-Defender,${__dirname}/chrome-extensions/Font-Fingerprint-Defender,${__dirname}/chrome-extensions/WebGL-Fingerprint-Defender,${__dirname}/chrome-extensions/WebRTC-Control`,
     ]
 
     // if(mode==="DEV"){
