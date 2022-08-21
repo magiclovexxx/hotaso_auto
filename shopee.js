@@ -1924,7 +1924,7 @@ runAllTime = async () => {
                 let ref = await page.url()
                 await page.goto('https://shopee.vn', {
                     waitUntil: "networkidle0",
-                    timeout: 50000,
+                    timeout: 60000,
                     referer: ref
                 })
                 //await updateProxy(proxy.proxy_ip + ":OK")
