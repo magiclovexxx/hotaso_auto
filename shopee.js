@@ -1165,16 +1165,21 @@ removeCart = async (page) => {
             })
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
-            let check_product_cart = await page.$x("//button[contains(text(), 'Delete')]");
-            let remove_order = check_product_cart.length - 1
-            console.log("Số đơn hàng cần xoá: " + remove_order)
+            let check_product_cart = await page.$x("//button[contains(text(), 'Xoá')]");
+            if(check_product_cart.length > 30){
 
-            if (remove_order > 0) {
-                for (let i = 0; i < remove_order; i++) {
-                    await check_product_cart[i].click();
-                    await page.waitForTimeout(delay(3000, 2000))
+            let remove_random = Math.floor(Math.random() * (30 - 10)) + 10;
+            let remove_order = check_product_cart.length - remove_random
+
+            console.log("Số đơn hàng cần xoá: " + remove_order)           
+                if (remove_order > 0) {
+                    for (let i = 0; i < remove_order; i++) {
+                        await check_product_cart[i].click();
+                        await page.waitForTimeout(delay(3000, 2000))
+                    }
                 }
             }
+           
         }
     } catch (error) {
         console.log(error)
@@ -2349,23 +2354,23 @@ runAllTime = async () => {
 
                             //------------------------------- Tìm vị trí sản phẩm ----------------------------------//
                             
-                            // for (let i = 0; i <= maxPage; i++) {
-                            //     let limit=60
-                            //     maxproduct = limit * (i - 1)
-                            //     search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=" + keyword_1 + "&limit="+limit + "&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
-                            //     search_api = encodeURI(search_api)
+                            for (let i = 0; i <= maxPage; i++) {
+                                let limit=60
+                                maxproduct = limit * (i - 1)
+                                search_api = "https://shopee.vn/api/v4/search/search_items?by=relevancy&keyword=" + keyword_1 + "&limit="+limit + "&newest=" + maxproduct + "&order=desc&page_type=search&version=2"
+                                search_api = encodeURI(search_api)
                                 
-                            //     console.log(search_api + " -- " + i)
+                                console.log(search_api + " -- " + i)
 
-                            //     await page.goto(search_api)
+                                await page.goto(search_api)
 
-                            //     if(viTriSanPhamTrang1 != false){
-                            //         trang_vi_tri_san_pham = i
-                            //         break;
-                            //     }
+                                if(viTriSanPhamTrang1 != false){
+                                    trang_vi_tri_san_pham = i
+                                    break;
+                                }
                                 
 
-                            // }
+                            }
 
                             if (trang_vi_tri_san_pham != false) {
                                 productForUser.trang = trang_vi_tri_san_pham
