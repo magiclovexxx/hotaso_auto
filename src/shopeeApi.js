@@ -34,8 +34,8 @@ followShop = async (cookies, ref, shopId) => {
 
     await axios(config)
         .then(function (response) {
-            console.log("--- follow shop API Thành công ---");
-            //console.log(response.data);
+            console.log("--- follow shop API ---");
+            console.log(response.data);
             result = response.data
         })
         .catch(function (error) {
