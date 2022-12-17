@@ -1771,7 +1771,7 @@ runAllTime = async () => {
         await sleep(300000)
         return
     }
-    if (!error_code.data) {
+    if (!error_code) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
         await sleep(300000)
         return
@@ -2712,7 +2712,7 @@ if (mode === "DEV") {
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
-            shell.exec('pm2 restart all');
+           
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
