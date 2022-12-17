@@ -1764,6 +1764,7 @@ runAllTime = async () => {
     if (error_code == 2222) {
         console.log(moment().format("hh:mm:ss") + " - Không có tài khoản clone")
         shell.exec('shutdown');
+        await sleep(300000)
         return
     }
     if (error_code == 3333) {
