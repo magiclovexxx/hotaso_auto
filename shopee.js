@@ -2190,6 +2190,7 @@ runAllTime = async () => {
 
                                 productInfo1 = await resp.json()
                                 productInfo2 = productInfo1.items
+                                console.log(productInfo2)
                                 if (productInfo2.length) {
                                     console.log(moment().format("hh:mm:ss") + " - Tổng sản phẩm trên trang: " + productInfo2.length + " -- " + productInfo2[0].itemid)
 
