@@ -1718,6 +1718,8 @@ runAllTime = async () => {
         return false
     }
 
+    // console.log(dataShopee.version)
+    // process.exit()
     if (dataShopee.version) {
 
         // get version hien tai trong file version.txt
@@ -1753,22 +1755,23 @@ runAllTime = async () => {
             }
         }
     }
-    if (dataShopee == 1111) {
+    let error_code = dataShopee.code
+    if (error_code == 1111) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu khách hàng")
         await sleep(300000)
         return
     }
-    if (dataShopee == 2222) {
+    if (error_code == 2222) {
         console.log(moment().format("hh:mm:ss") + " - Không có tài khoản clone")
         shell.exec('shutdown');
         return
     }
-    if (dataShopee == 3333) {
+    if (error_code == 3333) {
         console.log(moment().format("hh:mm:ss") + " - Không có proxy")
         await sleep(300000)
         return
     }
-    if (!dataShopee.data) {
+    if (!error_code.data) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
         await sleep(300000)
         return
