@@ -1760,7 +1760,7 @@ runAllTime = async () => {
     }
     if (dataShopee == 2222) {
         console.log(moment().format("hh:mm:ss") + " - Không có tài khoản clone")
-        shell.exec('pm2 stop shopee;');
+        shell.exec('shutdown');
         return
     }
     if (dataShopee == 3333) {
