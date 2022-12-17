@@ -9,6 +9,7 @@ const moment = require('moment')
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
+const {executablePath} = require('puppeteer')
 
 var cron = require('node-cron');
 var randomMac = require('random-mac');
@@ -1516,7 +1517,7 @@ gen_browser = async (option) => {
     }
 
     const browser = await puppeteer.launch({
-        //executablePath: chromiumDir,
+        executablePath: executablePath(),
         headless: headless_mode,
         devtools: false,
         userDataDir: `${profile_dir}`,

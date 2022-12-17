@@ -2,12 +2,6 @@ html, body {
   height: 0;
 }
 
-@-moz-document url-prefix() {
-  html, body {
-    height: auto;
-  }
-}
-
 body {
   border: 0;
   margin: 0;
@@ -46,19 +40,9 @@ body {
 }
 
 .content .name {
-  color: #888;
-  line-height: 16px;
+  color: #777;
   user-select: none;
   text-align: center;
-}
-
-.content .icon {
-  width: 32px;
-  font-size: 13px;
-  cursor: pointer;
-  user-select: none;
-  text-align: center;
-  font-family: monospace;
 }
 
 .content .buttons {
@@ -66,13 +50,39 @@ body {
   border-left: solid 1px rgba(0,0,0,0.1);
 }
 
-.content .button {
-  padding: 0 5px;
+.content .buttons .icon {
+  width: 32px;
+  font-size: 17px;
   cursor: pointer;
+  line-height: 37px;
   user-select: none;
+  text-align: center;
+  font-family: monospace;
+}
+
+.content .buttons .icon svg {
+  fill: #777;
+  margin: -5px 0 0 0;
+  vertical-align: middle;
+}
+
+.content .buttons .button {
+  padding: 0;
+  cursor: pointer;
+  text-indent: 5px;
+  user-select: none;
+}
+
+.content .buttons tr {
   transition: 300ms ease all;
 }
 
-.content .button:hover {
+.content .buttons tr:hover {
   background-color: rgba(0,0,0,0.1);
+}
+
+@-moz-document url-prefix() {
+  html, body {
+    height: auto;
+  }
 }

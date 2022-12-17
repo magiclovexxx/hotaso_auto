@@ -1,25 +1,38 @@
 var background = (function () {
-  var tmp = {};
-  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    for (var id in tmp) {
+  let tmp = {};
+  /*  */
+  chrome.runtime.onMessage.addListener(function (request) {
+    for (let id in tmp) {
       if (tmp[id] && (typeof tmp[id] === "function")) {
         if (request.path === "background-to-page") {
-          if (request.method === id) tmp[id](request.data);
+          if (request.method === id) {
+            tmp[id](request.data);
+          }
         }
       }
     }
   });
   /*  */
   return {
-    "receive": function (id, callback) {tmp[id] = callback},
-    "send": function (id, data) {chrome.runtime.sendMessage({"path": "page-to-background", "method": id, "data": data})}
+    "receive": function (id, callback) {
+      tmp[id] = callback;
+    },
+    "send": function (id, data) {
+      chrome.runtime.sendMessage({
+        "method": id, 
+        "data": data,
+        "path": "page-to-background"
+      }, function () {
+        return chrome.runtime.lastError;
+      });
+    }
   }
 })();
 
 var inject = function () {
-  var rand = {
+  let rand = {
     "noise": function () {
-      var SIGN = Math.random() < Math.random() ? -1 : 1;
+      let SIGN = Math.random() < Math.random() ? -1 : 1;
       return Math.floor(Math.random() + SIGN * Math.random());
     },
     "sign": function () {
@@ -30,46 +43,51 @@ var inject = function () {
   };
   //
   Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
-    get () {
-      const height = Math.floor(this.getBoundingClientRect().height);
-      const valid = height && rand.sign() === 1;
-      const result = valid ? height + rand.noise() : height;
-      //
-      if (valid && result !== height) {
-        window.top.postMessage("font-fingerprint-defender-alert", '*');
+    "get": new Proxy(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetHeight").get, {
+      apply(target, self, args) {
+        const height = Math.floor(self.getBoundingClientRect().height);
+        const valid = height && rand.sign() === 1;
+        const result = valid ? height + rand.noise() : height;
+        //
+        if (valid && result !== height) {
+          window.top.postMessage("font-fingerprint-defender-alert", '*');
+        }
+        //
+        return result;
       }
-      //
-      return result;
-    }
+    })
   });
   //
   Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
-    get () {
-      const width = Math.floor(this.getBoundingClientRect().width);
-      const valid = width && rand.sign() === 1;
-      const result = valid ? width + rand.noise() : width;
-      //
-      if (valid && result !== width) {
-        window.top.postMessage("font-fingerprint-defender-alert", '*');
+    "get": new Proxy(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetWidth").get, {
+      apply(target, self, args) {
+        const width = Math.floor(self.getBoundingClientRect().width);
+        const valid = width && rand.sign() === 1;
+        const result = valid ? width + rand.noise() : width;
+        //
+        if (valid && result !== width) {
+          window.top.postMessage("font-fingerprint-defender-alert", '*');
+        }
+        //
+        return result;
       }
-      //
-      return result;
-    }
+    })
   });
-  //
+  // Note: this variable is for targeting sandboxed iframes
   document.documentElement.dataset.fbscriptallow = true;
 };
 
-var script_1 = document.createElement("script");
+let script_1 = document.createElement("script");
 script_1.textContent = "(" + inject + ")()";
 document.documentElement.appendChild(script_1);
 script_1.remove();
 
 if (document.documentElement.dataset.fbscriptallow !== "true") {
-  var script_2 = document.createElement("script");
+  let script_2 = document.createElement("script");
+  //
   script_2.textContent = `{
     const iframes = [...window.top.document.querySelectorAll("iframe[sandbox]")];
-    for (var i = 0; i < iframes.length; i++) {
+    for (let i = 0; i < iframes.length; i++) {
       if (iframes[i].contentWindow) {
         if (iframes[i].contentWindow.HTMLElement) {
           iframes[i].contentWindow.HTMLElement.prototype.offsetWidth = HTMLElement.prototype.offsetWidth;
@@ -85,6 +103,8 @@ if (document.documentElement.dataset.fbscriptallow !== "true") {
 
 window.addEventListener("message", function (e) {
   if (e.data && e.data === "font-fingerprint-defender-alert") {
-    background.send("fingerprint", {"host": document.location.host});
+    background.send("fingerprint", {
+      "host": document.location.host
+    });
   }
 }, false);

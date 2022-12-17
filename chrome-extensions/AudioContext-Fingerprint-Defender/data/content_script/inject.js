@@ -1,18 +1,31 @@
 var background = (function () {
-  var tmp = {};
-  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    for (var id in tmp) {
+  let tmp = {};
+  /*  */
+  chrome.runtime.onMessage.addListener(function (request) {
+    for (let id in tmp) {
       if (tmp[id] && (typeof tmp[id] === "function")) {
         if (request.path === "background-to-page") {
-          if (request.method === id) tmp[id](request.data);
+          if (request.method === id) {
+            tmp[id](request.data);
+          }
         }
       }
     }
   });
   /*  */
   return {
-    "receive": function (id, callback) {tmp[id] = callback},
-    "send": function (id, data) {chrome.runtime.sendMessage({"path": "page-to-background", "method": id, "data": data})}
+    "receive": function (id, callback) {
+      tmp[id] = callback;
+    },
+    "send": function (id, data) {
+      chrome.runtime.sendMessage({
+        "method": id, 
+        "data": data,
+        "path": "page-to-background"
+      }, function () {
+        return chrome.runtime.lastError;
+      });
+    }
   }
 })();
 
@@ -20,14 +33,15 @@ var inject = function () {
   const context = {
     "BUFFER": null,
     "getChannelData": function (e) {
-      const getChannelData = e.prototype.getChannelData;
-      Object.defineProperty(e.prototype, "getChannelData", {
-        "value": function () {
-          const results_1 = getChannelData.apply(this, arguments);
+      e.prototype.getChannelData = new Proxy(e.prototype.getChannelData, {
+        apply(target, self, args) {
+          const results_1 = Reflect.apply(target, self, args);
+          //
           if (context.BUFFER !== results_1) {
             context.BUFFER = results_1;
             window.top.postMessage("audiocontext-fingerprint-defender-alert", '*');
-            for (var i = 0; i < results_1.length; i += 100) {
+            //
+            for (let i = 0; i < results_1.length; i += 100) {
               let index = Math.floor(Math.random() * i);
               results_1[index] = results_1[index] + Math.random() * 0.0000001;
             }
@@ -38,16 +52,16 @@ var inject = function () {
       });
     },
     "createAnalyser": function (e) {
-      const createAnalyser = e.prototype.__proto__.createAnalyser;
-      Object.defineProperty(e.prototype.__proto__, "createAnalyser", {
-        "value": function () {
-          const results_2 = createAnalyser.apply(this, arguments);
-          const getFloatFrequencyData = results_2.__proto__.getFloatFrequencyData;
-          Object.defineProperty(results_2.__proto__, "getFloatFrequencyData", {
-            "value": function () {
+      e.prototype.__proto__.createAnalyser = new Proxy(e.prototype.__proto__.createAnalyser, {
+        apply(target, self, args) {
+          const results_2 = Reflect.apply(target, self, args);
+          //
+          results_2.__proto__.getFloatFrequencyData = new Proxy(results_2.__proto__.getFloatFrequencyData, {
+            apply(target, self, args) {
+              const results_3 = Reflect.apply(target, self, args);
               window.top.postMessage("audiocontext-fingerprint-defender-alert", '*');
-              const results_3 = getFloatFrequencyData.apply(this, arguments);
-              for (var i = 0; i < arguments[0].length; i += 100) {
+              //
+              for (let i = 0; i < arguments[0].length; i += 100) {
                 let index = Math.floor(Math.random() * i);
                 arguments[0][index] = arguments[0][index] + Math.random() * 0.1;
               }
@@ -64,22 +78,23 @@ var inject = function () {
   //
   context.getChannelData(AudioBuffer);
   context.createAnalyser(AudioContext);
-  context.getChannelData(OfflineAudioContext);
   context.createAnalyser(OfflineAudioContext);
   //
+  // Note: this variable is for targeting sandboxed iframes
   document.documentElement.dataset.acxscriptallow = true;
 };
 
-var script_1 = document.createElement("script");
+let script_1 = document.createElement("script");
 script_1.textContent = "(" + inject + ")()";
 document.documentElement.appendChild(script_1);
 script_1.remove();
 
 if (document.documentElement.dataset.acxscriptallow !== "true") {
-  var script_2 = document.createElement("script");
+  let script_2 = document.createElement("script");
+  //
   script_2.textContent = `{
     const iframes = [...window.top.document.querySelectorAll("iframe[sandbox]")];
-    for (var i = 0; i < iframes.length; i++) {
+    for (let i = 0; i < iframes.length; i++) {
       if (iframes[i].contentWindow) {
         if (iframes[i].contentWindow.AudioBuffer) {
           if (iframes[i].contentWindow.AudioBuffer.prototype) {
@@ -88,7 +103,7 @@ if (document.documentElement.dataset.acxscriptallow !== "true") {
             }
           }
         }
-
+        //
         if (iframes[i].contentWindow.AudioContext) {
           if (iframes[i].contentWindow.AudioContext.prototype) {
             if (iframes[i].contentWindow.AudioContext.prototype.__proto__) {
@@ -98,7 +113,7 @@ if (document.documentElement.dataset.acxscriptallow !== "true") {
             }
           }
         }
-
+        //
         if (iframes[i].contentWindow.OfflineAudioContext) {
           if (iframes[i].contentWindow.OfflineAudioContext.prototype) {
             if (iframes[i].contentWindow.OfflineAudioContext.prototype.__proto__) {
@@ -108,7 +123,7 @@ if (document.documentElement.dataset.acxscriptallow !== "true") {
             }
           }
         }
-
+        //
         if (iframes[i].contentWindow.OfflineAudioContext) {
           if (iframes[i].contentWindow.OfflineAudioContext.prototype) {
             if (iframes[i].contentWindow.OfflineAudioContext.prototype.__proto__) {
@@ -128,6 +143,8 @@ if (document.documentElement.dataset.acxscriptallow !== "true") {
 
 window.addEventListener("message", function (e) {
   if (e.data && e.data === "audiocontext-fingerprint-defender-alert") {
-    background.send("fingerprint", {"host": document.location.host});
+    background.send("fingerprint", {
+      "host": document.location.host
+    });
   }
 }, false);

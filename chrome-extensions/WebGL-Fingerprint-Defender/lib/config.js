@@ -10,5 +10,5 @@ config.welcome = {
 config.notification = {
   "timeout": null,
   set show (val) {app.storage.write("notification", val)},
-  get show () {return app.storage.read("notification") !== undefined ? app.storage.read("notification") : true}
+  get show () {return app.storage.read("notification") !== undefined ? app.storage.read("notification") : false}
 };
