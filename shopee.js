@@ -2728,7 +2728,7 @@ if (mode === "DEV") {
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
-            shell.exec('pm2 restart all');
+           
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
