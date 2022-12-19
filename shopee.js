@@ -9,7 +9,7 @@ const moment = require('moment')
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
-const {executablePath} = require('puppeteer')
+const { executablePath } = require('puppeteer')
 
 var cron = require('node-cron');
 var randomMac = require('random-mac');
@@ -100,7 +100,6 @@ logs = 1
 
 loginShopee = async (page, accounts) => {
 
-
     let logincheck = await page.$$('.navbar__username');
 
     if (!logincheck.length) {
@@ -177,10 +176,7 @@ loginShopee = async (page, accounts) => {
             let check_account_checkpoint = await page.$x("//div[contains(text(), 'Xác minh tài khoản')]");
             if (check_account_checkpoint.length > 0) {
                 console.log("account bị checkpoint")
-                if (pending_check == 1) {
-                    console.log("Pending check --- : " + pending_check)
-                    await page.waitForTimeout(9999999)
-                }
+               
                 return 5
             }
 
@@ -211,6 +207,42 @@ loginShopee = async (page, accounts) => {
     }
 }
 
+check_captcha = async (page, accounts) =>{
+    let check_account_checkpoint = await page.$x("//div[contains(text(), 'Kéo sang phải để hoàn thiện bức hình')]");
+    if (check_account_checkpoint.length > 0) {
+        console.log("Tài khoản bị yêu cầu captcha: " + accounts[0])
+
+        accountInfo = {
+            user: accounts[0],
+            pass: accounts[1],
+        }
+
+        accountInfo.message = "Account bị check point"
+        accountInfo.status = 6
+
+        await axios.get(shopee_account_update_url, {
+            params: {
+                data: {
+                    dataToServer: accountInfo,
+                }
+            },
+            timeout: 5000
+        })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log("Không cập nhật được trạng thái tài khoản")
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
+    
+        console.log(" ----- KhởI đÔng lại ---- ")
+        return 1
+    }
+}
 
 searchKeyWord = async (page, keyword) => {
     try {
@@ -1172,12 +1204,12 @@ removeCart = async (page) => {
                 check_product_cart = await page.$x("//button[contains(text(), 'Xóa')]");
                 console.log("check btn Xóa: " + check_product_cart.length)
 
-                if(check_product_cart.length > 0){
+                if (check_product_cart.length > 0) {
                     await check_product_cart[0].click();
                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                     await page.waitForTimeout(timeout)
                 }
-               
+
             }
 
         }
@@ -1515,9 +1547,12 @@ gen_browser = async (option) => {
         param.push(proxy_for_slave)
         param.push('--ignore-certificate-errors')
     }
-
+   // chrome_dir = process.env.CHROME
+    //console.log("Chrome dir: " + chrome_dir)
     const browser = await puppeteer.launch({
         executablePath: executablePath(),
+        
+       // executablePath: chrome_dir,
         headless: headless_mode,
         devtools: false,
         userDataDir: `${profile_dir}`,
@@ -2150,7 +2185,7 @@ runAllTime = async () => {
                         //await page.setRequestInterception(true);
                         await page.on('response', async (resp) => {
                             let url = resp.url()
-                            let productInfo1, productInfo2                            
+                            let productInfo1, productInfo2
 
                             let checkUrlShop = url.split("shop/get_shop_base")
 
@@ -2190,8 +2225,8 @@ runAllTime = async () => {
                             if (checkUrlproduct.length > 1) {
 
                                 productInfo1 = await resp.json()
-                                
-                               // console.log(productInfo1)
+
+                                // console.log(productInfo1)
                                 if (productInfo1.items) {
                                     productInfo2 = productInfo1.items
 
@@ -2339,7 +2374,17 @@ runAllTime = async () => {
 
                         console.log(moment().format("hh:mm:ss") + " - TÌM KIẾM SẢN PHẨM")
 
-                        await sleep(7000)
+                        await sleep(5000)
+
+                        let check_captcha_1 = await check_captcha(page, subAccount)
+                        if(check_captcha_1 == 1){
+                            await browser.close();
+                            return
+                        }
+
+                        if (pending_check) {
+                            await sleep(70000000)
+                        }
 
                         let getProductPageTotal
                         try {
@@ -2375,7 +2420,7 @@ runAllTime = async () => {
                                 if (viTriSanPhamTrang1 != false) {
                                     productForUser.trang = i
                                     productForUser.vitri = viTriSanPhamTrang1
-    
+
                                     console.log(moment().format("hh:mm:ss") + " - Update kết quả vị trí sản phẩm: " + viTriSanPhamTrang1)
                                     productForUser.cookie = ""
                                     await axios.get(shopee_update_seo_san_pham_url, {
@@ -2393,12 +2438,12 @@ runAllTime = async () => {
                                             console.log(moment().format("hh:mm:ss") + " - Cập nhật SEO Sản phẩm thất bại")
                                         })
 
-                                        break;
+                                    break;
                                 }
 
                             }
 
-                            
+
 
                             if (trang_vi_tri_san_pham > 1) {
                                 pageUrl = trang_vi_tri_san_pham - 1
@@ -2700,7 +2745,7 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            
+
         }
     })
 };
@@ -2717,7 +2762,7 @@ if (mode === "DEV") {
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
-           
+
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
@@ -2731,10 +2776,10 @@ if (mode === "DEV") {
 
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
-            shell.exec('pm2 flush');            
+            shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
-           
+
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
