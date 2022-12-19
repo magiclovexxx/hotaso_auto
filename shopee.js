@@ -2730,7 +2730,8 @@ if (mode === "DEV") {
     (async () => {
 
         if (os_slave == "LINUX") {
-            shell.exec('pm2 flush');
+            shell.exec('rm -f core.*');
+            shell.exec('pm2 flush');            
             shell.exec('rm ~/.pm2/pm2.log');
             shell.exec('rm -rf ' + profileDir);
            
