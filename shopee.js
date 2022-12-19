@@ -2471,7 +2471,7 @@ runAllTime = async () => {
                             await page.waitForTimeout(5000)
                             console.log(moment().format("hh:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                             // console.log(getViTriSanPham)
-
+                           
                             if (viTriSanPhamTrang1 != false) {
 
                                 today = new Date().toLocaleString();
@@ -2546,6 +2546,13 @@ runAllTime = async () => {
                             }
                         }
 
+                        // check captcha
+                        check_captcha_1 = await check_captcha(page, subAccount)
+                        if(check_captcha_1 == 1){
+                            await browser.close();
+                            return
+                        }
+                        
 
                         if (check_product_exit === "Có tồn tại") {
                             try {
