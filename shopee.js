@@ -1547,17 +1547,29 @@ gen_browser = async (option) => {
         param.push(proxy_for_slave)
         param.push('--ignore-certificate-errors')
     }
-   // chrome_dir = process.env.CHROME
+    chrome_dir = process.env.CHROME
     //console.log("Chrome dir: " + chrome_dir)
-    const browser = await puppeteer.launch({
-        executablePath: executablePath(),
-        
-       // executablePath: chrome_dir,
-        headless: headless_mode,
-        devtools: false,
-        userDataDir: `${profile_dir}`,
-        args: param
-    });
+    let execute_path
+    if(chrome_dir){
+     
+        var browser = await puppeteer.launch({        
+            executablePath: chrome_dir,
+            headless: headless_mode,
+            devtools: false,
+            userDataDir: `${profile_dir}`,
+            args: param
+        });
+    }else{
+      
+        browser = await puppeteer.launch({        
+            executablePath: executablePath(),
+            headless: headless_mode,
+            devtools: false,
+            userDataDir: `${profile_dir}`,
+            args: param
+        });
+    }
+    
 
     return browser
 }
