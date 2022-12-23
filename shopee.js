@@ -1993,7 +1993,7 @@ runAllTime = async () => {
             cookie_3 = getCookiesMap(acc.cookie, ".shopee.vn")
         }        
         
-        console.log(cookie_3)
+      
         let option1 = {
             user_agent: user_agent,
             proxy: proxy,
@@ -2006,11 +2006,7 @@ runAllTime = async () => {
 
         console.log(proxy)
         let browser = await gen_browser(option1)
-        let page = await gen_page(browser, option1)
-
-        if (pending_check) {
-            await sleep(70000000)
-        }
+        let page = await gen_page(browser, option1)       
 
         //await chan_anh(page)
 
@@ -2411,7 +2407,7 @@ runAllTime = async () => {
                         } else {
                             break
                         }
-
+                        let cookie1 = ""
                         cookies22 = await page.cookies()
                         cookies22.forEach((row, index) => {
                             cookie1 = cookie1 + row.name + "=" + row.value
@@ -2419,7 +2415,7 @@ runAllTime = async () => {
                                 cookie1 = cookie1 + "; "
                             }
                         })
-
+                   
                         productForUser.cookie = cookie1
                         productForUser.user_agent = user_agent
                         productForUser.user_lang = user_lang
