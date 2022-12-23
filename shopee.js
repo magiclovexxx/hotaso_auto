@@ -1616,12 +1616,12 @@ gen_page = async (browser, option) => {
 
     try {
         if (cookie1.length) {
-            let cookie111 = JSON.parse(cookie1)
+         //   let cookie111 = JSON.parse(cookie1)
             //console.log(cookie111)
             // cookie111.forEach(async (item) => {
             //     await page.setCookie(item);
             // })
-            await page.setCookie(...cookie111);
+            await page.setCookie(...cookie1);
             console.log(moment().format("hh:mm:ss") + " - Setcookie thành công")
         }
     } catch (e) {
@@ -1652,6 +1652,29 @@ check_die_slave = () => {
 
 }
 
+
+
+function getCookiesMap(cookiesString, url) {
+    let cookies = []
+    const ck_obj = cookiesString.split(";")
+        .map(function (cookieString) {
+            return cookieString.trim().split(/=(.+)/);
+        })
+        .reduce(function (acc, curr) {
+            acc[curr[0]] = curr[1];
+            return acc;
+        }, {})
+    const keys = Object.keys(ck_obj)
+    for (let i = 0; i < keys.length; i++) {
+        cookies.push({
+            name: keys[i],
+            value: ck_obj[keys[i]],
+            domain: url,
+            path: '/'
+        })
+    }
+    return cookies
+}
 
 runAllTime = async () => {
 
@@ -1963,12 +1986,19 @@ runAllTime = async () => {
         }
 
         let profileChrome = profileDir + subAccount[0]
-
+        let cookie_3 = acc.cookie
+        if(cookie_3.search( ".shopee.vn")){
+            cookie_3 = JSON.parse(cookie_3)
+        }else{
+            cookie_3 = getCookiesMap(acc.cookie, ".shopee.vn")
+        }        
+        
+        console.log(cookie_3)
         let option1 = {
             user_agent: user_agent,
             proxy: proxy,
             profile_dir: profileChrome,
-            cookie: acc.cookie,
+            cookie: cookie_3,
             network: slaveInfo.network,
             headless_mode: headless_mode,
             user_lang: user_lang
@@ -1977,6 +2007,10 @@ runAllTime = async () => {
         console.log(proxy)
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
+
+        if (pending_check) {
+            await sleep(70000000)
+        }
 
         //await chan_anh(page)
 
@@ -1997,7 +2031,7 @@ runAllTime = async () => {
                 console.error(err);
                 await updateErrorLogs(err, slavenumber)
                 await updateProxy(proxy.proxy_ip)
-            }
+            }           
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
 
@@ -2379,7 +2413,14 @@ runAllTime = async () => {
                         }
 
                         cookies22 = await page.cookies()
-                        productForUser.cookie = cookies22
+                        cookies22.forEach((row, index) => {
+                            cookie1 = cookie1 + row.name + "=" + row.value
+                            if (index != (cookies22.length - 1)) {
+                                cookie1 = cookie1 + "; "
+                            }
+                        })
+
+                        productForUser.cookie = cookie1
                         productForUser.user_agent = user_agent
                         productForUser.user_lang = user_lang
                         cookie1 = ""
@@ -2401,9 +2442,7 @@ runAllTime = async () => {
                             return
                         }
 
-                        if (pending_check) {
-                            await sleep(70000000)
-                        }
+                       
 
                         let getProductPageTotal
                         try {

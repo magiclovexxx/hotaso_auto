@@ -8,6 +8,29 @@ proxy3 = [
 ]
 
 
+
+function getCookiesMap(cookiesString, url) {
+    let cookies = []
+    const ck_obj = cookiesString.split(";")
+        .map(function (cookieString) {
+            return cookieString.trim().split(/=(.+)/);
+        })
+        .reduce(function (acc, curr) {
+            acc[curr[0]] = curr[1];
+            return acc;
+        }, {})
+    const keys = Object.keys(ck_obj)
+    for (let i = 0; i < keys.length; i++) {
+        cookies.push({
+            name: keys[i],
+            value: ck_obj[keys[i]],
+            domain: url,
+            path: '/'
+        })
+    }
+    return cookies
+}
+
 proxy_test = async () => {
     proxy.forEach(async (item, index) => {
         proxy1 = item.split(":")
@@ -179,6 +202,8 @@ let is_block_image = false;
         log2: "aaaa"
 
     }
-    await test_cookie()
+    cookie_1 = '__LOCALE__null=VN; csrftoken=o1s7BYNU3JJPI66347NWnIXCPQAV3UoQ; SPC_F=V405JGAUbW4GMJCkQFIAYXbNIi6QYH30; REC_T_ID=79355162-81df-11ed-a4b0-48df37dfdd90; SPC_R_T_ID=U9yPbqHJrrAdoHCHss4l65NgMSb2dxnGdHjwWV666o1eh7+Ba0d4nDu1gjvkjhpdkvayk4uobO5X830kdpL0WS+b3HlZsHusaotvVTKzx47wxIlvSt8IfJeXHnebOsINGa4rk2ipDwcF/eRGSh/Vx06toQN8huxlTdy/ZgR+TRM=; SPC_R_T_IV=RE5icHJ5QTFnZFB1NlZNYQ==; SPC_T_IV=RE5icHJ5QTFnZFB1NlZNYQ==; SPC_EC=7X+bFFuzmCcI8xf3QjKsnOXwdpG1/9zDyGUX9PhTt+lzc9T79uaXZa0j4lNT1ULndknN1YEz3IoeN/I2jGX5tDGCWTrkAwga2UAF1WWTElZwb75lDAhfq1fFI1bX1etZrHM+9h4N+df+8/1cJ+K0K5zRCitj2IVjrRWrcwIRoP8=; SPC_SI=hteiYwAAAABmdHBuSUR1afoQGgAAAAAAQVNrb2dDRWg=; SPC_T_ID=U9yPbqHJrrAdoHCHss4l65NgMSb2dxnGdHjwWV666o1eh7+Ba0d4nDu1gjvkjhpdkvayk4uobO5X830kdpL0WS+b3HlZsHusaotvVTKzx47wxIlvSt8IfJeXHnebOsINGa4rk2ipDwcF/eRGSh/Vx06toQN8huxlTdy/ZgR+TRM=; SPC_ST=.Z2FkQTRiZGFGMGtLbTc1YeWdKrBDuq0IurWrvix4Jg+/sg2nYGGTdmyxRtguE8kNCN34t1VOEgF8Y9DVHp/nBXniV5J29Pe05mDOxd4KZ8C3FsdwbDuLRXPTCWvlzmINGPrZjHcEQz5+U9NirhCIScUBucEtWHBmvXSHmUYtqqKX2GQTUEl3IdlnwDgHiIF683SeyeeRTROa3qtOZbJdpw==; SPC_U=714859374; SPC_SC_TK=39c6f0cc7e62adaf4280165866387f83; SPC_SC_UD=714859374; SPC_STK=fEVDPEEIuyfphofVlh1wnu5/ABBZW8G1Aw3ygWWATREd75rXdeoizrT+LjFuuYixOGaTi3SKo47SG+eXDQExLTdSDW34i0oxLVa9WqYXgtLyUBqDgOIqKii/MWcRmMs78IBAvgZFF3h09drJLlSneumjTHctFGUMGEpMN9vZYWfmnvBFx69q4+ebKNYeD0DX; SC_DFP=lQuPPdQYFXihHEJTaCSmtfvTwfWgfVOB'
+    cookie_2 = await getCookiesMap(cookie_1, ".shopee.vn")
+    console.log(cookie_2)
 
 })();
