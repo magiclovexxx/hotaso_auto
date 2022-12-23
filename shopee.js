@@ -176,7 +176,7 @@ loginShopee = async (page, accounts) => {
             let check_account_checkpoint = await page.$x("//div[contains(text(), 'Xác minh tài khoản')]");
             if (check_account_checkpoint.length > 0) {
                 console.log("account bị checkpoint")
-               
+
                 return 5
             }
 
@@ -207,7 +207,7 @@ loginShopee = async (page, accounts) => {
     }
 }
 
-check_captcha = async (page, accounts) =>{
+check_captcha = async (page, accounts) => {
     let check_account_checkpoint = await page.$x("//div[contains(text(), 'Kéo sang phải để hoàn thiện bức hình')]");
     if (check_account_checkpoint.length > 0) {
         console.log("Tài khoản bị yêu cầu captcha: " + accounts[0])
@@ -238,7 +238,7 @@ check_captcha = async (page, accounts) =>{
             .then(function () {
                 // always executed
             });
-    
+
         console.log(" ----- KhởI đÔng lại ---- ")
         return 1
     }
@@ -1550,18 +1550,18 @@ gen_browser = async (option) => {
     chrome_dir = process.env.CHROME
     //console.log("Chrome dir: " + chrome_dir)
     let execute_path
-    if(chrome_dir){
-     
-        var browser = await puppeteer.launch({        
+    if (chrome_dir) {
+
+        var browser = await puppeteer.launch({
             executablePath: chrome_dir,
             headless: headless_mode,
             devtools: false,
             userDataDir: `${profile_dir}`,
             args: param
         });
-    }else{
-      
-        browser = await puppeteer.launch({        
+    } else {
+
+        browser = await puppeteer.launch({
             executablePath: executablePath(),
             headless: headless_mode,
             devtools: false,
@@ -1569,7 +1569,7 @@ gen_browser = async (option) => {
             args: param
         });
     }
-    
+
 
     return browser
 }
@@ -1616,7 +1616,7 @@ gen_page = async (browser, option) => {
 
     try {
         if (cookie1.length) {
-         //   let cookie111 = JSON.parse(cookie1)
+            //   let cookie111 = JSON.parse(cookie1)
             //console.log(cookie111)
             // cookie111.forEach(async (item) => {
             //     await page.setCookie(item);
@@ -1987,13 +1987,15 @@ runAllTime = async () => {
 
         let profileChrome = profileDir + subAccount[0]
         let cookie_3 = acc.cookie
-        if(cookie_3.search( ".shopee.vn")){
+        let check_cookie = cookie_3.search(".shopee.vn")
+        if (check_cookie > 0) {
+
             cookie_3 = JSON.parse(cookie_3)
-        }else{
+        } else {
             cookie_3 = getCookiesMap(acc.cookie, ".shopee.vn")
-        }        
-        
-      
+        }
+
+
         let option1 = {
             user_agent: user_agent,
             proxy: proxy,
@@ -2006,7 +2008,7 @@ runAllTime = async () => {
 
         console.log(proxy)
         let browser = await gen_browser(option1)
-        let page = await gen_page(browser, option1)       
+        let page = await gen_page(browser, option1)
 
         //await chan_anh(page)
 
@@ -2027,7 +2029,7 @@ runAllTime = async () => {
                 console.error(err);
                 await updateErrorLogs(err, slavenumber)
                 await updateProxy(proxy.proxy_ip)
-            }           
+            }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
 
@@ -2415,30 +2417,30 @@ runAllTime = async () => {
                                 cookie1 = cookie1 + "; "
                             }
                         })
-                   
+
                         productForUser.cookie = cookie1
                         productForUser.user_agent = user_agent
                         productForUser.user_lang = user_lang
-                        cookie1 = ""
+                        // cookie1 = ""
 
-                        cookies22.forEach((row, index) => {
-                            cookie1 = cookie1 + row.name + "=" + row.value
-                            if (index != (cookies22.length - 1)) {
-                                cookie1 = cookie1 + "; "
-                            }
-                        })
+                        // cookies22.forEach((row, index) => {
+                        //     cookie1 = cookie1 + row.name + "=" + row.value
+                        //     if (index != (cookies22.length - 1)) {
+                        //         cookie1 = cookie1 + "; "
+                        //     }
+                        // })
 
                         console.log(moment().format("hh:mm:ss") + " - TÌM KIẾM SẢN PHẨM")
 
                         await sleep(5000)
 
                         let check_captcha_1 = await check_captcha(page, subAccount)
-                        if(check_captcha_1 == 1){
+                        if (check_captcha_1 == 1) {
                             await browser.close();
                             return
                         }
 
-                       
+
 
                         let getProductPageTotal
                         try {
@@ -2453,6 +2455,10 @@ runAllTime = async () => {
                         }
 
                         maxPage = parseInt(getProductPageTotal)
+                        if (maxPage > 10 || maxPage == undefined) {
+                            maxPage = 5
+                        }
+
                         console.log(moment().format("hh:mm:ss") + " - Tổng số trang kết quả tìm kiếm: " + maxPage)
                         trang_vi_tri_san_pham = false
 
@@ -2498,7 +2504,6 @@ runAllTime = async () => {
                             }
 
 
-
                             if (trang_vi_tri_san_pham > 1) {
                                 pageUrl = trang_vi_tri_san_pham - 1
                                 urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
@@ -2514,7 +2519,7 @@ runAllTime = async () => {
                                 let ref = await page.url()
                                 await page.goto(urlSearch, {
                                     waitUntil: "networkidle0",
-                                    timeout: 50000,
+                                //    timeout: 50000,
                                     referer: ref
                                 })
 
@@ -2522,10 +2527,11 @@ runAllTime = async () => {
                                 await updateErrorLogs(error, slavenumber)
                                 console.error(error);
                             }
-                            await page.waitForTimeout(5000)
+                            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+                            await page.waitForTimeout(timeout)
                             console.log(moment().format("hh:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                             // console.log(getViTriSanPham)
-                           
+
                             if (viTriSanPhamTrang1 != false) {
 
                                 today = new Date().toLocaleString();
@@ -2602,11 +2608,11 @@ runAllTime = async () => {
 
                         // check captcha
                         check_captcha_1 = await check_captcha(page, subAccount)
-                        if(check_captcha_1 == 1){
+                        if (check_captcha_1 == 1) {
                             await browser.close();
                             return
                         }
-                        
+
 
                         if (check_product_exit === "Có tồn tại") {
                             try {
@@ -2618,8 +2624,17 @@ runAllTime = async () => {
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
 
+                                let cookie1 = ""
                                 cookies22 = await page.cookies()
-                                productForUser.cookie = await page.cookies()
+                                cookies22.forEach((row, index) => {
+                                    cookie1 = cookie1 + row.name + "=" + row.value
+                                    if (index != (cookies22.length - 1)) {
+                                        cookie1 = cookie1 + "; "
+                                    }
+                                })
+
+                              //  productForUser.cookie = await page.cookies()
+                                productForUser.cookie = cookie1
 
                                 productForUser.action = "search"
                                 await updateActions(productForUser, 10)
