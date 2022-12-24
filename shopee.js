@@ -111,8 +111,8 @@ loginShopee = async (page, accounts) => {
             console.log(moment().format("hh:mm:ss") + " - Login acc pass")
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
-                waitUntil: "networkidle0",
-                timeout: 50000,
+           //     waitUntil: "networkidle0",
+            //    timeout: 50000,
                 referer: ref
             })
 
@@ -822,9 +822,7 @@ action_view_shop = async (page, url, product) => {
 
 
     let ref = await page.url()
-    await page.goto(url, {
-        waitUntil: "networkidle0",
-        timeout: 50000,
+    await page.goto(url, {       
         referer: ref
     })
 
@@ -905,8 +903,6 @@ likeProductOfShop = async (page, url) => {
 
     let ref = await page.url()
     await page.goto(url, {
-        waitUntil: "networkidle0",
-        timeout: 50000,
         referer: ref
     })
 
@@ -1024,9 +1020,7 @@ action_report_shop = async (page, report_shop) => {
     try {
         console.log("---- Report shop ----")
         let url = "https://shopee.vn/shop/" + report_shop.shop_id + "/report/?__classic__=1"
-        await page.goto(url, {
-            waitUntil: "networkidle0",
-            timeout: 50000,
+        await page.goto(url, {            
             referer: ref
         });
 
@@ -1192,8 +1186,6 @@ removeCart = async (page) => {
 
             let ref = await page.url()
             await page.goto('https://shopee.vn/cart/', {
-                waitUntil: "networkidle0",
-                timeout: 50000,
                 referer: ref
             })
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -1992,9 +1984,11 @@ runAllTime = async () => {
 
             cookie_3 = JSON.parse(cookie_3)
         } else {
+         
             cookie_3 = getCookiesMap(acc.cookie, ".shopee.vn")
         }
 
+       console.log(cookie_3)
 
         let option1 = {
             user_agent: user_agent,
@@ -2017,9 +2011,7 @@ runAllTime = async () => {
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
                 let ref = await page.url()
-                await page.goto('https://shopee.vn', {
-                    waitUntil: "networkidle0",
-                    timeout: 60000,
+                await page.goto('https://shopee.vn', {                    
                     referer: ref
                 })
                 //await updateProxy(proxy.proxy_ip + ":OK")
@@ -2175,9 +2167,7 @@ runAllTime = async () => {
                         try {
                             let ref = await page.url()
                             start_check_time = Date.now()
-                            await page.goto('https://shopee.vn', {
-                                waitUntil: "networkidle0",
-                                timeout: 50000,
+                            await page.goto('https://shopee.vn', {                              
                                 referer: ref
                             })
                             stop_check_time = Date.now()
@@ -2409,7 +2399,7 @@ runAllTime = async () => {
                         } else {
                             break
                         }
-                        let cookie1 = ""
+                        let cookie1 = ''
                         cookies22 = await page.cookies()
                         cookies22.forEach((row, index) => {
                             cookie1 = cookie1 + row.name + "=" + row.value
@@ -2517,9 +2507,7 @@ runAllTime = async () => {
                             productForUser.urlSearch = urlSearch
                             try {
                                 let ref = await page.url()
-                                await page.goto(urlSearch, {
-                                    waitUntil: "networkidle0",
-                                //    timeout: 50000,
+                                await page.goto(urlSearch, {                                
                                     referer: ref
                                 })
 
@@ -2560,9 +2548,7 @@ runAllTime = async () => {
                                 } catch (error) {
                                     await updateErrorLogs(error, slavenumber)
                                     try {
-                                        await page.goto(productForUser.product_link, {
-                                            waitUntil: "networkidle0",
-                                            timeout: 50000
+                                        await page.goto(productForUser.product_link, {                                               
                                         });
 
                                     } catch (err) {
@@ -2596,9 +2582,7 @@ runAllTime = async () => {
                             //continue
 
                             try {
-                                await page.goto(productForUser.product_link, {
-                                    waitUntil: "networkidle0",
-                                    timeout: 50000
+                                await page.goto(productForUser.product_link, {                                  
                                 });
                             } catch (error) {
                                 console.log(error.message);
@@ -2624,7 +2608,7 @@ runAllTime = async () => {
                                 timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                                 await page.waitForTimeout(timeout)
 
-                                let cookie1 = ""
+                                let cookie1 = ''
                                 cookies22 = await page.cookies()
                                 cookies22.forEach((row, index) => {
                                     cookie1 = cookie1 + row.name + "=" + row.value
@@ -2633,8 +2617,8 @@ runAllTime = async () => {
                                     }
                                 })
 
-                              //  productForUser.cookie = await page.cookies()
-                                productForUser.cookie = cookie1
+                                productForUser.cookie = await page.cookies()
+                             //   productForUser.cookie = cookie1
 
                                 productForUser.action = "search"
                                 await updateActions(productForUser, 10)
