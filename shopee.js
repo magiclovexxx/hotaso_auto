@@ -5,11 +5,11 @@ const actionsShopee = require('./src/actions.js')
 const axios = require('axios').default;
 const HttpsProxyAgent = require("https-proxy-agent")
 const moment = require('moment')
-
+var FormData = require('form-data');
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
-const { executablePath } = require('puppeteer')
+const { executablePath, PageEmittedEvents } = require('puppeteer')
 
 var cron = require('node-cron');
 var randomMac = require('random-mac');
@@ -24,6 +24,7 @@ var shell = require('shelljs');
 const { preparePageForTests } = require('./src/bypass');
 const bypassTest = require('./src/bypassTest');
 var ip_address = require("ip");
+const { stringify } = require('querystring');
 
 slavenumber = process.env.SLAVE
 account_check = process.env.ACCOUNT_CHECK
@@ -111,8 +112,8 @@ loginShopee = async (page, accounts) => {
             console.log(moment().format("hh:mm:ss") + " - Login acc pass")
             let ref = await page.url()
             await page.goto("https://shopee.vn/buyer/login?next=https%3A%2F%2Fshopee.vn%2F", {
-           //     waitUntil: "networkidle0",
-            //    timeout: 50000,
+                //     waitUntil: "networkidle0",
+                //    timeout: 50000,
                 referer: ref
             })
 
@@ -247,7 +248,42 @@ check_captcha = async (page, accounts) => {
 searchKeyWord = async (page, keyword) => {
     try {
 
-        //    await page.waitForSelector('.shopee-searchbar-input__input')
+        //  if(pending_check){
+        let x = Math.floor(Math.random() * (4 - 2)) + 2;
+        for (let i = 0; i < x; i++) {
+            let y = Math.floor(Math.random() * (6 - 4)) + 4;
+            // for (i = 0; i < y; i++) {
+            //     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+            //     await page.waitForTimeout(timeout)
+            //     await page.keyboard.press('PageDown');
+            //     await page.waitForTimeout(timeout)
+
+
+            // }
+
+            // if (pending_check == 1) {
+            //     console.log("Pending check --- : " + pending_check)
+            //     await page.waitForTimeout(9999999)
+            // }
+
+            // let productsAll = await page.$$('[data-sqe="link"]')
+            // console.log(" Check product" + productsAll.length)
+            // if (productsAll.length > 0) {
+
+            //     let z = Math.floor(Math.random() * (productsAll.length - 1)) + 1;
+            //     await page.waitForTimeout(timeout)
+            //     await productsAll[z].click()
+
+            //     timeout = Math.floor(Math.random() * (10000 - 7000)) + 7000;
+            //     await page.waitForTimeout(timeout)
+            // }
+        }
+        await page.goto('https://shopee.vn')
+        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+        await page.waitForTimeout(timeout);
+        //   }
+
+
 
         let checkSearchInput = await page.$$('.shopee-searchbar-input__input');
         if (checkSearchInput.length) {
@@ -720,9 +756,8 @@ updateHistory = async (product) => {
 }
 
 updateAction = async (product9, limit) => {
-    // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-    // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
-
+    
+  // console.log(product9)
     await axios.post(update_actions_url, {
         data: product9,
         timeout: 50000
@@ -782,6 +817,23 @@ updatePoint = async (product9, limit) => {
         })
 }
 
+getShopeeLinkVerify = async (email) => {
+
+    let url = "https://mail68.tk/api/messages/" + email + "/hfBgaLAqy7ISZQ8WHu5e"
+    await axios.get(url, {
+
+    })
+        .then(function (response) {
+            console.log(moment().format("hh:mm:ss") + " - " + response.data)
+            return true
+        })
+        .catch(async function (error) {
+            console.log(error);
+            console.log(moment().format("hh:mm:ss") + " - Lấy link shopee verify lỗi");
+
+        })
+}
+
 updateErrorLogs = async (error, slave) => {
     //console.log(error)
     console.log(moment().format("hh:mm:ss") + " - CậP nhật lỗi: " + error.message);
@@ -822,7 +874,7 @@ action_view_shop = async (page, url, product) => {
 
 
     let ref = await page.url()
-    await page.goto(url, {       
+    await page.goto(url, {
         referer: ref
     })
 
@@ -1020,7 +1072,7 @@ action_report_shop = async (page, report_shop) => {
     try {
         console.log("---- Report shop ----")
         let url = "https://shopee.vn/shop/" + report_shop.shop_id + "/report/?__classic__=1"
-        await page.goto(url, {            
+        await page.goto(url, {
             referer: ref
         });
 
@@ -1520,10 +1572,10 @@ gen_browser = async (option) => {
         '--disable-backgrounding-occluded-windows',
         '--disable-renderer-backgrounding',
         '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
+        //   '--disable-accelerated-2d-canvas',
         '--no-first-run',
         '--lang=' + user_lang,
-        '--disable-reading-from-canvas',
+        //    '--disable-reading-from-canvas',
         `--disable-extensions-except=${__dirname}/chrome-extensions/AudioContext-Fingerprint-Defender,${__dirname}/chrome-extensions/Canvas-Fingerprint-Defender,${__dirname}/chrome-extensions/Font-Fingerprint-Defender,${__dirname}/chrome-extensions/WebGL-Fingerprint-Defender,${__dirname}/chrome-extensions/WebRTC-Control`,
         `--load-extension=${__dirname}/chrome-extensions/AudioContext-Fingerprint-Defender,${__dirname}/chrome-extensions/Canvas-Fingerprint-Defender,${__dirname}/chrome-extensions/Font-Fingerprint-Defender,${__dirname}/chrome-extensions/WebGL-Fingerprint-Defender,${__dirname}/chrome-extensions/WebRTC-Control`,
     ]
@@ -1925,6 +1977,8 @@ runAllTime = async () => {
         let subAccount = []
         let acc = data_for_tab.sub_account
         let keywords = data_for_tab.product_for_sub_account
+        let axios_config
+
         if (keywords.length == 0) {
             console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu từ khoá")
             await sleep(150000)
@@ -1979,16 +2033,16 @@ runAllTime = async () => {
 
         let profileChrome = profileDir + subAccount[0]
         let cookie_3 = acc.cookie
-        let check_cookie = cookie_3.search(".shopee.vn")
+        let check_cookie = cookie_3.search("shopee.vn")
         if (check_cookie > 0) {
 
             cookie_3 = JSON.parse(cookie_3)
         } else {
-         
-            cookie_3 = getCookiesMap(acc.cookie, ".shopee.vn")
+            console.log(cookie_3)
+            cookie_3 = getCookiesMap(cookie_3, "shopee.vn")
         }
 
-       console.log(cookie_3)
+        //    console.log(cookie_3)
 
         let option1 = {
             user_agent: user_agent,
@@ -2001,6 +2055,7 @@ runAllTime = async () => {
         }
 
         console.log(proxy)
+        console.log("email account: " + acc.email)
         let browser = await gen_browser(option1)
         let page = await gen_page(browser, option1)
 
@@ -2011,7 +2066,7 @@ runAllTime = async () => {
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
                 let ref = await page.url()
-                await page.goto('https://shopee.vn', {                    
+                await page.goto('https://shopee.vn', {
                     referer: ref
                 })
                 //await updateProxy(proxy.proxy_ip + ":OK")
@@ -2024,11 +2079,6 @@ runAllTime = async () => {
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-
-            // if (pending_check == 1) {
-            //     console.log("Pending check --- : " + pending_check)
-            //     await page.waitForTimeout(9999999)
-            // }
 
             await page.waitForTimeout(timeout)
 
@@ -2167,7 +2217,7 @@ runAllTime = async () => {
                         try {
                             let ref = await page.url()
                             start_check_time = Date.now()
-                            await page.goto('https://shopee.vn', {                              
+                            await page.goto('https://shopee.vn', {
                                 referer: ref
                             })
                             stop_check_time = Date.now()
@@ -2227,6 +2277,56 @@ runAllTime = async () => {
                         await page.on('response', async (resp) => {
                             let url = resp.url()
                             let productInfo1, productInfo2
+
+                            if (resp.url().includes('/api/v4/anti_fraud/captcha/generate') && resp.status() == 200) {
+                                try {
+                                    console.log('Xử lý captcha');
+                                    const imgCaptcha = await page.waitForXPath('//img[@draggable="false"]');
+                                    if (imgCaptcha) {
+                                        await imgCaptcha.screenshot({ path: 'captcha.png' });
+                                        var data = new FormData();
+                                        data.append('image', fs.createReadStream('captcha.png'));
+                                        axios_config = {
+                                            method: 'POST',
+                                            url: 'http://hamai00.tk:9985/slide',
+                                            headers: {
+                                                ...data.getHeaders()
+                                            },
+                                            data: data
+                                        };
+                                        await axios(axios_config).then(async function (response) {
+                                            const pixels = response.data.split(' ');
+                                            if (pixels.length == 4) {
+                                                const whirl_position = pixels[2] - 2;
+                                                console.log('Kéo captcha: ' + whirl_position);
+                                                const sliderHandle = await page.waitForXPath('//div[@style="width: 40px; height: 40px; transform: translateX(0px);"]');
+                                                if (sliderHandle) {
+                                                    const handle = await sliderHandle.boundingBox();
+                                                    let currentPosition = handle.width / 2;
+                                                    await page.mouse.move(
+                                                        handle.x + currentPosition,
+                                                        handle.y + handle.height / 2
+                                                    );
+                                                    await page.mouse.down();
+                                                    while (currentPosition < whirl_position) {
+                                                        currentPosition += 1;
+                                                        await page.mouse.move(
+                                                            handle.x + currentPosition,
+                                                            handle.y + handle.height / 2
+                                                        );
+                                                    }
+                                                    await page.waitForTimeout(1000);
+                                                    page.mouse.up();
+                                                }
+                                            }
+                                        }).catch(function (error) {
+                                            console.log(error);
+                                        });
+                                    }
+                                } catch (ex) {
+                                    console.log(ex);
+                                }
+                            }
 
                             let checkUrlShop = url.split("shop/get_shop_base")
 
@@ -2399,8 +2499,17 @@ runAllTime = async () => {
                         } else {
                             break
                         }
-                        let cookie1 = ''
+
+                        await page.waitForTimeout(5000)
+                      
                         cookies22 = await page.cookies()
+                        
+
+                        productForUser.cookie = await page.cookies()
+                        productForUser.user_agent = user_agent
+                        productForUser.user_lang = user_lang
+                        cookie1 = ""
+
                         cookies22.forEach((row, index) => {
                             cookie1 = cookie1 + row.name + "=" + row.value
                             if (index != (cookies22.length - 1)) {
@@ -2408,28 +2517,16 @@ runAllTime = async () => {
                             }
                         })
 
-                        productForUser.cookie = cookie1
-                        productForUser.user_agent = user_agent
-                        productForUser.user_lang = user_lang
-                        // cookie1 = ""
-
-                        // cookies22.forEach((row, index) => {
-                        //     cookie1 = cookie1 + row.name + "=" + row.value
-                        //     if (index != (cookies22.length - 1)) {
-                        //         cookie1 = cookie1 + "; "
-                        //     }
-                        // })
 
                         console.log(moment().format("hh:mm:ss") + " - TÌM KIẾM SẢN PHẨM")
 
-                        await sleep(5000)
+                       
 
-                        let check_captcha_1 = await check_captcha(page, subAccount)
-                        if (check_captcha_1 == 1) {
-                            await browser.close();
-                            return
-                        }
-
+                        // let check_captcha_1 = await check_captcha(page, subAccount)
+                        // if (check_captcha_1 == 1) {
+                        //     await browser.close();
+                        //     return
+                        // }
 
 
                         let getProductPageTotal
@@ -2507,7 +2604,7 @@ runAllTime = async () => {
                             productForUser.urlSearch = urlSearch
                             try {
                                 let ref = await page.url()
-                                await page.goto(urlSearch, {                                
+                                await page.goto(urlSearch, {
                                     referer: ref
                                 })
 
@@ -2548,7 +2645,7 @@ runAllTime = async () => {
                                 } catch (error) {
                                     await updateErrorLogs(error, slavenumber)
                                     try {
-                                        await page.goto(productForUser.product_link, {                                               
+                                        await page.goto(productForUser.product_link, {
                                         });
 
                                     } catch (err) {
@@ -2582,7 +2679,7 @@ runAllTime = async () => {
                             //continue
 
                             try {
-                                await page.goto(productForUser.product_link, {                                  
+                                await page.goto(productForUser.product_link, {
                                 });
                             } catch (error) {
                                 console.log(error.message);
@@ -2591,11 +2688,11 @@ runAllTime = async () => {
                         }
 
                         // check captcha
-                        check_captcha_1 = await check_captcha(page, subAccount)
-                        if (check_captcha_1 == 1) {
-                            await browser.close();
-                            return
-                        }
+                        // check_captcha_1 = await check_captcha(page, subAccount)
+                        // if (check_captcha_1 == 1) {
+                        //     await browser.close();
+                        //     return
+                        // }
 
 
                         if (check_product_exit === "Có tồn tại") {
@@ -2618,7 +2715,7 @@ runAllTime = async () => {
                                 })
 
                                 productForUser.cookie = await page.cookies()
-                             //   productForUser.cookie = cookie1
+                                //   productForUser.cookie = cookie1
 
                                 productForUser.action = "search"
                                 await updateActions(productForUser, 10)
