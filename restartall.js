@@ -32,9 +32,10 @@ restartAll = async () => {
     }
 }
 if (mode == "DEV") {
-    async () => {
+    (async () => {     
         await restartAll()
-    }
+
+    })();
 } else {
     cron.schedule('*/20 * * * *', async () => {
         await restartAll()
