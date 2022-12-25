@@ -1878,7 +1878,7 @@ runAllTime = async () => {
     }
     if (error_code == 2222) {
         console.log(moment().format("hh:mm:ss") + " - Không có tài khoản clone")
-        shell.exec('shutdown');
+    //    shell.exec('shutdown');
         await sleep(300000)
         return
     }
@@ -2035,10 +2035,8 @@ runAllTime = async () => {
         let cookie_3 = acc.cookie
         let check_cookie = cookie_3.search("shopee.vn")
         if (check_cookie > 0) {
-
             cookie_3 = JSON.parse(cookie_3)
-        } else {
-            console.log(cookie_3)
+        } else {           
             cookie_3 = getCookiesMap(cookie_3, "shopee.vn")
         }
 
@@ -2562,7 +2560,7 @@ runAllTime = async () => {
                                     await check_btn_next[0].click()
 
                                 }
-                                await page.waitForTimeout(3000)
+                                await page.waitForTimeout(5000)
 
                                 if (viTriSanPhamTrang1 != false) {
                                     productForUser.trang = i
@@ -2695,7 +2693,17 @@ runAllTime = async () => {
                         // }
 
 
-                        if (check_product_exit === "Có tồn tại") {
+                        //if (check_product_exit === "Có tồn tại") {
+                            let check_exist = await page.$$('.shopee-input-quantity')
+                            if(check_exist.length == 0){
+                                await page.waitForTimeout(7000)
+                                check_exist = await page.$$('.shopee-input-quantity')
+                                if(check_exist.length == 0){
+                                    await browser.close()
+                                    return
+                                }
+                            }
+
                             try {
                                 let check_action
                                 let check_confirm = await page.$(".shopee-alert-popup__btn")
@@ -2872,7 +2880,7 @@ runAllTime = async () => {
                                 console.log(error)
                                 await updateErrorLogs(error, slavenumber)
                             }
-                        }
+                     //   }
 
                         //productLink = await page.url()
 
