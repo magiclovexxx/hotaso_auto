@@ -3,6 +3,7 @@ const exec = require('child_process').exec;
 const actionsShopee = require('./src/actions.js')
 require('dotenv').config();
 slavenumber = process.env.SLAVE
+mode = process.env.MODE
 
 restartAll = async () => {
 
@@ -16,7 +17,7 @@ restartAll = async () => {
         });
 
         let check = await actionsShopee.check_slave_die(slavenumber)
-        console.log(check)
+        console.log("Trạng thái slave: " + check)
         if(check){
         //exec("shutdown -r", (error) => {
            exec("pm2 restart all", (error) => {
@@ -30,7 +31,10 @@ restartAll = async () => {
         console.log(error)
     }
 }
-
-cron.schedule('*/20 * * * *', async () => {
+if(mode == "DEV"){
     await restartAll()
-  })
+}else{
+    cron.schedule('*/20 * * * *', async () => {
+        await restartAll()
+      })
+}
