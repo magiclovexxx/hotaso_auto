@@ -15,17 +15,17 @@ restartAll = async () => {
             }
         });
 
-        // let check = await actionsShopee.check_slave_die(slavenumber)
-        // console.log(check)
-        // if(check){
-        // //exec("shutdown -r", (error) => {
-        //    exec("pm2 restart all", (error) => {
-        //        if (error) {
-        //            console.log(`error: ${error.message}`);
-        //            return;
-        //        }
-        //    });
-        // }
+        let check = await actionsShopee.check_slave_die(slavenumber)
+        console.log(check)
+        if(check){
+        //exec("shutdown -r", (error) => {
+           exec("pm2 restart all", (error) => {
+               if (error) {
+                   console.log(`error: ${error.message}`);
+                   return;
+               }
+           });
+        }
     } catch (error) {
         console.log(error)
     }

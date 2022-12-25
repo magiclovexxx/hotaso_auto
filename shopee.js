@@ -116,7 +116,8 @@ loginShopee = async (page, accounts) => {
                 //    timeout: 50000,
                 referer: ref
             })
-
+            let timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+            await page.waitForTimeout(timeout)
             //    await page.waitForSelector('[name="loginKey"]')
 
             await page.click('[name="loginKey"]')
@@ -246,45 +247,11 @@ check_captcha = async (page, accounts) => {
 }
 
 searchKeyWord = async (page, keyword) => {
-    try {
+    try {    
 
-        //  if(pending_check){
-        let x = Math.floor(Math.random() * (4 - 2)) + 2;
-        for (let i = 0; i < x; i++) {
-            let y = Math.floor(Math.random() * (6 - 4)) + 4;
-            // for (i = 0; i < y; i++) {
-            //     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            //     await page.waitForTimeout(timeout)
-            //     await page.keyboard.press('PageDown');
-            //     await page.waitForTimeout(timeout)
-
-
-            // }
-
-            // if (pending_check == 1) {
-            //     console.log("Pending check --- : " + pending_check)
-            //     await page.waitForTimeout(9999999)
-            // }
-
-            // let productsAll = await page.$$('[data-sqe="link"]')
-            // console.log(" Check product" + productsAll.length)
-            // if (productsAll.length > 0) {
-
-            //     let z = Math.floor(Math.random() * (productsAll.length - 1)) + 1;
-            //     await page.waitForTimeout(timeout)
-            //     await productsAll[z].click()
-
-            //     timeout = Math.floor(Math.random() * (10000 - 7000)) + 7000;
-            //     await page.waitForTimeout(timeout)
-            // }
-        }
-        await page.goto('https://shopee.vn')
-        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+        timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
-        //   }
-
-
-
+        
         let checkSearchInput = await page.$$('.shopee-searchbar-input__input');
         if (checkSearchInput.length) {
             await page.click('.shopee-searchbar-input__input')
@@ -2222,6 +2189,15 @@ runAllTime = async () => {
                             check_time = stop_check_time - start_check_time
                             //    await updateProxy(proxy.proxy_ip + ":OK", check_time)
 
+                            timeout = Math.floor(Math.random() * (6000 - 5000)) + 5000;
+                            await page.waitForTimeout(timeout)
+
+                            let check_popup = await page.$$(".shopee-popup__close-btn")
+                            if(check_popup.length){
+                                console.log(moment().format("hh:mm:ss") + " - Tắt popup")
+                                await check_popup[0].click()
+                            }
+
                         } catch (err) {
                             //HERE
                             stop_check_time = Date.now()
@@ -2490,6 +2466,8 @@ runAllTime = async () => {
                         //         await updateActions(productForUser, 10)
                         //     }
                         // }
+                        timeout = Math.floor(Math.random() * (6000 - 5000)) + 5000;
+                        await page.waitForTimeout(timeout)
 
                         check_point = await check_point_hour(productForUser.uid)
                         if (check_point) {
@@ -2498,7 +2476,7 @@ runAllTime = async () => {
                             break
                         }
 
-                        await page.waitForTimeout(5000)
+                        
                       
                         cookies22 = await page.cookies()
                         
@@ -2517,16 +2495,13 @@ runAllTime = async () => {
 
 
                         console.log(moment().format("hh:mm:ss") + " - TÌM KIẾM SẢN PHẨM")
-
+                        try {
+                            await page.waitForSelector(".shopee-mini-page-controller")
+                        } catch (error) {
+                            await browser.close()
+                            return
+                        }
                        
-
-                        // let check_captcha_1 = await check_captcha(page, subAccount)
-                        // if (check_captcha_1 == 1) {
-                        //     await browser.close();
-                        //     return
-                        // }
-
-
                         let getProductPageTotal
                         try {
                             getProductPageTotal = await page.evaluate(() => {
@@ -2699,6 +2674,7 @@ runAllTime = async () => {
                                 await page.waitForTimeout(7000)
                                 check_exist = await page.$$('.shopee-input-quantity')
                                 if(check_exist.length == 0){
+                                    console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
                                     await browser.close()
                                     return
                                 }
