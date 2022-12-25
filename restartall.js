@@ -9,12 +9,12 @@ restartAll = async () => {
 
     console.log("------- Restart all -------")
     try {
-        exec("node restart.js", (error) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-                return;
-            }
-        });
+        // exec("node restart.js", (error) => {
+        //     if (error) {
+        //         console.log(`error: ${error.message}`);
+        //         return;
+        //     }
+        // });
 
         let check = await actionsShopee.check_slave_die(slavenumber)
         console.log("Trạng thái slave: " + check)
