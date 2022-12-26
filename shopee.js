@@ -2195,9 +2195,14 @@ runAllTime = async () => {
                             let check_popup = await page.$$(".shopee-popup__close-btn")
                             if(check_popup.length){
                                 
-                                check_popup = await page.$$(".home-popup__close-button")
+                               
                                 console.log(moment().format("hh:mm:ss") + " - Tắt popup")
                                 await check_popup[0].click()
+                            }else{
+                                check_popup = await page.$$(".home-popup__close-button")
+                                if(check_popup.length){
+                                    await check_popup[0].click()
+                                }
                             }
 
                         } catch (err) {
