@@ -2194,6 +2194,8 @@ runAllTime = async () => {
 
                             let check_popup = await page.$$(".shopee-popup__close-btn")
                             if(check_popup.length){
+                                
+                                check_popup = await page.$$(".home-popup__close-button")
                                 console.log(moment().format("hh:mm:ss") + " - Tắt popup")
                                 await check_popup[0].click()
                             }
@@ -2262,7 +2264,7 @@ runAllTime = async () => {
                                         data.append('image', fs.createReadStream('captcha.png'));
                                         axios_config = {
                                             method: 'POST',
-                                            url: 'http://hamai00.tk:9985/slide',
+                                            url: 'https://captcha.sacuco.com/captcha/shoppe',
                                             headers: {
                                                 ...data.getHeaders()
                                             },

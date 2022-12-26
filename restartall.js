@@ -19,7 +19,7 @@ restartAll = async () => {
 
         let check = await actionsShopee.check_slave_die(slavenumber)
        
-        console.log(moment().format("hh:mm:ss") + "Trạng thái slave: " + check)
+        console.log(moment().format("hh:mm:ss") + "Trạng thái slave: " + slavenumber + " : " + check)
         if (check) {
             //exec("shutdown -r", (error) => {
                 console.log(moment().format("hh:mm:ss") + " - ------- Restart all -------")
