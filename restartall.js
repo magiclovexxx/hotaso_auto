@@ -40,6 +40,7 @@ if (mode == "DEV") {
 
     })();
 } else {
+    console.log(moment().format("hh:mm:ss") + "slave: " + slavenumber )
     cron.schedule('*/20 * * * *', async () => {
         await restartAll()
     })
