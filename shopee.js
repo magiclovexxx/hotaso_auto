@@ -2915,7 +2915,7 @@ if (mode === "DEV") {
         if (os_slave == "LINUX") {
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
-            shell.exec('Taskkill /F /IM Chrome.exe');
+        //    shell.exec('a-kill.bat');
             shell.exec('rm -rf ' + profileDir);
 
         } else {
@@ -2933,7 +2933,7 @@ if (mode === "DEV") {
             shell.exec('rm -f core.*');
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
-            shell.exec('Taskkill /F /IM Chrome.exe');
+            shell.exec('a-kill.bat');
             shell.exec('rm -rf ' + profileDir);
 
         } else {
