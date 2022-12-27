@@ -2185,6 +2185,10 @@ runAllTime = async () => {
                             await page.goto('https://shopee.vn', {
                                 referer: ref
                             })
+
+                            if(pending_check == 1){
+                                await page.waitForTimeout(9999999)
+                            }
                             stop_check_time = Date.now()
                             check_time = stop_check_time - start_check_time
                             //    await updateProxy(proxy.proxy_ip + ":OK", check_time)
@@ -2906,34 +2910,35 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
 
+        await runAllTime()
+
         if (os_slave == "LINUX") {
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
+            shell.exec('Taskkill /F /IM Chrome.exe');
             shell.exec('rm -rf ' + profileDir);
 
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
-
-        await runAllTime()
 
     })();
 } else {
 
     (async () => {
 
+        await runAllTime()
+
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
+            shell.exec('Taskkill /F /IM Chrome.exe');
             shell.exec('rm -rf ' + profileDir);
 
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
-
-        await runAllTime()
-
 
     })();
 }
