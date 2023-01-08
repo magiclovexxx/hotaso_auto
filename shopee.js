@@ -1840,7 +1840,7 @@ runAllTime = async () => {
     let error_code = dataShopee.code
     if (error_code == 1111) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu khách hàng")
-        await sleep(300000)
+        await sleep(60000)
         return
     }
     if (error_code == 2222) {
@@ -1863,7 +1863,7 @@ runAllTime = async () => {
 
     if (!dataShopee.data) {
         console.log(moment().format("hh:mm:ss") + " - Không có dữ liệu datashopee")
-        await sleep(300000)
+        await sleep(60000)
         return
     }
     data = dataShopee.data
@@ -2031,10 +2031,10 @@ runAllTime = async () => {
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
                 let ref = await page.url()
-                // await page.goto('https://shopee.vn', {
-                //     referer: ref
-                // })
-                //await updateProxy(proxy.proxy_ip + ":OK")
+                await page.goto('https://shopee.vn', {
+                    referer: ref
+                })
+                await updateProxy(proxy.proxy_ip + ":OK")
                 bypassTest.runBypassTest(page);
             } catch (err) {
                 //HERE
