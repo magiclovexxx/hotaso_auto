@@ -2031,9 +2031,9 @@ runAllTime = async () => {
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
                 let ref = await page.url()
-                await page.goto('https://shopee.vn', {
-                    referer: ref
-                })
+                // await page.goto('https://shopee.vn', {
+                //     referer: ref
+                // })
                 //await updateProxy(proxy.proxy_ip + ":OK")
                 bypassTest.runBypassTest(page);
             } catch (err) {
@@ -2196,18 +2196,24 @@ runAllTime = async () => {
                             timeout = Math.floor(Math.random() * (6000 - 5000)) + 5000;
                             await page.waitForTimeout(timeout)
 
-                            let check_popup = await page.$$(".shopee-popup__close-btn")
-                            if(check_popup.length){
+                            let ax = Math.floor(Math.random() * (40 - 0)) + 0;
+                            let by = Math.floor(Math.random() * (100 - 0)) + 0;
+
+                            console.log(moment().format("hh:mm:ss") + " - Click pixel: " + ax + "x" + by)
+
+                            await page.mouse.click(ax, by)
+                            // let check_popup = await page.$$(".shopee-popup__close-btn")
+                            // if(check_popup.length){
                                 
                                
-                                console.log(moment().format("hh:mm:ss") + " - Tắt popup")
-                                await check_popup[0].click()
-                            }else{
-                                check_popup = await page.$$(".home-popup__close-button")
-                                if(check_popup.length){
-                                    await check_popup[0].click()
-                                }
-                            }
+                            //     console.log(moment().format("hh:mm:ss") + " - Tắt popup")
+                            //     await check_popup[0].click()
+                            // }else{
+                            //     check_popup = await page.$$(".home-popup__close-button")
+                            //     if(check_popup.length){
+                            //         await check_popup[0].click()
+                            //     }
+                            // }
 
                         } catch (err) {
                             //HERE
