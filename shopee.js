@@ -2512,12 +2512,12 @@ runAllTime = async () => {
 
 
                         console.log(moment().format("hh:mm:ss") + " - TÌM KIẾM SẢN PHẨM")
-                        try {
-                            await page.waitForSelector(".shopee-mini-page-controller")
-                        } catch (error) {
-                            await browser.close()
-                            return
-                        }
+                        // try {
+                        //     await page.waitForSelector(".shopee-mini-page-controller")
+                        // } catch (error) {
+                        //     await browser.close()
+                        //     return
+                        // }
                        
                         let getProductPageTotal
                         try {
@@ -2852,7 +2852,7 @@ runAllTime = async () => {
                                     check1 = shopInfo3.followed
                                     console.log(moment().format("hh:mm:ss") + " -  check follow shop: " + check1)
 
-                                    if (check1 == false) {
+                                    if (!check1) {
                                         check_point = await check_point_hour(productForUser.uid)
                                         if (check_point) {
                                             random_follow = Math.floor(Math.random() * 4);
@@ -2939,7 +2939,7 @@ if (mode === "DEV") {
             shell.exec('rm -f core.*');
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
-            shell.exec('a-kill.bat');
+            //shell.exec('a-kill.bat');
             shell.exec('rm -rf ' + profileDir);
 
         } else {

@@ -8,39 +8,45 @@ const md5 = require('md5');
 
 
 followShop = async (cookies, ref, shopId) => {
-    let cookie1 = ""
-    let result
-    cookies.forEach((row, index) => {
-        cookie1 = cookie1 + row.name + "=" + row.value
-        if (index != (cookies.length - 1)) {
-            cookie1 = cookie1 + "; "
-        }
+    try {
+        let cookie1 = ""
+        let result
+        cookies.forEach((row, index) => {
+            cookie1 = cookie1 + row.name + "=" + row.value
+            if (index != (cookies.length - 1)) {
+                cookie1 = cookie1 + "; "
+            }
 
-    })
-
-    var data = JSON.stringify({ "shopid": shopId });
-
-    var config = {
-        method: 'post',
-        url: 'https://shopee.vn/api/v4/shop/follow',
-        timeout: 5000,
-        headers: {
-            'content-type': 'application/json',
-            'referer': ref,
-            'cookie': cookie1
-        },
-        data: data
-    };
-
-    await axios(config)
-        .then(function (response) {
-            console.log("--- follow shop API ---");
-            console.log(response.data);
-            result = response.data
         })
-        .catch(function (error) {
-            console.log("--- Lỗi API follow ---");
-        });
+
+        var data = JSON.stringify({ "shopid": shopId });
+
+        var config = {
+            method: 'post',
+            url: 'https://shopee.vn/api/v4/shop/follow',
+            timeout: 5000,
+            headers: {
+                'content-type': 'application/json',
+                'referer': ref,
+                'cookie': cookie1
+            },
+            data: data
+        };
+
+        await axios(config)
+            .then(function (response) {
+                console.log("--- follow shop API ---");
+                console.log(response.data);
+                result = response.data
+            })
+            .catch(function (error) {
+                console.log("--- Lỗi API follow ---");
+                console.log(error)
+            });
+    } catch (error) {
+        console.log(error)
+    }
+
     return result
 
 }
@@ -201,9 +207,9 @@ commentFeed = async (cookies, shopee_feed, proxy) => {
     })
 
     let icons = ['🙏', '💖', '😊', '😘', '😇', '👍', '🌺', '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😇', '😉', '😊', '🙂', '🙃', '😋', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '🤪', '😜', '😝', '😛', '🤑', '😎', '🤓', '🧐',
-    '🤠', '🥳', '🤡', '😏', '😶','😐', '😑', '😒', '🙄', '🤨', '🤔', '🤫', '🤭',  '🤗', '🤥', '😳', '😞', '😟', '😤', '😠', '😔', '😕', '🙁', '😬', '🥺', '😣', '😖', '😫', '😩', '🥱', '😮', '😮', '😓',
-    '😯', '😦', '😧', '😢', '🤤', '🤩', '😵', '😵', '🥴', '😲', '🤐', '😷', '🤕', '🤒', '🤧', '😶', '😴', '😺',
-    '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌']
+        '🤠', '🥳', '🤡', '😏', '😶', '😐', '😑', '😒', '🙄', '🤨', '🤔', '🤫', '🤭', '🤗', '🤥', '😳', '😞', '😟', '😤', '😠', '😔', '😕', '🙁', '😬', '🥺', '😣', '😖', '😫', '😩', '🥱', '😮', '😮', '😓',
+        '😯', '😦', '😧', '😢', '🤤', '🤩', '😵', '😵', '🥴', '😲', '🤐', '😷', '🤕', '🤒', '🤧', '😶', '😴', '😺',
+        '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌']
 
     let so_luong_icon = Math.floor(Math.random() * 5)
 
@@ -228,12 +234,12 @@ commentFeed = async (cookies, shopee_feed, proxy) => {
 
             let xx = hashtags[c]
             xx = xx.split('#');
-            if(xx.length>1){
+            if (xx.length > 1) {
                 xx = xx[1]
-            }else{
+            } else {
                 xx = xx[0]
             }
-            
+
             //xx = xx.split("\r")
             //xx = xx[0]
 
@@ -267,12 +273,12 @@ commentFeed = async (cookies, shopee_feed, proxy) => {
         //proxy: false,
         data: data
     };
-    
+
     await axios(config)
         .then(function (response) {
             result = response.data
             console.log("Comment feed: " + feed_link + " --- " + result.msg);
-           
+
         })
         .catch(function (error) {
             console.log(error);
@@ -293,7 +299,7 @@ const timViTriSanPham = async (product) => {
 
 
 module.exports = {
-    
+
     thaTimSanPham,
     layDanhSachSanPhamCuaShop,
     likeFeed,
