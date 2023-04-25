@@ -6,17 +6,25 @@ const axios = require('axios').default;
 const HttpsProxyAgent = require("https-proxy-agent")
 const moment = require('moment')
 var FormData = require('form-data');
-const { firefox, chromium } = require("playwright");
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
+const { executablePath, PageEmittedEvents } = require('puppeteer')
 
+var cron = require('node-cron');
 var randomMac = require('random-mac');
 const proxy_check = require('proxy-check');
 const exec = require('child_process').exec;
+const { spawn } = require('child_process');
 const randomUseragent = require('random-useragent');
 const publicIp = require('public-ip');
+const https = require('https');
+const { isBuffer } = require('util');
 var shell = require('shelljs');
 const { preparePageForTests } = require('./src/bypass.js');
 const bypassTest = require('./src/bypassTest.js');
 var ip_address = require("ip");
+const { stringify } = require('querystring');
 
 slavenumber = process.env.SLAVE
 account_check = process.env.ACCOUNT_CHECK
@@ -240,14 +248,12 @@ check_captcha = async (page, accounts) => {
 
 searchKeyWord = async (page, keyword) => {
     try {
-        
+
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
 
-        let checkSearchInput = await page.locator('.shopee-searchbar-input__input');
-       
-        if (checkSearchInput) {
-            console.log(moment().format("hh:mm:ss") + " - checkSearchInput", checkSearchInput)
+        let checkSearchInput = await page.$$('.shopee-searchbar-input__input');
+        if (checkSearchInput.length) {
             await page.click('.shopee-searchbar-input__input')
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
             await page.waitForTimeout(timeout);
@@ -255,27 +261,27 @@ searchKeyWord = async (page, keyword) => {
             timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
             await page.waitForTimeout(timeout);
             await page.keyboard.press('Enter')
+        }   
+        // } else {
+        //     //  await page.waitForSelector('.shopee-searchbar-input')
+        //     await page.click('.shopee-searchbar-input')
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     await page.click('.shopee-searchbar-input')
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     await page.click('.shopee-searchbar-input')
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     console.log(keyword)
+        //     await page.type('.shopee-searchbar-input', keyword, { delay: 100 })
+        //     timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+        //     await page.waitForTimeout(timeout);
+        //     await page.keyboard.press('Enter')
+
+        // }
+       
         
-        } else {
-            //  await page.waitForSelector('.shopee-searchbar-input')
-            await page.locator('.shopee-searchbar-input').click()
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            await page.locator('.shopee-searchbar-input').click()
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            await page.locator('.shopee-searchbar-input').click()
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            console.log(keyword)
-            await page.locator('.shopee-searchbar-input').type(keyword)
-            timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-            await page.waitForTimeout(timeout);
-            await page.keyboard.press('Enter')
-
-        }
-
-
     } catch (error) {
         console.log(moment().format("hh:mm:ss") + " - CÓ LỖI TÌM KIẾM SẢN PHẨM")
         console.log(error)
@@ -954,14 +960,14 @@ action_view_product = async (page) => {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
         }
-        // await page.waitForSelector('.icon-arrow-right-bold')
+        await page.waitForSelector('.icon-arrow-right-bold')
 
         for (let i = 0; i <= viewRandomImages; i++) {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
             if (nextRightButton.length > 1) {
-                await nextRightButton[nextRightButton.length-1].click();
+                await nextRightButton[1].click();
             }
         }
     } catch (e) {
@@ -983,9 +989,9 @@ action_view_product = async (page) => {
     return true
 }
 
-action_heart_product_api = async (browser, page, product) => {
+action_heart_product_api = async (page, product) => {
 
-    let cookies1 = await browser.cookies()
+    let cookies1 = await page.cookies()
     let refer = await page.url()
     let result = await shopeeApi.thaTimSanPham(cookies1, refer, product.shop_id, product.product_id)
 
@@ -1525,10 +1531,6 @@ function sleep(ms) {
     });
 }
 
-function randomInt(min, max) {
-    // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
 
 gen_browser = async (option) => {
     let profile_dir = option.profile_dir
@@ -1539,27 +1541,92 @@ gen_browser = async (option) => {
 
     console.log("Profile chrome link: " + profile_dir)
 
- 
-    if (!fs.existsSync(`${profileDir}`)) {
-        fs.mkdirSync(`${profileDir}`);
-      }
-      if (!fs.existsSync(`${profile_dir}`)) {
-        fs.mkdirSync(`${profile_dir}`);
-        fs.mkdirSync(`${profile_dir}\\extensions`);
-      }
+    let param = [
+        `--user-data-dir=${profile_dir}`,      // load profile chromium
+        '--disable-gpu',
+        '--no-sandbox',
+        '--lang=en-US',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-dev-shm-usage',
+        //   '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--lang=' + user_lang,
+        //    '--disable-reading-from-canvas',
+        `--disable-extensions-except=${__dirname}/chrome-extensions/AudioContext-Fingerprint-Defender,${__dirname}/chrome-extensions/Canvas-Fingerprint-Defender,${__dirname}/chrome-extensions/Font-Fingerprint-Defender,${__dirname}/chrome-extensions/WebGL-Fingerprint-Defender,${__dirname}/chrome-extensions/WebRTC-Control`,
+        `--load-extension=${__dirname}/chrome-extensions/AudioContext-Fingerprint-Defender,${__dirname}/chrome-extensions/Canvas-Fingerprint-Defender,${__dirname}/chrome-extensions/Font-Fingerprint-Defender,${__dirname}/chrome-extensions/WebGL-Fingerprint-Defender,${__dirname}/chrome-extensions/WebRTC-Control`,
+    ]
 
-    const extensions = fs
-        .readdirSync(`./firefox-extensions`)
-        .filter((x) => x.endsWith(".xpi"));
-    for (let i = 0; i < extensions.length; i++) {
-        fs.copyFileSync(
-            `./firefox-extensions/${extensions[i]}`,
-            `${profile_dir}/extensions\${extensions[i]}`
-        );
+    // if(mode==="DEV"){
+    //     network = ""
+    // }
+
+    if (network == "proxy") {
+        //'--proxy-server=103.90.230.170:9043'
+
+        let proxy_for_slave = "--proxy-server=" + proxy1.proxy_ip + ":" + proxy1.proxy_port
+        param.push(proxy_for_slave)
+        param.push('--ignore-certificate-errors')
+    }
+    chrome_dir = process.env.CHROME
+    //console.log("Chrome dir: " + chrome_dir)
+    let execute_path
+    if (chrome_dir) {
+
+        var browser = await puppeteer.launch({
+            executablePath: chrome_dir,
+            headless: headless_mode,
+            devtools: false,
+            userDataDir: `${profile_dir}`,
+            args: param
+        });
+    } else {
+
+        browser = await puppeteer.launch({
+            executablePath: executablePath(),
+            headless: headless_mode,
+            devtools: false,
+            userDataDir: `${profile_dir}`,
+            args: param
+        });
     }
 
-    let proxy_2
+
+    return browser
+}
+
+gen_page = async (browser, option) => {
+
+    const page = (await browser.pages())[0];
+    //const page = await browser.newPage()
+    await preparePageForTests(page);
+
+    let user_agent1 = option.user_agent
+    let proxy1 = option.proxy
+    let cookie1 = option.cookie
+    let network = option.network
+
+    //await page.setUserAgent(user_agent1)
+
+    // Random kích cỡ màn hình
+    width = Math.floor(Math.random() * (1280 - 1000)) + 1000;;
+    height = Math.floor(Math.random() * (800 - 600)) + 600;;
+    console.log("Kích thước màn hình: " + width + " x " + height)
+
+    await page.setViewport({
+        width: width,
+        height: height
+    });
+
+    // if(mode==="DEV"){
+    //     network = ""
+    // }
+
     if (network == "proxy") {
+
         let proxy_pass
         try {
             proxy_pass = proxy1.proxy_password.split("\r")[0]
@@ -1567,53 +1634,24 @@ gen_browser = async (option) => {
             proxy_pass = proxy1.proxy_password
         }
 
-        proxy_2 = {
-            server: `${proxy1.proxy_ip}:${proxy1.proxy_port}`,
-            username: proxy1.proxy_username,
-            password: proxy_pass,
-        }
+        console.log(" proxxy ip: " + proxy1.proxy_ip + ":" + proxy1.proxy_port + ":" + proxy1.proxy_username + ":" + proxy_pass)
+        await page.authenticate({ username: proxy1.proxy_username, password: proxy_pass });
     }
-   
 
-        var browser = await firefox.launchPersistentContext(
-            `${profile_dir}`,
-            {
-                headless: false,
-                viewport: { width: randomInt(900, 1200), height: randomInt(600, 900) },
-
-                //   args: args,
-                proxy: network == "proxy" ? proxy_2 : "",
-                //   userAgent,
-                //   locale,
-                javaScriptEnabled: true,
-            }
-        );
-   
-        
     try {
-        let cookie1 = option.cookie
         if (cookie1.length) {
             //   let cookie111 = JSON.parse(cookie1)
             //console.log(cookie111)
             // cookie111.forEach(async (item) => {
             //     await page.setCookie(item);
             // })
-            cookie1.forEach(elm => delete elm.expires);
-            await browser.addCookies(cookie1);
-          
+            await page.setCookie(...cookie1);
             console.log(moment().format("hh:mm:ss") + " - Setcookie thành công")
         }
     } catch (e) {
         console.log(" ---- Lỗi set coookie ----")
     }
 
-    return browser
-}
-
-gen_page = async (browser) => {
-
-    const page = await browser.pages()[0];
-   
     return page
 }
 
@@ -1777,7 +1815,7 @@ runAllTime = async () => {
 
     // console.log(dataShopee.version)
     // process.exit()
-    if (dataShopee.version && dataShopee.auto_update) {
+    if (dataShopee.version) {
 
         // get version hien tai trong file version.txt
         var checkVersion = fs.readFileSync("version.txt", { flag: "as+" });
@@ -1997,9 +2035,6 @@ runAllTime = async () => {
         console.log(proxy)
         console.log("email account: " + acc.email)
         let browser = await gen_browser(option1)
-
-       
-
         let page = await gen_page(browser, option1)
 
         //await chan_anh(page)
@@ -2013,8 +2048,7 @@ runAllTime = async () => {
                     referer: ref
                 })
                 await updateProxy(proxy.proxy_ip + ":OK")
-                
-               
+                bypassTest.runBypassTest(page);
             } catch (err) {
                 //HERE
                 console.error(err);
@@ -2108,7 +2142,7 @@ runAllTime = async () => {
                                 if (check_point) {
                                     try {
                                         console.log(moment().format("hh:mm:ss") + " - Thao tác shopee feed")
-                                        let cookie_2 = await browser.cookies()
+                                        let cookie_2 = await page.cookies()
                                         result_feed = 0
                                         check_feed = 0
 
@@ -2244,8 +2278,6 @@ runAllTime = async () => {
                         let check_add_cart
                         page.removeAllListeners('response');
                         //await page.setRequestInterception(true);
-                       
-
                         await page.on('response', async (resp) => {
                             let url = resp.url()
                             let productInfo1, productInfo2
@@ -2474,11 +2506,11 @@ runAllTime = async () => {
                         } else {
                             break
                         }
+                        
 
+                        cookies22 = await page.cookies()
 
-                        cookies22 = await browser.cookies()
-
-                        productForUser.cookie = cookies22
+                        productForUser.cookie = await page.cookies()
                         productForUser.user_agent = user_agent
                         productForUser.user_lang = user_lang
                         cookie1 = ""
@@ -2491,7 +2523,7 @@ runAllTime = async () => {
                         })
                         let result_check = true
                         let trang_vi_tri_san_pham = false
-
+                        
                         try {
                             await page.waitForSelector(".shopee-search-item-result__items", {
                                 timeout: 60000
@@ -2536,9 +2568,9 @@ runAllTime = async () => {
                                         console.log("tìm trên trang: " + i)
                                         if (check_btn_next.length) {
                                             await check_btn_next[0].click()
-                                            await page.waitForTimeout(5000)
+
                                         }
-                                        
+                                        await page.waitForTimeout(5000)
 
                                         if (viTriSanPhamTrang1 != false) {
                                             productForUser.trang = i
@@ -2672,15 +2704,11 @@ runAllTime = async () => {
                         //if (check_product_exit === "Có tồn tại") {
                         try {
                             await page.waitForSelector('.shopee-input-quantity', {
-                                timeout: 10000
+                                timeout: 60000
                             })
 
                         } catch (error) {
                             console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
-                            productForUser.action = "search"
-                            productForUser.product_not_exist = 1
-                            await updateActions(productForUser, 10)
-
                             console.log(error)
                             await browser.close()
                             return
@@ -2698,7 +2726,7 @@ runAllTime = async () => {
                             await page.waitForTimeout(timeout)
 
                             let cookie1 = ''
-                            cookies22 = await browser.cookies()
+                            cookies22 = await page.cookies()
                             cookies22.forEach((row, index) => {
                                 cookie1 = cookie1 + row.name + "=" + row.value
                                 if (index != (cookies22.length - 1)) {
@@ -2706,7 +2734,7 @@ runAllTime = async () => {
                                 }
                             })
 
-                            productForUser.cookie = await browser.cookies()
+                            productForUser.cookie = await page.cookies()
                             //   productForUser.cookie = cookie1
 
                             productForUser.action = "search"
@@ -2751,7 +2779,7 @@ runAllTime = async () => {
                                     check_point = await check_point_hour(productForUser.uid)
                                     if (check_point) {
                                         random_like = Math.floor(Math.random() * 4);
-                                        check_like = await action_heart_product_api(browser, page, productForUser)
+                                        check_like = await action_heart_product_api(page, productForUser)
                                         console.log(moment().format("hh:mm:ss") + " -  thả tim sản phẩm: " + check_like.error)
 
                                         if (check_like.error == 0) {
