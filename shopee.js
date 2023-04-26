@@ -2907,7 +2907,7 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-
+            shell.exec('pm2 restart all');
         }
     })
 };
@@ -2920,7 +2920,7 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
 
-        await runAllTime()
+       
 
         if (os_slave == "LINUX") {
             shell.exec('pm2 flush');
@@ -2932,12 +2932,14 @@ if (mode === "DEV") {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
 
+        await runAllTime()
+
     })();
 } else {
 
     (async () => {
 
-        await runAllTime()
+       
 
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
@@ -2945,11 +2947,13 @@ if (mode === "DEV") {
             shell.exec('rm ~/.pm2/pm2.log');
             //shell.exec('a-kill.bat');
             shell.exec('rm -rf ' + profileDir);
-            shell.exec('pm2 restart all');
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
-            shell.exec('pm2 restart all');
+           
         }
+
+        await runAllTime()
+
 
     })();
 }
