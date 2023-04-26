@@ -167,7 +167,8 @@ loginShopee = async (page, accounts) => {
                 }
             }
 
-            let check_account_checkpoint = await page.$x("//div[contains(text(), 'Xác minh tài khoản')]");
+            let check_account_checkpoint = await page.locator('div',{hasText: 'Xác minh tài khoản'} );
+            console.log("Check checkpoint", check_account_checkpoint)
             if (check_account_checkpoint.length > 0) {
                 console.log("account bị checkpoint")
 
@@ -202,7 +203,9 @@ loginShopee = async (page, accounts) => {
 }
 
 check_captcha = async (page, accounts) => {
-    let check_account_checkpoint = await page.$x("//div[contains(text(), 'Kéo sang phải để hoàn thiện bức hình')]");
+    
+    let check_account_checkpoint = await page.locator('div',{hasText: 'Kéo sang phải để hoàn thiện bức hình'} );
+    console.log("Check captcha: " + accounts[0], check_account_checkpoint)
     if (check_account_checkpoint.length > 0) {
         console.log("Tài khoản bị yêu cầu captcha: " + accounts[0])
 
@@ -1219,8 +1222,9 @@ removeCart = async (page) => {
             })
             for (let i = 0; i < 10; i++) {
 
-                check_product_cart = await page.$x("//button[contains(text(), 'Xóa')]");
-                console.log("check btn Xóa: " + check_product_cart.length)
+                check_product_cart = await page.locator('div',{hasText: 'Xóa'} );
+                
+                console.log("check btn Xóa: " + check_product_cart)
 
                 if (check_product_cart.length > 0) {
                     await check_product_cart[0].click();
