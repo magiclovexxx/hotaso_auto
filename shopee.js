@@ -2494,7 +2494,7 @@ runAllTime = async () => {
 
                         cookies22 = await browser.cookies()
 
-                        productForUser.cookie = cookies22
+                       // productForUser.cookie = cookies22
                         productForUser.user_agent = user_agent
                         productForUser.user_lang = user_lang
                         cookie1 = ""
@@ -2758,6 +2758,9 @@ runAllTime = async () => {
                                 }
                                 actions.push(action1)
                                 productForUser.action = "view_review"
+                                
+                                cookies22 = await browser.cookies()
+                                productForUser.cookie = cookies22
                                 await updateActions(productForUser, 10)
                             }
 
