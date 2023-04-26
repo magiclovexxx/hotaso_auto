@@ -2025,6 +2025,14 @@ runAllTime = async () => {
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
 
             await page.waitForTimeout(timeout)
+            cookie_3.forEach(elm => delete elm.expires);
+            await browser.addCookies(cookie_3);
+          
+            console.log(moment().format("hh:mm:ss") + " - Setcookie thành công")
+
+            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+
+            await page.waitForTimeout(timeout)
 
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
