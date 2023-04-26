@@ -2695,7 +2695,7 @@ runAllTime = async () => {
 
                             console.log(error)
                             await browser.close()
-                            return
+                           
                         }
 
 
@@ -2907,7 +2907,7 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            
+            shell.exec('pm2 restart all');
         }
     })
 };
@@ -2939,7 +2939,7 @@ if (mode === "DEV") {
 
     (async () => {
 
-       
+        await runAllTime()
 
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
@@ -2952,8 +2952,8 @@ if (mode === "DEV") {
            
         }
 
-        await runAllTime()
-        shell.exec('pm2 restart all');
+        
+        
 
     })();
 }
