@@ -2913,9 +2913,10 @@ runAllTime = async () => {
         await browser.close();
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            shell.exec('pm2 restart all');
+            
         }
     })
+    
 };
 
 
@@ -2942,8 +2943,9 @@ if (mode === "DEV") {
 
     })();
 } else {
-
+    
     (async () => {
+        var restart = 0
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
             shell.exec('pm2 flush');
@@ -2954,18 +2956,18 @@ if (mode === "DEV") {
             shell.exec('Rmdir /S /q ' + profileDir);
 
         }
-
-        new Promise(async (resolve, reject) => {
-            try {
-                await runAllTime()
-            } catch (error) {
-                console.log(error)
+        for(let x=1; x<100; x++){
+            await runAllTime()
+            if(x==10){
+                console.log(moment().format("hh:mm:ss") + " - restart ")
+                shell.exec('pm2 restart all');
             }
-            
-            resolve(  );
            
-          });
-          shell.exec('pm2 restart all')
+            x++
+            console.log(moment().format("hh:mm:ss") + " - Run --- " + x)
+        }
+        
+          
        
     })();
 }
