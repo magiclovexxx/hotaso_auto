@@ -1579,7 +1579,7 @@ gen_browser = async (option) => {
     }
 
 
-    var browser = await firefox.launchPersistentContext(
+    var browser = await chromium.launchPersistentContext(
         `${profile_dir}`,
         {
             headless: headless_mode,
