@@ -167,7 +167,7 @@ loginShopee = async (page, accounts) => {
                 }
             }
 
-            let check_account_checkpoint = await page.locator('div',{hasText: 'Xác minh tài khoản'} );
+            let check_account_checkpoint = await page.locator('div', { hasText: 'Xác minh tài khoản' });
             console.log("Check checkpoint", check_account_checkpoint)
             if (check_account_checkpoint.length > 0) {
                 console.log("account bị checkpoint")
@@ -203,8 +203,8 @@ loginShopee = async (page, accounts) => {
 }
 
 check_captcha = async (page, accounts) => {
-    
-    let check_account_checkpoint = await page.locator('div',{hasText: 'Kéo sang phải để hoàn thiện bức hình'} );
+
+    let check_account_checkpoint = await page.locator('div', { hasText: 'Kéo sang phải để hoàn thiện bức hình' });
     console.log("Check captcha: " + accounts[0], check_account_checkpoint)
     if (check_account_checkpoint.length > 0) {
         console.log("Tài khoản bị yêu cầu captcha: " + accounts[0])
@@ -243,12 +243,12 @@ check_captcha = async (page, accounts) => {
 
 searchKeyWord = async (page, keyword) => {
     try {
-        
+
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
 
         let checkSearchInput = await page.locator('.shopee-searchbar-input__input');
-       
+
         if (checkSearchInput) {
             console.log(moment().format("hh:mm:ss") + " - checkSearchInput", checkSearchInput)
             await page.click('.shopee-searchbar-input__input')
@@ -258,7 +258,7 @@ searchKeyWord = async (page, keyword) => {
             timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
             await page.waitForTimeout(timeout);
             await page.keyboard.press('Enter')
-        
+
         } else {
             //  await page.waitForSelector('.shopee-searchbar-input')
             await page.locator('.shopee-searchbar-input').click()
@@ -964,7 +964,7 @@ action_view_product = async (page) => {
             await page.waitForTimeout(timeout)
             let nextRightButton = await page.$$('.icon-arrow-right-bold')
             if (nextRightButton.length > 1) {
-                await nextRightButton[nextRightButton.length-1].click();
+                await nextRightButton[nextRightButton.length - 1].click();
             }
         }
     } catch (e) {
@@ -1222,8 +1222,8 @@ removeCart = async (page) => {
             })
             for (let i = 0; i < 10; i++) {
 
-                check_product_cart = await page.locator('div',{hasText: 'Xóa'} );
-                
+                check_product_cart = await page.locator('div', { hasText: 'Xóa' });
+
                 console.log("check btn Xóa: " + check_product_cart)
 
                 if (check_product_cart.length > 0) {
@@ -1532,7 +1532,7 @@ function sleep(ms) {
 function randomInt(min, max) {
     // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
-  }
+}
 
 gen_browser = async (option) => {
     let profile_dir = option.profile_dir
@@ -1543,14 +1543,14 @@ gen_browser = async (option) => {
 
     console.log("Profile chrome link: " + profile_dir)
 
- 
+
     if (!fs.existsSync(`${profileDir}`)) {
         fs.mkdirSync(`${profileDir}`);
-      }
-      if (!fs.existsSync(`${profile_dir}`)) {
+    }
+    if (!fs.existsSync(`${profile_dir}`)) {
         fs.mkdirSync(`${profile_dir}`);
         fs.mkdirSync(`${profile_dir}\\extensions`);
-      }
+    }
 
     const extensions = fs
         .readdirSync(`./firefox-extensions`)
@@ -1577,23 +1577,23 @@ gen_browser = async (option) => {
             password: proxy_pass,
         }
     }
-   
 
-        var browser = await firefox.launchPersistentContext(
-            `${profile_dir}`,
-            {
-                headless: headless_mode,
-                viewport: { width: randomInt(900, 1200), height: randomInt(600, 900) },
 
-                //   args: args,
-                proxy: network == "proxy" ? proxy_2 : "",
-                //   userAgent,
-                //   locale,
-                javaScriptEnabled: true,
-            }
-        );
-   
-        
+    var browser = await firefox.launchPersistentContext(
+        `${profile_dir}`,
+        {
+            headless: headless_mode,
+            viewport: { width: randomInt(900, 1200), height: randomInt(600, 900) },
+
+            //   args: args,
+            proxy: network == "proxy" ? proxy_2 : "",
+            //   userAgent,
+            //   locale,
+            javaScriptEnabled: true,
+        }
+    );
+
+
     try {
         let cookie1 = option.cookie
         if (cookie1.length) {
@@ -1604,7 +1604,7 @@ gen_browser = async (option) => {
             // })
             cookie1.forEach(elm => delete elm.expires);
             await browser.addCookies(cookie1);
-          
+
             console.log(moment().format("hh:mm:ss") + " - Setcookie thành công")
         }
     } catch (e) {
@@ -1617,7 +1617,7 @@ gen_browser = async (option) => {
 gen_page = async (browser) => {
 
     const page = await browser.pages()[0];
-   
+
     return page
 }
 
@@ -2002,7 +2002,7 @@ runAllTime = async () => {
         console.log("email account: " + acc.email)
         let browser = await gen_browser(option1)
 
-       
+
 
         let page = await gen_page(browser, option1)
 
@@ -2017,8 +2017,8 @@ runAllTime = async () => {
                     referer: ref
                 })
                 await updateProxy(proxy.proxy_ip + ":OK")
-                
-               
+
+
             } catch (err) {
                 //HERE
                 console.error(err);
@@ -2031,7 +2031,7 @@ runAllTime = async () => {
             await page.waitForTimeout(timeout)
             cookie_3.forEach(elm => delete elm.expires);
             await browser.addCookies(cookie_3);
-          
+
             console.log(moment().format("hh:mm:ss") + " - Setcookie thành công")
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -2086,7 +2086,7 @@ runAllTime = async () => {
                     });
                 await browser.close();
                 console.log(" ----- KhởI đÔng lại ---- ")
-                return
+                shell.exec('pm2 restart all');
             }
             if (checklogin) {
 
@@ -2256,7 +2256,7 @@ runAllTime = async () => {
                         let check_add_cart
                         page.removeAllListeners('response');
                         //await page.setRequestInterception(true);
-                       
+
 
                         await page.on('response', async (resp) => {
                             let url = resp.url()
@@ -2512,6 +2512,7 @@ runAllTime = async () => {
                             console.log(moment().format("hh:mm:ss") + " - Không tìm thấy kết quả sản phẩm")
                             result_check = false
                             // await browser.close()
+                            // shell.exec('pm2 restart all');
                             // return
                         }
                         // console.log(moment().format("hh:mm:ss") + " - Shopee search result")
@@ -2550,7 +2551,7 @@ runAllTime = async () => {
                                             await check_btn_next[0].click()
                                             await page.waitForTimeout(5000)
                                         }
-                                        
+
 
                                         if (viTriSanPhamTrang1 != false) {
                                             productForUser.trang = i
@@ -2695,7 +2696,7 @@ runAllTime = async () => {
 
                             console.log(error)
                             await browser.close()
-                           
+                            shell.exec('pm2 restart all');
                         }
 
 
@@ -2920,14 +2921,14 @@ runAllTime = async () => {
 if (mode === "DEV") {
     (async () => {
 
-       
+
 
         if (os_slave == "LINUX") {
             shell.exec('pm2 flush');
             shell.exec('rm ~/.pm2/pm2.log');
             //    shell.exec('a-kill.bat');
             shell.exec('rm -rf ' + profileDir);
-            
+
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
@@ -2938,9 +2939,6 @@ if (mode === "DEV") {
 } else {
 
     (async () => {
-
-        await runAllTime()
-
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
             shell.exec('pm2 flush');
@@ -2949,12 +2947,9 @@ if (mode === "DEV") {
             shell.exec('rm -rf ' + profileDir);
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
-           
+
         }
-
-        
-        
-
+        await runAllTime()
     })();
 }
 
