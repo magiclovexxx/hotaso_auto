@@ -2040,10 +2040,7 @@ runAllTime = async () => {
             } catch (error) {
                 console.log(moment().format("hh:mm:ss") + " - Setcookie thaast bai")
             }
-            await page.waitForTimeout(timeout)
-            cookie_3.forEach(elm => delete elm.expires);
-            await browser.addCookies(cookie_3);
-
+           
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
 
@@ -2959,7 +2956,12 @@ if (mode === "DEV") {
         }
 
         new Promise(async (resolve, reject) => {
-            await runAllTime()
+            try {
+                await runAllTime()
+            } catch (error) {
+                console.log(error)
+            }
+            
             resolve( shell.exec('pm2 restart all') );
            
           });
