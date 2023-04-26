@@ -2927,7 +2927,7 @@ if (mode === "DEV") {
             shell.exec('rm ~/.pm2/pm2.log');
             //    shell.exec('a-kill.bat');
             shell.exec('rm -rf ' + profileDir);
-
+            
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
         }
@@ -2948,6 +2948,7 @@ if (mode === "DEV") {
             shell.exec('pm2 restart all');
         } else {
             shell.exec('Rmdir /S /q ' + profileDir);
+            shell.exec('pm2 restart all');
         }
 
     })();
