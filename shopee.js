@@ -1578,7 +1578,7 @@ gen_browser = async (option) => {
         var browser = await firefox.launchPersistentContext(
             `${profile_dir}`,
             {
-                headless: false,
+                headless: headless_mode,
                 viewport: { width: randomInt(900, 1200), height: randomInt(600, 900) },
 
                 //   args: args,
