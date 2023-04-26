@@ -2962,10 +2962,10 @@ if (mode === "DEV") {
                 console.log(error)
             }
             
-            resolve( shell.exec('pm2 restart all') );
+            resolve(  );
            
           });
-
+          shell.exec('pm2 restart all')
        
     })();
 }
