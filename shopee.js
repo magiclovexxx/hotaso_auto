@@ -2092,7 +2092,8 @@ runAllTime = async () => {
                     });
                 await browser.close();
                 console.log(" ----- KhởI đÔng lại ---- ")
-                shell.exec('pm2 restart all');
+                // shell.exec('pm2 restart all');
+                return
             }
             if (checklogin) {
 
@@ -2702,7 +2703,8 @@ runAllTime = async () => {
 
                             console.log(error)
                             await browser.close()
-                            shell.exec('pm2 restart all');
+                            return
+                            // shell.exec('pm2 restart all');
                         }
 
 
@@ -2955,7 +2957,14 @@ if (mode === "DEV") {
             shell.exec('Rmdir /S /q ' + profileDir);
 
         }
-        await runAllTime()
+
+        new Promise(async (resolve, reject) => {
+            await runAllTime()
+            resolve( shell.exec('pm2 restart all') );
+           
+          });
+
+       
     })();
 }
 
