@@ -2956,18 +2956,10 @@ if (mode === "DEV") {
             shell.exec('Rmdir /S /q ' + profileDir);
 
         }
-        for(let x=1; x<100; x++){
-            await runAllTime()
-            if(x==10){
-                console.log(moment().format("hh:mm:ss") + " - restart ")
-                shell.exec('pm2 restart all');
-            }
-           
-            x++
-            console.log(moment().format("hh:mm:ss") + " - Run --- " + x)
-        }
+
+        await runAllTime()
         
-          
+          console.log(moment().format("hh:mm:ss") + " - restart ")
        
     })();
 }
