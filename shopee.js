@@ -2104,71 +2104,71 @@ runAllTime = async () => {
                     // Chạy lần lượt max_turn lượt tìm kiếm, tương tác từ khoá
                     for (let o = 0; o < max_turn; o++) {
 
-                        if (data_feed) {
-                            for (let x = 0; x < data_feed.length; x++) {
-                                data_feed_1 = data_feed[x]
-                                check_point = await check_point_hour(data_feed[x].uid)
-                                let productForUser1 = data_feed_1
-                                productForUser1.feed_id = data_feed_1.id
+                        // if (data_feed) {
+                        //     for (let x = 0; x < data_feed.length; x++) {
+                        //         data_feed_1 = data_feed[x]
+                        //         check_point = await check_point_hour(data_feed[x].uid)
+                        //         let productForUser1 = data_feed_1
+                        //         productForUser1.feed_id = data_feed_1.id
 
-                                productForUser1.username = subAccount[0]
-                                productForUser1.password = subAccount[1]
-                                productForUser1.clone_id = subAccount[2]
-                                productForUser1.shopee_point = shopee_point
-                                productForUser1.slave = slavenumber
+                        //         productForUser1.username = subAccount[0]
+                        //         productForUser1.password = subAccount[1]
+                        //         productForUser1.clone_id = subAccount[2]
+                        //         productForUser1.shopee_point = shopee_point
+                        //         productForUser1.slave = slavenumber
 
-                                if (check_point) {
-                                    try {
-                                        console.log(moment().format("hh:mm:ss") + " - Thao tác shopee feed")
-                                        let cookie_2 = await browser.cookies()
-                                        result_feed = 0
-                                        check_feed = 0
+                        //         if (check_point) {
+                        //             try {
+                        //                 console.log(moment().format("hh:mm:ss") + " - Thao tác shopee feed")
+                        //                 let cookie_2 = await browser.cookies()
+                        //                 result_feed = 0
+                        //                 check_feed = 0
 
-                                        console.log("Feed like: " + data_feed_1.feed_like)
-                                        console.log("count like: " + data_feed_1.count_like)
+                        //                 console.log("Feed like: " + data_feed_1.feed_like)
+                        //                 console.log("count like: " + data_feed_1.count_like)
 
-                                        if (Number(data_feed_1.feed_like) > Number(data_feed_1.count_like)) {
-                                            console.log(moment().format("hh:mm:ss") + " - Like Feed")
-                                            check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
-                                            if (check_feed) {
-                                                if (check_feed.msg == "Success") {
-                                                    console.log(moment().format("hh:mm:ss") + " - cập nhật action like feed")
-                                                    //console.log(productForUser1)
-                                                    productForUser1.action = "like_feed"
+                        //                 if (Number(data_feed_1.feed_like) > Number(data_feed_1.count_like)) {
+                        //                     console.log(moment().format("hh:mm:ss") + " - Like Feed")
+                        //                     check_feed = await shopeeApi.likeFeed(cookie_2, data_feed_1.feed_link, proxy)
+                        //                     if (check_feed) {
+                        //                         if (check_feed.msg == "Success") {
+                        //                             console.log(moment().format("hh:mm:ss") + " - cập nhật action like feed")
+                        //                             //console.log(productForUser1)
+                        //                             productForUser1.action = "like_feed"
 
-                                                    await updateActions(productForUser1, 10)
-                                                }
-                                            } else {
-                                                console.log(moment().format("hh:mm:ss") + " - Có lỗi khi live feed")
-                                            }
-                                        }
+                        //                             await updateActions(productForUser1, 10)
+                        //                         }
+                        //                     } else {
+                        //                         console.log(moment().format("hh:mm:ss") + " - Có lỗi khi live feed")
+                        //                     }
+                        //                 }
 
-                                        if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
-                                            console.log(moment().format("hh:mm:ss") + " - Comment feed")
+                        //                 if (Number(data_feed_1.feed_comment) > Number(data_feed_1.count_comment)) {
+                        //                     console.log(moment().format("hh:mm:ss") + " - Comment feed")
 
-                                            check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
-                                            if (check_feed) {
-                                                if (check_feed.msg == "Success") {
-                                                    console.log(moment().format("hh:mm:ss") + " - Cập nhật action comment feed")
-                                                    productForUser1.action = "comment_feed"
+                        //                     check_feed = await shopeeApi.commentFeed(cookie_2, data_feed_1, proxy)
+                        //                     if (check_feed) {
+                        //                         if (check_feed.msg == "Success") {
+                        //                             console.log(moment().format("hh:mm:ss") + " - Cập nhật action comment feed")
+                        //                             productForUser1.action = "comment_feed"
 
-                                                    productForUser1.feed_content = data_feed_1.feed_content
-                                                    productForUser1.feed_mention = data_feed_1.feed_mention
-                                                    productForUser1.feed_hashtag = data_feed_1.feed_hashtag
-                                                    console.log(data_feed_1.feed_mention)
-                                                    await updateActions(productForUser1, 10)
-                                                }
-                                            } else {
-                                                console.log(moment().format("hh:mm:ss") + " - Lỗi khi comment feed ")
-                                            }
-                                        }
-                                    } catch (error) {
-                                        console.log(error)
-                                        await updateErrorLogs(error, slavenumber)
-                                    }
-                                }
-                            }
-                        }
+                        //                             productForUser1.feed_content = data_feed_1.feed_content
+                        //                             productForUser1.feed_mention = data_feed_1.feed_mention
+                        //                             productForUser1.feed_hashtag = data_feed_1.feed_hashtag
+                        //                             console.log(data_feed_1.feed_mention)
+                        //                             await updateActions(productForUser1, 10)
+                        //                         }
+                        //                     } else {
+                        //                         console.log(moment().format("hh:mm:ss") + " - Lỗi khi comment feed ")
+                        //                     }
+                        //                 }
+                        //             } catch (error) {
+                        //                 console.log(error)
+                        //                 await updateErrorLogs(error, slavenumber)
+                        //             }
+                        //         }
+                        //     }
+                        // }
 
                         try {
                             // let ref = await page.url()
