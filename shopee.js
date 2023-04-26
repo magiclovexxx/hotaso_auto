@@ -2002,11 +2002,9 @@ runAllTime = async () => {
         console.log("email account: " + acc.email)
         let browser = await gen_browser(option1)
 
-
-
         let page = await gen_page(browser, option1)
 
-        //await chan_anh(page)
+       
 
         try {
 
@@ -2028,6 +2026,7 @@ runAllTime = async () => {
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
            
+          //  await page.waitForTimeout(9999999)
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
 
