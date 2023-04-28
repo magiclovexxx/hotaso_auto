@@ -261,7 +261,7 @@ searchKeyWord = async (page, keyword) => {
                 await page.click('.shopee-searchbar-input__input')
             } catch (error) {
                 console.log(error)
-                await page.goto('https://shopee.vn/')
+                await page.goto('https://shopee.vn/m/khung-gio-san-sale')
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                 await page.waitForTimeout(timeout);
                 await page.click('.shopee-searchbar-input__input')
@@ -2645,8 +2645,9 @@ runAllTime = async () => {
                                         console.log("productsAll", productsAll.length)
                                         console.log("viTriSanPhamTrang1", viTriSanPhamTrang1)
 
+                                        console.log("product_name_2", product_name_2)
                                         let check = await page.$(`text=${product_name_2}`);
-                                        console.log("check name san pham de click", check.length)
+                                        console.log("check name san pham de click", check)
                                         if (check) {
                                             await check.click()
                                         } else {
