@@ -2641,6 +2641,8 @@ runAllTime = async () => {
                                     await page.waitForTimeout(timeout);
 
                                     let productsAll = await page.$$('[data-sqe="link"]')
+                                    console.log("productsAll", productsAll.length)
+                                    console.log("viTriSanPhamTrang1", viTriSanPhamTrang1)
                                     try {
                                         await productsAll[viTriSanPhamTrang1 - 1].click()
                                     } catch (error) {
