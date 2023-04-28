@@ -2959,7 +2959,7 @@ runAllTime = async () => {
         // console.log(moment().format("hh:mm:ss") + " PM2 restart ")
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            shell.exec('pm2 update; pm2 restart shopee; pm2 log');
+            shell.exec('pm2 restart shopee; pm2 log');
         }
 
     })
