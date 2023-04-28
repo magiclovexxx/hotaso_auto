@@ -251,9 +251,7 @@ searchKeyWord = async (page, keyword) => {
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
         let checkSearchInput = 1
-
-        page.on('dialog', dialog => console.log("Dialog", dialog.message()));
-        
+ 
 
         await page.goto('https://shopee.vn/search?keyword='+keyword)
 
@@ -2950,7 +2948,7 @@ runAllTime = async () => {
         // console.log(moment().format("hh:mm:ss") + " PM2 restart ")
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-
+            shell.exec('pm2 restart shopee; pm2 log');
         }
 
     })
