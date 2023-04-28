@@ -261,7 +261,10 @@ searchKeyWord = async (page, keyword) => {
                 await page.click('.shopee-searchbar-input__input')    
             } catch (error) {
                 console.log(error)
-                page.reload()
+                await page.reload()
+                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                await page.waitForTimeout(timeout);
+                await page.click('.shopee-searchbar-input__input')  
                  
             }
             
