@@ -252,6 +252,8 @@ searchKeyWord = async (page, keyword) => {
         await page.waitForTimeout(timeout);
         let checkSearchInput
 
+        page.on('dialog', dialog => console.log(dialog.message()));
+        
 
         checkSearchInput = await page.$('.shopee-searchbar-input__input');
 
@@ -1047,6 +1049,10 @@ action_add_cart = async (page, product) => {
         timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
         await page.waitForTimeout(timeout)
 
+        let check = await page.$(`text=Mua ngay`)
+        if(check){
+            await check.click()
+        }
     } catch (error) {
         console.log(error)
         await updateErrorLogs(error, slavenumber)
@@ -2594,13 +2600,14 @@ runAllTime = async () => {
 
 
                                     if (trang_vi_tri_san_pham > 1) {
+                                        console.log(moment().format("hh:mm:ss") + " -  Đến trang có vị trí sản phẩm")
                                         pageUrl = trang_vi_tri_san_pham - 1
                                         urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword + "&page=" + pageUrl
                                     } else {
 
                                         urlSearch = "https://shopee.vn/search?keyword=" + productForUser.keyword
                                     }
-                                    console.log(moment().format("hh:mm:ss") + " -  Đến trang có vị trí sản phẩm")
+
 
                                     urlSearch = encodeURI(urlSearch)
                                     productForUser.urlSearch = urlSearch
@@ -2619,51 +2626,60 @@ runAllTime = async () => {
                                     console.log(moment().format("hh:mm:ss") + " - Vị trí sản phẩm: " + productForUser.product_name + " -- " + productForUser.product_id + ":  " + viTriSanPhamTrang1)
                                     // console.log(getViTriSanPham)
 
-                                    if (viTriSanPhamTrang1 != false) {
+                                    // if (viTriSanPhamTrang1 != false) {
 
-                                        today = new Date().toLocaleString();
-                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                        await page.keyboard.press('PageDown');
-                                        await page.waitForTimeout(timeout);
-                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                        await page.keyboard.press('PageDown');
-                                        await page.waitForTimeout(timeout);
-                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                        await page.keyboard.press('PageDown');
-                                        await page.waitForTimeout(timeout);
-                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                        await page.keyboard.press('PageDown');
-                                        await page.waitForTimeout(timeout);
-                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                        await page.keyboard.press('PageDown');
-                                        await page.waitForTimeout(timeout);
-                                        timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
-                                        await page.keyboard.press('PageDown');
-                                        await page.waitForTimeout(timeout);
+                                    //     today = new Date().toLocaleString();
+                                    //     timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    //     await page.keyboard.press('PageDown');
+                                    //     await page.waitForTimeout(timeout);
+                                    //     timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    //     await page.keyboard.press('PageDown');
+                                    //     await page.waitForTimeout(timeout);
+                                    //     timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    //     await page.keyboard.press('PageDown');
+                                    //     await page.waitForTimeout(timeout);
+                                    //     timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    //     await page.keyboard.press('PageDown');
+                                    //     await page.waitForTimeout(timeout);
+                                    //     timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    //     await page.keyboard.press('PageDown');
+                                    //     await page.waitForTimeout(timeout);
+                                    //     timeout = Math.floor(Math.random() * (4000 - 3000)) + 3000;
+                                    //     await page.keyboard.press('PageDown');
+                                    //     await page.waitForTimeout(timeout);
 
-                                        let productsAll = await page.$$('[data-sqe="link"]')
-                                        console.log("productsAll", productsAll.length)
-                                        console.log("viTriSanPhamTrang1", viTriSanPhamTrang1)
+                                    //     let productsAll = await page.$$('[data-sqe="link"]')
+                                    //     console.log("productsAll", productsAll.length)
+                                    //     console.log("viTriSanPhamTrang1", viTriSanPhamTrang1)
 
-                                        console.log("product_name_2", product_name_2)
-                                        let check = await page.$(`text=${product_name_2}`);
-                                        console.log("check name san pham de click", check)
-                                        if (check) {
-                                            await check.click()
-                                        } else {
+                                    //     console.log("product_name_2", product_name_2)
+                                    //     let check = await page.$(`text=${product_name_2}`);
+                                    //     console.log("check name san pham de click", check)
+                                    //     if (check) {
+                                    //         await check.click()
+                                    //     } else {
 
-                                            try {
-                                                await page.goto(productForUser.product_link, {
-                                                });
+                                    //         try {
+                                    //             await page.goto(productForUser.product_link, {
+                                    //             });
 
-                                            } catch (err) {
-                                                //HERE
-                                                console.error(err);
-                                                await updateErrorLogs(err, slavenumber)
-                                            }
-                                        }
+                                    //         } catch (err) {
+                                    //             //HERE
+                                    //             console.error(err);
+                                    //             await updateErrorLogs(err, slavenumber)
+                                    //         }
+                                    //     }
 
 
+                                    // }
+                                    try {
+                                        await page.goto(productForUser.product_link, {
+                                        });
+
+                                    } catch (err) {
+                                        //HERE
+                                        console.error(err);
+                                        await updateErrorLogs(err, slavenumber)
                                     }
                                 }
                             }
