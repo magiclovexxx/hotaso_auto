@@ -2952,6 +2952,7 @@ runAllTime = async () => {
         } catch (error) {
             console.log(error)
             await updateErrorLogs(error, slavenumber)
+            shell.exec('pm2 restart shopee; pm2 log');
         }
 
         await browser.close();
