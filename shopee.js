@@ -167,12 +167,16 @@ loginShopee = async (page, accounts) => {
                 }
             }
 
-            let check_account_checkpoint = await page.locator('div', { hasText: 'Xác minh tài khoản' });
+            let check_account_checkpoint = 0
+         //   check_account_checkpoint = await page.locator('div', { hasText: 'Xác minh tài khoản' });
             console.log("Check checkpoint", check_account_checkpoint)
-            if (check_account_checkpoint.length > 0) {
+            if (check_account_checkpoint) {
                 console.log("account bị checkpoint")
 
-                return 5
+                await page.locator('div', { hasText: 'Xác minh bằng liên kết Email' }).click()
+                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                await page.waitForTimeout(timeout)
+                //  return 5
             }
 
 
@@ -246,12 +250,21 @@ searchKeyWord = async (page, keyword) => {
 
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
-
-        let checkSearchInput = await page.locator('.shopee-searchbar-input__input');
+        let checkSearchInput
+       
+        
+        checkSearchInput = await page.$('.shopee-searchbar-input__input');  
 
         if (checkSearchInput) {
-            console.log(moment().format("hh:mm:ss") + " - checkSearchInput", checkSearchInput)
-            await page.click('.shopee-searchbar-input__input')
+           
+            try {
+                await page.click('.shopee-searchbar-input__input')    
+            } catch (error) {
+                console.log(error)
+                page.reload()
+                 
+            }
+            
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
             await page.waitForTimeout(timeout);
             await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
@@ -277,7 +290,9 @@ searchKeyWord = async (page, keyword) => {
             await page.keyboard.press('Enter')
 
         }
-
+      
+       
+        // check = await page.locator(':has-text("Kênh Người Bán")')
 
     } catch (error) {
         console.log(moment().format("hh:mm:ss") + " - CÓ LỖI TÌM KIẾM SẢN PHẨM")
@@ -1579,7 +1594,7 @@ gen_browser = async (option) => {
     }
 
 
-    var browser = await chromium.launchPersistentContext(
+    var browser = await firefox.launchPersistentContext(
         `${profile_dir}`,
         {
             headless: headless_mode,
@@ -2004,7 +2019,7 @@ runAllTime = async () => {
 
         let page = await gen_page(browser, option1)
 
-       
+
 
         try {
 
@@ -2025,8 +2040,8 @@ runAllTime = async () => {
             }
 
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-           
-          //  await page.waitForTimeout(9999999)
+
+            //  await page.waitForTimeout(9999999)
             // login account shopee                    
             let checklogin = await loginShopee(page, subAccount)
 
@@ -2480,7 +2495,7 @@ runAllTime = async () => {
 
                         cookies22 = await browser.cookies()
 
-                       // productForUser.cookie = cookies22
+                        // productForUser.cookie = cookies22
                         productForUser.user_agent = user_agent
                         productForUser.user_lang = user_lang
                         cookie1 = ""
@@ -2744,7 +2759,7 @@ runAllTime = async () => {
                                 }
                                 actions.push(action1)
                                 productForUser.action = "view_review"
-                                
+
                                 cookies22 = await browser.cookies()
                                 productForUser.cookie = cookies22
                                 await updateActions(productForUser, 10)
@@ -2900,12 +2915,14 @@ runAllTime = async () => {
         }
 
         await browser.close();
+        console.log(moment().format("hh:mm:ss") + " PM2 restart ")
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            
+           
         }
+        
     })
-    
+
 };
 
 
@@ -2932,9 +2949,8 @@ if (mode === "DEV") {
 
     })();
 } else {
-    
+
     (async () => {
-        var restart = 0
         if (os_slave == "LINUX") {
             shell.exec('rm -f core.*');
             shell.exec('pm2 flush');
@@ -2947,9 +2963,9 @@ if (mode === "DEV") {
         }
 
         await runAllTime()
-        
-          console.log(moment().format("hh:mm:ss") + " - restart ")
-       
+
+        console.log(moment().format("hh:mm:ss") + " - restart ")
+
     })();
 }
 
