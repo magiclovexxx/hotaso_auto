@@ -971,12 +971,14 @@ action_view_product = async (page) => {
         console.log("Anhr san pham", check.length)
         if (check.length) {
             await check[2].click()
-            for (let i = 0; i <= viewRandomImages; i++) {
-                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                await check[2].click()
-            }
         }
-        
+        // xem ngẫu nhiên n ảnh sản phẩm
+        let viewRandomImages = Math.floor(Math.random() * (5 - 3)) + 4;
+       
+        for (let i = 0; i <= viewRandomImages; i++) {
+            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+            await check[2].click()
+        }
     } catch (e) {
         await updateErrorLogs(e, slavenumber)
         //console.log(e)
