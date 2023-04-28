@@ -661,7 +661,7 @@ action_view_review = async (page) => {
             clickNext = await page.$$('.carousel-arrow--next')
 
             if (clickNext.length) {
-                clickNext[0].click()
+                await clickNext[0].click()
                 timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                 await page.waitForTimeout(timeout)
                 //clickNext[0].click()
@@ -2601,7 +2601,7 @@ runAllTime = async () => {
                                                         console.log(moment().format("hh:mm:ss") + " - Cập nhật SEO Sản phẩm thất bại")
                                                     })
 
-                                                break;
+                                              //  break;
                                             }
 
                                         }
