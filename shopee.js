@@ -250,52 +250,52 @@ searchKeyWord = async (page, keyword) => {
 
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
-        let checkSearchInput
+        let checkSearchInput = 1
 
-        page.on('dialog', dialog => console.log(dialog.message()));
+        page.on('dialog', dialog => console.log("Dialog", dialog.message()));
         
 
-        checkSearchInput = await page.$('.shopee-searchbar-input__input');
+        await page.goto('https://shopee.vn/search?keyword='+keyword)
 
-        if (checkSearchInput) {
+        // if (checkSearchInput) {
 
-            try {
-                await page.click('.shopee-searchbar-input__input')
-            } catch (error) {
-                console.log(error)
-                await page.goto('https://shopee.vn/m/khung-gio-san-sale')
-                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                await page.waitForTimeout(timeout);
-                await page.click('.shopee-searchbar-input__input')
+        //     try {
+        //         await page.click('.shopee-searchbar-input__input')
+        //     } catch (error) {
+        //         console.log(error)
+        //         await page.goto('https://shopee.vn/search?keyword='+keyword)
+        //         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //         await page.waitForTimeout(timeout);
+        //         await page.click('.shopee-searchbar-input__input')
 
-            }
+        //     }
 
 
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
-            timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-            await page.waitForTimeout(timeout);
-            await page.keyboard.press('Enter')
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
+        //     timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+        //     await page.waitForTimeout(timeout);
+        //     await page.keyboard.press('Enter')
 
-        } else {
-            //  await page.waitForSelector('.shopee-searchbar-input')
-            await page.locator('.shopee-searchbar-input').click()
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            await page.locator('.shopee-searchbar-input').click()
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            await page.locator('.shopee-searchbar-input').click()
-            timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await page.waitForTimeout(timeout);
-            console.log(keyword)
-            await page.locator('.shopee-searchbar-input').type(keyword)
-            timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
-            await page.waitForTimeout(timeout);
-            await page.keyboard.press('Enter')
+        // } else {
+        //     //  await page.waitForSelector('.shopee-searchbar-input')
+        //     await page.locator('.shopee-searchbar-input').click()
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     await page.locator('.shopee-searchbar-input').click()
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     await page.locator('.shopee-searchbar-input').click()
+        //     timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+        //     await page.waitForTimeout(timeout);
+        //     console.log(keyword)
+        //     await page.locator('.shopee-searchbar-input').type(keyword)
+        //     timeout = Math.floor(Math.random() * (1000 - 500)) + 500;
+        //     await page.waitForTimeout(timeout);
+        //     await page.keyboard.press('Enter')
 
-        }
+        // }
 
 
         // check = await page.locator(':has-text("Kênh Người Bán")')
@@ -1050,6 +1050,10 @@ action_add_cart = async (page, product) => {
         await page.waitForTimeout(timeout)
 
         let check = await page.$(`text=Mua ngay`)
+        if(check){
+            await check.click()
+        }
+        check = await page.$(`text=OK`)
         if(check){
             await check.click()
         }
