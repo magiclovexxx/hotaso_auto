@@ -872,20 +872,19 @@ action_view_shop = async (page, url, product) => {
     await page.waitForTimeout(timeout)
 
     try {
-        await page.waitForSelector('.shopee-avatar__placeholder', {
-            timeout: 60000
+        await page.waitForSelector('.shopee-avatar__img', {
+            timeout: 30000
         })
-        viewShopClick = await page.$$('.shopee-avatar__placeholder')
-        if (viewShopClick.length >= 2) {
-            viewShopClick[1].click()
-        } else {
-            viewShopClick[0].click()
-        }
+        viewShopClick = await page.$$('.shopee-avatar__img')
+        if (viewShopClick.length ) {
+            await viewShopClick[0].click()
+        } 
 
+       
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
         await page.waitForSelector('.shopee-avatar__img', {
-            timeout: 60000
+            timeout: 30000
         })
 
         randomDown = Math.floor(Math.random() * (5 - 2)) + 2;
@@ -970,14 +969,14 @@ action_view_product = async (page) => {
         let check = await page.$$(`.shopee-icon-button`);
         console.log("Anhr san pham", check.length)
         if (check.length) {
-            await check[2].click()
+            await check[1].click()
         }
         // xem ngẫu nhiên n ảnh sản phẩm
         let viewRandomImages = Math.floor(Math.random() * (5 - 3)) + 4;
        
         for (let i = 0; i <= viewRandomImages; i++) {
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-            await check[2].click()
+            await check[1].click()
         }
     } catch (e) {
         await updateErrorLogs(e, slavenumber)
@@ -2930,6 +2929,7 @@ runAllTime = async () => {
         }
 
     })
+    console.log(moment().format("hh:mm:ss") + "end of Foreach ")
 
 };
 
