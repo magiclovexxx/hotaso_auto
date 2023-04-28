@@ -92,8 +92,10 @@ if (mode === "DEV") {
 logs = 1
 
 loginShopee = async (browser, page, accounts) => {
-
+    await page.waitForTimeout(3000)
     let logincheck = await page.$$('.navbar__username');
+    console.log("Check login: ", logincheck.length)
+   // await page.waitForTimeout(999999)
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
@@ -605,10 +607,10 @@ action_view_review = async (page) => {
 
             if (allmedia.length > 3) {
 
-                randomDown = Math.floor(Math.random() * (3 - 1)) + 1;
+                randomDown = Math.floor(Math.random() * (2 - 1)) + 1;
                 for (i = 1; i < randomDown; i++) {
 
-                    randomDown2 = Math.floor(Math.random() * (3 - 1)) + 1;
+                    randomDown2 = Math.floor(Math.random() * (2 - 1)) + 1;
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                     await page.waitForTimeout(timeout)
                     if (allmedia[randomDown2]) {
@@ -643,9 +645,9 @@ action_view_review = async (page) => {
             allmedia = await page.$$(".shopee-rating-media-list-image__content--blur")
 
             if (allmedia.length > 3) {
-                randomDown = Math.floor(Math.random() * (3 - 1)) + 1;
+                randomDown = Math.floor(Math.random() * (2 - 1)) + 1;
                 for (i = 0; i < randomDown; i++) {
-                    randomDown2 = Math.floor(Math.random() * (3 - 1)) + 1;
+                    randomDown2 = Math.floor(Math.random() * (2 - 1)) + 1;
                     timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
                     await page.waitForTimeout(timeout)
                     if (allmedia[randomDown2]) {
@@ -873,7 +875,8 @@ action_view_shop = async (page, url, product) => {
     // await page.goto(url, {
     //     referer: ref
     // })
-
+    timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
+    await page.waitForTimeout(timeout)
     await page.keyboard.press('Home');
     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
     await page.waitForTimeout(timeout)
@@ -881,10 +884,12 @@ action_view_shop = async (page, url, product) => {
     await page.waitForTimeout(timeout)
 
     try {
-        await page.waitForSelector('.shopee-avatar__img', {
+        await page.waitForSelector('.page-product__shop>div>a', {
             timeout: 30000
         })
-        viewShopClick = await page.$$('.shopee-avatar__img')
+        
+        viewShopClick = await page.$$('.page-product__shop>div>a')
+        console.log(moment().format("hh:mm:ss") + " --> Click vao link shop: " + viewShopClick.length)
         if (viewShopClick.length) {
             await viewShopClick[0].click()
         }
@@ -892,7 +897,7 @@ action_view_shop = async (page, url, product) => {
 
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
-        await page.waitForSelector('.shopee-avatar__img', {
+        await page.waitForSelector('.page-product__shop>div>a', {
             timeout: 30000
         })
 
@@ -997,8 +1002,8 @@ action_view_product = async (page) => {
     await page.mouse.click(10, 30)
 
     // kéo xuống đọc sản phẩm
-    for (let i = 0; i <= 6; i++) {
-        timeout = Math.floor(Math.random() * (6000 - 4000)) + 4000;
+    for (let i = 2; i <= 4; i++) {
+        timeout = Math.floor(Math.random() * (4000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
         await page.keyboard.press('PageDown');
     }
@@ -1056,14 +1061,14 @@ action_add_cart = async (page, product) => {
         timeout = Math.floor(Math.random() * (5000 - 4000)) + 4000;
         await page.waitForTimeout(timeout)
 
-        let check = await page.$(`text=Mua ngay`)
-        if (check) {
-            await check.click()
-        }
-        check = await page.$(`text=OK`)
-        if (check) {
-            await check.click()
-        }
+        // let check = await page.$(`text=Mua ngay`)
+        // if (check) {
+        //     await check.click()
+        // }
+        // check = await page.$(`text=OK`)
+        // if (check) {
+        //     await check.click()
+        // }
     } catch (error) {
         console.log(error)
         await updateErrorLogs(error, slavenumber)
@@ -1257,8 +1262,10 @@ removeCart = async (page) => {
 
                 console.log("check btn Xóa: " + del)
 
-                if (del.length > 0) {
+                if (del) {
+                    
                     await del.click();
+                    console.log("Click Xóa: ")
                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                     await page.waitForTimeout(timeout)
                 }
