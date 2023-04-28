@@ -170,19 +170,19 @@ loginShopee = async (browser, page, accounts) => {
             let check_account_checkpoint = 0
             let check
             //check = await page.$(`text=Xác minh bằng liên kết Email`)
-          
+
             if (check) {
-                console.log("account bị checkpoint: "+ accounts[3])
+                console.log("account bị checkpoint: " + accounts[3])
 
                 await check.click()
-               
+
                 await page.waitForTimeout(10000)
-                let url ='https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid='+accounts[3]
+                let url = 'https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid=' + accounts[3]
                 let email_link = await axios(url)
                 console.log(email_link.data)
                 const pageTwo = await browser.newPage();
-                
-                
+
+
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                 await page.waitForTimeout(999999)
                 //  return 5
@@ -260,9 +260,9 @@ searchKeyWord = async (page, keyword) => {
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
         let checkSearchInput = 1
- 
 
-        await page.goto('https://shopee.vn/search?keyword='+keyword)
+
+        await page.goto('https://shopee.vn/search?keyword=' + keyword)
 
         // if (checkSearchInput) {
 
@@ -1057,11 +1057,11 @@ action_add_cart = async (page, product) => {
         await page.waitForTimeout(timeout)
 
         let check = await page.$(`text=Mua ngay`)
-        if(check){
+        if (check) {
             await check.click()
         }
         check = await page.$(`text=OK`)
-        if(check){
+        if (check) {
             await check.click()
         }
     } catch (error) {
@@ -2031,7 +2031,7 @@ runAllTime = async () => {
         }
 
         console.log(proxy)
-       
+
         let browser = await gen_browser(option1)
 
         let page = await gen_page(browser, option1)
@@ -2685,8 +2685,8 @@ runAllTime = async () => {
 
                                     // }
                                     try {
-                                        await page.goto(productForUser.product_link, {
-                                        });
+                                        console.log("Goto product link")
+                                        await page.goto(productForUser.product_link);
 
                                     } catch (err) {
                                         //HERE
@@ -2741,7 +2741,7 @@ runAllTime = async () => {
 
                             console.log(error)
                             await browser.close()
-                          //  return
+                            //  return
                             // shell.exec('pm2 restart all');
                         }
 
@@ -3003,8 +3003,8 @@ if (mode === "DEV") {
 
         }
 
-       let a = await runAllTime()
-       console.log ("aaaaa", a)
+        let a = await runAllTime()
+        console.log("aaaaa", a)
 
     })();
 }
