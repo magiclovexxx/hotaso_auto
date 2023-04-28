@@ -3003,7 +3003,8 @@ if (mode === "DEV") {
 
         }
 
-        await runAllTime()
+       let a = await runAllTime()
+       console.log ("aaaaa", a)
 
     })();
 }
