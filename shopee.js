@@ -169,7 +169,7 @@ loginShopee = async (browser, page, accounts) => {
 
             let check_account_checkpoint = 0
             let check
-            //check = await page.$(`text=Xác minh bằng liên kết Email`)
+            check = await page.$(`text=Xác minh bằng liên kết Email`)
 
             if (check) {
                 console.log("account bị checkpoint: " + accounts[3])
@@ -185,7 +185,7 @@ loginShopee = async (browser, page, accounts) => {
 
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                 await page.waitForTimeout(999999)
-                //  return 5
+                return 5
             }
 
 
@@ -2585,7 +2585,7 @@ runAllTime = async () => {
                                                 productForUser.vitri = viTriSanPhamTrang1
 
                                                 console.log(moment().format("hh:mm:ss") + " - Update kết quả vị trí sản phẩm: " + viTriSanPhamTrang1)
-                                                productForUser.cookie = ""
+
                                                 await axios.get(shopee_update_seo_san_pham_url, {
                                                     params: {
                                                         data: {
@@ -2601,7 +2601,7 @@ runAllTime = async () => {
                                                         console.log(moment().format("hh:mm:ss") + " - Cập nhật SEO Sản phẩm thất bại")
                                                     })
 
-                                              //  break;
+                                                //  break;
                                             }
 
                                         }
@@ -2702,7 +2702,7 @@ runAllTime = async () => {
                         if (trang_vi_tri_san_pham == false) {
                             productForUser.trang = 0
                             productForUser.vitri = 0
-                            productForUser.cookie = ""
+
                             await axios.get(shopee_update_seo_san_pham_url, {
                                 params: {
                                     data: {
@@ -2959,11 +2959,10 @@ runAllTime = async () => {
         // console.log(moment().format("hh:mm:ss") + " PM2 restart ")
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-            shell.exec('pm2 restart shopee; pm2 log');
+            shell.exec('pm2 update; pm2 restart shopee; pm2 log');
         }
 
     })
-    console.log(moment().format("hh:mm:ss") + "end of Foreach ")
 
 };
 
@@ -3005,8 +3004,6 @@ if (mode === "DEV") {
         }
 
         let a = await runAllTime()
-        console.log("aaaaa", a)
-
     })();
 }
 
