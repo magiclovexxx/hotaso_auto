@@ -91,7 +91,7 @@ if (mode === "DEV") {
 }
 logs = 1
 
-loginShopee = async (page, accounts) => {
+loginShopee = async (browser, page, accounts) => {
 
     let logincheck = await page.$$('.navbar__username');
 
@@ -168,14 +168,23 @@ loginShopee = async (page, accounts) => {
             }
 
             let check_account_checkpoint = 0
-            //   check_account_checkpoint = await page.locator('div', { hasText: 'Xác minh tài khoản' });
-            console.log("Check checkpoint", check_account_checkpoint)
-            if (check_account_checkpoint) {
-                console.log("account bị checkpoint")
+            let check
+            //check = await page.$(`text=Xác minh bằng liên kết Email`)
+          
+            if (check) {
+                console.log("account bị checkpoint: "+ accounts[3])
 
-                await page.locator('div', { hasText: 'Xác minh bằng liên kết Email' }).click()
+                await check.click()
+               
+                await page.waitForTimeout(10000)
+                let url ='https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid='+accounts[3]
+                let email_link = await axios(url)
+                console.log(email_link.data)
+                const pageTwo = await browser.newPage();
+                
+                
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                await page.waitForTimeout(timeout)
+                await page.waitForTimeout(999999)
                 //  return 5
             }
 
@@ -1969,9 +1978,10 @@ runAllTime = async () => {
 
         let user_agent, user_lang
         console.log(moment().format("hh:mm:ss") + " - Số lượng từ khoá tab: " + index + " ---- " + keywords.length)
-
+        console.log("Account email: " + acc.email)
         subAccount[0] = acc.username
         subAccount[2] = acc.id
+        subAccount[3] = acc.email
         try {
             subAccount[1] = acc.password.split("\r")[0]
         } catch (error) {
@@ -2021,7 +2031,7 @@ runAllTime = async () => {
         }
 
         console.log(proxy)
-        console.log("email account: " + acc.email)
+       
         let browser = await gen_browser(option1)
 
         let page = await gen_page(browser, option1)
@@ -2050,7 +2060,7 @@ runAllTime = async () => {
 
             //  await page.waitForTimeout(9999999)
             // login account shopee                    
-            let checklogin = await loginShopee(page, subAccount)
+            let checklogin = await loginShopee(browser, page, subAccount)
 
 
             console.log(moment().format("hh:mm:ss") + " - index = " + index + " - check login account: " + subAccount[0] + " - " + checklogin)
@@ -2731,7 +2741,7 @@ runAllTime = async () => {
 
                             console.log(error)
                             await browser.close()
-                            return
+                          //  return
                             // shell.exec('pm2 restart all');
                         }
 
