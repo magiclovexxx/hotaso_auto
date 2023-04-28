@@ -168,7 +168,7 @@ loginShopee = async (page, accounts) => {
             }
 
             let check_account_checkpoint = 0
-         //   check_account_checkpoint = await page.locator('div', { hasText: 'Xác minh tài khoản' });
+            //   check_account_checkpoint = await page.locator('div', { hasText: 'Xác minh tài khoản' });
             console.log("Check checkpoint", check_account_checkpoint)
             if (check_account_checkpoint) {
                 console.log("account bị checkpoint")
@@ -251,23 +251,24 @@ searchKeyWord = async (page, keyword) => {
         timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
         await page.waitForTimeout(timeout);
         let checkSearchInput
-       
-        
-        checkSearchInput = await page.$('.shopee-searchbar-input__input');  
+
+
+        checkSearchInput = await page.$('.shopee-searchbar-input__input');
 
         if (checkSearchInput) {
-           
+
             try {
-                await page.click('.shopee-searchbar-input__input')    
+                await page.click('.shopee-searchbar-input__input')
             } catch (error) {
                 console.log(error)
-                await page.reload()
+                await page.goto('https://shopee.vn/')
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
                 await page.waitForTimeout(timeout);
-                await page.click('.shopee-searchbar-input__input')  
-                 
+                await page.click('.shopee-searchbar-input__input')
+
             }
-            
+
+
             timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
             await page.waitForTimeout(timeout);
             await page.type('.shopee-searchbar-input__input', keyword, { delay: 100 })
@@ -293,8 +294,8 @@ searchKeyWord = async (page, keyword) => {
             await page.keyboard.press('Enter')
 
         }
-      
-       
+
+
         // check = await page.locator(':has-text("Kênh Người Bán")')
 
     } catch (error) {
@@ -963,28 +964,19 @@ likeProductOfShop = async (page, url) => {
 
 action_view_product = async (page) => {
     try {
-        await page.waitForSelector('.shopee-image-placeholder')
+        //  await page.waitForSelector('.product-briefing')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout)
-        await page.locator('.shopee-image-placeholder').first().click();
-
-        // xem ngẫu nhiên n ảnh sản phẩm
-        let viewRandomImages = Math.floor(Math.random() * (6 - 4)) + 4;
-        let checkvideo = await page.$$('video')
-        if (checkvideo.length) {
-            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitForTimeout(timeout)
-        }
-        // await page.waitForSelector('.icon-arrow-right-bold')
-
-        for (let i = 0; i <= viewRandomImages; i++) {
-            timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
-            await page.waitForTimeout(timeout)
-            let nextRightButton = await page.$$('.icon-arrow-right-bold')
-            if (nextRightButton.length > 1) {
-                await nextRightButton[nextRightButton.length - 1].click();
+        let check = await page.$$(`.shopee-icon-button`);
+        console.log("Anhr san pham", check.length)
+        if (check.length) {
+            await check[2].click()
+            for (let i = 0; i <= viewRandomImages; i++) {
+                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                await check[2].click()
             }
         }
+        
     } catch (e) {
         await updateErrorLogs(e, slavenumber)
         //console.log(e)
@@ -1240,12 +1232,15 @@ removeCart = async (page) => {
             })
             for (let i = 0; i < 10; i++) {
 
-                check_product_cart = await page.locator('div', { hasText: 'Xóa' }).first().click();
 
-                console.log("check btn Xóa: " + check_product_cart)
+                let del = await page.$(`text=Xóa`)
 
-                if (check_product_cart.length > 0) {
-                    await check_product_cart[0].click();
+                //check_product_cart = await page.locator('div', { hasText: 'Xóa' }).first().click();
+
+                console.log("check btn Xóa: " + del)
+
+                if (del.length > 0) {
+                    await del.click();
                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
                     await page.waitForTimeout(timeout)
                 }
@@ -2269,6 +2264,7 @@ runAllTime = async () => {
                         await page.on('response', async (resp) => {
                             let url = resp.url()
                             let productInfo1, productInfo2
+                            let product_name_2
                             try {
                                 if (resp.url().includes('/api/v4/anti_fraud/captcha/generate') && resp.status() == 200) {
 
@@ -2365,7 +2361,7 @@ runAllTime = async () => {
 
                                         productInfo2.forEach((item, index) => {
                                             if (item.itemid == productForUser.product_id && (item.ads_keyword == null)) {
-
+                                                product_name_2 = item.item_basic.name
                                                 viTriSanPhamTrang1 = index + 1
                                                 url_trang_tim_kiem_san_pham = url
                                                 //console.log("url_trang_tim_kiem_san_pham: " + url_trang_tim_kiem_san_pham)
@@ -2643,10 +2639,13 @@ runAllTime = async () => {
                                     let productsAll = await page.$$('[data-sqe="link"]')
                                     console.log("productsAll", productsAll.length)
                                     console.log("viTriSanPhamTrang1", viTriSanPhamTrang1)
-                                    try {
-                                        await productsAll[viTriSanPhamTrang1 - 1].click()
-                                    } catch (error) {
-                                        await updateErrorLogs(error, slavenumber)
+
+                                    let check = await page.$(`text=${product_name_2}`);
+                                    console.log("check name san pham de click", check.length)
+                                    if (check) {
+                                        await check.click()
+                                    } else {
+
                                         try {
                                             await page.goto(productForUser.product_link, {
                                             });
@@ -2657,6 +2656,8 @@ runAllTime = async () => {
                                             await updateErrorLogs(err, slavenumber)
                                         }
                                     }
+
+
                                 }
                             }
                         }
@@ -2920,12 +2921,12 @@ runAllTime = async () => {
         }
 
         await browser.close();
-       // console.log(moment().format("hh:mm:ss") + " PM2 restart ")
+        // console.log(moment().format("hh:mm:ss") + " PM2 restart ")
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
-           
+
         }
-        
+
     })
 
 };
@@ -2968,8 +2969,6 @@ if (mode === "DEV") {
         }
 
         await runAllTime()
-
-        console.log(moment().format("hh:mm:ss") + " - restart ")
 
     })();
 }
