@@ -963,10 +963,10 @@ likeProductOfShop = async (page, url) => {
 
 action_view_product = async (page) => {
     try {
-        await page.waitForSelector('.product-briefing')
+        await page.waitForSelector('.shopee-image-placeholder')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout)
-        await page.click('.product-briefing>div>div>div');
+        await page.locator('.shopee-image-placeholder').click();
 
         // xem ngẫu nhiên n ảnh sản phẩm
         let viewRandomImages = Math.floor(Math.random() * (6 - 4)) + 4;
