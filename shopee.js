@@ -966,7 +966,7 @@ action_view_product = async (page) => {
         await page.waitForSelector('.shopee-image-placeholder')
         timeout = Math.floor(Math.random() * (timemax - timemin)) + timemin;
         await page.waitForTimeout(timeout)
-        await page.locator('.shopee-image-placeholder').click();
+        await page.locator('.shopee-image-placeholder').first().click();
 
         // xem ngẫu nhiên n ảnh sản phẩm
         let viewRandomImages = Math.floor(Math.random() * (6 - 4)) + 4;
@@ -1240,7 +1240,7 @@ removeCart = async (page) => {
             })
             for (let i = 0; i < 10; i++) {
 
-                check_product_cart = await page.locator('div', { hasText: 'Xóa' });
+                check_product_cart = await page.locator('div', { hasText: 'Xóa' }).first().click();
 
                 console.log("check btn Xóa: " + check_product_cart)
 
@@ -2920,7 +2920,7 @@ runAllTime = async () => {
         }
 
         await browser.close();
-        console.log(moment().format("hh:mm:ss") + " PM2 restart ")
+       // console.log(moment().format("hh:mm:ss") + " PM2 restart ")
         if (os_slave == "LINUX") {
             console.log(moment().format("hh:mm:ss") + " PM2 restart ")
            
