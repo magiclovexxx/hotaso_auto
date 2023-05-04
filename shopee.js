@@ -92,7 +92,7 @@ if (mode === "DEV") {
 logs = 1
 
 loginShopee = async (browser, page, accounts) => {
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(5000)
     let logincheck = await page.$$('.navbar__username');
     console.log("Check login: ", logincheck.length)
    // await page.waitForTimeout(999999)
@@ -168,21 +168,35 @@ loginShopee = async (browser, page, accounts) => {
                     return 3
                 }
             }
-
+         
             let check_account_checkpoint = 0
             let check
             check = await page.$(`text=Xác minh bằng liên kết Email`)
 
             if (check) {
+                return 5
                 console.log("account bị checkpoint: " + accounts[3])
 
                 await check.click()
 
-                await page.waitForTimeout(10000)
+                await page.waitForTimeout(40000)
                 let url = 'https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid=' + accounts[3]
-                let email_link = await axios(url)
-                console.log(email_link.data)
-                const pageTwo = await browser.newPage();
+                let email = await axios(url)
+                let data=email.data
+                //console.log(check.data[0].content)
+                if(data.length >0){
+                    let verify_link
+                    regex = /(?<=https:\/\/anon.ws\/\?)(.*?)(?=")/g
+                    const myArray = regex.exec(data[data.length-1].content);
+                    if(myArray.length > 1){
+                        verify_link = myArray[0]
+                        console.log(verify_link)
+                    }
+                   
+                    await page.goto(verify_link)
+                    //await page.waitForTimeout(90000)
+                }
+                
 
 
                 timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
@@ -897,7 +911,7 @@ action_view_shop = async (page, url, product) => {
 
         timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
         await page.waitForTimeout(timeout)
-        await page.waitForSelector('.page-product__shop>div>a', {
+        await page.waitForSelector('.shopee-avatar__img', {
             timeout: 30000
         })
 
@@ -2051,9 +2065,7 @@ runAllTime = async () => {
             try {
                 console.log(moment().format("hh:mm:ss") + " - Load shopee.vn")
                 let ref = await page.url()
-                await page.goto('https://shopee.vn', {
-                    referer: ref
-                })
+                await page.goto('https://shopee.vn')
                 await updateProxy(proxy.proxy_ip + ":OK")
 
 
@@ -2737,16 +2749,14 @@ runAllTime = async () => {
 
                         //if (check_product_exit === "Có tồn tại") {
                         try {
-                            await page.waitForSelector('.shopee-input-quantity', {
-                                timeout: 10000
-                            })
+                            await page.waitForSelector('.shopee-input-quantity')
 
                         } catch (error) {
-                            console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
+                            
                             productForUser.action = "search"
                             productForUser.product_not_exist = 1
                             await updateActions(productForUser, 10)
-
+                            console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
                             console.log(error)
                             await browser.close()
                             //  return

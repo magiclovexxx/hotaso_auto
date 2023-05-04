@@ -196,8 +196,20 @@ let is_block_image = false;
 
 
 (async () => {
-   let check = await axios('https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid=nqvixuyenle507@mail68.tk')
+    let mail="xdhnyenrubyyen901@mail68.tk"
+   let check = await axios('https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid='+mail)
+    let data = check.data
     
-    console.log(check.data)
+    console.log(data[data.length-1].content)
+    console.log("Data length: " + data.length)
+    //regex get verify link
+    regex = /(?<=https:\/\/anon.ws\/\?)(.*?)(?=")/g  
 
+    // regex get forgot password link
+    let forgor_regex = /(?=https:\/\/shopee.vn\/forgot_password)(.*?)(?=")/g
+    const myArray = regex.exec(data[data.length-1].content);
+    if(myArray.length > 1){
+      //  console.log(myArray[1])
+    }
+    
 })();
