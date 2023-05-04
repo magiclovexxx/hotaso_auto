@@ -95,7 +95,7 @@ loginShopee = async (browser, page, accounts) => {
     await page.waitForTimeout(5000)
     let logincheck = await page.$$('.navbar__username');
     console.log("Check login: ", logincheck.length)
-   // await page.waitForTimeout(999999)
+    // await page.waitForTimeout(999999)
 
     if (!logincheck.length) {
         await page.mouse.click(10, 30)
@@ -144,6 +144,12 @@ loginShopee = async (browser, page, accounts) => {
                 return 2
             }
 
+            checkcode = await page.$(`text=Cách khắc phục`)
+            if (checkcode) {
+                console.log(moment().format("hh:mm:ss") + " - Tài khoản đang xác minh -")
+                return false
+            }
+
             let checkblock = await page.$$('form>div>div>div>div>svg>path[clip-rule="evenodd"]')
 
             if (checkblock.length) {
@@ -168,40 +174,147 @@ loginShopee = async (browser, page, accounts) => {
                     return 3
                 }
             }
-         
+
             let check_account_checkpoint = 0
             let check
             check = await page.$(`text=Xác minh bằng liên kết Email`)
 
+
+            await page.removeAllListeners('response');
+            //await page.setRequestInterception(true);
+
+
+            await page.on('response', async (resp) => {
+                let url = resp.url()
+
+                try {
+
+                    if (resp.url().includes('/anti_fraud/captcha/generate') && resp.status() == 200) {
+
+                        console.log('Xử lý captcha');
+                        const imgCaptcha = await page.waitForSelector('//img[@draggable="false"]');
+                        if (imgCaptcha) {
+                            await imgCaptcha.screenshot({ path: 'captcha.png' });
+                            var data = new FormData();
+                            data.append('image', fs.createReadStream('captcha.png'));
+                            axios_config = {
+                                method: 'POST',
+                                url: 'https://captcha.sacuco.com/captcha/shoppe',
+                                headers: {
+                                    ...data.getHeaders()
+                                },
+                                data: data
+                            };
+                            await axios(axios_config).then(async function (response) {
+                                const pixels = response.data.split(' ');
+                                if (pixels.length == 4) {
+                                    const whirl_position = pixels[2] - 2;
+                                    console.log('Kéo captcha: ' + whirl_position);
+                                    const sliderHandle = await page.waitForSelector('//div[@style="width: 40px; height: 40px; transform: translateX(0px);"]');
+                                    if (sliderHandle) {
+                                        const handle = await sliderHandle.boundingBox();
+                                        let currentPosition = handle.width / 2;
+                                        await page.mouse.move(
+                                            handle.x + currentPosition,
+                                            handle.y + handle.height / 2
+                                        );
+                                        await page.mouse.down();
+                                        while (currentPosition < whirl_position) {
+                                            currentPosition += 1;
+                                            await page.mouse.move(
+                                                handle.x + currentPosition,
+                                                handle.y + handle.height / 2
+                                            );
+                                        }
+                                        await page.waitForTimeout(1000);
+                                        page.mouse.up();
+                                    }
+                                }
+                            }).catch(function (error) {
+                                console.log(error);
+                            });
+                            await page.waitForTimeout(3000)
+                        }
+
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+
             if (check) {
-                return 5
-                console.log("account bị checkpoint: " + accounts[3])
+                //   return 5
+                console.log("account bị xác minh email: " + accounts[3])
 
                 await check.click()
 
                 await page.waitForTimeout(40000)
                 let url = 'https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid=' + accounts[3]
                 let email = await axios(url)
-                let data=email.data
+                let data = email.data
+                let verify_link
                 //console.log(check.data[0].content)
-                if(data.length >0){
-                    let verify_link
+                if (data.length > 0) {
+
                     regex = /(?<=https:\/\/anon.ws\/\?)(.*?)(?=")/g
-                    const myArray = regex.exec(data[data.length-1].content);
-                    if(myArray.length > 1){
+                    let myArray = regex.exec(data[data.length - 1].content);
+                    if (myArray.length > 1) {
                         verify_link = myArray[0]
-                        console.log(verify_link)
+                        console.log("Verify link: ", verify_link)
+                        await page.goto(verify_link)
+                        await page.waitForTimeout(5000)
+
+                        let check = page.$(`text=Lỗi hệ thống`)
+                        if (check) {
+                            console.log("Lỗi hệ thống --- Reset password: ")
+                            await page.goto('https://shopee.vn/buyer/reset')
+                            await page.waitForTimeout(2000)
+                            await page.type('[name="emailOrPhone"]', accounts[3])
+                            await page.waitForTimeout(1000)
+                            let btn = await page.$(`text=Tiếp theo`)
+                            if (btn) {
+                                await btn.click()
+                                await page.waitForTimeout(10000)
+                                btn = await page.$(`text=OK`)
+                                if (btn) {
+                                    await btn.click()
+                                    await page.waitForTimeout(30000)
+                                    email = await axios(url)
+                                    console.log(moment().format("hh:mm:ss") + "Lấy link Change pass ----------")
+                                    data = email.data
+                                    if (data.length) {
+                                        let forgor_regex = /(?=https:\/\/shopee.vn\/forgot_password)(.*?)(?=")/g
+                                        myArray = forgor_regex.exec(data[data.length - 1].content);
+                                        if (myArray.length > 1) {
+                                            verify_link = myArray[0]
+                                            console.log("Change pass link ----------", verify_link)
+                                            await page.goto(verify_link)
+                                            await page.waitForTimeout(3000)
+                                            await page.type('[autocomplete="new-password"]', accounts[1])
+                                            await page.waitForTimeout(2000)
+                                            btn = await page.$(`text=Tiếp tục`)
+                                            if(btn){
+                                                await btn.click()
+                                            }
+                                            
+                                            console.log(moment().format("hh:mm:ss") + "Change pass OK ----------")
+                                            await page.waitForTimeout(2000000)
+                                            return false
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        }
                     }
-                   
-                    await page.goto(verify_link)
-                    //await page.waitForTimeout(90000)
+
+
                 }
-                
 
-
-                timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
-                await page.waitForTimeout(999999)
-                return 5
+                // timeout = Math.floor(Math.random() * (2000 - 1000)) + 1000;
+                // await page.waitForTimeout(999999)
+                // return 5
             }
 
 
@@ -901,7 +1014,7 @@ action_view_shop = async (page, url, product) => {
         await page.waitForSelector('.page-product__shop>div>a', {
             timeout: 30000
         })
-        
+
         viewShopClick = await page.$$('.page-product__shop>div>a')
         console.log(moment().format("hh:mm:ss") + " --> Click vao link shop: " + viewShopClick.length)
         if (viewShopClick.length) {
@@ -1277,7 +1390,7 @@ removeCart = async (page) => {
                 console.log("check btn Xóa: " + del)
 
                 if (del) {
-                    
+
                     await del.click();
                     console.log("Click Xóa: ")
                     timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
@@ -2126,6 +2239,7 @@ runAllTime = async () => {
                         // always executed
                     });
                 await browser.close();
+                console.log(moment().format("hh:mm:ss") + " -  ----------- Kết thúc tương tác")
                 console.log(" ----- KhởI đÔng lại ---- ")
                 // shell.exec('pm2 restart all');
                 return
@@ -2305,10 +2419,11 @@ runAllTime = async () => {
                             let productInfo1, productInfo2
 
                             try {
-                                if (resp.url().includes('/api/v4/anti_fraud/captcha/generate') && resp.status() == 200) {
+                                console.log(' cheeeeeeeeekkk --------->>>>')
+                                if (resp.url().includes('/anti_fraud/captcha/generate') && resp.status() == 200) {
 
                                     console.log('Xử lý captcha');
-                                    const imgCaptcha = await page.waitForXPath('//img[@draggable="false"]');
+                                    const imgCaptcha = await page.waitForSelector('//img[@draggable="false"]');
                                     if (imgCaptcha) {
                                         await imgCaptcha.screenshot({ path: 'captcha.png' });
                                         var data = new FormData();
@@ -2326,7 +2441,7 @@ runAllTime = async () => {
                                             if (pixels.length == 4) {
                                                 const whirl_position = pixels[2] - 2;
                                                 console.log('Kéo captcha: ' + whirl_position);
-                                                const sliderHandle = await page.waitForXPath('//div[@style="width: 40px; height: 40px; transform: translateX(0px);"]');
+                                                const sliderHandle = await page.waitForSelector('//div[@style="width: 40px; height: 40px; transform: translateX(0px);"]');
                                                 if (sliderHandle) {
                                                     const handle = await sliderHandle.boundingBox();
                                                     let currentPosition = handle.width / 2;
@@ -2752,15 +2867,17 @@ runAllTime = async () => {
                             await page.waitForSelector('.shopee-input-quantity')
 
                         } catch (error) {
-                            
+
                             productForUser.action = "search"
                             productForUser.product_not_exist = 1
                             await updateActions(productForUser, 10)
-                            console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
+                           
                             console.log(error)
                             await browser.close()
                             //  return
                             // shell.exec('pm2 restart all');
+                            console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
+                            console.log(moment().format("hh:mm:ss") + " -  ----------- Kết thúc tương tác")
                         }
 
 
