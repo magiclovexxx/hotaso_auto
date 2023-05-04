@@ -298,7 +298,7 @@ loginShopee = async (browser, page, accounts) => {
                                             }
                                             
                                             console.log(moment().format("hh:mm:ss") + "Change pass OK ----------")
-                                            await page.waitForTimeout(2000000)
+                                            await page.waitForTimeout(2000)
                                             return false
                                         }
                                     }
