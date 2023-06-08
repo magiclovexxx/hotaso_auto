@@ -248,7 +248,7 @@ loginShopee = async (browser, page, accounts) => {
 
                 await check.click()
 
-                await page.waitForTimeout(40000)
+                await page.waitForTimeout(4000000)
                 let url = 'https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid=' + accounts[3]
                 let email = await axios(url)
                 let data = email.data
@@ -293,10 +293,10 @@ loginShopee = async (browser, page, accounts) => {
                                             await page.type('[autocomplete="new-password"]', accounts[1])
                                             await page.waitForTimeout(2000)
                                             btn = await page.$(`text=Tiếp tục`)
-                                            if(btn){
+                                            if (btn) {
                                                 await btn.click()
                                             }
-                                            
+
                                             console.log(moment().format("hh:mm:ss") + "Change pass OK ----------")
                                             await page.waitForTimeout(2000)
                                             return false
@@ -2419,7 +2419,6 @@ runAllTime = async () => {
                             let productInfo1, productInfo2
 
                             try {
-                                console.log(' cheeeeeeeeekkk --------->>>>')
                                 if (resp.url().includes('/anti_fraud/captcha/generate') && resp.status() == 200) {
 
                                     console.log('Xử lý captcha');
@@ -2871,7 +2870,7 @@ runAllTime = async () => {
                             productForUser.action = "search"
                             productForUser.product_not_exist = 1
                             await updateActions(productForUser, 10)
-                           
+
                             console.log(error)
                             await browser.close()
                             //  return

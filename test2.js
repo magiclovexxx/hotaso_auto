@@ -196,11 +196,11 @@ let is_block_image = false;
 
 
 (async () => {
-    let mail="xdhnyenrubyyen901@mail68.tk"
-   let check = await axios('https://shopee68.com/ajaxs/client/get-mail-box-tm.php?uid='+mail)
+    let mail="linenhannhan@mail68.tk"
+   let check = await axios('https://1000don.com/api/messages/' + mail + '/TKJHQS9mPgn3lxNC0A74')
     let data = check.data
     
-    console.log(data[data.length-1].content)
+    console.log(data[data.length-1])
     console.log("Data length: " + data.length)
     //regex get verify link
     regex = /(?<=https:\/\/anon.ws\/\?)(.*?)(?=")/g  

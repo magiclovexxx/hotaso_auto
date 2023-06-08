@@ -1,6 +1,4 @@
 const axios = require('axios').default;
-const puppeteer = require('puppeteer');
-const randomUseragent = require('random-useragent');
 
 const check_slave_die = async(slave)=>{
     let url = "http://api.hotaso.vn/api_user/check_slave?slave=" + slave
