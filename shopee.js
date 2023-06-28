@@ -2499,7 +2499,7 @@ runAllTime = async () => {
                                     console.log(moment().format("hh:mm:ss") + " - Kiểm tra bỏ giỏ: " + check_add_cart)
                                 }
 
-                                let checkUrlproduct = url.split("search/search_items?by=relevancy&keyword=")
+                                let checkUrlproduct = url.split("search_items?by=relevancy&extra_params=")
                                 if (checkUrlproduct.length > 1) {
 
                                     productInfo1 = await resp.json()
@@ -2550,18 +2550,21 @@ runAllTime = async () => {
                                 // }
 
 
-                                check_link_san_pham = url.split("item/get?itemid=" + productForUser.product_id)
+                                check_link_san_pham = url.split(`item/get?shopid=${productForUser.shop_id}&itemid=${productForUser.product_id}`)
+                                
                                 if (check_link_san_pham.length > 1) {
 
                                     try {
                                         let productInfo1 = await resp.json()
                                         productInfo2 = productInfo1.data
+                                        
                                         productForUser.product_image = ""
                                         productForUser.product_image = productInfo2.image
                                         productForUser.liked = productInfo2.liked
 
-
+                                        
                                     } catch (error) {
+                                        console.log(error)
                                         check_product_exit = "Không tồn tại"
                                         console.log(moment().format("hh:mm:ss") + " - Sản phẩm không tồn tại")
                                     }
@@ -2734,7 +2737,7 @@ runAllTime = async () => {
                                                         console.log(moment().format("hh:mm:ss") + " - Cập nhật SEO Sản phẩm thất bại")
                                                     })
 
-                                                //  break;
+                                                break;
                                             }
 
                                         }

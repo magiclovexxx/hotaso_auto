@@ -97,10 +97,11 @@ thaTimSanPham = async (cookies, ref, shopId, productId) => {
     await axios(config)
         .then(function (response) {
             console.log("--- Thả tim sản phẩm API Thành công ---");
-            //console.log(response.data);
+            console.log(response.data);
             result = response.data
         })
         .catch(function (error) {
+            console.log(error)
             console.log("--- Lỗi Thả tim sản phẩm API ---");
         });
     return result
