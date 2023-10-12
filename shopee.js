@@ -635,7 +635,7 @@ get_variation_enable = async (page) => {
         let variation1 = await page.evaluate(() => {
 
             //  tất cả variation
-            let titles = document.querySelectorAll('.product-variation');
+            let titles = document.querySelectorAll('section>div>button[aria-disabled="false"]');
             let list_variation = []
             titles.forEach((item, index) => {
                 let x = item.click()
@@ -645,26 +645,26 @@ get_variation_enable = async (page) => {
         })
 
         // variation disable
-        let variation_disable = await page.evaluate(() => {
-            let titles_disable = document.querySelectorAll('.product-variation--disabled');
-            let list_variation_disable = []
-            titles_disable.forEach((item) => {
-                let x = item.textContent
-                list_variation_disable.push(x)
-            })
+        // let variation_disable = await page.evaluate(() => {
+        //     let titles_disable = document.querySelectorAll('section>div>button[aria-disabled="true"]');
+        //     let list_variation_disable = []
+        //     titles_disable.forEach((item) => {
+        //         let x = item.textContent
+        //         list_variation_disable.push(x)
+        //     })
 
-            return list_variation_disable
-        })
+        //     return list_variation_disable
+        // })
 
-        list_variation_enable = []
-        variation1.forEach((item2, index) => {
-            if (!variation_disable.includes(item2)) {
-                list_variation_enable.push(index)
-            }
+        // list_variation_enable = []
+        // variation1.forEach((item2, index) => {
+        //     if (!variation_disable.includes(item2)) {
+        //         list_variation_enable.push(index)
+        //     }
 
-        })
+        // })
 
-        return list_variation_enable
+        return variation1
     } catch (error) {
         console.log(error)
         await updateErrorLogs(error, slavenumber)
@@ -678,7 +678,7 @@ chooseVariation = async (page, product) => {
     try {
         console.log("---- Chọn ngẫu nhiên phân loại sản phẩm ----")
 
-        let varitations = await page.$$('.product-variation')
+        let varitations = await page.$$('section>div>button[aria-disabled="false"]')
 
         variation_enable = await get_variation_enable(page)
         console.log("variation enable")
@@ -2549,17 +2549,17 @@ runAllTime = async () => {
                                 // }
 
 
-                                check_link_san_pham = url.split(`item/get?shopid=${productForUser.shop_id}&itemid=${productForUser.product_id}`)
+                                // check_link_san_pham = url.includes(`/get_pc?shopid=${productForUser.shop_id}&itemid=${productForUser.product_id}`)
+                               
                                 
-                                if (check_link_san_pham.length > 1) {
-
+                                if ( url.includes(`/get_pc?shop_id=${productForUser.shop_id}&item_id=${productForUser.product_id}`)) {
+                                    
                                     try {
                                         let productInfo1 = await resp.json()
                                         productInfo2 = productInfo1.data
-                                        
                                         productForUser.product_image = ""
-                                        productForUser.product_image = productInfo2.image
-                                        productForUser.liked = productInfo2.liked
+                                        productForUser.product_image = productInfo2.item.image
+                                        productForUser.liked = productInfo2.product_review.liked
 
                                         
                                     } catch (error) {
