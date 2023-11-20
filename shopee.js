@@ -125,21 +125,14 @@ loginShopee = async (browser, page, accounts) => {
             await page.click('[name="password"]')
             timeout = Math.floor(Math.random() * (5000 - 3000)) + 3000;
             await page.waitForTimeout(timeout)
-            const loginbutton = await page.$$('div>button:nth-child(4)');
-            if (loginbutton.length) {
-                await loginbutton[0].click()
-
-                // get_account_info = await (await page.waitForResponse((res) => {
-                //     return (res.status() == 200 && res.url().includes('/account/login_by_password') && res.request().method() == 'GET');
-                // }, { timeout: 180000 })).json();
-
-
-            }
+            // const loginbutton = await page.click("text=Đăng nhập");
+            await page.getByRole('button', { name: /Đăng nhập/i }).click()
+           
             timeout = Math.floor(Math.random() * (3000 - 2000)) + 2000;
             await page.waitForTimeout(5000)
             let checkcode = await page.$$('[autocomplete="one-time-code"]')
 
-            if (checkcode.length) {
+            if (checkcode.length) {8
                 console.log("account bi khoá 1")
                 return 2
             }
